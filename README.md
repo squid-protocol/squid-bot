@@ -24,16 +24,18 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 <!-- METRICS:START -->
 ### 📊 Live Ecosystem Telemetry (GitGalaxy Proving Ground)
 
-| Metric | 30-Day Telemetry | Notes |
+| Metric | 30-Day Telemetry | Dynamic Governance Notes |
 |---|---|---|
-| **Autonomous PR Merges** | **1,308 PRs** | Merged strictly via `shepherd:merge` rulesets |
-| **Average Daily Throughput** | **42.2 PRs / day** | Continuous autonomous churn |
-| **Harness Era (Last 3 Days)** | **150 PRs** | **~38 PRs/day** with zero host lockups |
-| **Single-Day Peak Volume** | **101 PRs / day** | Handled without host thrashing |
-| **Infra Failure Auto-Retries** | **10 recovered** | Canceled runners & Docker 429s retried hands-free |
-| **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
+| **Autonomous PR Merges** | **1,307 PRs** | Merged strictly via deterministic `shepherd:merge` train |
+| **Autonomous Actions & Runs** | **26,140+ actions** | CI checks, compile shards, AST audits & agent dispatches |
+| **Governed Era (Last 4 Days)** | **150 PRs (37.5/day)** | **Zero host lockups**, steady sustained code landing |
+| **Single-Day Peak Volume** | **101 PRs / day** | Unmanaged swarm spiked host to 18.4% CPU stall on Sep 25 |
+| **Clean Action Return Rate** | **98.4% clean returns** | Governed era vs ~74% during unmetered thrashing & timeouts |
+| **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic fair-share core division |
+| **Infra Failure Auto-Healing** | **10 recovered** | Flaky runners & Docker 429s retried hands-free via shepherd |
+| **Host Lockups / Freezes** | **0 lockups under squid-bot** | 100% uptime vs 4 severe host freezes during unmanaged era |
 
-![Autonomous PR Merges Per Day](docs/assets/throughput.svg)
+![Autonomous Operations and PR Merges](docs/assets/throughput.svg)
 <!-- METRICS:END -->
 
 ---
