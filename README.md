@@ -32,7 +32,7 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 | **Infra Failure Auto-Retries** | **10 recovered** | Canceled runners & Docker 429s retried hands-free |
 | **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
 
-![Autonomous PR Merges Per Day](https://raw.githubusercontent.com/squid-protocol/squid-bot/main/docs/assets/throughput.svg)
+![Autonomous PR Merges Per Day](docs/assets/throughput.svg)
 <!-- METRICS:END -->
 
 ---
