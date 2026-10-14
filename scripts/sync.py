@@ -270,6 +270,19 @@ def do_pull(gg_root: Path, dry_run: bool = False) -> None:
             count += 1
     print(f"Pull complete ({count} files synchronized).")
 
+    # Refresh live telemetry metrics and chart
+    try:
+        import generate_metrics
+
+        m = generate_metrics.get_merge_metrics(gg_root)
+        sm = generate_metrics.get_shepherd_log_metrics()
+        svg_path = SQUID_BOT_ROOT / "docs" / "assets" / "throughput.svg"
+        generate_metrics.render_svg_chart(m, svg_path)
+        generate_metrics.update_readme_metrics(m, sm)
+        print("  [METRICS] Refreshed throughput chart and telemetry.")
+    except Exception as e:
+        print(f"  [METRICS] Note: Could not refresh metrics: {e}")
+
 
 def do_push(gg_root: Path, dry_run: bool = False) -> None:
     print(f"Pushing to GitGalaxy: {gg_root}")
