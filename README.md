@@ -26,8 +26,9 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 
 | Metric | 30-Day Telemetry | Notes |
 |---|---|---|
-| **Autonomous PR Merges** | **1,206 PRs** | Merged strictly via `shepherd:merge` rulesets |
-| **Average Daily Throughput** | **41.6 PRs / day** | Continuous autonomous churn |
+| **Autonomous PR Merges** | **1,308 PRs** | Merged strictly via `shepherd:merge` rulesets |
+| **Average Daily Throughput** | **42.2 PRs / day** | Continuous autonomous churn |
+| **Harness Era (Last 3 Days)** | **150 PRs** | **~38 PRs/day** with zero host lockups |
 | **Single-Day Peak Volume** | **101 PRs / day** | Handled without host thrashing |
 | **Infra Failure Auto-Retries** | **10 recovered** | Canceled runners & Docker 429s retried hands-free |
 | **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |

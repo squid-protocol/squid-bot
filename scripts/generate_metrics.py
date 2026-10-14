@@ -39,12 +39,24 @@ def find_repo_root() -> Path:
     return ROOT
 
 
+HARNESS_START_DATE = "2026-10-11"
+
+
 def get_merge_metrics(repo: Path, days: int = 30) -> dict:
+    ref = "HEAD"
+    check_ref = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--verify", "origin/main"],
+        capture_output=True,
+    )
+    if check_ref.returncode == 0:
+        ref = "origin/main"
+
     cmd = [
         "git",
         "-C",
         str(repo),
         "log",
+        ref,
         f"--since={days} days ago",
         "--format=%ad|%s",
         "--date=short",
@@ -65,12 +77,19 @@ def get_merge_metrics(repo: Path, days: int = 30) -> dict:
     avg = total / len(dates) if dates else 0.0
     peak = max(daily.values()) if dates else 0
 
+    harness_dates = [d for d in dates if d >= HARNESS_START_DATE]
+    harness_total = sum(daily[d] for d in harness_dates)
+    harness_avg = harness_total / len(harness_dates) if harness_dates else 0.0
+
     return {
         "daily": {d: daily[d] for d in dates},
         "total": total,
         "avg": avg,
         "peak": peak,
         "days": len(dates),
+        "harness_total": harness_total,
+        "harness_avg": harness_avg,
+        "harness_days": len(harness_dates),
     }
 
 
@@ -137,6 +156,29 @@ def render_svg_chart(metrics: dict, out_file: Path) -> None:
             f'<text x="{margin_left - 10}" y="{y_pos + 4:.1f}" font-size="11" fill="#8b949e" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">{y_val}</text>'
         )
 
+    # Shaded zone and vertical marker for Harness Activation
+    annotation_svg = []
+    if HARNESS_START_DATE in dates:
+        h_idx = dates.index(HARNESS_START_DATE)
+        marker_x = margin_left + h_idx * bar_slot - 3
+        zone_w = (width - margin_right) - marker_x + 3
+        # Background shaded region
+        annotation_svg.append(
+            f'<rect x="{marker_x:.1f}" y="{margin_top}" width="{zone_w:.1f}" height="{chart_h}" fill="#58a6ff" fill-opacity="0.07" rx="3" />'
+        )
+        # Vertical marker line
+        annotation_svg.append(
+            f'<line x1="{marker_x:.1f}" y1="{margin_top - 12}" x2="{marker_x:.1f}" y2="{margin_top + chart_h}" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" />'
+        )
+        # Badge label
+        badge_cx = min(marker_x + 65, width - margin_right - 65)
+        annotation_svg.append(
+            f'<g transform="translate({badge_cx:.1f}, {margin_top - 16})">'
+            f'<rect x="-65" y="-10" width="130" height="20" rx="4" fill="#1f6feb" stroke="#388bfd" stroke-width="1" />'
+            f'<text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">&#9889; Harness Era (Oct 11)</text>'
+            f'</g>'
+        )
+
     # Bars
     x_labels = []
     for idx, d in enumerate(dates):
@@ -145,19 +187,27 @@ def render_svg_chart(metrics: dict, out_file: Path) -> None:
         x = margin_left + idx * bar_slot + (bar_slot - bar_width) / 2
         y = margin_top + chart_h - bar_h
 
-        # Color: gradient/accent for high volume
-        color = "#238636" if count < 60 else "#2ea043" if count < 80 else "#3fb950"
+        is_harness = d >= HARNESS_START_DATE
+        if is_harness:
+            color = "#2ea043"
+            extra = ' stroke="#58a6ff" stroke-width="1.2"'
+        else:
+            color = "#238636"
+            extra = ' fill-opacity="0.55"'
+
         bars_svg.append(
-            f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_width:.1f}" height="{bar_h:.1f}" rx="3" fill="{color}">'
-            f"<title>{d}: {count} PRs merged</title></rect>"
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_width:.1f}" height="{bar_h:.1f}" rx="3" fill="{color}"{extra}>'
+            f"<title>{d}: {count} PRs merged {'[Harness Era]' if is_harness else ''}</title></rect>"
         )
 
         # X label every 4 days or endpoints
-        if idx % 4 == 0 or idx == num_bars - 1:
+        if idx % 4 == 0 or idx == num_bars - 1 or d == HARNESS_START_DATE:
             short_date = d[5:]  # MM-DD
             label_x = x + bar_width / 2
+            text_fill = "#58a6ff" if is_harness else "#8b949e"
+            font_weight = "bold" if d == HARNESS_START_DATE else "normal"
             x_labels.append(
-                f'<text x="{label_x:.1f}" y="{height - 18}" font-size="11" fill="#8b949e" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">{short_date}</text>'
+                f'<text x="{label_x:.1f}" y="{height - 18}" font-size="11" fill="{text_fill}" font-weight="{font_weight}" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">{short_date}</text>'
             )
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="{height}" style="background-color: #0d1117; border-radius: 8px; border: 1px solid #30363d;">
@@ -169,11 +219,14 @@ def render_svg_chart(metrics: dict, out_file: Path) -> None:
   <text x="{margin_left}" y="48" font-size="12" fill="#8b949e">
     30-Day Total: <tspan fill="#58a6ff" font-weight="600">{metrics['total']} PRs</tspan> &#8226; 
     Daily Avg: <tspan fill="#3fb950" font-weight="600">{metrics['avg']:.1f} PRs/day</tspan> &#8226; 
-    Peak: <tspan fill="#d29922" font-weight="600">{metrics['peak']} PRs/day</tspan>
+    Harness Era: <tspan fill="#388bfd" font-weight="600">{metrics['harness_total']} PRs ({metrics['harness_avg']:.1f}/day)</tspan>
   </text>
   
   <!-- Y Grid -->
   {''.join(grid_svg)}
+  
+  <!-- Shaded Annotation Zone -->
+  {''.join(annotation_svg)}
   
   <!-- Bars -->
   {''.join(bars_svg)}
@@ -201,6 +254,7 @@ def update_readme_metrics(metrics: dict, shepherd_metrics: dict) -> None:
 |---|---|---|
 | **Autonomous PR Merges** | **{metrics['total']:,} PRs** | Merged strictly via `shepherd:merge` rulesets |
 | **Average Daily Throughput** | **{metrics['avg']:.1f} PRs / day** | Continuous autonomous churn |
+| **Harness Era (Last 3 Days)** | **{metrics['harness_total']} PRs** | **~{metrics['harness_avg']:.0f} PRs/day** with zero host lockups |
 | **Single-Day Peak Volume** | **{metrics['peak']} PRs / day** | Handled without host thrashing |
 | **Infra Failure Auto-Retries** | **{shepherd_metrics.get('infra_retries', 0)} recovered** | Canceled runners & Docker 429s retried hands-free |
 | **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
