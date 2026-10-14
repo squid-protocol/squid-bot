@@ -1,0 +1,30 @@
+# squid-bot configuration file (squid-bot.toml)
+
+[repository]
+# Default GitHub repository slug in "owner/repo" format.
+# Defaults to $SQUID_BOT_REPO or $GITHUB_REPOSITORY if omitted.
+slug = "squid-protocol/gitgalaxy"
+
+[shepherd]
+# Required CI checks before auto-merging a PR with the shepherd:merge label.
+# If omitted, checks with the repository's ruleset / branch protection.
+required_checks = [
+    "det",
+    "full-suite",
+    "ground-truth",
+    "mypy-audit",
+    "ruff-audit"
+]
+
+# Poll interval in seconds for background queue reconciliation (default: 600 = 10 min)
+poll_interval_seconds = 600
+
+# Path to state persistence file
+state_path = "/tmp/squid-bot/state/shepherd.json"
+
+[supervisor]
+# Directory used for slot and exclusive flock files
+lock_dir = "/tmp/squid-bot/locks"
+
+# Maximum heavy-run slots (defaults to nproc / 4)
+# heavy_slots = 3
