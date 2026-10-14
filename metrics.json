@@ -1,0 +1,307 @@
+{
+ "days": {
+  "2026-09-15": {
+   "merged": 19,
+   "runs": {
+    "cancelled": 14,
+    "failure": 14,
+    "skipped": 0,
+    "success": 298,
+    "total": 326
+   }
+  },
+  "2026-09-16": {
+   "merged": 28,
+   "runs": {
+    "cancelled": 1,
+    "failure": 2,
+    "skipped": 0,
+    "success": 405,
+    "total": 408
+   }
+  },
+  "2026-09-17": {
+   "merged": 25,
+   "runs": {
+    "cancelled": 10,
+    "failure": 10,
+    "skipped": 0,
+    "success": 421,
+    "total": 441
+   }
+  },
+  "2026-09-18": {
+   "merged": 25,
+   "runs": {
+    "cancelled": 18,
+    "failure": 13,
+    "skipped": 0,
+    "success": 503,
+    "total": 534
+   }
+  },
+  "2026-09-19": {
+   "merged": 17,
+   "runs": {
+    "cancelled": 25,
+    "failure": 30,
+    "skipped": 0,
+    "success": 360,
+    "total": 415
+   }
+  },
+  "2026-09-20": {
+   "merged": 17,
+   "runs": {
+    "cancelled": 13,
+    "failure": 15,
+    "skipped": 0,
+    "success": 310,
+    "total": 338
+   }
+  },
+  "2026-09-21": {
+   "merged": 7,
+   "runs": {
+    "cancelled": 14,
+    "failure": 17,
+    "skipped": 0,
+    "success": 192,
+    "total": 223
+   }
+  },
+  "2026-09-22": {
+   "merged": 24,
+   "runs": {
+    "cancelled": 9,
+    "failure": 17,
+    "skipped": 0,
+    "success": 423,
+    "total": 449
+   }
+  },
+  "2026-09-23": {
+   "merged": 73,
+   "runs": {
+    "cancelled": 54,
+    "failure": 8,
+    "skipped": 2,
+    "success": 1165,
+    "total": 1229
+   }
+  },
+  "2026-09-24": {
+   "merged": 82,
+   "runs": {
+    "cancelled": 33,
+    "failure": 9,
+    "skipped": 25,
+    "success": 1140,
+    "total": 1207
+   }
+  },
+  "2026-09-25": {
+   "merged": 102,
+   "runs": {
+    "cancelled": 170,
+    "failure": 31,
+    "skipped": 12,
+    "success": 1684,
+    "total": 1897
+   }
+  },
+  "2026-09-26": {
+   "merged": 89,
+   "runs": {
+    "cancelled": 170,
+    "failure": 13,
+    "skipped": 4,
+    "success": 1415,
+    "total": 1602
+   }
+  },
+  "2026-09-27": {
+   "merged": 75,
+   "runs": {
+    "cancelled": 136,
+    "failure": 20,
+    "skipped": 0,
+    "success": 1505,
+    "total": 1661
+   }
+  },
+  "2026-09-28": {
+   "merged": 19,
+   "runs": {
+    "cancelled": 29,
+    "failure": 13,
+    "skipped": 0,
+    "success": 414,
+    "total": 456
+   }
+  },
+  "2026-09-29": {
+   "merged": 20,
+   "runs": {
+    "cancelled": 51,
+    "failure": 10,
+    "skipped": 0,
+    "success": 673,
+    "total": 734
+   }
+  },
+  "2026-09-30": {
+   "merged": 16,
+   "runs": {
+    "cancelled": 34,
+    "failure": 10,
+    "skipped": 1,
+    "success": 373,
+    "total": 418
+   }
+  },
+  "2026-10-01": {
+   "merged": 30,
+   "runs": {
+    "cancelled": 26,
+    "failure": 11,
+    "skipped": 1,
+    "success": 582,
+    "total": 620
+   }
+  },
+  "2026-10-02": {
+   "merged": 66,
+   "runs": {
+    "cancelled": 130,
+    "failure": 35,
+    "skipped": 1,
+    "success": 1568,
+    "total": 1734
+   }
+  },
+  "2026-10-03": {
+   "merged": 62,
+   "runs": {
+    "cancelled": 146,
+    "failure": 29,
+    "skipped": 2,
+    "success": 1200,
+    "total": 1377
+   }
+  },
+  "2026-10-04": {
+   "merged": 62,
+   "runs": {
+    "cancelled": 105,
+    "failure": 29,
+    "skipped": 2,
+    "success": 1231,
+    "total": 1367
+   }
+  },
+  "2026-10-05": {
+   "merged": 76,
+   "runs": {
+    "cancelled": 246,
+    "failure": 53,
+    "skipped": 4,
+    "success": 1942,
+    "total": 2245
+   }
+  },
+  "2026-10-06": {
+   "merged": 50,
+   "runs": {
+    "cancelled": 157,
+    "failure": 49,
+    "skipped": 0,
+    "success": 1442,
+    "total": 1648
+   }
+  },
+  "2026-10-07": {
+   "merged": 44,
+   "runs": {
+    "cancelled": 181,
+    "failure": 64,
+    "skipped": 2,
+    "success": 1165,
+    "total": 1412
+   }
+  },
+  "2026-10-08": {
+   "merged": 25,
+   "runs": {
+    "cancelled": 49,
+    "failure": 33,
+    "skipped": 7,
+    "success": 1247,
+    "total": 1336
+   }
+  },
+  "2026-10-09": {
+   "merged": 64,
+   "runs": {
+    "cancelled": 190,
+    "failure": 80,
+    "skipped": 37,
+    "success": 2169,
+    "total": 2476
+   }
+  },
+  "2026-10-10": {
+   "merged": 33,
+   "runs": {
+    "cancelled": 238,
+    "failure": 37,
+    "skipped": 83,
+    "success": 1161,
+    "total": 1519
+   }
+  },
+  "2026-10-11": {
+   "merged": 40,
+   "runs": {
+    "cancelled": 612,
+    "failure": 33,
+    "skipped": 209,
+    "success": 1758,
+    "total": 2612
+   }
+  },
+  "2026-10-12": {
+   "merged": 43,
+   "runs": {
+    "cancelled": 297,
+    "failure": 71,
+    "skipped": 114,
+    "success": 2133,
+    "total": 2615
+   }
+  },
+  "2026-10-13": {
+   "merged": 31,
+   "runs": {
+    "cancelled": 174,
+    "failure": 37,
+    "skipped": 131,
+    "success": 1590,
+    "total": 1932
+   }
+  },
+  "2026-10-14": {
+   "merged": 44,
+   "runs": {
+    "cancelled": 668,
+    "failure": 41,
+    "skipped": 434,
+    "success": 2085,
+    "total": 3257
+   }
+  }
+ },
+ "open_prs": 9,
+ "repo": "squid-protocol/gitgalaxy",
+ "updated": "2026-10-14T22:06Z"
+}
