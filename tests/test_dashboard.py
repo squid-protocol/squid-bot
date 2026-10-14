@@ -47,3 +47,17 @@ def test_render_ignores_history_outside_the_window():
     data = _data(40)
     svg = dashboard.render(data, 30, TODAY)
     assert "last 30 days" in svg
+
+
+def test_render_adds_the_ci_cost_row_and_wait_chart_when_detail_exists():
+    data = _data()
+    for i, d in enumerate(sorted(data["days"])):
+        data["days"][d]["detail"] = {"bot_runs": 100, "ci_changes": [{"pr": 5000 + i, "title": "t"}] if i % 10 == 0 else [],
+                                     "wait_median": 1.0, "wait_p90": 4.0, "runner_min_est": 600, "sampled_runs": 24}
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Job queue wait (p90)" in svg and "4.0 min" in svg
+    assert "Runner time per merged PR" in svg
+    assert svg.count("CI change(s) merged") == 3
+    # without detail the extra row and chart stay out
+    assert "Job queue wait" not in dashboard.render(_data(), 30, TODAY)

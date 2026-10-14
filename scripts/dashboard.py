@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """Live fleet dashboard: real daily numbers from the GitHub API, rendered as an SVG.
 
-Every figure is fetched, nothing is estimated:
-  merged PRs per day   search API  (repo:R is:pr is:merged merged:DAY)
-  Actions runs per day  actions/runs?created=DAY, total and per conclusion
-  open PRs right now    search API  (repo:R is:pr is:open)
+Counted exactly:
+  merged PRs per day      search API  (repo:R is:pr is:merged merged:DAY)
+  Actions runs per day     actions/runs?created=DAY, total and per conclusion
+  bot workflow runs        the same count per BOT_WORKFLOWS workflow (the shepherd's own bookkeeping)
+  CI changes merged        PR merges to main that touched .github/workflows, shown as markers
+  open PRs right now       search API  (repo:R is:pr is:open)
+Sampled (SAMPLE_RUNS runs a day, spread over the day; labelled "est." where it is an estimate):
+  job queue wait           job created -> picked up by a runner, median and p90
+  runner minutes           mean job minutes per run x the day's runs
 
 History accumulates in <out>/metrics.json: a finished day is fetched once, the last
 REFRESH_DAYS days (still moving) are re-fetched on every run. Needs `gh` (authenticated,
@@ -21,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import time
 from datetime import date, datetime, timedelta, timezone
@@ -31,14 +37,71 @@ DEFAULT_REPO = os.environ.get("DASHBOARD_REPO", "squid-protocol/gitgalaxy")
 REFRESH_DAYS = 3  # today, yesterday and the day before can still change
 OUTCOMES = ("success", "failure", "cancelled", "skipped")
 SEARCH_PAUSE = 2.2  # search API: 30 requests a minute
+BOT_WORKFLOWS = [w.strip() for w in os.environ.get(
+    "DASHBOARD_BOT_WORKFLOWS", "CI shepherd (reconcile),CI shepherd (label events),Main Watch").split(",") if w.strip()]
+SAMPLE_RUNS = 24  # 6 per 6-hour window
+DETAIL_BACKFILL = 4  # older days missing the sampled detail, filled a few per refresh (API budget)
+
+
+def gh_json(path: str):
+    out = subprocess.run(
+        ["gh", "api", "-H", "Accept: application/vnd.github+json", path],
+        capture_output=True, text=True, check=True,
+    )
+    return json.loads(out.stdout)
 
 
 def gh_count(path: str) -> int:
-    out = subprocess.run(
-        ["gh", "api", "-H", "Accept: application/vnd.github+json", path, "--jq", ".total_count"],
-        capture_output=True, text=True, check=True,
-    )
-    return int(out.stdout.strip())
+    return int(gh_json(path)["total_count"])
+
+
+def _iso(s: str) -> datetime:
+    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def _pct(xs: list[float], q: float) -> float:
+    xs = sorted(xs)
+    return xs[min(len(xs) - 1, int(q * len(xs)))] if xs else 0.0
+
+
+def bot_workflow_ids(repo: str) -> dict[str, int]:
+    wfs = gh_json(f"repos/{repo}/actions/workflows?per_page=100")["workflows"]
+    return {w["name"]: w["id"] for w in wfs if w["name"] in BOT_WORKFLOWS}
+
+
+def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int]) -> dict:
+    """Bot-run count (exact), CI-change PRs (exact), job queue wait and runner minutes (sampled)."""
+    bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
+    changes: dict[int, str] = {}
+    for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
+        title = c["commit"]["message"].splitlines()[0]
+        m = re.search(r"\(#(\d+)\)\s*$", title)
+        if m:  # squash merges of PRs; direct bot commits carry no PR number
+            changes[int(m.group(1))] = title
+    waits: list[float] = []
+    job_min: list[float] = []
+    per_window = SAMPLE_RUNS // 4
+    for h in (0, 6, 12, 18):
+        page = gh_json(f"repos/{repo}/actions/runs?created={day}T{h:02d}:00:00Z..{day}T{h + 5:02d}:59:59Z&per_page=100")
+        runs = [r for r in page["workflow_runs"] if r.get("conclusion") != "skipped" and r.get("status") == "completed"]
+        step = max(1, len(runs) // per_window)
+        for r in runs[::step][:per_window]:
+            minutes = 0.0
+            for j in gh_json(f"repos/{repo}/actions/runs/{r['id']}/jobs?per_page=100")["jobs"]:
+                if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
+                    m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
+                    if m > 0.05:  # a job that never really ran held no runner
+                        minutes += m
+                        waits.append(max(0.0, (_iso(j["started_at"]) - _iso(j["created_at"])).total_seconds() / 60))
+            job_min.append(minutes)
+    return {
+        "bot_runs": bot_runs,
+        "ci_changes": [{"pr": n, "title": t} for n, t in sorted(changes.items())],
+        "wait_median": round(_pct(waits, 0.5), 2),
+        "wait_p90": round(_pct(waits, 0.9), 2),
+        "runner_min_est": round(sum(job_min) / len(job_min) * total_runs) if job_min else None,
+        "sampled_runs": len(job_min),
+    }
 
 
 def fetch_day(repo: str, day: str) -> dict:
@@ -60,11 +123,18 @@ def days_to_fetch(have: dict, today: date, days: int) -> list[str]:
     return [d for d in window if d not in have or d in fresh]
 
 
-def collect(repo: str, days: int, data: dict, today: date) -> dict:
+def collect(repo: str, days: int, data: dict, today: date, backfill: int = DETAIL_BACKFILL) -> dict:
     if data.get("repo") != repo:
         data = {"repo": repo, "days": {}}
-    for d in days_to_fetch(data["days"], today, days):
+    fresh = days_to_fetch(data["days"], today, days)
+    for d in fresh:
         data["days"][d] = fetch_day(repo, d)
+    bots = bot_workflow_ids(repo)
+    window = [(today - timedelta(days=i)).isoformat() for i in range(days)]
+    missing = [d for d in window if d not in fresh and "detail" not in data["days"].get(d, {"detail": 1})]
+    for d in fresh + missing[:backfill]:
+        r = data["days"][d]["runs"]
+        data["days"][d]["detail"] = fetch_detail(repo, d, r["total"] - r["skipped"], bots)
     data["open_prs"] = gh_count(f"search/issues?q=repo:{repo}+is:pr+is:open&per_page=1")
     data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     return data
@@ -95,6 +165,9 @@ STYLE = """
   .base { stroke: var(--axis); stroke-width: 1; }
   .s { fill: var(--series); } .ok { fill: var(--pass); } .bad { fill: var(--fail); } .na { fill: var(--neutral); }
   .partial { opacity: 0.5; }
+  .l1 { fill: none; stroke: var(--series); stroke-width: 2; } .l1d { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+  .l2 { fill: none; stroke: var(--fail); stroke-width: 2; } .l2d { fill: var(--fail); stroke: var(--surface); stroke-width: 2; }
+  .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
 """
 
 
@@ -145,14 +218,33 @@ def render(data: dict, days: int, today: date) -> str:
         ("CI pass rate", rate, f"{ok:,} passed · {bad:,} failed"),
         ("Open PRs", f"{data.get('open_prs', 0):,}", "right now"),
     ]
+    # second row: CI cost and congestion, last 7 finished days that carry the sampled detail
+    det7 = [r for r in done if "detail" in r][-7:]
+    if det7:
+        dt = [r["detail"] for r in det7]
+        n7 = len(det7)
+        est = [(r["detail"]["runner_min_est"], r["merged"]) for r in det7 if r["detail"].get("runner_min_est") is not None]
+        per_pr = sum(m for m, _ in est) / max(1, sum(n for _, n in est)) / 60 if est else None
+        bots = sum(x["bot_runs"] for x in dt)
+        runs7 = sum(r["runs"]["total"] for r in det7)
+        changes = sum(len(x["ci_changes"]) for x in dt)
+        tiles += [
+            ("Job queue wait (p90)", f"{sum(x['wait_p90'] for x in dt) / n7:.1f} min",
+             f"median {sum(x['wait_median'] for x in dt) / n7:.1f} min · sampled, last {n7} days"),
+            ("Runner time per merged PR", f"{per_pr:.1f} h" if per_pr is not None else "–", f"est. from sampled jobs · last {n7} days"),
+            ("Bot workflow runs", f"{100 * bots / max(1, runs7):.0f}%", f"{bots / n7:,.0f}/day · shepherd, Main Watch"),
+            ("CI changes merged", f"{changes}", f"last {n7} days · ◆ on the wait chart"),
+        ]
     gap = 12
     tw = (W - 2 * pad - 3 * gap) / 4
     for i, (k, v, sub) in enumerate(tiles):
-        x = pad + i * (tw + gap)
-        out.append(f'<rect class="tile" x="{x:.1f}" y="52" width="{tw:.1f}" height="74" rx="8"/>')
-        out.append(f'<text class="k" x="{x + 14:.1f}" y="73">{k}</text>')
-        out.append(f'<text class="v" x="{x + 14:.1f}" y="101">{v}</text>')
-        out.append(f'<text class="sub" x="{x + 14:.1f}" y="117">{escape(sub)}</text>')
+        x = pad + (i % 4) * (tw + gap)
+        y = 52 + (i // 4) * 86
+        out.append(f'<rect class="tile" x="{x:.1f}" y="{y}" width="{tw:.1f}" height="74" rx="8"/>')
+        out.append(f'<text class="k" x="{x + 14:.1f}" y="{y + 21}">{k}</text>')
+        out.append(f'<text class="v" x="{x + 14:.1f}" y="{y + 49}">{v}</text>')
+        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{y + 65}">{escape(sub)}</text>')
+    tiles_bottom = 52 + ((len(tiles) - 1) // 4) * 86 + 74
 
     left, right = pad + 40, W - pad
     plot_w = right - left
@@ -171,7 +263,7 @@ def render(data: dict, days: int, today: date) -> str:
                 out.append(f'<text class="tick" x="{cx:.1f}" y="{top + h + 16}" text-anchor="middle">{_fmt_day(d)}</text>')
 
     # chart 1: merged PRs per day
-    top1, h1 = 170, 150
+    top1, h1 = tiles_bottom + 44, 150
     vmax1 = _nice_max(max(merged) or 1)
     axes(top1, h1, vmax1, "Merged PRs per day")
     for idx, (d, r) in enumerate(rows):
@@ -220,9 +312,40 @@ def render(data: dict, days: int, today: date) -> str:
         out.append(f'<text class="lbl" x="{lx + 15:.1f}" y="{ly}">{label}</text>')
         lx -= 6
 
-    H = top2 + h2 + 58
+    bottom = top2 + h2
+    # chart 3: job queue wait (sampled), with a marker on each day a CI change merged
+    wrows = [(i, d, r["detail"]) for i, (d, r) in enumerate(rows) if "detail" in r]
+    if wrows:
+        top3, h3 = top2 + h2 + 78, 130
+        vmax3 = _nice_max(max(x["wait_p90"] for _, _, x in wrows) or 1)
+        axes(top3, h3, vmax3, "Job queue wait per day, minutes (sampled)")
+        cx = lambda i: left + i * slot + slot / 2  # noqa: E731
+        cy = lambda v: top3 + h3 - h3 * v / vmax3  # noqa: E731
+        for i, d, x in wrows:
+            if x["ci_changes"]:
+                prs = ", ".join(f"#{c['pr']}" for c in x["ci_changes"][:8]) + (" …" if len(x["ci_changes"]) > 8 else "")
+                out.append(f'<g><title>{_fmt_day(d)}: {len(x["ci_changes"])} CI change(s) merged: {escape(prs)}</title>'
+                           f'<line class="mark" x1="{cx(i):.1f}" x2="{cx(i):.1f}" y1="{top3}" y2="{top3 + h3}"/>'
+                           f'<path class="markd" d="M{cx(i):.1f},{top3 - 5} l4,4 l-4,4 l-4,-4 Z"/></g>')
+        for key, cls, label in (("wait_median", "l1", "median"), ("wait_p90", "l2", "p90")):
+            pts = " ".join(f"{cx(i):.1f},{cy(x[key]):.1f}" for i, _, x in wrows)
+            out.append(f'<polyline class="{cls}" points="{pts}"/>')
+            for i, d, x in wrows:
+                out.append(f'<circle class="{cls}d" cx="{cx(i):.1f}" cy="{cy(x[key]):.1f}" r="4">'
+                           f'<title>{_fmt_day(d)}: {label} wait {x[key]:.1f} min ({x["sampled_runs"]} runs sampled)</title></circle>')
+        ly = top3 - 14
+        lx = right
+        for label, cls in reversed([("median", "l1d"), ("p90", "l2d"), ("◆ CI change merged", "")]):
+            lx -= 7 * len(label) + (16 if cls else 0)
+            if cls:
+                out.append(f'<circle class="{cls}" cx="{lx + 5:.1f}" cy="{ly - 4}" r="4"/>')
+            out.append(f'<text class="lbl" x="{lx + (15 if cls else 0):.1f}" y="{ly}">{label}</text>')
+            lx -= 10
+        bottom = top3 + h3
+
+    H = bottom + 58
     out.append(f'<text class="meta" x="{pad}" y="{H - 14}">Source: GitHub API, refreshed every 6 hours. '
-               f'Faded bar = today so far. Days are UTC.</text>')
+               f'Faded bar = today so far. Days are UTC. Wait and runner time are sampled from about 24 runs a day.</text>')
     body = "\n  ".join(out)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
             f'role="img" aria-label="{repo} merged PRs and CI runs per day">\n'
@@ -235,6 +358,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--repo", default=DEFAULT_REPO)
     p.add_argument("--days", type=int, default=30)
     p.add_argument("--out", type=Path, default=Path("dashboard"))
+    p.add_argument("--detail-backfill", type=int, default=DETAIL_BACKFILL,
+                   help="older days to fill with the sampled detail this run (each costs ~30 API calls)")
     p.add_argument("--render-only", action="store_true", help="redraw from metrics.json without fetching")
     a = p.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
@@ -242,7 +367,7 @@ def main(argv: list[str] | None = None) -> int:
     data = json.loads(data_file.read_text()) if data_file.exists() else {}
     today = datetime.now(timezone.utc).date()
     if not a.render_only:
-        data = collect(a.repo, a.days, data, today)
+        data = collect(a.repo, a.days, data, today, a.detail_backfill)
         data_file.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
     (a.out / "dashboard.svg").write_text(render(data, a.days, today), encoding="utf-8")
     print(f"wrote {a.out}/dashboard.svg and metrics.json ({len(data['days'])} days of history)")
