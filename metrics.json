@@ -930,10 +930,10 @@
       "title": "evidence: the det coverage ledger reads batch (runs) and CALL (calls) coverage lines (#5008) (#5011)"
      }
     ],
-    "runner_min_est": 26427,
+    "runner_min_est": 31389,
     "sampled_runs": 24,
-    "wait_median": 3.9,
-    "wait_p90": 11.1
+    "wait_median": 6.55,
+    "wait_p90": 14.95
    },
    "merged": 43,
    "runs": {
@@ -965,10 +965,10 @@
       "title": "Generated aggregate docs: render in CI, publish to `generated`, never commit (#5057) (#5062)"
      }
     ],
-    "runner_min_est": 6325,
+    "runner_min_est": 12976,
     "sampled_runs": 24,
-    "wait_median": 0.72,
-    "wait_p90": 4.48
+    "wait_median": 0.03,
+    "wait_p90": 5.65
    },
    "merged": 31,
    "runs": {
@@ -981,7 +981,7 @@
   },
   "2026-10-14": {
    "detail": {
-    "bot_runs": 1250,
+    "bot_runs": 1284,
     "ci_changes": [
      {
       "pr": 5071,
@@ -1028,22 +1028,22 @@
       "title": "CI critical path: ignore the duplicate evidence_components run in the full suite; evidence._match compiled and memoised (Part of #5162) (#5163)"
      }
     ],
-    "runner_min_est": 11812,
+    "runner_min_est": 20993,
     "sampled_runs": 24,
-    "wait_median": 4.87,
-    "wait_p90": 18.95
+    "wait_median": 5.47,
+    "wait_p90": 18.65
    },
-   "merged": 49,
+   "merged": 53,
    "runs": {
-    "cancelled": 730,
-    "failure": 45,
-    "skipped": 524,
-    "success": 2254,
-    "total": 3574
+    "cancelled": 746,
+    "failure": 46,
+    "skipped": 537,
+    "success": 2328,
+    "total": 3668
    }
   }
  },
- "open_prs": 6,
+ "open_prs": 5,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-14T23:35Z"
+ "updated": "2026-10-14T23:46Z"
 }
