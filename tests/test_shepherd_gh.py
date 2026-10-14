@@ -549,7 +549,7 @@ def test_labels_from_event_reads_the_pull_request_labels(tmp_path):
 
 # --- the workflows: the security rules, as a lint -------------------------------------------------------------------
 
-WORKFLOWS = [REPO / ".github" / "workflows" / n for n in ("shepherd-event.yml", "shepherd-reconcile.yml")]
+WORKFLOWS = [REPO / "templates" / "workflows" / n for n in ("shepherd-event.yml", "shepherd-reconcile.yml")]
 
 
 def _steps(doc):
@@ -664,7 +664,7 @@ def test_a_non_writers_label_after_the_push_approves_nothing():
 
 
 def test_the_event_workflow_has_no_concurrency_group():
-    wf = (REPO / ".github/workflows/shepherd-event.yml").read_text(encoding="utf-8")
+    wf = (REPO / "templates/workflows/shepherd-event.yml").read_text(encoding="utf-8")
     assert not re.search(r"^concurrency:", wf, re.M)  # a group keeps one pending run and cancels the rest
 
 
@@ -693,5 +693,5 @@ def test_reconcile_triggers_on_the_required_checks_workflows_and_the_matrix_only
 
 def test_every_reconcile_pass_covers_all_labelled_prs():
     # a cancelled pending pass (one pending run per concurrency group) must not drop a PR until the cron
-    rec = (REPO / ".github" / "workflows" / "shepherd-reconcile.yml").read_text(encoding="utf-8")
+    rec = (REPO / "templates" / "workflows" / "shepherd-reconcile.yml").read_text(encoding="utf-8")
     assert "--head-sha" not in rec

@@ -190,6 +190,15 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
                 content,
             )
 
+        # the shepherd workflows ship as templates here, not as this repo's own workflows
+        if "test_shepherd_gh.py" in rel_dest:
+            content = content.replace('REPO / ".github" / "workflows" / n for n in ("shepherd-event.yml"',
+                                      'REPO / "templates" / "workflows" / n for n in ("shepherd-event.yml"')
+            content = content.replace('REPO / ".github/workflows/shepherd-event.yml"',
+                                      'REPO / "templates/workflows/shepherd-event.yml"')
+            content = content.replace('REPO / ".github" / "workflows" / "shepherd-reconcile.yml"',
+                                      'REPO / "templates" / "workflows" / "shepherd-reconcile.yml"')
+
     # 3. Adapt scripts
     if rel_dest.endswith("heavy-run.sh"):
         content = re.sub(
@@ -202,6 +211,12 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
             'export GG_JOB_CORES\n      SQUID_BOT_CORES=$GG_JOB_CORES\n      export SQUID_BOT_CORES',
             content,
         )
+
+    if rel_dest.endswith("exclusive-lock.sh"):
+        content = content.replace(
+            "dir=${GG_LOCK_DIR:-/tmp/gitgalaxy-scratch/locks}",
+            'dir="${SQUID_BOT_LOCK_DIR:-${GG_LOCK_DIR:-/tmp/squid-bot/locks}}"',
+        ).replace("${GG_LOCK_DIR:-/tmp/gitgalaxy-scratch/locks}/golden.lock", "${SQUID_BOT_LOCK_DIR:-/tmp/squid-bot/locks}/golden.lock")
 
     return content
 
@@ -279,19 +294,6 @@ def do_pull(gg_root: Path, dry_run: bool = False) -> None:
             print(f"  [SYNCED] {gg_rel} -> {sb_rel}")
             count += 1
     print(f"Pull complete ({count} files synchronized).")
-
-    # Refresh live telemetry metrics and chart
-    try:
-        import generate_metrics
-
-        m = generate_metrics.get_merge_metrics(gg_root)
-        sm = generate_metrics.get_shepherd_log_metrics()
-        svg_path = SQUID_BOT_ROOT / "docs" / "assets" / "throughput.svg"
-        generate_metrics.render_svg_chart(m, svg_path)
-        generate_metrics.update_readme_metrics(m, sm)
-        print("  [METRICS] Refreshed throughput chart and telemetry.")
-    except Exception as e:
-        print(f"  [METRICS] Note: Could not refresh metrics: {e}")
 
 
 def do_push(gg_root: Path, dry_run: bool = False) -> None:
