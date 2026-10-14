@@ -5,8 +5,8 @@
   <!-- Title & KPI summary -->
   <text x="50" y="28" font-size="15" font-weight="600" fill="#f0f6fc">GitGalaxy Live Proving Ground: Daily Autonomous PR Merges</text>
   <text x="50" y="48" font-size="12" fill="#8b949e">
-    30-Day Total: <tspan fill="#58a6ff" font-weight="600">1206 PRs</tspan> &bull; 
-    Daily Avg: <tspan fill="#3fb950" font-weight="600">41.6 PRs/day</tspan> &bull; 
+    30-Day Total: <tspan fill="#58a6ff" font-weight="600">1206 PRs</tspan> &#8226; 
+    Daily Avg: <tspan fill="#3fb950" font-weight="600">41.6 PRs/day</tspan> &#8226; 
     Peak: <tspan fill="#d29922" font-weight="600">101 PRs/day</tspan>
   </text>
   

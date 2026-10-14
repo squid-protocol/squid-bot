@@ -167,8 +167,8 @@ def render_svg_chart(metrics: dict, out_file: Path) -> None:
   <!-- Title & KPI summary -->
   <text x="{margin_left}" y="28" font-size="15" font-weight="600" fill="#f0f6fc">GitGalaxy Live Proving Ground: Daily Autonomous PR Merges</text>
   <text x="{margin_left}" y="48" font-size="12" fill="#8b949e">
-    30-Day Total: <tspan fill="#58a6ff" font-weight="600">{metrics['total']} PRs</tspan> &bull; 
-    Daily Avg: <tspan fill="#3fb950" font-weight="600">{metrics['avg']:.1f} PRs/day</tspan> &bull; 
+    30-Day Total: <tspan fill="#58a6ff" font-weight="600">{metrics['total']} PRs</tspan> &#8226; 
+    Daily Avg: <tspan fill="#3fb950" font-weight="600">{metrics['avg']:.1f} PRs/day</tspan> &#8226; 
     Peak: <tspan fill="#d29922" font-weight="600">{metrics['peak']} PRs/day</tspan>
   </text>
   

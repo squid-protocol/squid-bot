@@ -27,3 +27,12 @@ def test_transform_for_squid_bot_replaces_heavy_run_locks():
     res = sync.transform_for_squid_bot(content, "scripts/heavy-run.sh")
     assert "SQUID_BOT_LOCK_DIR" in res
     assert "SQUID_BOT_CORES" in res
+
+
+def test_svg_assets_are_valid_xml():
+    import xml.etree.ElementTree as ET
+
+    svg_file = ROOT / "docs" / "assets" / "throughput.svg"
+    if svg_file.exists():
+        tree = ET.fromstring(svg_file.read_text(encoding="utf-8"))
+        assert tree.tag.endswith("svg")
