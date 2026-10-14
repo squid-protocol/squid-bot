@@ -2,10 +2,11 @@
 
 **Ecosystem balance for autonomous coding fleets: managing compute, CI, and state so agent swarms thrive without devouring their habitat.**
 
-[![Tests](https://img.shields.io/badge/tests-78%20passed-brightgreen.svg)]()
+[![Tests](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml)
+[![Dashboard](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![Platform: Linux](https://img.shields.io/badge/platform-Linux%20%7C%20POSIX-lightgrey.svg)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
@@ -21,22 +22,11 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 
 ---
 
-<!-- METRICS:START -->
-### 📊 Live Ecosystem Telemetry (GitGalaxy Proving Ground)
+## 📊 Live Fleet Dashboard
 
-| Metric | 30-Day Telemetry | Dynamic Governance Notes |
-|---|---|---|
-| **Autonomous PR Merges** | **1,307 PRs** | Merged strictly via deterministic `shepherd:merge` train |
-| **Autonomous Actions & Runs** | **26,140+ actions** | CI checks, compile shards, AST audits & agent dispatches |
-| **Governed Era (Last 4 Days)** | **150 PRs (37.5/day)** | **Zero host lockups**, steady sustained code landing |
-| **Single-Day Peak Volume** | **101 PRs / day** | Unmanaged swarm spiked host to 18.4% CPU stall on Sep 25 |
-| **Clean Action Return Rate** | **98.4% clean returns** | Governed era vs ~74% during unmetered thrashing & timeouts |
-| **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic fair-share core division |
-| **Infra Failure Auto-Healing** | **10 recovered** | Flaky runners & Docker 429s retried hands-free via shepherd |
-| **Host Lockups / Freezes** | **0 lockups under squid-bot** | 100% uptime vs 4 severe host freezes during unmanaged era |
+![GitGalaxy agent fleet activity: merged PRs and CI runs per day](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
-![Autonomous Operations and PR Merges](docs/assets/throughput.svg)
-<!-- METRICS:END -->
+Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours by [`dashboard.yml`](.github/workflows/dashboard.yml). Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json). To point it at another repo, run `python scripts/dashboard.py --repo owner/repo`.
 
 ---
 
@@ -177,7 +167,7 @@ In a high-churn code factory, GitHub webhook events are unreliable—they drop u
 
 ---
 
-### 4. Zero-Hallucination CI Triage (`ci_digest.py`)
+### 4. Structured CI Triage (`ci_digest.py`)
 CLI command: `ci-digest <PR_NUMBER>`
 
 When CI fails on a PR, agents should never waste tokens reading 10,000 lines of raw GitHub Actions ANSI output. `ci_digest` scrapes the logs, strips noise, classifies the failure, and emits an unambiguous triage block:
@@ -284,7 +274,7 @@ python scripts/sync.py pull
 python scripts/sync.py push
 ```
 
-The bridge automatically translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites.
+The bridge translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites. The shepherd workflows ship as templates in `templates/workflows/`: copy them into your own repo's `.github/workflows/` and adjust the required-check names.
 
 ---
 
@@ -303,4 +293,4 @@ The bridge automatically translates paths, abstracts repository slugs, maps pack
 
 ## 📜 License
 
-MIT License. Copyright (c) 2026 Joe Esquibel / Squid Protocol.
+MIT License; see [LICENSE](LICENSE). Copyright (c) 2026 Joe Esquibel / Squid Protocol.

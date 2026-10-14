@@ -33,3 +33,6 @@ state/
 *.lock
 .DS_Store
 squid-bot.toml
+
+# Claude Code worktrees
+.claude/worktrees/

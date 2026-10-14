@@ -1,0 +1,44 @@
+name: Dashboard
+
+# Refreshes the live fleet dashboard (scripts/dashboard.py) from the GitHub API and commits
+# dashboard.svg + metrics.json to the `dashboard` branch, so main's history stays clean.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dashboard
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DASHBOARD_REPO: squid-protocol/gitgalaxy
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check out the dashboard branch (or start it)
+        run: |
+          mkdir out && cd out
+          git init -q -b dashboard
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch -q --depth=1 origin dashboard; then git checkout -q -B dashboard FETCH_HEAD; fi
+
+      - name: Fetch metrics and render
+        run: python3 scripts/dashboard.py --repo "$DASHBOARD_REPO" --out out
+
+      - name: Commit and push
+        working-directory: out
+        run: |
+          git add dashboard.svg metrics.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "dashboard: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q origin dashboard
