@@ -205,9 +205,7 @@ def update_readme_metrics(metrics: dict, shepherd_metrics: dict) -> None:
 | **Infra Failure Auto-Retries** | **{shepherd_metrics.get('infra_retries', 0)} recovered** | Canceled runners & Docker 429s retried hands-free |
 | **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
 
-<p align="center">
-  <img src="docs/assets/throughput.svg" alt="Autonomous PR Merges Per Day" width="100%" />
-</p>
+![Autonomous PR Merges Per Day](https://raw.githubusercontent.com/squid-protocol/squid-bot/main/docs/assets/throughput.svg)
 <!-- METRICS:END -->"""
 
     pattern = re.compile(
@@ -216,8 +214,8 @@ def update_readme_metrics(metrics: dict, shepherd_metrics: dict) -> None:
     if pattern.search(content):
         new_content = pattern.sub(block, content)
     else:
-        # Insert after architecture section
-        target = "## 🏛️ How It Works: The 3 Governance Layers"
+        # Insert after 15-second pitch
+        target = "## 🦗 The Ecosystem Analogy: The Swarm & The Habitat"
         if target in content:
             new_content = content.replace(target, f"{block}\n\n---\n\n{target}")
         else:

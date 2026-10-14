@@ -21,6 +21,22 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 
 ---
 
+<!-- METRICS:START -->
+### 📊 Live Ecosystem Telemetry (GitGalaxy Proving Ground)
+
+| Metric | 30-Day Telemetry | Notes |
+|---|---|---|
+| **Autonomous PR Merges** | **1,206 PRs** | Merged strictly via `shepherd:merge` rulesets |
+| **Average Daily Throughput** | **41.6 PRs / day** | Continuous autonomous churn |
+| **Single-Day Peak Volume** | **101 PRs / day** | Handled without host thrashing |
+| **Infra Failure Auto-Retries** | **10 recovered** | Canceled runners & Docker 429s retried hands-free |
+| **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
+
+![Autonomous PR Merges Per Day](https://raw.githubusercontent.com/squid-protocol/squid-bot/main/docs/assets/throughput.svg)
+<!-- METRICS:END -->
+
+---
+
 ## 🦗 The Ecosystem Analogy: The Swarm & The Habitat
 
 In biological ecology, an environment has a **carrying capacity**—the maximum population size that the habitat's resources can sustain without permanent degradation:
@@ -66,24 +82,6 @@ When you deploy autonomous developers, every agent consumes finite ecological re
 | **Shared State & Seams** | Agents touch shared contract files, golden masters, and baseline fixtures. | Upstream merges invalidate in-flight branches; agents enter infinite rebase/re-bless loops. |
 
 `squid-bot` balances this ecosystem by treating **compute, time, and attention as assets to be metered and conserved**.
-
----
-
-<!-- METRICS:START -->
-### 📊 Live Ecosystem Telemetry (GitGalaxy Proving Ground)
-
-| Metric | 30-Day Telemetry | Notes |
-|---|---|---|
-| **Autonomous PR Merges** | **1,206 PRs** | Merged strictly via `shepherd:merge` rulesets |
-| **Average Daily Throughput** | **41.6 PRs / day** | Continuous autonomous churn |
-| **Single-Day Peak Volume** | **101 PRs / day** | Handled without host thrashing |
-| **Infra Failure Auto-Retries** | **10 recovered** | Canceled runners & Docker 429s retried hands-free |
-| **Host Stall Pressure (PSI)** | **&lt; 0.05% CPU stall** | Regulated via `heavy-run.sh` dynamic core division |
-
-<p align="center">
-  <img src="docs/assets/throughput.svg" alt="Autonomous PR Merges Per Day" width="100%" />
-</p>
-<!-- METRICS:END -->
 
 ---
 

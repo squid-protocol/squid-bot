@@ -145,6 +145,16 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
                 content,
             )
             content = re.sub(
+                r'"head": \{"sha": SHA, "ref": "fix/x", "repo": \{"full_name": "squid-protocol/gitgalaxy"\}\}',
+                '"head": {"sha": SHA, "ref": "fix/x", "repo": {"full_name": sg.REPO_SLUG}}',
+                content,
+            )
+            content = re.sub(
+                r'assert f"repos/squid-protocol/gitgalaxy/collaborators/joe/permission" in gh\.calls',
+                'assert f"repos/{sg.REPO_SLUG}/collaborators/joe/permission" in gh.calls',
+                content,
+            )
+            content = re.sub(
                 r'def test_shepherd_full_label_plans_a_full_det_sweep\(\):',
                 'def test_shepherd_full_label_plans_a_full_det_sweep():\n    if dsp is None:\n        pytest.skip("det_sweep_plan is GitGalaxy-specific")',
                 content,

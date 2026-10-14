@@ -261,7 +261,7 @@ class Gh:
             "merged": False,
             "draft": True,
             "auto_merge": None,
-            "head": {"sha": SHA, "ref": "fix/x", "repo": {"full_name": "squid-protocol/gitgalaxy"}},
+            "head": {"sha": SHA, "ref": "fix/x", "repo": {"full_name": sg.REPO_SLUG}},
             "labels": [{"name": sg.MERGE}],
             "body": "Depends on #6",
             "mergeable_state": "clean",
@@ -446,7 +446,7 @@ def test_gather_and_process_for_a_labelled_event_marks_ready_and_enables_auto_me
     assert any(c[:3] == ["gh", "pr", "ready"] for c in gh.cmds)
     merge = next(c for c in gh.cmds if c[:3] == ["gh", "pr", "merge"])
     assert "--auto" in merge and "--match-head-commit" in merge and merge[merge.index("--match-head-commit") + 1] == SHA
-    assert f"repos/squid-protocol/gitgalaxy/collaborators/joe/permission" in gh.calls
+    assert f"repos/{sg.REPO_SLUG}/collaborators/joe/permission" in gh.calls
 
 
 def test_gather_blocks_on_an_open_dependency_and_on_a_read_only_labeler():
