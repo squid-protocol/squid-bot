@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
@@ -65,10 +66,19 @@ class Config:
 
 # ---------------------------------------------------------------- GitHub API
 
+def _gh(cmd: list[str], tries: int = 3) -> str:
+    """Runs a gh call, retrying transient failures (a 5xx or a dropped connection) with a short backoff."""
+    for attempt in range(tries):
+        out = subprocess.run(cmd, capture_output=True, text=True)
+        if out.returncode == 0:
+            return out.stdout
+        if attempt < tries - 1:
+            time.sleep(2 * 3 ** attempt)
+    raise RuntimeError(f"{' '.join(cmd[:3])} {cmd[-1][:120]} failed: {out.stderr.strip()[:200]}")
+
+
 def gh_json(path: str):
-    out = subprocess.run(["gh", "api", "-H", "Accept: application/vnd.github+json", path],
-                         capture_output=True, text=True, check=True)
-    return json.loads(out.stdout)
+    return json.loads(_gh(["gh", "api", "-H", "Accept: application/vnd.github+json", path]))
 
 
 def gh_count(path: str) -> int:
@@ -76,11 +86,10 @@ def gh_count(path: str) -> int:
 
 
 def gh_graphql(query: str, **variables: str) -> dict:
-    cmd = ["gh", "api", "graphql", "-f", f"query={query}"]
+    cmd = ["gh", "api", "graphql"]
     for k, v in variables.items():
         cmd += ["-f", f"{k}={v}"]
-    out = subprocess.run(cmd, capture_output=True, text=True, check=True)
-    return json.loads(out.stdout)["data"]
+    return json.loads(_gh(cmd + ["-f", f"query={query}"]))["data"]
 
 
 def _iso(s: str) -> datetime:
@@ -191,8 +200,13 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
         runs = [r for r in page["workflow_runs"] if r.get("conclusion") != "skipped" and r.get("status") == "completed"]
         step = max(1, len(runs) // per_window)
         for r in runs[::step][:per_window]:
+            try:
+                jobs = gh_json(f"repos/{repo}/actions/runs/{r['id']}/jobs?per_page=100")["jobs"]
+            except RuntimeError as e:  # one unreadable run shrinks the sample, it doesn't stop the report
+                print(f"::notice::skipped run {r['id']} in the sample: {e}", file=sys.stderr)
+                continue
             minutes = 0.0
-            for j in gh_json(f"repos/{repo}/actions/runs/{r['id']}/jobs?per_page=100")["jobs"]:
+            for j in jobs:
                 if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
                     m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
                     if m > 0.05:  # a job that never really ran held no runner
@@ -247,7 +261,10 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
                and "sampled_min_by_origin" not in data["days"][d].get("detail", {})]
     for d in fresh + missing[:backfill]:
         r = data["days"][d]["runs"]
-        data["days"][d]["detail"] = fetch_detail(repo, d, r["total"] - r["skipped"], bots, origin, cfg)
+        try:
+            data["days"][d]["detail"] = fetch_detail(repo, d, r["total"] - r["skipped"], bots, origin, cfg)
+        except RuntimeError as e:  # keep the day's previous detail (if any); the next run tries again
+            print(f"::warning::sampled detail for {d} not refreshed: {e}", file=sys.stderr)
     data["open_prs"] = gh_count(f"search/issues?q=repo:{repo}+is:pr+is:open&per_page=1")
     data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     return data
