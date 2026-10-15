@@ -26,7 +26,9 @@ Autonomous agents are greedy by default. Left unmanaged, an agent population beh
 
 ![GitGalaxy agent fleet activity: merged PRs and CI runs per day](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
-Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours by [`dashboard.yml`](.github/workflows/dashboard.yml). Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json). To point it at another repo, run `python scripts/dashboard.py --repo owner/repo`.
+Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json).
+
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. Add it to any repo to get the same dashboard plus a weekly report: CI cost and queue wait per merged PR, split between agent-made and other PRs, with the method published.
 
 ---
 

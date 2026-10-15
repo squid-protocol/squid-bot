@@ -1,0 +1,115 @@
+name: Fleet CI report
+description: >-
+  A live dashboard and weekly report of what your CI costs and how congested it is per merged PR, split
+  agent vs other: queue wait, runner time, pass rate, CI changes. Built for repos worked by coding agents.
+author: squid-protocol
+branding:
+  icon: activity
+  color: blue
+
+inputs:
+  repo:
+    description: Repository to measure (owner/repo). Defaults to the repository running the workflow.
+    default: ${{ github.repository }}
+  token:
+    description: >-
+      Token that can read the measured repo's Actions, PRs and commits, and push to `branch` of the repository
+      running the workflow. The default GITHUB_TOKEN works for public repos and for the repo itself
+      (needs `permissions: contents: write` to publish).
+    default: ${{ github.token }}
+  branch:
+    description: Branch of this repository to publish dashboard.svg and metrics.json to. Empty = don't publish.
+    default: dashboard
+  days:
+    description: Days shown on the dashboard.
+    default: "30"
+  title:
+    description: Dashboard and report heading. Default "<repo>: CI activity".
+    default: ""
+  bot-workflows:
+    description: Comma-separated workflow names that are an orchestrator's own bookkeeping (counted as a share of runs).
+    default: ""
+  agent-branch-prefixes:
+    description: Comma-separated head-branch prefixes that mark a PR as agent-made. Replaces the default list.
+    default: "claude/,codex/,copilot/,cursor/,devin/"
+  agent-markers:
+    description: Regex matched against PR bodies that marks a PR as agent-made. Empty = the built-in list (Claude Code, Copilot, Devin, Cursor, Codex, Gemini CLI trailers).
+    default: ""
+  sample-runs:
+    description: Runs sampled per day for queue wait and runner time (each costs one API call).
+    default: "24"
+  detail-backfill:
+    description: Older days to fill with the sampled detail per run (about 30 API calls each).
+    default: "4"
+  max-wait-p90:
+    description: Warn when the 7-day average p90 job queue wait (minutes) exceeds this. Empty = off.
+    default: ""
+  max-runner-hours-per-pr:
+    description: Warn when 7-day runner hours per merged PR exceed this. Empty = off.
+    default: ""
+  fail-on-alert:
+    description: Fail the step when an alert fires.
+    default: "false"
+
+outputs:
+  dashboard-url:
+    description: Raw URL of the published dashboard.svg (empty when not published).
+    value: ${{ steps.publish.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check out the publish branch (or start it)
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        BRANCH: ${{ inputs.branch }}
+        OUT: ${{ runner.temp }}/fleet-report
+      run: |
+        mkdir -p "$OUT" && cd "$OUT"
+        if [ -n "$BRANCH" ]; then
+          git init -q -b "$BRANCH"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch -q --depth=1 origin "$BRANCH" 2>/dev/null; then git checkout -q -B "$BRANCH" FETCH_HEAD; fi
+        fi
+
+    - name: Measure and render
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        OUT: ${{ runner.temp }}/fleet-report
+        I_REPO: ${{ inputs.repo }}
+        I_DAYS: ${{ inputs.days }}
+        I_TITLE: ${{ inputs.title }}
+        I_BOTS: ${{ inputs.bot-workflows }}
+        I_PREFIXES: ${{ inputs.agent-branch-prefixes }}
+        I_MARKERS: ${{ inputs.agent-markers }}
+        I_SAMPLE: ${{ inputs.sample-runs }}
+        I_BACKFILL: ${{ inputs.detail-backfill }}
+        I_MAX_WAIT: ${{ inputs.max-wait-p90 }}
+        I_MAX_H: ${{ inputs.max-runner-hours-per-pr }}
+        I_FAIL: ${{ inputs.fail-on-alert }}
+      run: |
+        args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
+              --agent-branch-prefixes "$I_PREFIXES" --sample-runs "$I_SAMPLE" --detail-backfill "$I_BACKFILL"
+              --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY")
+        [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
+        [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)
+        python3 "$GITHUB_ACTION_PATH/fleet_report.py" "${args[@]}"
+
+    - name: Publish
+      id: publish
+      if: ${{ always() && inputs.branch != '' }}
+      shell: bash
+      working-directory: ${{ runner.temp }}/fleet-report
+      env:
+        BRANCH: ${{ inputs.branch }}
+      run: |
+        [ -f dashboard.svg ] || exit 0
+        git add dashboard.svg metrics.json
+        if ! git diff --cached --quiet; then
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "fleet report: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q origin "$BRANCH"
+        fi
+        echo "url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${BRANCH}/dashboard.svg" >> "$GITHUB_OUTPUT"

@@ -1,7 +1,8 @@
 name: Dashboard
 
-# Refreshes the live fleet dashboard (scripts/dashboard.py) from the GitHub API and commits
-# dashboard.svg + metrics.json to the `dashboard` branch, so main's history stays clean.
+# The live GitGalaxy fleet dashboard, made with this repo's own Fleet CI report action
+# (actions/fleet-report). It publishes dashboard.svg + metrics.json to the `dashboard` branch and writes
+# the weekly report to the run's summary page.
 on:
   schedule:
     - cron: "17 */6 * * *"
@@ -17,28 +18,15 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      GH_TOKEN: ${{ github.token }}
-      DASHBOARD_REPO: squid-protocol/gitgalaxy
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Check out the dashboard branch (or start it)
-        run: |
-          mkdir out && cd out
-          git init -q -b dashboard
-          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          if git fetch -q --depth=1 origin dashboard; then git checkout -q -B dashboard FETCH_HEAD; fi
-
-      - name: Fetch metrics and render
-        run: python3 scripts/dashboard.py --repo "$DASHBOARD_REPO" --out out
-
-      - name: Commit and push
-        working-directory: out
-        run: |
-          git add dashboard.svg metrics.json
-          git diff --cached --quiet && { echo "no change"; exit 0; }
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -q -m "dashboard: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push -q origin dashboard
+        with:
+          persist-credentials: false
+      - uses: ./actions/fleet-report
+        with:
+          repo: squid-protocol/gitgalaxy
+          title: "squid-protocol/gitgalaxy: agent fleet CI"
+          bot-workflows: "CI shepherd (reconcile),CI shepherd (label events),Main Watch"
+          agent-branch-prefixes: "churn/,agy/,claude/,codex/,copilot/,cursor/,devin/"
+          max-wait-p90: "15"
