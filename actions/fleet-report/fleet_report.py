@@ -352,6 +352,36 @@ def rerun_split(rows: list[dict]) -> list[tuple[str, int, int, int]]:
     return sorted(((k, sum(v), v[0], v[1]) for k, v in c.items()), key=lambda t: (-t[1], t[0]))
 
 
+def factory_rows(data: dict, today: date, n: int = 7) -> list[tuple[str, dict]]:
+    """The last n finished days of the agent factory's own numbers (factory.json, published beside metrics.json by an
+    orchestrator such as churn): worker-hours by kind, slot use, fix loops, pauses, idle ticks."""
+    days = (data.get("factory") or {}).get("days") or {}
+    return [(d, days[d]) for d in sorted(days)
+            if d < today.isoformat() and sum((days[d].get("worker_hours") or {}).values())][-n:]  # no runs: no data yet
+
+
+def factory_stats(rows: list[tuple[str, dict]]) -> dict:
+    """Averages per day over the rows (worker-hour shares weighted by hours)."""
+    if not rows:
+        return {}
+    wh = Counter()
+    for _, r in rows:
+        wh.update(r.get("worker_hours") or {})
+    worked = sum(wh.values())
+    loops, merged = sum(r.get("loop_runs") or 0 for _, r in rows), sum(r.get("churn_merged") or 0 for _, r in rows)
+    avg = lambda k: sum(r.get(k) or 0 for _, r in rows) / len(rows)  # noqa: E731
+    slots = [r["slot_use"] for _, r in rows if r.get("slot_use") is not None]
+    return {
+        "days": len(rows), "new_work_share": wh["new_work"] / worked if worked else None,
+        "fix_h": (wh["pr_fix"]) / len(rows), "sendback_h": (wh["send_back"] + wh["precheck_retry"]) / len(rows),
+        "slot_use": sum(slots) / len(slots) if slots else None, "max_workers": rows[-1][1].get("max_workers"),
+        "loops_per_pr": loops / merged if merged else None, "paused_h": avg("paused_hours"), "ci_busy_h": avg("ci_busy_hours"),
+        "idle_h": avg("idle_ticks") * 10 / 60,  # one gate tick every ~10 min
+        "precheck_sent_back": sum((r.get("precheck") or {}).get("sent_back", 0) for _, r in rows),
+        "precheck_failed_again": sum((r.get("precheck") or {}).get("failed_again", 0) for _, r in rows),
+    }
+
+
 def runner_split(rows: list[dict], key: str) -> list[tuple[str, float]]:
     """Share of sampled runner minutes by workflow or by origin, largest first."""
     c: Counter[str] = Counter()
@@ -403,6 +433,18 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
                 "A rerun that failed again usually retried a real failure: runner time spent learning nothing.", "",
                 "| Workflow | Reruns | Passed | Failed again |", "|---|---|---|---|"]
         out += [f"| {_md(k)} | {n} | {p} | {f} |" for k, n, p, f in rr[:12]]
+    fr = factory_rows(data, today)
+    if fr:
+        out += ["", "### Agent factory (from the orchestrator's own logs)", "",
+                "Where the agents' time went. New work makes PRs; PR fixes and send-backs are loops. Idle = a free worker "
+                "slot with nothing launchable.", "",
+                "| Day | Worker-h | New work | Fix loops / merged PR | Slots used | Paused h | CI-busy h | Idle h |",
+                "|---|---|---|---|---|---|---|---|"]
+        for d, r in fr:
+            w = r.get("worker_hours") or {}
+            out.append(f"| {d} | {sum(w.values()):.1f} | {_fmt(r.get('new_work_share'), 'pct')} | "
+                       f"{_fmt(r.get('loops_per_merged_pr'), 'n')} | {_fmt(r.get('slot_use'), 'pct')} | "
+                       f"{r.get('paused_hours', 0):.1f} | {r.get('ci_busy_hours', 0):.1f} | {(r.get('idle_ticks') or 0) / 6:.1f} |")
     org = runner_split(done[-7:], "sampled_min_by_origin")
     if org:
         names = {"agent": "Agent PRs", "other": "Other PRs", "automation": "Automation PRs",
@@ -533,6 +575,18 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                 ("Most rerun workflow", f"{top[1]}", f"{_short(top[0])} · {top[3]} failed again"),
                 ("Most rescued by reruns", f"{flaky[2]}", _short(flaky[0]) if flaky[2] else "no rerun passed"),
             ]
+    fs = factory_stats(factory_rows(data, today))
+    if fs:
+        n = fs["days"]
+        tiles += [
+            (f"Agent time on new work ({n}d)", _fmt(fs["new_work_share"], "pct"),
+             f"fixes {fs['fix_h']:.1f}h · send-backs {fs['sendback_h']:.1f}h a day"),
+            ("Worker slots used", _fmt(fs["slot_use"], "pct"),
+             f"of {fs['max_workers'] or '?'} · paused {fs['paused_h']:.1f}h a day"),
+            ("Fix loops per merged PR", _fmt(fs["loops_per_pr"], "n"),
+             f"precheck sent back {fs['precheck_sent_back']} · failed again {fs['precheck_failed_again']}"),
+            ("Idle with a free slot", f"{fs['idle_h']:.1f}h/day", f"nothing launchable · CI-busy {fs['ci_busy_h']:.1f}h a day"),
+        ]
     gap = 12
     tw = (W - 2 * pad - 3 * gap) / 4
     for i, (k, v, sub) in enumerate(tiles):
@@ -693,6 +747,12 @@ def main(argv: list[str] | None = None) -> int:
     if not a.render_only:
         data = collect(cfg, a.days, data, today, a.detail_backfill)
         data_file.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
+    factory_file = a.out / "factory.json"  # an orchestrator's own numbers, published to the same branch (optional)
+    if factory_file.exists():
+        try:
+            data = {**data, "factory": json.loads(factory_file.read_text())}
+        except ValueError as e:
+            print(f"::warning title=Fleet CI report::factory.json unreadable: {e}", file=sys.stderr)
     (a.out / "dashboard.svg").write_text(render(data, a.days, today, cfg), encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr))
     for msg in alerts:

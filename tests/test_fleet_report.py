@@ -164,3 +164,21 @@ def test_rerun_counts_pages_two_hour_windows_and_splits_by_outcome(monkeypatch):
     assert len(calls) == 12
     assert r == {"runs": 2, "attempts": 3, "passed": 1, "failed_again": 1,
                  "by_workflow": {"Smoke": [0, 1, 0], "Det": [1, 0, 0]}}
+
+
+def test_an_orchestrators_factory_json_adds_an_agent_row_and_a_summary_table():
+    data = _data()
+    for d in sorted(data["days"]):
+        data["days"][d]["detail"] = {"bot_runs": 100, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                     "runner_min_est": 600, "sampled_runs": 24}
+    day = {"worker_hours": {"new_work": 14.0, "pr_fix": 4.0, "send_back": 2.0, "precheck_retry": 0.0},
+           "new_work_share": 0.7, "slot_use": 0.5, "max_workers": 2, "loops_per_merged_pr": 1.2, "loop_runs": 12,
+           "churn_merged": 10, "precheck": {"sent_back": 1, "passed": 3, "failed_again": 0}, "paused_hours": 1.0,
+           "ci_busy_hours": 2.0, "idle_ticks": 30}
+    data["factory"] = {"days": {(TODAY - timedelta(days=i)).isoformat(): day for i in range(0, 9)}}
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Agent time on new work (7d)" in svg and "70.0%" in svg and "Idle with a free slot" in svg and "5.0h/day" in svg
+    md = dashboard.summary_md(data, CFG, 30, TODAY, [])
+    assert "### Agent factory" in md and md.count("| 2026-10-") >= 7 and str(TODAY) not in md.split("### Agent factory")[1]
+    assert "Agent time" not in dashboard.render(_data(), 30, TODAY)  # no factory.json: no row
