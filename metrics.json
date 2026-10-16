@@ -695,10 +695,34 @@
       "title": "ci: pin mypy and run the local audit in the pinned version (#4537) (#4538)"
      }
     ],
-    "runner_min_est": 30132,
+    "runner_min_est": 24208,
+    "sampled_min_by_origin": {
+     "agent": 123.9,
+     "main": 225.1,
+     "other": 3.6
+    },
+    "sampled_min_by_workflow": {
+     "CICS Crucible": 9.1,
+     "CodeQL Security Scan": 3.5,
+     "Crucible Path Independence": 4.6,
+     "Dead Key Audit": 0.6,
+     "Deploy Museum of Code Docs": 0.9,
+     "Det Sweep": 47.5,
+     "Estate Crucible": 0.8,
+     "Full Suite Gate (All OS x Python)": 220.2,
+     "Generated Java Compiles": 12.8,
+     "GitGalaxy Smoke Tests": 21.8,
+     "GitGalaxy Zero-Trust Pipeline": 4.9,
+     "Golden Crucible Resilience Test": 7.3,
+     "Golden Master Change Guard": 1.9,
+     "Mypy Audit": 0.6,
+     "Ports Compile": 7.2,
+     "pages build and deployment": 0.3,
+     "unicode-gauntlet": 8.4
+    },
     "sampled_runs": 24,
-    "wait_median": 0.78,
-    "wait_p90": 4.3
+    "wait_median": 1.13,
+    "wait_p90": 6.45
    },
    "merged": 50,
    "merged_by_class": {
@@ -755,10 +779,30 @@
       "title": "ci: evidence-refresh det sweep installs the translator extra and fails loudly on a failed sweep (#4270) (#4641)"
      }
     ],
-    "runner_min_est": 24489,
+    "runner_min_est": 6320,
+    "sampled_min_by_origin": {
+     "agent": 98.4,
+     "main": 9.2
+    },
+    "sampled_min_by_workflow": {
+     "CICS Crucible": 11.7,
+     "Dead Key Audit": 0.2,
+     "Estate Crucible": 0.9,
+     "Evidence Refresh": 3.5,
+     "GitGalaxy Smoke Tests": 31.0,
+     "GitGalaxy Zero-Trust Pipeline": 2.4,
+     "Golden Crucible Resilience Test": 13.9,
+     "Mainframe Ground Truth": 8.0,
+     "Muninn Security Scan": 7.8,
+     "Ruff Audit": 0.9,
+     "Tree-sitter Accuracy Audit": 3.5,
+     "Tri-Comparison Audit": 1.0,
+     "pages build and deployment": 1.7,
+     "unicode-gauntlet": 21.3
+    },
     "sampled_runs": 24,
-    "wait_median": 0.18,
-    "wait_p90": 17.33
+    "wait_median": 0.2,
+    "wait_p90": 3.67
    },
    "merged": 44,
    "merged_by_class": {
@@ -787,10 +831,31 @@
       "title": "ci: evidence-refresh finishes a running refresh instead of cancelling it on every push (#4703) (#4720)"
      }
     ],
-    "runner_min_est": 14712,
+    "runner_min_est": 7384,
+    "sampled_min_by_origin": {
+     "agent": 68.9,
+     "main": 64.5
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 1.0,
+     "CICS Crucible": 12.8,
+     "CodeQL Security Scan": 2.5,
+     "Dead Key Audit": 0.4,
+     "Det Sweep": 51.4,
+     "Fact Cross-check": 8.4,
+     "GitGalaxy Smoke Tests": 13.1,
+     "GitGalaxy Zero-Trust Pipeline": 4.7,
+     "Golden Master Change Guard": 1.8,
+     "Ports Compile": 6.3,
+     "Ruff Audit": 0.9,
+     "Signal Contract Audit": 0.2,
+     "pages build and deployment": 1.1,
+     "rosetta-audit": 5.4,
+     "unicode-gauntlet": 23.4
+    },
     "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 1.5
+    "wait_p90": 1.57
    },
    "merged": 25,
    "merged_by_class": {
@@ -843,10 +908,30 @@
       "title": "ci: core checks always report (required-ready); det sweep proves only the ports a translator change moves, shards up to 20 (#4825 1a, #4814 v1) (#4826)"
      }
     ],
-    "runner_min_est": 46737,
+    "runner_min_est": 22730,
+    "sampled_min_by_origin": {
+     "agent": 87.1,
+     "main": 50.1,
+     "other": 86.4
+    },
+    "sampled_min_by_workflow": {
+     "Blocker Baseline": 7.9,
+     "CICS Crucible": 20.9,
+     "CodeQL Security Scan": 7.2,
+     "Deploy Museum of Code Docs": 1.4,
+     "Det Sweep": 102.9,
+     "GitGalaxy Smoke Tests": 51.6,
+     "GitGalaxy Zero-Trust Pipeline": 2.8,
+     "Golden Crucible Resilience Test": 6.2,
+     "Golden Master Change Guard": 1.7,
+     "Muninn Security Scan": 12.8,
+     "Mypy Audit": 2.2,
+     "pages build and deployment": 1.1,
+     "rosetta-audit": 5.1
+    },
     "sampled_runs": 24,
-    "wait_median": 2.9,
-    "wait_p90": 14.15
+    "wait_median": 2.53,
+    "wait_p90": 9.67
    },
    "merged": 64,
    "merged_by_class": {
@@ -1323,27 +1408,26 @@
       "title": "evidence report: generated is the single source; main keeps a stub (Closes #5206) (#5207)"
      }
     ],
-    "runner_min_est": 8202,
+    "runner_min_est": 8582,
     "sampled_min_by_origin": {
-     "agent": 65.6,
-     "main": 2.4
+     "agent": 69.0,
+     "main": 2.2
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 1.2,
-     "CI shepherd (reconcile)": 1.3,
-     "CICS Crucible": 21.5,
+     "CI shepherd (label events)": 1.8,
+     "CI shepherd (reconcile)": 1.2,
      "Det Sweep": 1.2,
-     "Fact Cross-check": 2.6,
+     "Fact Cross-check": 6.2,
      "Generated Java Compiles": 23.7,
+     "GitGalaxy Smoke Tests": 27.7,
      "GitGalaxy Zero-Trust Pipeline": 3.8,
-     "Golden Crucible Resilience Test": 7.1,
-     "Main Watch": 1.1,
+     "Main Watch": 0.9,
      "Mypy Audit": 1.1,
      "unicode-gauntlet": 3.3
     },
     "sampled_runs": 24,
-    "wait_median": 0.53,
-    "wait_p90": 5.18
+    "wait_median": 0.05,
+    "wait_p90": 4.92
    },
    "merged": 43,
    "merged_by_class": {
@@ -1353,47 +1437,49 @@
    },
    "runs": {
     "cancelled": 348,
-    "failure": 78,
+    "failure": 77,
     "skipped": 733,
-    "success": 2471,
+    "success": 2472,
     "total": 3630
    }
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 23,
+    "bot_runs": 70,
     "ci_changes": [],
-    "runner_min_est": 89,
+    "runner_min_est": 654,
     "sampled_min_by_origin": {
-     "agent": 9.4,
-     "main": 0.5
+     "agent": 0.8,
+     "main": 23.1
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.8,
-     "CI shepherd (reconcile)": 0.5,
-     "Estate Crucible": 0.6,
-     "Golden Crucible Resilience Test": 8.1
+     "CI shepherd (label events)": 0.2,
+     "Generated Docs": 0.6,
+     "Main Watch": 0.2,
+     "Mainframe Ground Truth": 21.8,
+     "Mypy Audit": 0.6,
+     "post-merge": 0.5
     },
     "sampled_runs": 6,
     "wait_median": 0.03,
-    "wait_p90": 1.52
+    "wait_p90": 0.12
    },
-   "merged": 1,
+   "merged": 4,
    "merged_by_class": {
-    "agent": 1,
+    "agent": 4,
     "automation": 0,
     "other": 0
    },
    "runs": {
-    "cancelled": 0,
-    "failure": 1,
-    "skipped": 6,
-    "success": 49,
-    "total": 60
+    "cancelled": 1,
+    "failure": 2,
+    "skipped": 21,
+    "success": 161,
+    "total": 185
    }
   }
  },
- "open_prs": 6,
+ "open_prs": 3,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T00:33Z"
+ "updated": "2026-10-16T04:41Z"
 }
