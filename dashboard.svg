@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 900" width="880" height="900" role="img" aria-label="squid-protocol/gitgalaxy: agent fleet CI: merged PRs, CI runs and queue wait per day">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 1072" width="880" height="1072" role="img" aria-label="squid-protocol/gitgalaxy: agent fleet CI: merged PRs, CI runs and queue wait per day">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --series:#2a78d6; --series2:#1baf7a;
@@ -28,24 +28,24 @@
   .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
 </style>
 <g class="root">
-  <rect class="bg" x="0.5" y="0.5" width="879" height="899" rx="10"/>
+  <rect class="bg" x="0.5" y="0.5" width="879" height="1071" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: agent fleet CI</text>
-  <text class="meta" x="856" y="34" text-anchor="end">last 30 days · updated 2026-10-16 11:35 UTC</text>
+  <text class="meta" x="856" y="34" text-anchor="end">last 30 days · updated 2026-10-16 16:12 UTC</text>
   <rect class="tile" x="24.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="73">Merged PRs</text>
-  <text class="v" x="38.0" y="101">1,333</text>
+  <text class="v" x="38.0" y="101">1,349</text>
   <text class="sub" x="38.0" y="117">44.0/day over the last 7 days</text>
   <rect class="tile" x="235.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="249.0" y="73">CI runs</text>
-  <text class="v" x="249.0" y="101">42,837</text>
+  <text class="v" x="249.0" y="101">43,946</text>
   <text class="sub" x="249.0" y="117">2,639/day over the last 7 days</text>
   <rect class="tile" x="446.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="460.0" y="73">CI pass rate</text>
   <text class="v" x="460.0" y="101">97.5%</text>
-  <text class="sub" x="460.0" y="117">35,253 passed · 909 failed</text>
+  <text class="sub" x="460.0" y="117">35,920 passed · 931 failed</text>
   <rect class="tile" x="657.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="671.0" y="73">Open PRs</text>
-  <text class="v" x="671.0" y="101">9</text>
+  <text class="v" x="671.0" y="101">6</text>
   <text class="sub" x="671.0" y="117">right now</text>
   <rect class="tile" x="24.0" y="138" width="199.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="159">Job queue wait (p90)</text>
@@ -63,221 +63,253 @@
   <text class="k" x="671.0" y="159">CI changes merged</text>
   <text class="v" x="671.0" y="187">67</text>
   <text class="sub" x="671.0" y="203">last 7 days · ◆ on the wait chart</text>
-  <text class="h2" x="24" y="242">Merged PRs per day, by origin</text>
-  <line class="base" x1="64" x2="856" y1="406.0" y2="406.0"/>
-  <text class="tick" x="56" y="409.5" text-anchor="end">0</text>
-  <line class="grid" x1="64" x2="856" y1="368.5" y2="368.5"/>
-  <text class="tick" x="56" y="372.0" text-anchor="end">30</text>
-  <line class="grid" x1="64" x2="856" y1="331.0" y2="331.0"/>
-  <text class="tick" x="56" y="334.5" text-anchor="end">60</text>
-  <line class="grid" x1="64" x2="856" y1="293.5" y2="293.5"/>
-  <text class="tick" x="56" y="297.0" text-anchor="end">90</text>
-  <line class="grid" x1="64" x2="856" y1="256.0" y2="256.0"/>
-  <text class="tick" x="56" y="259.5" text-anchor="end">120</text>
-  <text class="tick" x="103.6" y="422" text-anchor="middle">Sep 18</text>
-  <text class="tick" x="288.4" y="422" text-anchor="middle">Sep 25</text>
-  <text class="tick" x="473.2" y="422" text-anchor="middle">Oct 2</text>
-  <text class="tick" x="658.0" y="422" text-anchor="middle">Oct 9</text>
-  <text class="tick" x="842.8" y="422" text-anchor="middle">Oct 16</text>
-  <g><title>Sep 17: 25 merged · 9 agent · 16 other · 0 automation</title><rect class="agent" x="65.0" y="396.8" width="24.4" height="9.2"/><path class="other" d="M65.0,394.8 V378.8 Q65.0,374.8 69.0,374.8 H85.4 Q89.4,374.8 89.4,378.8 V394.8 Z"/></g>
-  <g><title>Sep 18: 25 merged · 13 agent · 6 other · 6 automation</title><rect class="agent" x="91.4" y="391.8" width="24.4" height="14.2"/><rect class="other" x="91.4" y="384.2" width="24.4" height="5.5"/><path class="automation" d="M91.4,382.2 V378.8 Q91.4,374.8 95.4,374.8 H111.8 Q115.8,374.8 115.8,378.8 V382.2 Z"/></g>
-  <g><title>Sep 19: 17 merged · 13 agent · 4 other · 0 automation</title><rect class="agent" x="117.8" y="391.8" width="24.4" height="14.2"/><path class="other" d="M117.8,389.8 V388.8 Q117.8,384.8 121.8,384.8 H138.2 Q142.2,384.8 142.2,388.8 V389.8 Z"/></g>
-  <g><title>Sep 20: 17 merged · 12 agent · 5 other · 0 automation</title><rect class="agent" x="144.2" y="393.0" width="24.4" height="13.0"/><path class="other" d="M144.2,391.0 V388.8 Q144.2,384.8 148.2,384.8 H164.6 Q168.6,384.8 168.6,388.8 V391.0 Z"/></g>
-  <g><title>Sep 21: 7 merged · 0 agent · 7 other · 0 automation</title><path class="other" d="M170.6,406.0 V401.2 Q170.6,397.2 174.6,397.2 H191.0 Q195.0,397.2 195.0,401.2 V406.0 Z"/></g>
-  <g><title>Sep 22: 24 merged · 12 agent · 12 other · 0 automation</title><rect class="agent" x="197.0" y="393.0" width="24.4" height="13.0"/><path class="other" d="M197.0,391.0 V380.0 Q197.0,376.0 201.0,376.0 H217.4 Q221.4,376.0 221.4,380.0 V391.0 Z"/></g>
-  <g><title>Sep 23: 73 merged · 45 agent · 28 other · 0 automation</title><rect class="agent" x="223.4" y="351.8" width="24.4" height="54.2"/><path class="other" d="M223.4,349.8 V318.8 Q223.4,314.8 227.4,314.8 H243.8 Q247.8,314.8 247.8,318.8 V349.8 Z"/></g>
-  <g><title>Sep 24: 82 merged · 40 agent · 42 other · 0 automation</title><rect class="agent" x="249.8" y="358.0" width="24.4" height="48.0"/><path class="other" d="M249.8,356.0 V307.5 Q249.8,303.5 253.8,303.5 H270.2 Q274.2,303.5 274.2,307.5 V356.0 Z"/></g>
-  <g><title>Sep 25: 102 merged · 55 agent · 42 other · 5 automation</title><rect class="agent" x="276.2" y="339.2" width="24.4" height="66.8"/><rect class="other" x="276.2" y="286.8" width="24.4" height="50.5"/><path class="automation" d="M276.2,284.8 V282.5 Q276.2,278.5 280.2,278.5 H296.6 Q300.6,278.5 300.6,282.5 V284.8 Z"/></g>
-  <g><title>Sep 26: 89 merged · 45 agent · 44 other · 0 automation</title><rect class="agent" x="302.6" y="351.8" width="24.4" height="54.2"/><path class="other" d="M302.6,349.8 V298.8 Q302.6,294.8 306.6,294.8 H323.0 Q327.0,294.8 327.0,298.8 V349.8 Z"/></g>
-  <g><title>Sep 27: 75 merged · 46 agent · 29 other · 0 automation</title><rect class="agent" x="329.0" y="350.5" width="24.4" height="55.5"/><path class="other" d="M329.0,348.5 V316.2 Q329.0,312.2 333.0,312.2 H349.4 Q353.4,312.2 353.4,316.2 V348.5 Z"/></g>
-  <g><title>Sep 28: 19 merged · 8 agent · 10 other · 1 automation</title><rect class="agent" x="355.4" y="398.0" width="24.4" height="8.0"/><rect class="other" x="355.4" y="385.5" width="24.4" height="10.5"/><path class="automation" d="M355.4,383.5 V383.5 Q355.4,382.2 356.6,382.2 H378.5 Q379.8,382.2 379.8,383.5 V383.5 Z"/></g>
-  <g><title>Sep 29: 20 merged · 17 agent · 3 other · 0 automation</title><rect class="agent" x="381.8" y="386.8" width="24.4" height="19.2"/><path class="other" d="M381.8,384.8 V384.8 Q381.8,381.0 385.5,381.0 H402.4 Q406.2,381.0 406.2,384.8 V384.8 Z"/></g>
-  <g><title>Sep 30: 16 merged · 12 agent · 4 other · 0 automation</title><rect class="agent" x="408.2" y="393.0" width="24.4" height="13.0"/><path class="other" d="M408.2,391.0 V390.0 Q408.2,386.0 412.2,386.0 H428.6 Q432.6,386.0 432.6,390.0 V391.0 Z"/></g>
-  <g><title>Oct 1: 30 merged · 21 agent · 9 other · 0 automation</title><rect class="agent" x="434.6" y="381.8" width="24.4" height="24.2"/><path class="other" d="M434.6,379.8 V372.5 Q434.6,368.5 438.6,368.5 H455.0 Q459.0,368.5 459.0,372.5 V379.8 Z"/></g>
-  <g><title>Oct 2: 66 merged · 47 agent · 18 other · 1 automation</title><rect class="agent" x="461.0" y="349.2" width="24.4" height="56.8"/><rect class="other" x="461.0" y="326.8" width="24.4" height="20.5"/><path class="automation" d="M461.0,324.8 V324.8 Q461.0,323.5 462.2,323.5 H484.1 Q485.4,323.5 485.4,324.8 V324.8 Z"/></g>
-  <g><title>Oct 3: 62 merged · 33 agent · 29 other · 0 automation</title><rect class="agent" x="487.4" y="366.8" width="24.4" height="39.2"/><path class="other" d="M487.4,364.8 V332.5 Q487.4,328.5 491.4,328.5 H507.8 Q511.8,328.5 511.8,332.5 V364.8 Z"/></g>
-  <g><title>Oct 4: 62 merged · 31 agent · 31 other · 0 automation</title><rect class="agent" x="513.8" y="369.2" width="24.4" height="36.8"/><path class="other" d="M513.8,367.2 V332.5 Q513.8,328.5 517.8,328.5 H534.2 Q538.2,328.5 538.2,332.5 V367.2 Z"/></g>
-  <g><title>Oct 5: 76 merged · 49 agent · 27 other · 0 automation</title><rect class="agent" x="540.2" y="346.8" width="24.4" height="59.2"/><path class="other" d="M540.2,344.8 V315.0 Q540.2,311.0 544.2,311.0 H560.6 Q564.6,311.0 564.6,315.0 V344.8 Z"/></g>
-  <g><title>Oct 6: 50 merged · 45 agent · 5 other · 0 automation</title><rect class="agent" x="566.6" y="351.8" width="24.4" height="54.2"/><path class="other" d="M566.6,349.8 V347.5 Q566.6,343.5 570.6,343.5 H587.0 Q591.0,343.5 591.0,347.5 V349.8 Z"/></g>
-  <g><title>Oct 7: 44 merged · 33 agent · 11 other · 0 automation</title><rect class="agent" x="593.0" y="366.8" width="24.4" height="39.2"/><path class="other" d="M593.0,364.8 V355.0 Q593.0,351.0 597.0,351.0 H613.4 Q617.4,351.0 617.4,355.0 V364.8 Z"/></g>
-  <g><title>Oct 8: 25 merged · 24 agent · 1 other · 0 automation</title><rect class="agent" x="619.4" y="378.0" width="24.4" height="28.0"/><path class="other" d="M619.4,376.0 V376.0 Q619.4,374.8 620.6,374.8 H642.5 Q643.8,374.8 643.8,376.0 V376.0 Z"/></g>
-  <g><title>Oct 9: 64 merged · 45 agent · 18 other · 1 automation</title><rect class="agent" x="645.8" y="351.8" width="24.4" height="54.2"/><rect class="other" x="645.8" y="329.2" width="24.4" height="20.5"/><path class="automation" d="M645.8,327.2 V327.2 Q645.8,326.0 647.0,326.0 H668.9 Q670.2,326.0 670.2,327.2 V327.2 Z"/></g>
-  <g><title>Oct 10: 33 merged · 29 agent · 4 other · 0 automation</title><rect class="agent" x="672.2" y="371.8" width="24.4" height="34.2"/><path class="other" d="M672.2,369.8 V368.8 Q672.2,364.8 676.2,364.8 H692.6 Q696.6,364.8 696.6,368.8 V369.8 Z"/></g>
-  <g><title>Oct 11: 40 merged · 34 agent · 6 other · 0 automation</title><rect class="agent" x="698.6" y="365.5" width="24.4" height="40.5"/><path class="other" d="M698.6,363.5 V360.0 Q698.6,356.0 702.6,356.0 H719.0 Q723.0,356.0 723.0,360.0 V363.5 Z"/></g>
-  <g><title>Oct 12: 43 merged · 34 agent · 8 other · 1 automation</title><rect class="agent" x="725.0" y="365.5" width="24.4" height="40.5"/><rect class="other" x="725.0" y="355.5" width="24.4" height="8.0"/><path class="automation" d="M725.0,353.5 V353.5 Q725.0,352.2 726.2,352.2 H748.1 Q749.4,352.2 749.4,353.5 V353.5 Z"/></g>
-  <g><title>Oct 13: 31 merged · 29 agent · 2 other · 0 automation</title><rect class="agent" x="751.4" y="371.8" width="24.4" height="34.2"/><path class="other" d="M751.4,369.8 V369.8 Q751.4,367.2 753.9,367.2 H773.3 Q775.8,367.2 775.8,369.8 V369.8 Z"/></g>
-  <g><title>Oct 14: 54 merged · 53 agent · 1 other · 0 automation</title><rect class="agent" x="777.8" y="341.8" width="24.4" height="64.2"/><path class="other" d="M777.8,339.8 V339.8 Q777.8,338.5 779.0,338.5 H800.9 Q802.2,338.5 802.2,339.8 V339.8 Z"/></g>
-  <g><title>Oct 15: 43 merged · 41 agent · 2 other · 0 automation</title><rect class="agent" x="804.2" y="356.8" width="24.4" height="49.2"/><path class="other" d="M804.2,354.8 V354.8 Q804.2,352.2 806.7,352.2 H826.1 Q828.6,352.2 828.6,354.8 V354.8 Z"/></g>
-  <g class="partial"><title>Oct 16: 19 merged · 12 agent · 3 other · 4 automation (today, so far)</title><rect class="agent" x="830.6" y="393.0" width="24.4" height="13.0"/><rect class="other" x="830.6" y="389.2" width="24.4" height="1.8"/><path class="automation" d="M830.6,387.2 V386.2 Q830.6,382.2 834.6,382.2 H851.0 Q855.0,382.2 855.0,386.2 V387.2 Z"/></g>
-  <text class="lbl" x="288.4" y="272.5" text-anchor="middle">102</text>
-  <rect class="automation" x="770.0" y="233" width="10" height="10" rx="2"/>
-  <text class="lbl" x="785.0" y="242">automation</text>
-  <rect class="other" x="713.0" y="233" width="10" height="10" rx="2"/>
-  <text class="lbl" x="728.0" y="242">other</text>
-  <rect class="agent" x="656.0" y="233" width="10" height="10" rx="2"/>
-  <text class="lbl" x="671.0" y="242">agent</text>
-  <text class="h2" x="24" y="470">CI runs per day, by outcome</text>
-  <line class="base" x1="64" x2="856" y1="634.0" y2="634.0"/>
-  <text class="tick" x="56" y="637.5" text-anchor="end">0</text>
-  <line class="grid" x1="64" x2="856" y1="596.5" y2="596.5"/>
-  <text class="tick" x="56" y="600.0" text-anchor="end">1,000</text>
-  <line class="grid" x1="64" x2="856" y1="559.0" y2="559.0"/>
-  <text class="tick" x="56" y="562.5" text-anchor="end">2,000</text>
-  <line class="grid" x1="64" x2="856" y1="521.5" y2="521.5"/>
-  <text class="tick" x="56" y="525.0" text-anchor="end">3,000</text>
-  <line class="grid" x1="64" x2="856" y1="484.0" y2="484.0"/>
-  <text class="tick" x="56" y="487.5" text-anchor="end">4,000</text>
-  <text class="tick" x="103.6" y="650" text-anchor="middle">Sep 18</text>
-  <text class="tick" x="288.4" y="650" text-anchor="middle">Sep 25</text>
-  <text class="tick" x="473.2" y="650" text-anchor="middle">Oct 2</text>
-  <text class="tick" x="658.0" y="650" text-anchor="middle">Oct 9</text>
-  <text class="tick" x="842.8" y="650" text-anchor="middle">Oct 16</text>
-  <g><title>Sep 17: 441 runs · 421 passed · 10 failed · 10 cancelled/skipped/other</title><rect class="ok" x="65.0" y="620.2" width="24.4" height="13.8"/><rect class="bad" x="65.0" y="617.8" width="24.4" height="0.5"/><path class="na" d="M65.0,617.8 V617.8 Q65.0,617.5 65.4,617.5 H89.0 Q89.4,617.5 89.4,617.8 V617.8 Z"/></g>
-  <g><title>Sep 18: 534 runs · 503 passed · 13 failed · 18 cancelled/skipped/other</title><rect class="ok" x="91.4" y="617.1" width="24.4" height="16.9"/><rect class="bad" x="91.4" y="614.7" width="24.4" height="0.5"/><path class="na" d="M91.4,614.7 V614.7 Q91.4,614.0 92.1,614.0 H115.1 Q115.8,614.0 115.8,614.7 V614.7 Z"/></g>
-  <g><title>Sep 19: 415 runs · 360 passed · 30 failed · 25 cancelled/skipped/other</title><rect class="ok" x="117.8" y="622.5" width="24.4" height="11.5"/><rect class="bad" x="117.8" y="619.4" width="24.4" height="1.1"/><path class="na" d="M117.8,619.4 V619.4 Q117.8,618.4 118.7,618.4 H141.3 Q142.2,618.4 142.2,619.4 V619.4 Z"/></g>
-  <g><title>Sep 20: 338 runs · 310 passed · 15 failed · 13 cancelled/skipped/other</title><rect class="ok" x="144.2" y="624.4" width="24.4" height="9.6"/><rect class="bad" x="144.2" y="621.8" width="24.4" height="0.6"/><path class="na" d="M144.2,621.8 V621.8 Q144.2,621.3 144.7,621.3 H168.1 Q168.6,621.3 168.6,621.8 V621.8 Z"/></g>
-  <g><title>Sep 21: 223 runs · 192 passed · 17 failed · 14 cancelled/skipped/other</title><rect class="ok" x="170.6" y="628.8" width="24.4" height="5.2"/><rect class="bad" x="170.6" y="626.2" width="24.4" height="0.6"/><path class="na" d="M170.6,626.2 V626.2 Q170.6,625.6 171.1,625.6 H194.5 Q195.0,625.6 195.0,626.2 V626.2 Z"/></g>
-  <g><title>Sep 22: 449 runs · 423 passed · 17 failed · 9 cancelled/skipped/other</title><rect class="ok" x="197.0" y="620.1" width="24.4" height="13.9"/><rect class="bad" x="197.0" y="617.5" width="24.4" height="0.6"/><path class="na" d="M197.0,617.5 V617.5 Q197.0,617.2 197.3,617.2 H221.1 Q221.4,617.2 221.4,617.5 V617.5 Z"/></g>
-  <g><title>Sep 23: 1,229 runs · 1,165 passed · 8 failed · 56 cancelled/skipped/other</title><rect class="ok" x="223.4" y="592.3" width="24.4" height="41.7"/><rect class="bad" x="223.4" y="590.0" width="24.4" height="0.5"/><path class="na" d="M223.4,590.0 V590.0 Q223.4,587.9 225.5,587.9 H245.7 Q247.8,587.9 247.8,590.0 V590.0 Z"/></g>
-  <g><title>Sep 24: 1,207 runs · 1,140 passed · 9 failed · 58 cancelled/skipped/other</title><rect class="ok" x="249.8" y="593.2" width="24.4" height="40.8"/><rect class="bad" x="249.8" y="590.9" width="24.4" height="0.5"/><path class="na" d="M249.8,590.9 V590.9 Q249.8,588.7 252.0,588.7 H272.0 Q274.2,588.7 274.2,590.9 V590.9 Z"/></g>
-  <g><title>Sep 25: 1,897 runs · 1,684 passed · 31 failed · 182 cancelled/skipped/other</title><rect class="ok" x="276.2" y="572.9" width="24.4" height="61.1"/><rect class="bad" x="276.2" y="569.7" width="24.4" height="1.2"/><path class="na" d="M276.2,569.7 V566.9 Q276.2,562.9 280.2,562.9 H296.6 Q300.6,562.9 300.6,566.9 V569.7 Z"/></g>
-  <g><title>Sep 26: 1,602 runs · 1,415 passed · 13 failed · 174 cancelled/skipped/other</title><rect class="ok" x="302.6" y="582.9" width="24.4" height="51.1"/><rect class="bad" x="302.6" y="580.5" width="24.4" height="0.5"/><path class="na" d="M302.6,580.5 V577.9 Q302.6,573.9 306.6,573.9 H323.0 Q327.0,573.9 327.0,577.9 V580.5 Z"/></g>
-  <g><title>Sep 27: 1,661 runs · 1,505 passed · 20 failed · 136 cancelled/skipped/other</title><rect class="ok" x="329.0" y="579.6" width="24.4" height="54.4"/><rect class="bad" x="329.0" y="576.8" width="24.4" height="0.8"/><path class="na" d="M329.0,576.8 V575.7 Q329.0,571.7 333.0,571.7 H349.4 Q353.4,571.7 353.4,575.7 V576.8 Z"/></g>
-  <g><title>Sep 28: 456 runs · 414 passed · 13 failed · 29 cancelled/skipped/other</title><rect class="ok" x="355.4" y="620.5" width="24.4" height="13.5"/><rect class="bad" x="355.4" y="618.0" width="24.4" height="0.5"/><path class="na" d="M355.4,618.0 V618.0 Q355.4,616.9 356.5,616.9 H378.7 Q379.8,616.9 379.8,618.0 V618.0 Z"/></g>
-  <g><title>Sep 29: 734 runs · 673 passed · 10 failed · 51 cancelled/skipped/other</title><rect class="ok" x="381.8" y="610.8" width="24.4" height="23.2"/><rect class="bad" x="381.8" y="608.4" width="24.4" height="0.5"/><path class="na" d="M381.8,608.4 V608.4 Q381.8,606.5 383.7,606.5 H404.3 Q406.2,606.5 406.2,608.4 V608.4 Z"/></g>
-  <g><title>Sep 30: 418 runs · 373 passed · 10 failed · 35 cancelled/skipped/other</title><rect class="ok" x="408.2" y="622.0" width="24.4" height="12.0"/><rect class="bad" x="408.2" y="619.6" width="24.4" height="0.5"/><path class="na" d="M408.2,619.6 V619.6 Q408.2,618.3 409.5,618.3 H431.3 Q432.6,618.3 432.6,619.6 V619.6 Z"/></g>
-  <g><title>Oct 1: 620 runs · 582 passed · 11 failed · 27 cancelled/skipped/other</title><rect class="ok" x="434.6" y="614.2" width="24.4" height="19.8"/><rect class="bad" x="434.6" y="611.8" width="24.4" height="0.5"/><path class="na" d="M434.6,611.8 V611.8 Q434.6,610.7 435.6,610.7 H458.0 Q459.0,610.7 459.0,611.8 V611.8 Z"/></g>
-  <g><title>Oct 2: 1,734 runs · 1,568 passed · 35 failed · 131 cancelled/skipped/other</title><rect class="ok" x="461.0" y="577.2" width="24.4" height="56.8"/><rect class="bad" x="461.0" y="573.9" width="24.4" height="1.3"/><path class="na" d="M461.0,573.9 V573.0 Q461.0,569.0 465.0,569.0 H481.4 Q485.4,569.0 485.4,573.0 V573.9 Z"/></g>
-  <g><title>Oct 3: 1,377 runs · 1,200 passed · 29 failed · 148 cancelled/skipped/other</title><rect class="ok" x="487.4" y="591.0" width="24.4" height="43.0"/><rect class="bad" x="487.4" y="587.9" width="24.4" height="1.1"/><path class="na" d="M487.4,587.9 V586.4 Q487.4,582.4 491.4,582.4 H507.8 Q511.8,582.4 511.8,586.4 V587.9 Z"/></g>
-  <g><title>Oct 4: 1,367 runs · 1,231 passed · 29 failed · 107 cancelled/skipped/other</title><rect class="ok" x="513.8" y="589.8" width="24.4" height="44.2"/><rect class="bad" x="513.8" y="586.8" width="24.4" height="1.1"/><path class="na" d="M513.8,586.8 V586.7 Q513.8,582.7 517.8,582.7 H534.2 Q538.2,582.7 538.2,586.7 V586.8 Z"/></g>
-  <g><title>Oct 5: 2,245 runs · 1,942 passed · 53 failed · 250 cancelled/skipped/other</title><rect class="ok" x="540.2" y="563.2" width="24.4" height="70.8"/><rect class="bad" x="540.2" y="559.2" width="24.4" height="2.0"/><path class="na" d="M540.2,559.2 V553.8 Q540.2,549.8 544.2,549.8 H560.6 Q564.6,549.8 564.6,553.8 V559.2 Z"/></g>
-  <g><title>Oct 6: 1,648 runs · 1,442 passed · 49 failed · 157 cancelled/skipped/other</title><rect class="ok" x="566.6" y="581.9" width="24.4" height="52.1"/><rect class="bad" x="566.6" y="578.1" width="24.4" height="1.8"/><path class="na" d="M566.6,578.1 V576.2 Q566.6,572.2 570.6,572.2 H587.0 Q591.0,572.2 591.0,576.2 V578.1 Z"/></g>
-  <g><title>Oct 7: 1,412 runs · 1,165 passed · 64 failed · 183 cancelled/skipped/other</title><rect class="ok" x="593.0" y="592.3" width="24.4" height="41.7"/><rect class="bad" x="593.0" y="587.9" width="24.4" height="2.4"/><path class="na" d="M593.0,587.9 V585.1 Q593.0,581.1 597.0,581.1 H613.4 Q617.4,581.1 617.4,585.1 V587.9 Z"/></g>
-  <g><title>Oct 8: 1,336 runs · 1,247 passed · 33 failed · 56 cancelled/skipped/other</title><rect class="ok" x="619.4" y="589.2" width="24.4" height="44.8"/><rect class="bad" x="619.4" y="586.0" width="24.4" height="1.2"/><path class="na" d="M619.4,586.0 V586.0 Q619.4,583.9 621.5,583.9 H641.7 Q643.8,583.9 643.8,586.0 V586.0 Z"/></g>
-  <g><title>Oct 9: 2,476 runs · 2,169 passed · 80 failed · 227 cancelled/skipped/other</title><rect class="ok" x="645.8" y="554.7" width="24.4" height="79.3"/><rect class="bad" x="645.8" y="549.7" width="24.4" height="3.0"/><path class="na" d="M645.8,549.7 V545.1 Q645.8,541.1 649.8,541.1 H666.2 Q670.2,541.1 670.2,545.1 V549.7 Z"/></g>
-  <g><title>Oct 10: 1,519 runs · 1,161 passed · 37 failed · 321 cancelled/skipped/other</title><rect class="ok" x="672.2" y="592.5" width="24.4" height="41.5"/><rect class="bad" x="672.2" y="589.1" width="24.4" height="1.4"/><path class="na" d="M672.2,589.1 V581.0 Q672.2,577.0 676.2,577.0 H692.6 Q696.6,577.0 696.6,581.0 V589.1 Z"/></g>
-  <g><title>Oct 11: 2,612 runs · 1,758 passed · 33 failed · 821 cancelled/skipped/other</title><rect class="ok" x="698.6" y="570.1" width="24.4" height="63.9"/><rect class="bad" x="698.6" y="566.8" width="24.4" height="1.2"/><path class="na" d="M698.6,566.8 V540.1 Q698.6,536.1 702.6,536.1 H719.0 Q723.0,536.1 723.0,540.1 V566.8 Z"/></g>
-  <g><title>Oct 12: 2,615 runs · 2,133 passed · 71 failed · 411 cancelled/skipped/other</title><rect class="ok" x="725.0" y="556.0" width="24.4" height="78.0"/><rect class="bad" x="725.0" y="551.4" width="24.4" height="2.7"/><path class="na" d="M725.0,551.4 V539.9 Q725.0,535.9 729.0,535.9 H745.4 Q749.4,535.9 749.4,539.9 V551.4 Z"/></g>
-  <g><title>Oct 13: 1,932 runs · 1,590 passed · 37 failed · 305 cancelled/skipped/other</title><rect class="ok" x="751.4" y="576.4" width="24.4" height="57.6"/><rect class="bad" x="751.4" y="573.0" width="24.4" height="1.4"/><path class="na" d="M751.4,573.0 V565.5 Q751.4,561.5 755.4,561.5 H771.8 Q775.8,561.5 775.8,565.5 V573.0 Z"/></g>
-  <g><title>Oct 14: 3,691 runs · 2,359 passed · 47 failed · 1,285 cancelled/skipped/other</title><rect class="ok" x="777.8" y="547.5" width="24.4" height="86.5"/><rect class="bad" x="777.8" y="543.8" width="24.4" height="1.8"/><path class="na" d="M777.8,543.8 V499.6 Q777.8,495.6 781.8,495.6 H798.2 Q802.2,495.6 802.2,499.6 V543.8 Z"/></g>
-  <g><title>Oct 15: 3,630 runs · 2,472 passed · 77 failed · 1,081 cancelled/skipped/other</title><rect class="ok" x="804.2" y="543.3" width="24.4" height="90.7"/><rect class="bad" x="804.2" y="538.4" width="24.4" height="2.9"/><path class="na" d="M804.2,538.4 V501.9 Q804.2,497.9 808.2,497.9 H824.6 Q828.6,497.9 828.6,501.9 V538.4 Z"/></g>
-  <g class="partial"><title>Oct 16: 1,019 runs · 656 passed · 8 failed · 355 cancelled/skipped/other (today, so far)</title><rect class="ok" x="830.6" y="611.4" width="24.4" height="22.6"/><rect class="bad" x="830.6" y="609.1" width="24.4" height="0.5"/><path class="na" d="M830.6,609.1 V599.8 Q830.6,595.8 834.6,595.8 H851.0 Q855.0,595.8 855.0,599.8 V609.1 Z"/></g>
-  <rect class="na" x="707.0" y="461" width="10" height="10" rx="2"/>
-  <text class="lbl" x="722.0" y="470">cancelled / skipped</text>
-  <rect class="bad" x="629.0" y="461" width="10" height="10" rx="2"/>
-  <text class="lbl" x="644.0" y="470">✕ failed</text>
-  <rect class="ok" x="551.0" y="461" width="10" height="10" rx="2"/>
-  <text class="lbl" x="566.0" y="470">✓ passed</text>
-  <text class="h2" x="24" y="698">Job queue wait per day, minutes (sampled)</text>
-  <line class="base" x1="64" x2="856" y1="842.0" y2="842.0"/>
-  <text class="tick" x="56" y="845.5" text-anchor="end">0</text>
-  <line class="grid" x1="64" x2="856" y1="809.5" y2="809.5"/>
-  <text class="tick" x="56" y="813.0" text-anchor="end">10</text>
-  <line class="grid" x1="64" x2="856" y1="777.0" y2="777.0"/>
-  <text class="tick" x="56" y="780.5" text-anchor="end">20</text>
-  <line class="grid" x1="64" x2="856" y1="744.5" y2="744.5"/>
-  <text class="tick" x="56" y="748.0" text-anchor="end">30</text>
-  <line class="grid" x1="64" x2="856" y1="712.0" y2="712.0"/>
-  <text class="tick" x="56" y="715.5" text-anchor="end">40</text>
-  <text class="tick" x="103.6" y="858" text-anchor="middle">Sep 18</text>
-  <text class="tick" x="288.4" y="858" text-anchor="middle">Sep 25</text>
-  <text class="tick" x="473.2" y="858" text-anchor="middle">Oct 2</text>
-  <text class="tick" x="658.0" y="858" text-anchor="middle">Oct 9</text>
-  <text class="tick" x="842.8" y="858" text-anchor="middle">Oct 16</text>
-  <g><title>Sep 17: 1 CI change(s) merged: #3130</title><line class="mark" x1="77.2" x2="77.2" y1="712" y2="842"/><path class="markd" d="M77.2,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 18: 1 CI change(s) merged: #3168</title><line class="mark" x1="103.6" x2="103.6" y1="712" y2="842"/><path class="markd" d="M103.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 20: 1 CI change(s) merged: #3232</title><line class="mark" x1="156.4" x2="156.4" y1="712" y2="842"/><path class="markd" d="M156.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 23: 4 CI change(s) merged: #3378, #3379, #3402, #3415</title><line class="mark" x1="235.6" x2="235.6" y1="712" y2="842"/><path class="markd" d="M235.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 24: 2 CI change(s) merged: #3456, #3525</title><line class="mark" x1="262.0" x2="262.0" y1="712" y2="842"/><path class="markd" d="M262.0,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 25: 7 CI change(s) merged: #3547, #3572, #3630, #3636, #3647, #3661, #3664</title><line class="mark" x1="288.4" x2="288.4" y1="712" y2="842"/><path class="markd" d="M288.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 26: 6 CI change(s) merged: #3761, #3777, #3793, #3802, #3818, #3838</title><line class="mark" x1="314.8" x2="314.8" y1="712" y2="842"/><path class="markd" d="M314.8,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 27: 2 CI change(s) merged: #3864, #3916</title><line class="mark" x1="341.2" x2="341.2" y1="712" y2="842"/><path class="markd" d="M341.2,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 28: 1 CI change(s) merged: #3961</title><line class="mark" x1="367.6" x2="367.6" y1="712" y2="842"/><path class="markd" d="M367.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 29: 1 CI change(s) merged: #4000</title><line class="mark" x1="394.0" x2="394.0" y1="712" y2="842"/><path class="markd" d="M394.0,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Sep 30: 1 CI change(s) merged: #4027</title><line class="mark" x1="420.4" x2="420.4" y1="712" y2="842"/><path class="markd" d="M420.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 1: 2 CI change(s) merged: #4081, #4086</title><line class="mark" x1="446.8" x2="446.8" y1="712" y2="842"/><path class="markd" d="M446.8,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 2: 3 CI change(s) merged: #4097, #4105, #4123</title><line class="mark" x1="473.2" x2="473.2" y1="712" y2="842"/><path class="markd" d="M473.2,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 3: 1 CI change(s) merged: #4220</title><line class="mark" x1="499.6" x2="499.6" y1="712" y2="842"/><path class="markd" d="M499.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 4: 4 CI change(s) merged: #4313, #4314, #4316, #4362</title><line class="mark" x1="526.0" x2="526.0" y1="712" y2="842"/><path class="markd" d="M526.0,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 5: 8 CI change(s) merged: #4434, #4446, #4450, #4456, #4466, #4495, #4519, #4521</title><line class="mark" x1="552.4" x2="552.4" y1="712" y2="842"/><path class="markd" d="M552.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 6: 3 CI change(s) merged: #4497, #4536, #4538</title><line class="mark" x1="578.8" x2="578.8" y1="712" y2="842"/><path class="markd" d="M578.8,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 7: 9 CI change(s) merged: #4595, #4597, #4603, #4604, #4611, #4617, #4625, #4631 …</title><line class="mark" x1="605.2" x2="605.2" y1="712" y2="842"/><path class="markd" d="M605.2,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 8: 2 CI change(s) merged: #4705, #4720</title><line class="mark" x1="631.6" x2="631.6" y1="712" y2="842"/><path class="markd" d="M631.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 9: 8 CI change(s) merged: #4740, #4745, #4757, #4761, #4774, #4779, #4811, #4826</title><line class="mark" x1="658.0" x2="658.0" y1="712" y2="842"/><path class="markd" d="M658.0,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 10: 19 CI change(s) merged: #4827, #4828, #4829, #4830, #4832, #4833, #4835, #4837 …</title><line class="mark" x1="684.4" x2="684.4" y1="712" y2="842"/><path class="markd" d="M684.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 11: 9 CI change(s) merged: #4866, #4906, #4907, #4908, #4912, #4913, #4924, #4927 …</title><line class="mark" x1="710.8" x2="710.8" y1="712" y2="842"/><path class="markd" d="M710.8,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 12: 7 CI change(s) merged: #4942, #4961, #4962, #4966, #4995, #5001, #5011</title><line class="mark" x1="737.2" x2="737.2" y1="712" y2="842"/><path class="markd" d="M737.2,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 13: 4 CI change(s) merged: #5017, #5022, #5047, #5062</title><line class="mark" x1="763.6" x2="763.6" y1="712" y2="842"/><path class="markd" d="M763.6,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 14: 11 CI change(s) merged: #5071, #5086, #5105, #5111, #5138, #5139, #5140, #5141 …</title><line class="mark" x1="790.0" x2="790.0" y1="712" y2="842"/><path class="markd" d="M790.0,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 15: 9 CI change(s) merged: #5165, #5169, #5177, #5179, #5182, #5183, #5190, #5191 …</title><line class="mark" x1="816.4" x2="816.4" y1="712" y2="842"/><path class="markd" d="M816.4,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <g><title>Oct 16: 5 CI change(s) merged: #5223, #5225, #5242, #5243, #5244</title><line class="mark" x1="842.8" x2="842.8" y1="712" y2="842"/><path class="markd" d="M842.8,707 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <polyline class="l1" points="77.2,841.5 103.6,841.8 130.0,841.9 156.4,841.9 182.8,841.9 209.2,841.8 235.6,841.8 262.0,841.9 288.4,840.8 314.8,841.9 341.2,838.4 367.6,841.4 394.0,841.9 420.4,841.8 446.8,841.8 473.2,841.0 499.6,841.8 526.0,841.9 552.4,840.3 578.8,838.3 605.2,841.4 631.6,841.9 658.0,833.8 684.4,839.9 710.8,811.7 737.2,820.7 763.6,841.9 790.0,841.1 816.4,841.8 842.8,841.9"/>
-  <circle class="l1d" cx="77.2" cy="841.5" r="4"><title>Sep 17: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="103.6" cy="841.8" r="4"><title>Sep 18: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="130.0" cy="841.9" r="4"><title>Sep 19: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="156.4" cy="841.9" r="4"><title>Sep 20: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="182.8" cy="841.9" r="4"><title>Sep 21: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="209.2" cy="841.8" r="4"><title>Sep 22: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="235.6" cy="841.8" r="4"><title>Sep 23: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="262.0" cy="841.9" r="4"><title>Sep 24: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="288.4" cy="840.8" r="4"><title>Sep 25: median wait 0.4 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="314.8" cy="841.9" r="4"><title>Sep 26: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="341.2" cy="838.4" r="4"><title>Sep 27: median wait 1.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="367.6" cy="841.4" r="4"><title>Sep 28: median wait 0.2 min (19 runs sampled)</title></circle>
-  <circle class="l1d" cx="394.0" cy="841.9" r="4"><title>Sep 29: median wait 0.0 min (18 runs sampled)</title></circle>
-  <circle class="l1d" cx="420.4" cy="841.8" r="4"><title>Sep 30: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="446.8" cy="841.8" r="4"><title>Oct 1: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="473.2" cy="841.0" r="4"><title>Oct 2: median wait 0.3 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="499.6" cy="841.8" r="4"><title>Oct 3: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="526.0" cy="841.9" r="4"><title>Oct 4: median wait 0.0 min (18 runs sampled)</title></circle>
-  <circle class="l1d" cx="552.4" cy="840.3" r="4"><title>Oct 5: median wait 0.5 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="578.8" cy="838.3" r="4"><title>Oct 6: median wait 1.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="605.2" cy="841.4" r="4"><title>Oct 7: median wait 0.2 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="631.6" cy="841.9" r="4"><title>Oct 8: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="658.0" cy="833.8" r="4"><title>Oct 9: median wait 2.5 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="684.4" cy="839.9" r="4"><title>Oct 10: median wait 0.7 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="710.8" cy="811.7" r="4"><title>Oct 11: median wait 9.3 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="737.2" cy="820.7" r="4"><title>Oct 12: median wait 6.5 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="763.6" cy="841.9" r="4"><title>Oct 13: median wait 0.0 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="790.0" cy="841.1" r="4"><title>Oct 14: median wait 0.3 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="816.4" cy="841.8" r="4"><title>Oct 15: median wait 0.1 min (24 runs sampled)</title></circle>
-  <circle class="l1d" cx="842.8" cy="841.9" r="4"><title>Oct 16: median wait 0.0 min (12 runs sampled)</title></circle>
-  <polyline class="l2" points="77.2,838.2 103.6,840.0 130.0,840.0 156.4,840.6 182.8,840.5 209.2,839.6 235.6,833.7 262.0,840.5 288.4,830.1 314.8,839.5 341.2,808.4 367.6,835.3 394.0,837.7 420.4,837.7 446.8,837.9 473.2,834.6 499.6,834.0 526.0,838.2 552.4,819.2 578.8,821.0 605.2,830.1 631.6,836.9 658.0,810.6 684.4,817.0 710.8,757.3 737.2,788.3 763.6,828.1 790.0,791.6 816.4,826.0 842.8,841.8"/>
-  <circle class="l2d" cx="77.2" cy="838.2" r="4"><title>Sep 17: p90 wait 1.2 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="103.6" cy="840.0" r="4"><title>Sep 18: p90 wait 0.6 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="130.0" cy="840.0" r="4"><title>Sep 19: p90 wait 0.6 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="156.4" cy="840.6" r="4"><title>Sep 20: p90 wait 0.4 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="182.8" cy="840.5" r="4"><title>Sep 21: p90 wait 0.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="209.2" cy="839.6" r="4"><title>Sep 22: p90 wait 0.7 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="235.6" cy="833.7" r="4"><title>Sep 23: p90 wait 2.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="262.0" cy="840.5" r="4"><title>Sep 24: p90 wait 0.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="288.4" cy="830.1" r="4"><title>Sep 25: p90 wait 3.7 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="314.8" cy="839.5" r="4"><title>Sep 26: p90 wait 0.8 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="341.2" cy="808.4" r="4"><title>Sep 27: p90 wait 10.3 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="367.6" cy="835.3" r="4"><title>Sep 28: p90 wait 2.1 min (19 runs sampled)</title></circle>
-  <circle class="l2d" cx="394.0" cy="837.7" r="4"><title>Sep 29: p90 wait 1.3 min (18 runs sampled)</title></circle>
-  <circle class="l2d" cx="420.4" cy="837.7" r="4"><title>Sep 30: p90 wait 1.3 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="446.8" cy="837.9" r="4"><title>Oct 1: p90 wait 1.3 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="473.2" cy="834.6" r="4"><title>Oct 2: p90 wait 2.3 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="499.6" cy="834.0" r="4"><title>Oct 3: p90 wait 2.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="526.0" cy="838.2" r="4"><title>Oct 4: p90 wait 1.2 min (18 runs sampled)</title></circle>
-  <circle class="l2d" cx="552.4" cy="819.2" r="4"><title>Oct 5: p90 wait 7.0 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="578.8" cy="821.0" r="4"><title>Oct 6: p90 wait 6.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="605.2" cy="830.1" r="4"><title>Oct 7: p90 wait 3.7 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="631.6" cy="836.9" r="4"><title>Oct 8: p90 wait 1.6 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="658.0" cy="810.6" r="4"><title>Oct 9: p90 wait 9.7 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="684.4" cy="817.0" r="4"><title>Oct 10: p90 wait 7.7 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="710.8" cy="757.3" r="4"><title>Oct 11: p90 wait 26.1 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="737.2" cy="788.3" r="4"><title>Oct 12: p90 wait 16.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="763.6" cy="828.1" r="4"><title>Oct 13: p90 wait 4.3 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="790.0" cy="791.6" r="4"><title>Oct 14: p90 wait 15.5 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="816.4" cy="826.0" r="4"><title>Oct 15: p90 wait 4.9 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="842.8" cy="841.8" r="4"><title>Oct 16: p90 wait 0.1 min (12 runs sampled)</title></circle>
-  <text class="lbl" x="730.0" y="698">◆ CI change merged</text>
-  <circle class="l2d" cx="688.0" cy="694" r="4"/>
-  <text class="lbl" x="698.0" y="698">p90</text>
-  <circle class="l1d" cx="620.0" cy="694" r="4"/>
-  <text class="lbl" x="630.0" y="698">median</text>
-  <text class="meta" x="24" y="886">Source: GitHub API. Faded bar = today so far. Days are UTC. Wait and runner time are sampled from about 24 runs a day.</text>
+  <rect class="tile" x="24.0" y="224" width="199.0" height="74" rx="8"/>
+  <text class="k" x="38.0" y="245">Reruns</text>
+  <text class="v" x="38.0" y="273">9.0/day</text>
+  <text class="sub" x="38.0" y="289">54 runs rerun · last 7 days</text>
+  <rect class="tile" x="235.0" y="224" width="199.0" height="74" rx="8"/>
+  <text class="k" x="249.0" y="245">Reruns that passed</text>
+  <text class="v" x="249.0" y="273">65.9%</text>
+  <text class="sub" x="249.0" y="289">29 passed · 15 failed again</text>
+  <rect class="tile" x="446.0" y="224" width="199.0" height="74" rx="8"/>
+  <text class="k" x="460.0" y="245">Most rerun workflow</text>
+  <text class="v" x="460.0" y="273">21</text>
+  <text class="sub" x="460.0" y="289">Mainframe Ground Truth · 0 failed again</text>
+  <rect class="tile" x="657.0" y="224" width="199.0" height="74" rx="8"/>
+  <text class="k" x="671.0" y="245">Most rescued by reruns</text>
+  <text class="v" x="671.0" y="273">15</text>
+  <text class="sub" x="671.0" y="289">Mainframe Ground Truth</text>
+  <rect class="tile" x="24.0" y="310" width="199.0" height="74" rx="8"/>
+  <text class="k" x="38.0" y="331">Agent time on new work (5d)</text>
+  <text class="v" x="38.0" y="359">70.2%</text>
+  <text class="sub" x="38.0" y="375">fixes 2.1h · send-backs 3.9h a day</text>
+  <rect class="tile" x="235.0" y="310" width="199.0" height="74" rx="8"/>
+  <text class="k" x="249.0" y="331">Worker slots used</text>
+  <text class="v" x="249.0" y="359">41.5%</text>
+  <text class="sub" x="249.0" y="375">of 2 · paused 3.5h a day</text>
+  <rect class="tile" x="446.0" y="310" width="199.0" height="74" rx="8"/>
+  <text class="k" x="460.0" y="331">Fix loops per merged PR</text>
+  <text class="v" x="460.0" y="359">1.0</text>
+  <text class="sub" x="460.0" y="375">precheck sent back 0 · failed again 0</text>
+  <rect class="tile" x="657.0" y="310" width="199.0" height="74" rx="8"/>
+  <text class="k" x="671.0" y="331">Idle with a free slot</text>
+  <text class="v" x="671.0" y="359">2.1h/day</text>
+  <text class="sub" x="671.0" y="375">nothing launchable · CI-busy 1.8h a day</text>
+  <text class="h2" x="24" y="414">Merged PRs per day, by origin</text>
+  <line class="base" x1="64" x2="856" y1="578.0" y2="578.0"/>
+  <text class="tick" x="56" y="581.5" text-anchor="end">0</text>
+  <line class="grid" x1="64" x2="856" y1="540.5" y2="540.5"/>
+  <text class="tick" x="56" y="544.0" text-anchor="end">30</text>
+  <line class="grid" x1="64" x2="856" y1="503.0" y2="503.0"/>
+  <text class="tick" x="56" y="506.5" text-anchor="end">60</text>
+  <line class="grid" x1="64" x2="856" y1="465.5" y2="465.5"/>
+  <text class="tick" x="56" y="469.0" text-anchor="end">90</text>
+  <line class="grid" x1="64" x2="856" y1="428.0" y2="428.0"/>
+  <text class="tick" x="56" y="431.5" text-anchor="end">120</text>
+  <text class="tick" x="103.6" y="594" text-anchor="middle">Sep 18</text>
+  <text class="tick" x="288.4" y="594" text-anchor="middle">Sep 25</text>
+  <text class="tick" x="473.2" y="594" text-anchor="middle">Oct 2</text>
+  <text class="tick" x="658.0" y="594" text-anchor="middle">Oct 9</text>
+  <text class="tick" x="842.8" y="594" text-anchor="middle">Oct 16</text>
+  <g><title>Sep 17: 25 merged · 9 agent · 16 other · 0 automation</title><rect class="agent" x="65.0" y="568.8" width="24.4" height="9.2"/><path class="other" d="M65.0,566.8 V550.8 Q65.0,546.8 69.0,546.8 H85.4 Q89.4,546.8 89.4,550.8 V566.8 Z"/></g>
+  <g><title>Sep 18: 25 merged · 13 agent · 6 other · 6 automation</title><rect class="agent" x="91.4" y="563.8" width="24.4" height="14.2"/><rect class="other" x="91.4" y="556.2" width="24.4" height="5.5"/><path class="automation" d="M91.4,554.2 V550.8 Q91.4,546.8 95.4,546.8 H111.8 Q115.8,546.8 115.8,550.8 V554.2 Z"/></g>
+  <g><title>Sep 19: 17 merged · 13 agent · 4 other · 0 automation</title><rect class="agent" x="117.8" y="563.8" width="24.4" height="14.2"/><path class="other" d="M117.8,561.8 V560.8 Q117.8,556.8 121.8,556.8 H138.2 Q142.2,556.8 142.2,560.8 V561.8 Z"/></g>
+  <g><title>Sep 20: 17 merged · 12 agent · 5 other · 0 automation</title><rect class="agent" x="144.2" y="565.0" width="24.4" height="13.0"/><path class="other" d="M144.2,563.0 V560.8 Q144.2,556.8 148.2,556.8 H164.6 Q168.6,556.8 168.6,560.8 V563.0 Z"/></g>
+  <g><title>Sep 21: 7 merged · 0 agent · 7 other · 0 automation</title><path class="other" d="M170.6,578.0 V573.2 Q170.6,569.2 174.6,569.2 H191.0 Q195.0,569.2 195.0,573.2 V578.0 Z"/></g>
+  <g><title>Sep 22: 24 merged · 12 agent · 12 other · 0 automation</title><rect class="agent" x="197.0" y="565.0" width="24.4" height="13.0"/><path class="other" d="M197.0,563.0 V552.0 Q197.0,548.0 201.0,548.0 H217.4 Q221.4,548.0 221.4,552.0 V563.0 Z"/></g>
+  <g><title>Sep 23: 73 merged · 45 agent · 28 other · 0 automation</title><rect class="agent" x="223.4" y="523.8" width="24.4" height="54.2"/><path class="other" d="M223.4,521.8 V490.8 Q223.4,486.8 227.4,486.8 H243.8 Q247.8,486.8 247.8,490.8 V521.8 Z"/></g>
+  <g><title>Sep 24: 82 merged · 40 agent · 42 other · 0 automation</title><rect class="agent" x="249.8" y="530.0" width="24.4" height="48.0"/><path class="other" d="M249.8,528.0 V479.5 Q249.8,475.5 253.8,475.5 H270.2 Q274.2,475.5 274.2,479.5 V528.0 Z"/></g>
+  <g><title>Sep 25: 102 merged · 55 agent · 42 other · 5 automation</title><rect class="agent" x="276.2" y="511.2" width="24.4" height="66.8"/><rect class="other" x="276.2" y="458.8" width="24.4" height="50.5"/><path class="automation" d="M276.2,456.8 V454.5 Q276.2,450.5 280.2,450.5 H296.6 Q300.6,450.5 300.6,454.5 V456.8 Z"/></g>
+  <g><title>Sep 26: 89 merged · 45 agent · 44 other · 0 automation</title><rect class="agent" x="302.6" y="523.8" width="24.4" height="54.2"/><path class="other" d="M302.6,521.8 V470.8 Q302.6,466.8 306.6,466.8 H323.0 Q327.0,466.8 327.0,470.8 V521.8 Z"/></g>
+  <g><title>Sep 27: 75 merged · 46 agent · 29 other · 0 automation</title><rect class="agent" x="329.0" y="522.5" width="24.4" height="55.5"/><path class="other" d="M329.0,520.5 V488.2 Q329.0,484.2 333.0,484.2 H349.4 Q353.4,484.2 353.4,488.2 V520.5 Z"/></g>
+  <g><title>Sep 28: 19 merged · 8 agent · 10 other · 1 automation</title><rect class="agent" x="355.4" y="570.0" width="24.4" height="8.0"/><rect class="other" x="355.4" y="557.5" width="24.4" height="10.5"/><path class="automation" d="M355.4,555.5 V555.5 Q355.4,554.2 356.6,554.2 H378.5 Q379.8,554.2 379.8,555.5 V555.5 Z"/></g>
+  <g><title>Sep 29: 20 merged · 17 agent · 3 other · 0 automation</title><rect class="agent" x="381.8" y="558.8" width="24.4" height="19.2"/><path class="other" d="M381.8,556.8 V556.8 Q381.8,553.0 385.5,553.0 H402.4 Q406.2,553.0 406.2,556.8 V556.8 Z"/></g>
+  <g><title>Sep 30: 16 merged · 12 agent · 4 other · 0 automation</title><rect class="agent" x="408.2" y="565.0" width="24.4" height="13.0"/><path class="other" d="M408.2,563.0 V562.0 Q408.2,558.0 412.2,558.0 H428.6 Q432.6,558.0 432.6,562.0 V563.0 Z"/></g>
+  <g><title>Oct 1: 30 merged · 21 agent · 9 other · 0 automation</title><rect class="agent" x="434.6" y="553.8" width="24.4" height="24.2"/><path class="other" d="M434.6,551.8 V544.5 Q434.6,540.5 438.6,540.5 H455.0 Q459.0,540.5 459.0,544.5 V551.8 Z"/></g>
+  <g><title>Oct 2: 66 merged · 47 agent · 18 other · 1 automation</title><rect class="agent" x="461.0" y="521.2" width="24.4" height="56.8"/><rect class="other" x="461.0" y="498.8" width="24.4" height="20.5"/><path class="automation" d="M461.0,496.8 V496.8 Q461.0,495.5 462.2,495.5 H484.1 Q485.4,495.5 485.4,496.8 V496.8 Z"/></g>
+  <g><title>Oct 3: 62 merged · 33 agent · 29 other · 0 automation</title><rect class="agent" x="487.4" y="538.8" width="24.4" height="39.2"/><path class="other" d="M487.4,536.8 V504.5 Q487.4,500.5 491.4,500.5 H507.8 Q511.8,500.5 511.8,504.5 V536.8 Z"/></g>
+  <g><title>Oct 4: 62 merged · 31 agent · 31 other · 0 automation</title><rect class="agent" x="513.8" y="541.2" width="24.4" height="36.8"/><path class="other" d="M513.8,539.2 V504.5 Q513.8,500.5 517.8,500.5 H534.2 Q538.2,500.5 538.2,504.5 V539.2 Z"/></g>
+  <g><title>Oct 5: 76 merged · 49 agent · 27 other · 0 automation</title><rect class="agent" x="540.2" y="518.8" width="24.4" height="59.2"/><path class="other" d="M540.2,516.8 V487.0 Q540.2,483.0 544.2,483.0 H560.6 Q564.6,483.0 564.6,487.0 V516.8 Z"/></g>
+  <g><title>Oct 6: 50 merged · 45 agent · 5 other · 0 automation</title><rect class="agent" x="566.6" y="523.8" width="24.4" height="54.2"/><path class="other" d="M566.6,521.8 V519.5 Q566.6,515.5 570.6,515.5 H587.0 Q591.0,515.5 591.0,519.5 V521.8 Z"/></g>
+  <g><title>Oct 7: 44 merged · 33 agent · 11 other · 0 automation</title><rect class="agent" x="593.0" y="538.8" width="24.4" height="39.2"/><path class="other" d="M593.0,536.8 V527.0 Q593.0,523.0 597.0,523.0 H613.4 Q617.4,523.0 617.4,527.0 V536.8 Z"/></g>
+  <g><title>Oct 8: 25 merged · 24 agent · 1 other · 0 automation</title><rect class="agent" x="619.4" y="550.0" width="24.4" height="28.0"/><path class="other" d="M619.4,548.0 V548.0 Q619.4,546.8 620.6,546.8 H642.5 Q643.8,546.8 643.8,548.0 V548.0 Z"/></g>
+  <g><title>Oct 9: 64 merged · 45 agent · 18 other · 1 automation</title><rect class="agent" x="645.8" y="523.8" width="24.4" height="54.2"/><rect class="other" x="645.8" y="501.2" width="24.4" height="20.5"/><path class="automation" d="M645.8,499.2 V499.2 Q645.8,498.0 647.0,498.0 H668.9 Q670.2,498.0 670.2,499.2 V499.2 Z"/></g>
+  <g><title>Oct 10: 33 merged · 29 agent · 4 other · 0 automation</title><rect class="agent" x="672.2" y="543.8" width="24.4" height="34.2"/><path class="other" d="M672.2,541.8 V540.8 Q672.2,536.8 676.2,536.8 H692.6 Q696.6,536.8 696.6,540.8 V541.8 Z"/></g>
+  <g><title>Oct 11: 40 merged · 34 agent · 6 other · 0 automation</title><rect class="agent" x="698.6" y="537.5" width="24.4" height="40.5"/><path class="other" d="M698.6,535.5 V532.0 Q698.6,528.0 702.6,528.0 H719.0 Q723.0,528.0 723.0,532.0 V535.5 Z"/></g>
+  <g><title>Oct 12: 43 merged · 34 agent · 8 other · 1 automation</title><rect class="agent" x="725.0" y="537.5" width="24.4" height="40.5"/><rect class="other" x="725.0" y="527.5" width="24.4" height="8.0"/><path class="automation" d="M725.0,525.5 V525.5 Q725.0,524.2 726.2,524.2 H748.1 Q749.4,524.2 749.4,525.5 V525.5 Z"/></g>
+  <g><title>Oct 13: 31 merged · 29 agent · 2 other · 0 automation</title><rect class="agent" x="751.4" y="543.8" width="24.4" height="34.2"/><path class="other" d="M751.4,541.8 V541.8 Q751.4,539.2 753.9,539.2 H773.3 Q775.8,539.2 775.8,541.8 V541.8 Z"/></g>
+  <g><title>Oct 14: 54 merged · 53 agent · 1 other · 0 automation</title><rect class="agent" x="777.8" y="513.8" width="24.4" height="64.2"/><path class="other" d="M777.8,511.8 V511.8 Q777.8,510.5 779.0,510.5 H800.9 Q802.2,510.5 802.2,511.8 V511.8 Z"/></g>
+  <g><title>Oct 15: 43 merged · 41 agent · 2 other · 0 automation</title><rect class="agent" x="804.2" y="528.8" width="24.4" height="49.2"/><path class="other" d="M804.2,526.8 V526.8 Q804.2,524.2 806.7,524.2 H826.1 Q828.6,524.2 828.6,526.8 V526.8 Z"/></g>
+  <g class="partial"><title>Oct 16: 35 merged · 26 agent · 5 other · 4 automation (today, so far)</title><rect class="agent" x="830.6" y="547.5" width="24.4" height="30.5"/><rect class="other" x="830.6" y="541.2" width="24.4" height="4.2"/><path class="automation" d="M830.6,539.2 V538.2 Q830.6,534.2 834.6,534.2 H851.0 Q855.0,534.2 855.0,538.2 V539.2 Z"/></g>
+  <text class="lbl" x="288.4" y="444.5" text-anchor="middle">102</text>
+  <rect class="automation" x="770.0" y="405" width="10" height="10" rx="2"/>
+  <text class="lbl" x="785.0" y="414">automation</text>
+  <rect class="other" x="713.0" y="405" width="10" height="10" rx="2"/>
+  <text class="lbl" x="728.0" y="414">other</text>
+  <rect class="agent" x="656.0" y="405" width="10" height="10" rx="2"/>
+  <text class="lbl" x="671.0" y="414">agent</text>
+  <text class="h2" x="24" y="642">CI runs per day, by outcome</text>
+  <line class="base" x1="64" x2="856" y1="806.0" y2="806.0"/>
+  <text class="tick" x="56" y="809.5" text-anchor="end">0</text>
+  <line class="grid" x1="64" x2="856" y1="768.5" y2="768.5"/>
+  <text class="tick" x="56" y="772.0" text-anchor="end">1,000</text>
+  <line class="grid" x1="64" x2="856" y1="731.0" y2="731.0"/>
+  <text class="tick" x="56" y="734.5" text-anchor="end">2,000</text>
+  <line class="grid" x1="64" x2="856" y1="693.5" y2="693.5"/>
+  <text class="tick" x="56" y="697.0" text-anchor="end">3,000</text>
+  <line class="grid" x1="64" x2="856" y1="656.0" y2="656.0"/>
+  <text class="tick" x="56" y="659.5" text-anchor="end">4,000</text>
+  <text class="tick" x="103.6" y="822" text-anchor="middle">Sep 18</text>
+  <text class="tick" x="288.4" y="822" text-anchor="middle">Sep 25</text>
+  <text class="tick" x="473.2" y="822" text-anchor="middle">Oct 2</text>
+  <text class="tick" x="658.0" y="822" text-anchor="middle">Oct 9</text>
+  <text class="tick" x="842.8" y="822" text-anchor="middle">Oct 16</text>
+  <g><title>Sep 17: 441 runs · 421 passed · 10 failed · 10 cancelled/skipped/other</title><rect class="ok" x="65.0" y="792.2" width="24.4" height="13.8"/><rect class="bad" x="65.0" y="789.8" width="24.4" height="0.5"/><path class="na" d="M65.0,789.8 V789.8 Q65.0,789.5 65.4,789.5 H89.0 Q89.4,789.5 89.4,789.8 V789.8 Z"/></g>
+  <g><title>Sep 18: 534 runs · 503 passed · 13 failed · 18 cancelled/skipped/other</title><rect class="ok" x="91.4" y="789.1" width="24.4" height="16.9"/><rect class="bad" x="91.4" y="786.7" width="24.4" height="0.5"/><path class="na" d="M91.4,786.7 V786.7 Q91.4,786.0 92.1,786.0 H115.1 Q115.8,786.0 115.8,786.7 V786.7 Z"/></g>
+  <g><title>Sep 19: 415 runs · 360 passed · 30 failed · 25 cancelled/skipped/other</title><rect class="ok" x="117.8" y="794.5" width="24.4" height="11.5"/><rect class="bad" x="117.8" y="791.4" width="24.4" height="1.1"/><path class="na" d="M117.8,791.4 V791.4 Q117.8,790.4 118.7,790.4 H141.3 Q142.2,790.4 142.2,791.4 V791.4 Z"/></g>
+  <g><title>Sep 20: 338 runs · 310 passed · 15 failed · 13 cancelled/skipped/other</title><rect class="ok" x="144.2" y="796.4" width="24.4" height="9.6"/><rect class="bad" x="144.2" y="793.8" width="24.4" height="0.6"/><path class="na" d="M144.2,793.8 V793.8 Q144.2,793.3 144.7,793.3 H168.1 Q168.6,793.3 168.6,793.8 V793.8 Z"/></g>
+  <g><title>Sep 21: 223 runs · 192 passed · 17 failed · 14 cancelled/skipped/other</title><rect class="ok" x="170.6" y="800.8" width="24.4" height="5.2"/><rect class="bad" x="170.6" y="798.2" width="24.4" height="0.6"/><path class="na" d="M170.6,798.2 V798.2 Q170.6,797.6 171.1,797.6 H194.5 Q195.0,797.6 195.0,798.2 V798.2 Z"/></g>
+  <g><title>Sep 22: 449 runs · 423 passed · 17 failed · 9 cancelled/skipped/other</title><rect class="ok" x="197.0" y="792.1" width="24.4" height="13.9"/><rect class="bad" x="197.0" y="789.5" width="24.4" height="0.6"/><path class="na" d="M197.0,789.5 V789.5 Q197.0,789.2 197.3,789.2 H221.1 Q221.4,789.2 221.4,789.5 V789.5 Z"/></g>
+  <g><title>Sep 23: 1,229 runs · 1,165 passed · 8 failed · 56 cancelled/skipped/other</title><rect class="ok" x="223.4" y="764.3" width="24.4" height="41.7"/><rect class="bad" x="223.4" y="762.0" width="24.4" height="0.5"/><path class="na" d="M223.4,762.0 V762.0 Q223.4,759.9 225.5,759.9 H245.7 Q247.8,759.9 247.8,762.0 V762.0 Z"/></g>
+  <g><title>Sep 24: 1,207 runs · 1,140 passed · 9 failed · 58 cancelled/skipped/other</title><rect class="ok" x="249.8" y="765.2" width="24.4" height="40.8"/><rect class="bad" x="249.8" y="762.9" width="24.4" height="0.5"/><path class="na" d="M249.8,762.9 V762.9 Q249.8,760.7 252.0,760.7 H272.0 Q274.2,760.7 274.2,762.9 V762.9 Z"/></g>
+  <g><title>Sep 25: 1,897 runs · 1,684 passed · 31 failed · 182 cancelled/skipped/other</title><rect class="ok" x="276.2" y="744.9" width="24.4" height="61.1"/><rect class="bad" x="276.2" y="741.7" width="24.4" height="1.2"/><path class="na" d="M276.2,741.7 V738.9 Q276.2,734.9 280.2,734.9 H296.6 Q300.6,734.9 300.6,738.9 V741.7 Z"/></g>
+  <g><title>Sep 26: 1,602 runs · 1,415 passed · 13 failed · 174 cancelled/skipped/other</title><rect class="ok" x="302.6" y="754.9" width="24.4" height="51.1"/><rect class="bad" x="302.6" y="752.5" width="24.4" height="0.5"/><path class="na" d="M302.6,752.5 V749.9 Q302.6,745.9 306.6,745.9 H323.0 Q327.0,745.9 327.0,749.9 V752.5 Z"/></g>
+  <g><title>Sep 27: 1,661 runs · 1,505 passed · 20 failed · 136 cancelled/skipped/other</title><rect class="ok" x="329.0" y="751.6" width="24.4" height="54.4"/><rect class="bad" x="329.0" y="748.8" width="24.4" height="0.8"/><path class="na" d="M329.0,748.8 V747.7 Q329.0,743.7 333.0,743.7 H349.4 Q353.4,743.7 353.4,747.7 V748.8 Z"/></g>
+  <g><title>Sep 28: 456 runs · 414 passed · 13 failed · 29 cancelled/skipped/other</title><rect class="ok" x="355.4" y="792.5" width="24.4" height="13.5"/><rect class="bad" x="355.4" y="790.0" width="24.4" height="0.5"/><path class="na" d="M355.4,790.0 V790.0 Q355.4,788.9 356.5,788.9 H378.7 Q379.8,788.9 379.8,790.0 V790.0 Z"/></g>
+  <g><title>Sep 29: 734 runs · 673 passed · 10 failed · 51 cancelled/skipped/other</title><rect class="ok" x="381.8" y="782.8" width="24.4" height="23.2"/><rect class="bad" x="381.8" y="780.4" width="24.4" height="0.5"/><path class="na" d="M381.8,780.4 V780.4 Q381.8,778.5 383.7,778.5 H404.3 Q406.2,778.5 406.2,780.4 V780.4 Z"/></g>
+  <g><title>Sep 30: 418 runs · 373 passed · 10 failed · 35 cancelled/skipped/other</title><rect class="ok" x="408.2" y="794.0" width="24.4" height="12.0"/><rect class="bad" x="408.2" y="791.6" width="24.4" height="0.5"/><path class="na" d="M408.2,791.6 V791.6 Q408.2,790.3 409.5,790.3 H431.3 Q432.6,790.3 432.6,791.6 V791.6 Z"/></g>
+  <g><title>Oct 1: 620 runs · 582 passed · 11 failed · 27 cancelled/skipped/other</title><rect class="ok" x="434.6" y="786.2" width="24.4" height="19.8"/><rect class="bad" x="434.6" y="783.8" width="24.4" height="0.5"/><path class="na" d="M434.6,783.8 V783.8 Q434.6,782.7 435.6,782.7 H458.0 Q459.0,782.7 459.0,783.8 V783.8 Z"/></g>
+  <g><title>Oct 2: 1,734 runs · 1,568 passed · 35 failed · 131 cancelled/skipped/other</title><rect class="ok" x="461.0" y="749.2" width="24.4" height="56.8"/><rect class="bad" x="461.0" y="745.9" width="24.4" height="1.3"/><path class="na" d="M461.0,745.9 V745.0 Q461.0,741.0 465.0,741.0 H481.4 Q485.4,741.0 485.4,745.0 V745.9 Z"/></g>
+  <g><title>Oct 3: 1,377 runs · 1,200 passed · 29 failed · 148 cancelled/skipped/other</title><rect class="ok" x="487.4" y="763.0" width="24.4" height="43.0"/><rect class="bad" x="487.4" y="759.9" width="24.4" height="1.1"/><path class="na" d="M487.4,759.9 V758.4 Q487.4,754.4 491.4,754.4 H507.8 Q511.8,754.4 511.8,758.4 V759.9 Z"/></g>
+  <g><title>Oct 4: 1,367 runs · 1,231 passed · 29 failed · 107 cancelled/skipped/other</title><rect class="ok" x="513.8" y="761.8" width="24.4" height="44.2"/><rect class="bad" x="513.8" y="758.8" width="24.4" height="1.1"/><path class="na" d="M513.8,758.8 V758.7 Q513.8,754.7 517.8,754.7 H534.2 Q538.2,754.7 538.2,758.7 V758.8 Z"/></g>
+  <g><title>Oct 5: 2,245 runs · 1,942 passed · 53 failed · 250 cancelled/skipped/other</title><rect class="ok" x="540.2" y="735.2" width="24.4" height="70.8"/><rect class="bad" x="540.2" y="731.2" width="24.4" height="2.0"/><path class="na" d="M540.2,731.2 V725.8 Q540.2,721.8 544.2,721.8 H560.6 Q564.6,721.8 564.6,725.8 V731.2 Z"/></g>
+  <g><title>Oct 6: 1,648 runs · 1,442 passed · 49 failed · 157 cancelled/skipped/other</title><rect class="ok" x="566.6" y="753.9" width="24.4" height="52.1"/><rect class="bad" x="566.6" y="750.1" width="24.4" height="1.8"/><path class="na" d="M566.6,750.1 V748.2 Q566.6,744.2 570.6,744.2 H587.0 Q591.0,744.2 591.0,748.2 V750.1 Z"/></g>
+  <g><title>Oct 7: 1,412 runs · 1,165 passed · 64 failed · 183 cancelled/skipped/other</title><rect class="ok" x="593.0" y="764.3" width="24.4" height="41.7"/><rect class="bad" x="593.0" y="759.9" width="24.4" height="2.4"/><path class="na" d="M593.0,759.9 V757.1 Q593.0,753.1 597.0,753.1 H613.4 Q617.4,753.1 617.4,757.1 V759.9 Z"/></g>
+  <g><title>Oct 8: 1,336 runs · 1,247 passed · 33 failed · 56 cancelled/skipped/other</title><rect class="ok" x="619.4" y="761.2" width="24.4" height="44.8"/><rect class="bad" x="619.4" y="758.0" width="24.4" height="1.2"/><path class="na" d="M619.4,758.0 V758.0 Q619.4,755.9 621.5,755.9 H641.7 Q643.8,755.9 643.8,758.0 V758.0 Z"/></g>
+  <g><title>Oct 9: 2,476 runs · 2,169 passed · 80 failed · 227 cancelled/skipped/other</title><rect class="ok" x="645.8" y="726.7" width="24.4" height="79.3"/><rect class="bad" x="645.8" y="721.7" width="24.4" height="3.0"/><path class="na" d="M645.8,721.7 V717.1 Q645.8,713.1 649.8,713.1 H666.2 Q670.2,713.1 670.2,717.1 V721.7 Z"/></g>
+  <g><title>Oct 10: 1,519 runs · 1,161 passed · 37 failed · 321 cancelled/skipped/other</title><rect class="ok" x="672.2" y="764.5" width="24.4" height="41.5"/><rect class="bad" x="672.2" y="761.1" width="24.4" height="1.4"/><path class="na" d="M672.2,761.1 V753.0 Q672.2,749.0 676.2,749.0 H692.6 Q696.6,749.0 696.6,753.0 V761.1 Z"/></g>
+  <g><title>Oct 11: 2,612 runs · 1,758 passed · 33 failed · 821 cancelled/skipped/other</title><rect class="ok" x="698.6" y="742.1" width="24.4" height="63.9"/><rect class="bad" x="698.6" y="738.8" width="24.4" height="1.2"/><path class="na" d="M698.6,738.8 V712.1 Q698.6,708.1 702.6,708.1 H719.0 Q723.0,708.1 723.0,712.1 V738.8 Z"/></g>
+  <g><title>Oct 12: 2,615 runs · 2,133 passed · 71 failed · 411 cancelled/skipped/other</title><rect class="ok" x="725.0" y="728.0" width="24.4" height="78.0"/><rect class="bad" x="725.0" y="723.4" width="24.4" height="2.7"/><path class="na" d="M725.0,723.4 V711.9 Q725.0,707.9 729.0,707.9 H745.4 Q749.4,707.9 749.4,711.9 V723.4 Z"/></g>
+  <g><title>Oct 13: 1,932 runs · 1,590 passed · 37 failed · 305 cancelled/skipped/other</title><rect class="ok" x="751.4" y="748.4" width="24.4" height="57.6"/><rect class="bad" x="751.4" y="745.0" width="24.4" height="1.4"/><path class="na" d="M751.4,745.0 V737.5 Q751.4,733.5 755.4,733.5 H771.8 Q775.8,733.5 775.8,737.5 V745.0 Z"/></g>
+  <g><title>Oct 14: 3,691 runs · 2,359 passed · 47 failed · 1,285 cancelled/skipped/other</title><rect class="ok" x="777.8" y="719.5" width="24.4" height="86.5"/><rect class="bad" x="777.8" y="715.8" width="24.4" height="1.8"/><path class="na" d="M777.8,715.8 V671.6 Q777.8,667.6 781.8,667.6 H798.2 Q802.2,667.6 802.2,671.6 V715.8 Z"/></g>
+  <g><title>Oct 15: 3,630 runs · 2,472 passed · 77 failed · 1,081 cancelled/skipped/other</title><rect class="ok" x="804.2" y="715.3" width="24.4" height="90.7"/><rect class="bad" x="804.2" y="710.4" width="24.4" height="2.9"/><path class="na" d="M804.2,710.4 V673.9 Q804.2,669.9 808.2,669.9 H824.6 Q828.6,669.9 828.6,673.9 V710.4 Z"/></g>
+  <g class="partial"><title>Oct 16: 2,128 runs · 1,323 passed · 30 failed · 775 cancelled/skipped/other (today, so far)</title><rect class="ok" x="830.6" y="758.4" width="24.4" height="47.6"/><rect class="bad" x="830.6" y="755.3" width="24.4" height="1.1"/><path class="na" d="M830.6,755.3 V730.2 Q830.6,726.2 834.6,726.2 H851.0 Q855.0,726.2 855.0,730.2 V755.3 Z"/></g>
+  <rect class="na" x="707.0" y="633" width="10" height="10" rx="2"/>
+  <text class="lbl" x="722.0" y="642">cancelled / skipped</text>
+  <rect class="bad" x="629.0" y="633" width="10" height="10" rx="2"/>
+  <text class="lbl" x="644.0" y="642">✕ failed</text>
+  <rect class="ok" x="551.0" y="633" width="10" height="10" rx="2"/>
+  <text class="lbl" x="566.0" y="642">✓ passed</text>
+  <text class="h2" x="24" y="870">Job queue wait per day, minutes (sampled)</text>
+  <line class="base" x1="64" x2="856" y1="1014.0" y2="1014.0"/>
+  <text class="tick" x="56" y="1017.5" text-anchor="end">0</text>
+  <line class="grid" x1="64" x2="856" y1="981.5" y2="981.5"/>
+  <text class="tick" x="56" y="985.0" text-anchor="end">10</text>
+  <line class="grid" x1="64" x2="856" y1="949.0" y2="949.0"/>
+  <text class="tick" x="56" y="952.5" text-anchor="end">20</text>
+  <line class="grid" x1="64" x2="856" y1="916.5" y2="916.5"/>
+  <text class="tick" x="56" y="920.0" text-anchor="end">30</text>
+  <line class="grid" x1="64" x2="856" y1="884.0" y2="884.0"/>
+  <text class="tick" x="56" y="887.5" text-anchor="end">40</text>
+  <text class="tick" x="103.6" y="1030" text-anchor="middle">Sep 18</text>
+  <text class="tick" x="288.4" y="1030" text-anchor="middle">Sep 25</text>
+  <text class="tick" x="473.2" y="1030" text-anchor="middle">Oct 2</text>
+  <text class="tick" x="658.0" y="1030" text-anchor="middle">Oct 9</text>
+  <text class="tick" x="842.8" y="1030" text-anchor="middle">Oct 16</text>
+  <g><title>Sep 17: 1 CI change(s) merged: #3130</title><line class="mark" x1="77.2" x2="77.2" y1="884" y2="1014"/><path class="markd" d="M77.2,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 18: 1 CI change(s) merged: #3168</title><line class="mark" x1="103.6" x2="103.6" y1="884" y2="1014"/><path class="markd" d="M103.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 20: 1 CI change(s) merged: #3232</title><line class="mark" x1="156.4" x2="156.4" y1="884" y2="1014"/><path class="markd" d="M156.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 23: 4 CI change(s) merged: #3378, #3379, #3402, #3415</title><line class="mark" x1="235.6" x2="235.6" y1="884" y2="1014"/><path class="markd" d="M235.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 24: 2 CI change(s) merged: #3456, #3525</title><line class="mark" x1="262.0" x2="262.0" y1="884" y2="1014"/><path class="markd" d="M262.0,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 25: 7 CI change(s) merged: #3547, #3572, #3630, #3636, #3647, #3661, #3664</title><line class="mark" x1="288.4" x2="288.4" y1="884" y2="1014"/><path class="markd" d="M288.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 26: 6 CI change(s) merged: #3761, #3777, #3793, #3802, #3818, #3838</title><line class="mark" x1="314.8" x2="314.8" y1="884" y2="1014"/><path class="markd" d="M314.8,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 27: 2 CI change(s) merged: #3864, #3916</title><line class="mark" x1="341.2" x2="341.2" y1="884" y2="1014"/><path class="markd" d="M341.2,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 28: 1 CI change(s) merged: #3961</title><line class="mark" x1="367.6" x2="367.6" y1="884" y2="1014"/><path class="markd" d="M367.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 29: 1 CI change(s) merged: #4000</title><line class="mark" x1="394.0" x2="394.0" y1="884" y2="1014"/><path class="markd" d="M394.0,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Sep 30: 1 CI change(s) merged: #4027</title><line class="mark" x1="420.4" x2="420.4" y1="884" y2="1014"/><path class="markd" d="M420.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 1: 2 CI change(s) merged: #4081, #4086</title><line class="mark" x1="446.8" x2="446.8" y1="884" y2="1014"/><path class="markd" d="M446.8,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 2: 3 CI change(s) merged: #4097, #4105, #4123</title><line class="mark" x1="473.2" x2="473.2" y1="884" y2="1014"/><path class="markd" d="M473.2,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 3: 1 CI change(s) merged: #4220</title><line class="mark" x1="499.6" x2="499.6" y1="884" y2="1014"/><path class="markd" d="M499.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 4: 4 CI change(s) merged: #4313, #4314, #4316, #4362</title><line class="mark" x1="526.0" x2="526.0" y1="884" y2="1014"/><path class="markd" d="M526.0,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 5: 8 CI change(s) merged: #4434, #4446, #4450, #4456, #4466, #4495, #4519, #4521</title><line class="mark" x1="552.4" x2="552.4" y1="884" y2="1014"/><path class="markd" d="M552.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 6: 3 CI change(s) merged: #4497, #4536, #4538</title><line class="mark" x1="578.8" x2="578.8" y1="884" y2="1014"/><path class="markd" d="M578.8,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 7: 9 CI change(s) merged: #4595, #4597, #4603, #4604, #4611, #4617, #4625, #4631 …</title><line class="mark" x1="605.2" x2="605.2" y1="884" y2="1014"/><path class="markd" d="M605.2,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 8: 2 CI change(s) merged: #4705, #4720</title><line class="mark" x1="631.6" x2="631.6" y1="884" y2="1014"/><path class="markd" d="M631.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 9: 8 CI change(s) merged: #4740, #4745, #4757, #4761, #4774, #4779, #4811, #4826</title><line class="mark" x1="658.0" x2="658.0" y1="884" y2="1014"/><path class="markd" d="M658.0,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 10: 19 CI change(s) merged: #4827, #4828, #4829, #4830, #4832, #4833, #4835, #4837 …</title><line class="mark" x1="684.4" x2="684.4" y1="884" y2="1014"/><path class="markd" d="M684.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 11: 9 CI change(s) merged: #4866, #4906, #4907, #4908, #4912, #4913, #4924, #4927 …</title><line class="mark" x1="710.8" x2="710.8" y1="884" y2="1014"/><path class="markd" d="M710.8,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 12: 7 CI change(s) merged: #4942, #4961, #4962, #4966, #4995, #5001, #5011</title><line class="mark" x1="737.2" x2="737.2" y1="884" y2="1014"/><path class="markd" d="M737.2,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 13: 4 CI change(s) merged: #5017, #5022, #5047, #5062</title><line class="mark" x1="763.6" x2="763.6" y1="884" y2="1014"/><path class="markd" d="M763.6,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 14: 11 CI change(s) merged: #5071, #5086, #5105, #5111, #5138, #5139, #5140, #5141 …</title><line class="mark" x1="790.0" x2="790.0" y1="884" y2="1014"/><path class="markd" d="M790.0,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 15: 9 CI change(s) merged: #5165, #5169, #5177, #5179, #5182, #5183, #5190, #5191 …</title><line class="mark" x1="816.4" x2="816.4" y1="884" y2="1014"/><path class="markd" d="M816.4,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <g><title>Oct 16: 7 CI change(s) merged: #5223, #5225, #5242, #5243, #5244, #5256, #5265</title><line class="mark" x1="842.8" x2="842.8" y1="884" y2="1014"/><path class="markd" d="M842.8,879 l4,4 l-4,4 l-4,-4 Z"/></g>
+  <polyline class="l1" points="77.2,1013.5 103.6,1013.8 130.0,1013.9 156.4,1013.9 182.8,1013.9 209.2,1013.8 235.6,1013.8 262.0,1013.9 288.4,1012.8 314.8,1013.9 341.2,1010.4 367.6,1013.4 394.0,1013.9 420.4,1013.8 446.8,1013.8 473.2,1013.0 499.6,1013.8 526.0,1013.9 552.4,1012.3 578.8,1010.3 605.2,1013.4 631.6,1013.9 658.0,1005.8 684.4,1011.9 710.8,983.7 737.2,992.7 763.6,1013.9 790.0,1013.1 816.4,1013.8 842.8,1013.9"/>
+  <circle class="l1d" cx="77.2" cy="1013.5" r="4"><title>Sep 17: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="103.6" cy="1013.8" r="4"><title>Sep 18: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="130.0" cy="1013.9" r="4"><title>Sep 19: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="156.4" cy="1013.9" r="4"><title>Sep 20: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="182.8" cy="1013.9" r="4"><title>Sep 21: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="209.2" cy="1013.8" r="4"><title>Sep 22: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="235.6" cy="1013.8" r="4"><title>Sep 23: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="262.0" cy="1013.9" r="4"><title>Sep 24: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="288.4" cy="1012.8" r="4"><title>Sep 25: median wait 0.4 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="314.8" cy="1013.9" r="4"><title>Sep 26: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="341.2" cy="1010.4" r="4"><title>Sep 27: median wait 1.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="367.6" cy="1013.4" r="4"><title>Sep 28: median wait 0.2 min (19 runs sampled)</title></circle>
+  <circle class="l1d" cx="394.0" cy="1013.9" r="4"><title>Sep 29: median wait 0.0 min (18 runs sampled)</title></circle>
+  <circle class="l1d" cx="420.4" cy="1013.8" r="4"><title>Sep 30: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="446.8" cy="1013.8" r="4"><title>Oct 1: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="473.2" cy="1013.0" r="4"><title>Oct 2: median wait 0.3 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="499.6" cy="1013.8" r="4"><title>Oct 3: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="526.0" cy="1013.9" r="4"><title>Oct 4: median wait 0.0 min (18 runs sampled)</title></circle>
+  <circle class="l1d" cx="552.4" cy="1012.3" r="4"><title>Oct 5: median wait 0.5 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="578.8" cy="1010.3" r="4"><title>Oct 6: median wait 1.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="605.2" cy="1013.4" r="4"><title>Oct 7: median wait 0.2 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="631.6" cy="1013.9" r="4"><title>Oct 8: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="658.0" cy="1005.8" r="4"><title>Oct 9: median wait 2.5 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="684.4" cy="1011.9" r="4"><title>Oct 10: median wait 0.7 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="710.8" cy="983.7" r="4"><title>Oct 11: median wait 9.3 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="737.2" cy="992.7" r="4"><title>Oct 12: median wait 6.5 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="763.6" cy="1013.9" r="4"><title>Oct 13: median wait 0.0 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="790.0" cy="1013.1" r="4"><title>Oct 14: median wait 0.3 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="816.4" cy="1013.8" r="4"><title>Oct 15: median wait 0.1 min (24 runs sampled)</title></circle>
+  <circle class="l1d" cx="842.8" cy="1013.9" r="4"><title>Oct 16: median wait 0.0 min (18 runs sampled)</title></circle>
+  <polyline class="l2" points="77.2,1010.2 103.6,1012.0 130.0,1012.0 156.4,1012.6 182.8,1012.5 209.2,1011.6 235.6,1005.7 262.0,1012.5 288.4,1002.1 314.8,1011.5 341.2,980.4 367.6,1007.3 394.0,1009.7 420.4,1009.7 446.8,1009.9 473.2,1006.6 499.6,1006.0 526.0,1010.2 552.4,991.2 578.8,993.0 605.2,1002.1 631.6,1008.9 658.0,982.6 684.4,989.0 710.8,929.3 737.2,960.3 763.6,1000.1 790.0,963.6 816.4,998.0 842.8,1012.5"/>
+  <circle class="l2d" cx="77.2" cy="1010.2" r="4"><title>Sep 17: p90 wait 1.2 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="103.6" cy="1012.0" r="4"><title>Sep 18: p90 wait 0.6 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="130.0" cy="1012.0" r="4"><title>Sep 19: p90 wait 0.6 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="156.4" cy="1012.6" r="4"><title>Sep 20: p90 wait 0.4 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="182.8" cy="1012.5" r="4"><title>Sep 21: p90 wait 0.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="209.2" cy="1011.6" r="4"><title>Sep 22: p90 wait 0.7 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="235.6" cy="1005.7" r="4"><title>Sep 23: p90 wait 2.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="262.0" cy="1012.5" r="4"><title>Sep 24: p90 wait 0.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="288.4" cy="1002.1" r="4"><title>Sep 25: p90 wait 3.7 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="314.8" cy="1011.5" r="4"><title>Sep 26: p90 wait 0.8 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="341.2" cy="980.4" r="4"><title>Sep 27: p90 wait 10.3 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="367.6" cy="1007.3" r="4"><title>Sep 28: p90 wait 2.1 min (19 runs sampled)</title></circle>
+  <circle class="l2d" cx="394.0" cy="1009.7" r="4"><title>Sep 29: p90 wait 1.3 min (18 runs sampled)</title></circle>
+  <circle class="l2d" cx="420.4" cy="1009.7" r="4"><title>Sep 30: p90 wait 1.3 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="446.8" cy="1009.9" r="4"><title>Oct 1: p90 wait 1.3 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="473.2" cy="1006.6" r="4"><title>Oct 2: p90 wait 2.3 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="499.6" cy="1006.0" r="4"><title>Oct 3: p90 wait 2.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="526.0" cy="1010.2" r="4"><title>Oct 4: p90 wait 1.2 min (18 runs sampled)</title></circle>
+  <circle class="l2d" cx="552.4" cy="991.2" r="4"><title>Oct 5: p90 wait 7.0 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="578.8" cy="993.0" r="4"><title>Oct 6: p90 wait 6.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="605.2" cy="1002.1" r="4"><title>Oct 7: p90 wait 3.7 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="631.6" cy="1008.9" r="4"><title>Oct 8: p90 wait 1.6 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="658.0" cy="982.6" r="4"><title>Oct 9: p90 wait 9.7 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="684.4" cy="989.0" r="4"><title>Oct 10: p90 wait 7.7 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="710.8" cy="929.3" r="4"><title>Oct 11: p90 wait 26.1 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="737.2" cy="960.3" r="4"><title>Oct 12: p90 wait 16.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="763.6" cy="1000.1" r="4"><title>Oct 13: p90 wait 4.3 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="790.0" cy="963.6" r="4"><title>Oct 14: p90 wait 15.5 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="816.4" cy="998.0" r="4"><title>Oct 15: p90 wait 4.9 min (24 runs sampled)</title></circle>
+  <circle class="l2d" cx="842.8" cy="1012.5" r="4"><title>Oct 16: p90 wait 0.5 min (18 runs sampled)</title></circle>
+  <text class="lbl" x="730.0" y="870">◆ CI change merged</text>
+  <circle class="l2d" cx="688.0" cy="866" r="4"/>
+  <text class="lbl" x="698.0" y="870">p90</text>
+  <circle class="l1d" cx="620.0" cy="866" r="4"/>
+  <text class="lbl" x="630.0" y="870">median</text>
+  <text class="meta" x="24" y="1058">Source: GitHub API. Faded bar = today so far. Days are UTC. Wait and runner time are sampled from about 24 runs a day.</text>
 </g>
 </svg>
