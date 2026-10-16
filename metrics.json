@@ -411,10 +411,35 @@
       "title": "Fix #3958: Support ASCII code pages and PC-COBOL zoned signs in Target config (#3961)"
      }
     ],
-    "runner_min_est": 2640,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 4992,
+    "sampled_min_by_origin": {
+     "agent": 26.8,
+     "main": 25.0,
+     "other": 156.1
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 2.6,
+     "CodeQL Security Scan": 12.1,
+     "Configured Graph Update: pip in /. #1595150580": 0.7,
+     "Dead Key Audit": 0.2,
+     "Full Suite Gate (All OS x Python)": 117.5,
+     "Generated Java Compiles": 36.6,
+     "GitGalaxy Smoke Tests": 18.9,
+     "GitGalaxy Zero-Trust Pipeline": 2.8,
+     "Mainframe Ground Truth": 15.1,
+     "Mypy Audit": 0.6,
+     "pages build and deployment": 1.0
+    },
     "sampled_runs": 19,
-    "wait_median": 0.18,
-    "wait_p90": 2.07
+    "wait_median": 0.05,
+    "wait_p90": 2.2
    },
    "merged": 19,
    "merged_by_class": {
@@ -439,10 +464,38 @@
       "title": "#3989 phase 2: CICS crucible runner, baseline ratchet and CI (#4000)"
      }
     ],
-    "runner_min_est": 3628,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 3893,
+    "sampled_min_by_origin": {
+     "agent": 64.7,
+     "main": 29.8,
+     "other": 1.0
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 0.9,
+     "CICS Crucible": 3.4,
+     "CodeQL Security Scan": 2.5,
+     "Dead Key Audit": 0.2,
+     "Deploy Museum of Code Docs": 1.3,
+     "GitGalaxy Smoke Tests": 56.6,
+     "GitGalaxy Zero-Trust Pipeline": 1.9,
+     "Golden Master Change Guard": 1.0,
+     "Mainframe Ground Truth": 14.7,
+     "Muninn Security Scan": 4.1,
+     "Mypy Audit": 0.5,
+     "Ruff Audit": 0.5,
+     "pages build and deployment": 0.5,
+     "unicode-gauntlet": 7.3
+    },
     "sampled_runs": 18,
-    "wait_median": 0.03,
-    "wait_p90": 1.33
+    "wait_median": 0.38,
+    "wait_p90": 1.8
    },
    "merged": 20,
    "merged_by_class": {
@@ -467,10 +520,43 @@
       "title": "#4023: COBOL paragraph / branch coverage per program (CICS crucible, CardDemo, cobol4j) (#4027)"
      }
     ],
-    "runner_min_est": 2145,
+    "reruns": {
+     "attempts": 1,
+     "by_workflow": {
+      "Muninn Security Scan": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 1,
+     "runs": 1
+    },
+    "runner_min_est": 1578,
+    "sampled_min_by_origin": {
+     "agent": 56.5,
+     "main": 28.4,
+     "other": 5.9
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 4.1,
+     "CICS Crucible": 7.4,
+     "CodeQL Security Scan": 5.7,
+     "Dead Key Audit": 0.2,
+     "Deploy Museum of Code Docs": 1.0,
+     "GitGalaxy Smoke Tests": 16.1,
+     "Golden Crucible Resilience Test": 3.1,
+     "Golden Master Change Guard": 0.8,
+     "Mainframe Ground Truth": 12.4,
+     "Muninn Security Scan": 14.0,
+     "Tree-sitter Accuracy Audit": 2.6,
+     "pages build and deployment": 2.1,
+     "unicode-gauntlet": 21.2
+    },
     "sampled_runs": 24,
     "wait_median": 0.05,
-    "wait_p90": 1.33
+    "wait_p90": 0.47
    },
    "merged": 16,
    "merged_by_class": {
@@ -499,9 +585,37 @@
       "title": "chore: bump muninn to v0.3.13 (#4086)"
      }
     ],
-    "runner_min_est": 3571,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 2140,
+    "sampled_min_by_origin": {
+     "agent": 69.4,
+     "main": 9.9,
+     "other": 3.7
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 2.8,
+     "CodeQL Security Scan": 3.1,
+     "Dead Key Audit": 0.1,
+     "Deploy Museum of Code Docs": 1.1,
+     "GitGalaxy Smoke Tests": 20.5,
+     "GitGalaxy Zero-Trust Pipeline": 2.1,
+     "Golden Crucible Resilience Test": 13.2,
+     "Graph Accuracy Audit": 8.6,
+     "Mainframe Ground Truth": 11.9,
+     "Muninn Security Scan": 14.2,
+     "Mypy Audit": 1.1,
+     "Ruff Audit": 0.3,
+     "Tri-Comparison Audit": 1.1,
+     "pages build and deployment": 2.8
+    },
     "sampled_runs": 24,
-    "wait_median": 0.07,
+    "wait_median": 0.05,
     "wait_p90": 1.27
    },
    "merged": 30,
@@ -1764,7 +1878,7 @@
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 790,
+    "bot_runs": 972,
     "ci_changes": [
      {
       "pr": 5223,
@@ -1797,6 +1911,10 @@
      {
       "pr": 5265,
       "title": "CI: restore the pinned Db2 image from actions/cache, not icr.io per shard (Fixes #5262) (#5265)"
+     },
+     {
+      "pr": 5281,
+      "title": "Generated progress page: burned-estate ladder, components, eras, burn-down, Gap Atlas; READMEs link it (Part of #5280) (#5281)"
      }
     ],
     "reruns": {
@@ -1817,45 +1935,48 @@
      "passed": 1,
      "runs": 7
     },
-    "runner_min_est": 8975,
+    "runner_min_est": 6840,
     "sampled_min_by_origin": {
-     "agent": 38.0,
-     "main": 46.2,
+     "agent": 19.7,
+     "main": 48.4,
      "other": 4.5
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.0,
-     "CI shepherd (reconcile)": 0.8,
+     "CI shepherd (label events)": 0.9,
+     "CI shepherd (reconcile)": 1.2,
      "CICS Crucible": 18.5,
-     "GitGalaxy Smoke Tests": 19.1,
-     "GitGalaxy Zero-Trust Pipeline": 7.2,
-     "Main Watch": 0.6,
-     "Mainframe Ground Truth": 35.3,
+     "Deploy Museum of Code Docs": 1.4,
+     "Det Sweep": 1.3,
+     "GitGalaxy Smoke Tests": 0.1,
+     "GitGalaxy Zero-Trust Pipeline": 7.7,
+     "Main Watch": 0.7,
+     "Mainframe Ground Truth": 33.2,
      "Mypy Audit": 0.6,
+     "Ports Compile": 0.1,
      "Small Audits": 1.1,
-     "pages build and deployment": 1.2,
-     "post-merge": 0.3
+     "pages build and deployment": 2.0
     },
-    "sampled_runs": 18,
+    "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 0.05
+    "wait_p90": 0.28
    },
-   "merged": 41,
+   "merged": 48,
    "merged_by_class": {
-    "agent": 32,
+    "agent": 39,
     "automation": 4,
     "other": 5
    },
    "runs": {
-    "cancelled": 296,
-    "failure": 32,
-    "skipped": 519,
-    "success": 1491,
-    "total": 2340
+    "cancelled": 406,
+    "failure": 35,
+    "skipped": 623,
+    "success": 1812,
+    "total": 2883
    }
   }
  },
- "open_prs": 4,
+ "open_prs": 3,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T18:08Z"
+ "updated": "2026-10-16T21:21Z"
 }
