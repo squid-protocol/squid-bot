@@ -221,7 +221,7 @@ $ ci-digest 4976
 #### Learned Flakes (`flake-history`)
 CLI command: `flake-history [--json] [--file-issues]`
 
-GitHub already records the evidence: a rerun workflow run has `run_attempt > 1`, and its jobs from every attempt are listed. `flake-history` finds the jobs that failed and then passed on a rerun of the same run over the last 14 days. A job that passed on a rerun at least twice, with at least half its reruns passing, is *learned flaky*. `ci_shepherd` refreshes that cache in the background every 6 hours and treats such a check's first failure as a `flake`. `--file-issues` opens one cleanup issue per learned-flaky job (once).
+GitHub already records the evidence: a rerun workflow run has `run_attempt > 1`, and its jobs from every attempt are listed. `flake-history` finds the jobs that failed and then passed on a rerun of the same run over the last 14 days. A job that passed on a rerun at least twice, with at least 80% of its reruns passing, is *learned flaky* (on GitGalaxy's first 14 days: the four Db2 shards and Muninn, not the broad `det` and `full-suite` jobs, whose reruns pass only because a timing flake sits in one of their thousands of tests). In GitGalaxy each job also carries why its first attempt failed, from `ci_rerun_stats.py`'s classifier. `ci_shepherd` refreshes that cache in the background every 6 hours and treats such a check's first failure as a `flake`. `--file-issues` opens one cleanup issue per learned-flaky job (once).
 
 ---
 
