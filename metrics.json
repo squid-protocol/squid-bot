@@ -60,6 +60,11 @@
     "wait_p90": 1.18
    },
    "merged": 25,
+   "merged_by_class": {
+    "agent": 9,
+    "automation": 0,
+    "other": 16
+   },
    "runs": {
     "cancelled": 10,
     "failure": 10,
@@ -83,6 +88,11 @@
     "wait_p90": 0.63
    },
    "merged": 25,
+   "merged_by_class": {
+    "agent": 13,
+    "automation": 6,
+    "other": 6
+   },
    "runs": {
     "cancelled": 18,
     "failure": 13,
@@ -101,6 +111,11 @@
     "wait_p90": 0.63
    },
    "merged": 17,
+   "merged_by_class": {
+    "agent": 13,
+    "automation": 0,
+    "other": 4
+   },
    "runs": {
     "cancelled": 25,
     "failure": 30,
@@ -124,6 +139,11 @@
     "wait_p90": 0.43
    },
    "merged": 17,
+   "merged_by_class": {
+    "agent": 12,
+    "automation": 0,
+    "other": 5
+   },
    "runs": {
     "cancelled": 13,
     "failure": 15,
@@ -142,6 +162,11 @@
     "wait_p90": 0.45
    },
    "merged": 7,
+   "merged_by_class": {
+    "agent": 0,
+    "automation": 0,
+    "other": 7
+   },
    "runs": {
     "cancelled": 14,
     "failure": 17,
@@ -160,6 +185,11 @@
     "wait_p90": 0.73
    },
    "merged": 24,
+   "merged_by_class": {
+    "agent": 12,
+    "automation": 0,
+    "other": 12
+   },
    "runs": {
     "cancelled": 9,
     "failure": 17,
@@ -195,6 +225,11 @@
     "wait_p90": 2.55
    },
    "merged": 73,
+   "merged_by_class": {
+    "agent": 45,
+    "automation": 0,
+    "other": 28
+   },
    "runs": {
     "cancelled": 54,
     "failure": 8,
@@ -222,6 +257,11 @@
     "wait_p90": 0.45
    },
    "merged": 82,
+   "merged_by_class": {
+    "agent": 40,
+    "automation": 0,
+    "other": 42
+   },
    "runs": {
     "cancelled": 33,
     "failure": 9,
@@ -269,6 +309,11 @@
     "wait_p90": 3.67
    },
    "merged": 102,
+   "merged_by_class": {
+    "agent": 55,
+    "automation": 5,
+    "other": 42
+   },
    "runs": {
     "cancelled": 170,
     "failure": 31,
@@ -312,6 +357,11 @@
     "wait_p90": 0.77
    },
    "merged": 89,
+   "merged_by_class": {
+    "agent": 45,
+    "automation": 0,
+    "other": 44
+   },
    "runs": {
     "cancelled": 170,
     "failure": 13,
@@ -339,6 +389,11 @@
     "wait_p90": 10.33
    },
    "merged": 75,
+   "merged_by_class": {
+    "agent": 46,
+    "automation": 0,
+    "other": 29
+   },
    "runs": {
     "cancelled": 136,
     "failure": 20,
@@ -362,6 +417,11 @@
     "wait_p90": 2.07
    },
    "merged": 19,
+   "merged_by_class": {
+    "agent": 8,
+    "automation": 1,
+    "other": 10
+   },
    "runs": {
     "cancelled": 29,
     "failure": 13,
@@ -385,6 +445,11 @@
     "wait_p90": 1.33
    },
    "merged": 20,
+   "merged_by_class": {
+    "agent": 17,
+    "automation": 0,
+    "other": 3
+   },
    "runs": {
     "cancelled": 51,
     "failure": 10,
@@ -408,6 +473,11 @@
     "wait_p90": 1.33
    },
    "merged": 16,
+   "merged_by_class": {
+    "agent": 12,
+    "automation": 0,
+    "other": 4
+   },
    "runs": {
     "cancelled": 34,
     "failure": 10,
@@ -435,6 +505,11 @@
     "wait_p90": 1.27
    },
    "merged": 30,
+   "merged_by_class": {
+    "agent": 21,
+    "automation": 0,
+    "other": 9
+   },
    "runs": {
     "cancelled": 26,
     "failure": 11,
@@ -466,6 +541,11 @@
     "wait_p90": 4.62
    },
    "merged": 66,
+   "merged_by_class": {
+    "agent": 47,
+    "automation": 1,
+    "other": 18
+   },
    "runs": {
     "cancelled": 130,
     "failure": 35,
@@ -489,6 +569,11 @@
     "wait_p90": 4.02
    },
    "merged": 62,
+   "merged_by_class": {
+    "agent": 33,
+    "automation": 0,
+    "other": 29
+   },
    "runs": {
     "cancelled": 146,
     "failure": 29,
@@ -524,6 +609,11 @@
     "wait_p90": 3.08
    },
    "merged": 62,
+   "merged_by_class": {
+    "agent": 31,
+    "automation": 0,
+    "other": 31
+   },
    "runs": {
     "cancelled": 105,
     "failure": 29,
@@ -575,6 +665,11 @@
     "wait_p90": 10.17
    },
    "merged": 76,
+   "merged_by_class": {
+    "agent": 49,
+    "automation": 0,
+    "other": 27
+   },
    "runs": {
     "cancelled": 246,
     "failure": 53,
@@ -606,6 +701,11 @@
     "wait_p90": 4.3
    },
    "merged": 50,
+   "merged_by_class": {
+    "agent": 45,
+    "automation": 0,
+    "other": 5
+   },
    "runs": {
     "cancelled": 157,
     "failure": 49,
@@ -661,6 +761,11 @@
     "wait_p90": 17.33
    },
    "merged": 44,
+   "merged_by_class": {
+    "agent": 33,
+    "automation": 0,
+    "other": 11
+   },
    "runs": {
     "cancelled": 181,
     "failure": 64,
@@ -688,6 +793,11 @@
     "wait_p90": 1.5
    },
    "merged": 25,
+   "merged_by_class": {
+    "agent": 24,
+    "automation": 0,
+    "other": 1
+   },
    "runs": {
     "cancelled": 49,
     "failure": 33,
@@ -739,6 +849,11 @@
     "wait_p90": 14.15
    },
    "merged": 64,
+   "merged_by_class": {
+    "agent": 45,
+    "automation": 1,
+    "other": 18
+   },
    "runs": {
     "cancelled": 190,
     "failure": 80,
@@ -828,12 +943,39 @@
       "title": "ci: make stalled PRs and hung tests visible (shepherd:reapprove, pytest --timeout) (#4865)"
      }
     ],
-    "runner_min_est": 34633,
+    "runner_min_est": 51727,
+    "sampled_min_by_origin": {
+     "agent": 238.5,
+     "main": 626.0
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.5,
+     "CI shepherd (reconcile)": 0.2,
+     "Deploy Museum of Code Docs": 1.3,
+     "Fact Cross-check": 3.3,
+     "Full Suite Gate (All OS x Python)": 758.8,
+     "Generated Java Compiles": 22.6,
+     "GitGalaxy Smoke Tests": 32.9,
+     "GitGalaxy Zero-Trust Pipeline": 2.9,
+     "Golden Master Change Guard": 1.0,
+     "Main Watch": 0.1,
+     "Mainframe Ground Truth": 24.8,
+     "Muninn Security Scan": 8.3,
+     "Mypy Audit": 0.5,
+     "Tree-sitter Accuracy Audit": 7.0,
+     "pages build and deployment": 0.4,
+     "post-merge": 0.1
+    },
     "sampled_runs": 24,
-    "wait_median": 0.1,
-    "wait_p90": 10.67
+    "wait_median": 0.65,
+    "wait_p90": 7.68
    },
    "merged": 33,
+   "merged_by_class": {
+    "agent": 29,
+    "automation": 0,
+    "other": 4
+   },
    "runs": {
     "cancelled": 238,
     "failure": 37,
@@ -883,12 +1025,36 @@
       "title": "ci: shepherd reconcile wakes on the required checks only and coalesces bursts (Part of #4935) (#4936)"
      }
     ],
-    "runner_min_est": 8891,
+    "runner_min_est": 20466,
+    "sampled_min_by_origin": {
+     "agent": 161.3,
+     "main": 43.1
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.2,
+     "CI shepherd (reconcile)": 0.8,
+     "CICS Crucible": 13.4,
+     "CodeQL Security Scan": 4.3,
+     "Deploy Museum of Code Docs": 0.8,
+     "Det Sweep": 119.9,
+     "Fact Cross-check": 3.6,
+     "Generated Java Compiles": 21.5,
+     "GitGalaxy Smoke Tests": 27.8,
+     "GitGalaxy Zero-Trust Pipeline": 3.1,
+     "Golden Crucible Resilience Test": 7.2,
+     "Main Watch": 0.2,
+     "Small Audits": 1.5
+    },
     "sampled_runs": 24,
-    "wait_median": 3.15,
-    "wait_p90": 7.25
+    "wait_median": 9.33,
+    "wait_p90": 26.05
    },
    "merged": 40,
+   "merged_by_class": {
+    "agent": 34,
+    "automation": 0,
+    "other": 6
+   },
    "runs": {
     "cancelled": 612,
     "failure": 33,
@@ -930,12 +1096,37 @@
       "title": "evidence: the det coverage ledger reads batch (runs) and CALL (calls) coverage lines (#5008) (#5011)"
      }
     ],
-    "runner_min_est": 31389,
+    "runner_min_est": 20546,
+    "sampled_min_by_origin": {
+     "agent": 154.8,
+     "main": 27.2,
+     "other": 15.2
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.5,
+     "CI shepherd (reconcile)": 0.4,
+     "CICS Crucible": 26.4,
+     "CodeQL Security Scan": 4.7,
+     "Det Sweep": 125.0,
+     "Estate Crucible": 1.0,
+     "Golden Crucible Resilience Test": 14.0,
+     "Main Watch": 0.2,
+     "Mainframe Ground Truth": 18.1,
+     "Muninn Security Scan": 5.4,
+     "Ruff Audit": 0.4,
+     "Small Audits": 1.1,
+     "post-merge": 0.1
+    },
     "sampled_runs": 24,
     "wait_median": 6.55,
-    "wait_p90": 14.95
+    "wait_p90": 16.52
    },
    "merged": 43,
+   "merged_by_class": {
+    "agent": 34,
+    "automation": 1,
+    "other": 8
+   },
    "runs": {
     "cancelled": 297,
     "failure": 71,
@@ -965,12 +1156,36 @@
       "title": "Generated aggregate docs: render in CI, publish to `generated`, never commit (#5057) (#5062)"
      }
     ],
-    "runner_min_est": 12976,
+    "runner_min_est": 13738,
+    "sampled_min_by_origin": {
+     "agent": 176.2,
+     "main": 6.9
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.9,
+     "CI shepherd (reconcile)": 0.9,
+     "Det Sweep": 127.6,
+     "Estate Crucible": 0.5,
+     "Evidence Pages": 0.6,
+     "Generated Java Compiles": 20.6,
+     "GitGalaxy Zero-Trust Pipeline": 2.9,
+     "Main Watch": 0.7,
+     "Mainframe Ground Truth": 15.3,
+     "Mypy Audit": 0.5,
+     "Small Audits": 1.6,
+     "Tree-sitter Accuracy Audit": 4.7,
+     "rosetta-audit": 6.2
+    },
     "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 5.65
+    "wait_p90": 4.28
    },
    "merged": 31,
+   "merged_by_class": {
+    "agent": 29,
+    "automation": 0,
+    "other": 2
+   },
    "runs": {
     "cancelled": 174,
     "failure": 37,
@@ -981,7 +1196,7 @@
   },
   "2026-10-14": {
    "detail": {
-    "bot_runs": 1284,
+    "bot_runs": 1293,
     "ci_changes": [
      {
       "pr": 5071,
@@ -1028,22 +1243,157 @@
       "title": "CI critical path: ignore the duplicate evidence_components run in the full suite; evidence._match compiled and memoised (Part of #5162) (#5163)"
      }
     ],
-    "runner_min_est": 20993,
+    "runner_min_est": 61617,
+    "sampled_min_by_origin": {
+     "agent": 183.9,
+     "main": 285.2
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.3,
+     "CI shepherd (reconcile)": 0.2,
+     "CodeQL Security Scan": 4.7,
+     "Det Sweep": 122.6,
+     "Full Suite Gate (All OS x Python)": 224.2,
+     "Generated Docs": 0.5,
+     "GitGalaxy Smoke Tests": 65.9,
+     "Main Watch": 0.7,
+     "Mainframe Ground Truth": 34.1,
+     "Muninn Security Scan": 7.6,
+     "Mypy Audit": 0.6,
+     "Ruff Audit": 0.5,
+     "Small Audits": 2.6,
+     "unicode-gauntlet": 4.5
+    },
     "sampled_runs": 24,
-    "wait_median": 5.47,
-    "wait_p90": 18.65
+    "wait_median": 0.28,
+    "wait_p90": 15.52
    },
-   "merged": 53,
+   "merged": 54,
+   "merged_by_class": {
+    "agent": 53,
+    "automation": 0,
+    "other": 1
+   },
    "runs": {
-    "cancelled": 746,
-    "failure": 46,
-    "skipped": 537,
-    "success": 2328,
-    "total": 3668
+    "cancelled": 747,
+    "failure": 47,
+    "skipped": 538,
+    "success": 2359,
+    "total": 3691
+   }
+  },
+  "2026-10-15": {
+   "detail": {
+    "bot_runs": 1263,
+    "ci_changes": [
+     {
+      "pr": 5165,
+      "title": "Ground Truth: plan job proves nothing when a PR changes no input (Part of #5164) (#5165)"
+     },
+     {
+      "pr": 5169,
+      "title": "CI: test-time ratchet, per-test gate and suite budget (Part of #5166) (#5169)"
+     },
+     {
+      "pr": 5177,
+      "title": "CI: publish-history waits for ground-truth-part to have run (Closes #5176) (#5177)"
+     },
+     {
+      "pr": 5179,
+      "title": "tests: ten tests over the 10 s limit are faster, same checks (Closes #5178) (#5179)"
+     },
+     {
+      "pr": 5182,
+      "title": "ci: pin the smoke-test pytest-split durations once per run, lint the class (Part of #5135, #5114) (#5182)"
+     },
+     {
+      "pr": 5183,
+      "title": "CI queue: fold pre-gate jobs, path-gate Muninn/CodeQL/golden-crucible (Part of #5132) (#5183)"
+     },
+     {
+      "pr": 5190,
+      "title": "ci: key the Generated Java same-base cache on the generation inputs' content (Part of #5137, #5142) (#5190)"
+     },
+     {
+      "pr": 5191,
+      "title": "ci: deselect the extraction ReDoS sweeps on a PR with no sweep input (Part of #5166) (#5191)"
+     },
+     {
+      "pr": 5207,
+      "title": "evidence report: generated is the single source; main keeps a stub (Closes #5206) (#5207)"
+     }
+    ],
+    "runner_min_est": 8202,
+    "sampled_min_by_origin": {
+     "agent": 65.6,
+     "main": 2.4
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 1.2,
+     "CI shepherd (reconcile)": 1.3,
+     "CICS Crucible": 21.5,
+     "Det Sweep": 1.2,
+     "Fact Cross-check": 2.6,
+     "Generated Java Compiles": 23.7,
+     "GitGalaxy Zero-Trust Pipeline": 3.8,
+     "Golden Crucible Resilience Test": 7.1,
+     "Main Watch": 1.1,
+     "Mypy Audit": 1.1,
+     "unicode-gauntlet": 3.3
+    },
+    "sampled_runs": 24,
+    "wait_median": 0.53,
+    "wait_p90": 5.18
+   },
+   "merged": 43,
+   "merged_by_class": {
+    "agent": 41,
+    "automation": 0,
+    "other": 2
+   },
+   "runs": {
+    "cancelled": 348,
+    "failure": 78,
+    "skipped": 733,
+    "success": 2471,
+    "total": 3630
+   }
+  },
+  "2026-10-16": {
+   "detail": {
+    "bot_runs": 23,
+    "ci_changes": [],
+    "runner_min_est": 89,
+    "sampled_min_by_origin": {
+     "agent": 9.4,
+     "main": 0.5
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.8,
+     "CI shepherd (reconcile)": 0.5,
+     "Estate Crucible": 0.6,
+     "Golden Crucible Resilience Test": 8.1
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.03,
+    "wait_p90": 1.52
+   },
+   "merged": 1,
+   "merged_by_class": {
+    "agent": 1,
+    "automation": 0,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 0,
+    "failure": 1,
+    "skipped": 6,
+    "success": 49,
+    "total": 60
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 6,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-14T23:46Z"
+ "updated": "2026-10-16T00:33Z"
 }
