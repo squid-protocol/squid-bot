@@ -9,13 +9,13 @@
 Per queued PR, each pass (tests/tools/pr_check.py for the state, tests/tools/ci_digest.py for the failures):
   merged / closed         leaves the queue
   waits on --after PR     skipped until that one merged
-  green + mergeable       `pr_check.merge` (marks ready, squash-merges pinned to the checked head); a merge that moved
+  green + mergeable       `pr_check.merge` (a draft is only marked ready, merged on a later pass once its CI is green; else squash-merges pinned
+                          to the checked head); a merge that moved
                           the crucible pin syncs the shared checkouts, as `pr_check.py --merge` does
   checks pending          waits
-  behind main, no failed/pending checks  `gh pr update-branch`, ONCE per head SHA (#4790): the push restarts
-                          its checks, and a later pass merges it
+  behind main             never updated to stay current (#5134): a push restarts CI. It waits like any PR
   failed: infra / flake   `gh run rerun RUN --failed`, ONCE per (head SHA, check)
-  failed: dirty           one PR comment per head SHA: merge origin/main, regenerate generated files with their tools
+  failed: dirty           one PR comment per head SHA: merge origin/main (the conflict is the reason), regenerate generated files with their tools
   failed: real            one PR comment per head SHA with the digest (error lines, log tail, local repro) -- the
                           fixer's input; $CI_SHEPHERD_FIXER, when set, is run as `$CI_SHEPHERD_FIXER N DIGEST.json`
 A new head SHA (someone pushed) resets the once-per-SHA memory. Nothing here reads a raw log or guesses a fix.
@@ -164,6 +164,9 @@ def _pass_one(
     sha = res["head_sha"]
     if res["ready"]:
         errors = pr_check.merge(res, run)
+        if pr_check.draft_marked_ready(errors):
+            did.append(f"#{n} was a draft: marked ready; its CI starts, a later pass merges")
+            return
         if errors:
             did.append(f"#{n} merge failed: {'; '.join(errors)}")
             return
@@ -174,13 +177,9 @@ def _pass_one(
         time.sleep(settle)  # GitHub recomputes the others' mergeability
         return
     failed = res["checks"]["failed"]
-    if not failed and not res["checks"]["pending"] and res["mergeable_state"] == "behind":
-        if once(state, n, sha, "update-branch"):
-            r = run(["gh", "pr", "update-branch", str(n), "-R", REPO_SLUG])
-            did.append(f"#{n} behind: branch updated" if not r.returncode
-                       else f"#{n} behind: update-branch failed: {r.stderr.strip()[:120]}")  # fmt: skip
-        else:
-            did.append(f"#{n} behind main: branch already updated for head {sha[:12]}, waiting for its checks")
+    if not failed and res["mergeable_state"] == "behind" and not res["checks"]["pending"]:
+        # green but GitHub calls it behind (classic strict protection): a human merges main or clears strict (#5134)
+        did.append(f"#{n} behind main, not updated (#5134): merge it by hand or clear branch-protection strict")
         return
     if not failed and res["mergeable_state"] != "dirty":
         did.append(f"#{n} waiting: {len(res['checks']['pending'])} pending")
@@ -199,7 +198,9 @@ def _pass_one(
             and all(reruns_used_up(state, n, sha, f"rerun:{f['check']}", INFRA_RETRIES) for f in d["failed"])):  # fmt: skip
         errors = pr_check.merge(res, run)
         names = ", ".join(f["check"] for f in d["failed"])
-        if errors:
+        if pr_check.draft_marked_ready(errors):
+            did.append(f"#{n} was a draft: marked ready; its CI starts, a later pass decides")
+        elif errors:
             did.append(f"#{n} merge failed: {'; '.join(errors)}")
         else:
             state["queue"].remove(n)

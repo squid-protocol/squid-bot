@@ -46,7 +46,11 @@ def test_merge_label_by_writer_marks_ready_and_enables_auto_merge():
     acts = sg.decide(
         snap(draft=True, action="labeled", event_label=sg.MERGE, sender={"login": "joe", "permission": "admin"})
     )
-    assert kinds(acts) == ["ready", "automerge"]
+    # #5104: a draft is only marked ready; auto-merge waits until the ready_for_review runs exist
+    assert kinds(acts) == ["ready"]
+    acts = sg.decide(
+        snap(draft=False, action="labeled", event_label=sg.MERGE, sender={"login": "joe", "permission": "admin"})
+    )
     assert by_op(acts, "automerge")[0] == {"op": "automerge", "on": True, "sha": SHA}
 
 
@@ -221,14 +225,12 @@ def test_status_labels_clear_when_no_request_label_is_left():
     assert by_op(acts, "labels") == [{"op": "labels", "add": [], "remove": [sg.NEEDS]}]
 
 
-def test_behind_and_green_updates_the_branch_but_not_when_failing_or_held():
-    assert "update_branch" in kinds(sg.decide(snap(mergeable_state="behind")))  # labelled, behind, green
-    acts = sg.decide(snap(mergeable_state="behind", labels=[sg.MERGE, sg.HOLD]))
-    assert "update_branch" not in kinds(acts)
-    acts = sg.decide(snap(mergeable_state="behind", failed=[failure("real")]))
-    assert "update_branch" not in kinds(acts)
-    acts = sg.decide(snap(mergeable_state="behind", auto_merge=True))
-    assert "update_branch" in kinds(acts)
+def test_behind_main_is_never_acted_on_whatever_the_state():
+    """#5134 (option A): a push restarts CI, so the bot never updates a branch just because it is behind."""
+    for extra in ({}, {"labels": [sg.MERGE, sg.HOLD]}, {"failed": [failure("real")]}, {"auto_merge": True},
+                  {"labels": []}):  # fmt: skip
+        acts = sg.decide(snap(mergeable_state="behind", **extra))
+        assert "update_branch" not in kinds(acts), extra
 
 
 def test_dirty_pr_gets_the_merge_note_once():
@@ -259,7 +261,7 @@ class Gh:
             "number": 7,
             "state": "open",
             "merged": False,
-            "draft": True,
+            "draft": False,
             "auto_merge": None,
             "head": {"sha": SHA, "ref": "fix/x", "repo": {"full_name": sg.REPO_SLUG}},
             "labels": [{"name": sg.MERGE}],
@@ -278,6 +280,7 @@ class Gh:
         # the bot's own comments: the approval marker of the labelled head, written by the bot's account (BOT)
         self.comments = [bot_comment(f"<!-- shepherd:approved sha={SHA} by=joe -->")]
         self.parents = {}  # commit sha -> parent shas
+        self.compare = {}  # (base, head) -> the compare response; an absent pair is an unreadable compare
         self.pushed_at = "2026-10-10T19:59:00Z"  # when the head became the head (its first check suite)
 
     def api(self, path):
@@ -289,6 +292,10 @@ class Gh:
             return [self.pr]
         if re.fullmatch(r"repos/[^/]+/[^/]+/commits/[0-9a-f]{40}", bare):
             return {"parents": [{"sha": x} for x in self.parents.get(bare.rsplit("/", 1)[1], [])]}
+        if m := re.search(r"/compare/([^/]+)\.\.\.([0-9a-f]{40})$", bare):
+            if (m[1], m[2]) not in self.compare:
+                raise SystemExit("gh api compare failed")
+            return self.compare[(m[1], m[2])]
         if bare.endswith("/pulls/7"):
             return self.pr
         if bare.endswith("/pulls/6"):
@@ -439,11 +446,18 @@ def test_prs_for_head_selects_the_open_labelled_pr_of_that_commit():
 
 
 def test_gather_and_process_for_a_labelled_event_marks_ready_and_enables_auto_merge():
+    # #5104: a draft's heavy checks are skipped (green); the first pass only marks it ready, the next enables auto-merge
     gh = Gh()
+    gh.pr["draft"] = True
     gh.dep_state = "closed"  # #6 merged: no block
     lines = sg.process(7, gh.api, gh.run, {"action": "labeled", "label": sg.MERGE, "sender": "joe"})
-    assert lines == ["#7 ready for review: ok", "#7 auto-merge on: ok"]
-    assert any(c[:3] == ["gh", "pr", "ready"] for c in gh.cmds)
+    assert lines == ["#7 ready for review: ok"]
+    assert not any(c[:3] == ["gh", "pr", "merge"] for c in gh.cmds)
+    gh.pr["draft"] = False  # what `gh pr ready` did
+    gh.cmds.clear()
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert lines == ["#7 auto-merge on: ok"]
+    assert not any(c[:3] == ["gh", "pr", "ready"] for c in gh.cmds)
     merge = next(c for c in gh.cmds if c[:3] == ["gh", "pr", "merge"])
     assert "--auto" in merge and "--match-head-commit" in merge and merge[merge.index("--match-head-commit") + 1] == SHA
     assert f"repos/{sg.REPO_SLUG}/collaborators/joe/permission" in gh.calls
@@ -476,19 +490,15 @@ def test_gather_reads_the_matrix_on_the_head_and_dispatches_only_when_none_ran()
     assert any(c[:3] == ["gh", "pr", "merge"] and "--auto" in c for c in gh.cmds)
 
 
-def test_update_branch_writes_the_marker_pair_around_the_push():
-    s = snap(mergeable_state="behind", head_sha="b" * 40)
-    log_cmds = []
+def test_apply_has_no_update_branch_op_any_more():
+    cmds = []
 
     def run(argv):
-        log_cmds.append(argv)
-        return subprocess.CompletedProcess(argv, 0, "d" * 40 if "-q" in argv else "", "")
+        cmds.append(argv)
+        return subprocess.CompletedProcess(argv, 0, "", "")
 
-    lines = sg.apply(7, s, [{"op": "update_branch"}], run=run)
-    assert "shepherd-update from=" + "b" * 40 in " ".join(log_cmds[0])
-    assert log_cmds[1][:4] == ["gh", "pr", "update-branch", "7"]
-    assert "shepherd-update from=" + "b" * 40 + " to=" + "d" * 40 in " ".join(log_cmds[3])
-    assert all(line.endswith("ok") for line in lines)
+    sg.apply(7, snap(mergeable_state="behind", head_sha="b" * 40), [{"op": "update_branch"}], run=run)
+    assert cmds == []
 
 
 def test_event_facts_read_the_payload_as_data(tmp_path):
@@ -516,6 +526,80 @@ def test_failed_gh_call_is_reported_not_raised():
     s = snap()
     lines = sg.apply(7, s, [{"op": "ready"}], run=lambda argv: subprocess.CompletedProcess(argv, 1, "", "boom"))
     assert lines == ["#7 ready for review: FAILED: boom"]
+
+
+def test_rerun_refused_already_running_is_logged_as_skipped():
+    s = snap()
+
+    def run_already_running(argv):
+        return subprocess.CompletedProcess(argv, 1, "", "The workflow run is already running.")
+
+    lines = sg.apply(7, s, [{"op": "rerun", "run_id": 55, "check": "muninn"}], run=run_already_running)
+    assert lines == ["#7 rerun muninn (run 55): skipped (already running)"]
+
+
+def test_rerun_refused_already_running_in_stdout_is_logged_as_skipped():
+    s = snap()
+
+    def run_already_running(argv):
+        return subprocess.CompletedProcess(argv, 1, "HTTP 409: already running\n", "")
+
+    lines = sg.apply(7, s, [{"op": "rerun", "run_id": 55, "check": "muninn"}], run=run_already_running)
+    assert lines == ["#7 rerun muninn (run 55): skipped (already running)"]
+
+
+def test_rerun_failure_other_error_is_logged_as_failed():
+    s = snap()
+
+    def run_failed(argv):
+        return subprocess.CompletedProcess(argv, 1, "", "HTTP 500: Internal Server Error")
+
+    lines = sg.apply(7, s, [{"op": "rerun", "run_id": 55, "check": "muninn"}], run=run_failed)
+    assert lines == ["#7 rerun muninn (run 55): FAILED: HTTP 500: Internal Server Error"]
+
+
+def test_rerun_det_refused_already_running_is_logged_as_skipped():
+    s = snap()
+
+    def run_dispatch(argv):
+        if argv[:3] == ["gh", "run", "list"]:
+            return subprocess.CompletedProcess(argv, 0, "42\n", "")
+        if argv[:3] == ["gh", "run", "rerun"]:
+            return subprocess.CompletedProcess(argv, 1, "", "workflow run is already running")
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    lines = sg.apply(7, s, [{"op": "rerun_det", "sha": SHA}], run=run_dispatch)
+    assert lines == [f"#7 rerun {sg.DET_WORKFLOW} (run 42) for {sg.FULL}: skipped (already running)"]
+
+
+def test_rerun_det_failure_other_error_is_logged_as_failed():
+    s = snap()
+
+    def run_dispatch(argv):
+        if argv[:3] == ["gh", "run", "list"]:
+            return subprocess.CompletedProcess(argv, 0, "42\n", "")
+        if argv[:3] == ["gh", "run", "rerun"]:
+            return subprocess.CompletedProcess(argv, 1, "", "HTTP 404: Not Found")
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    lines = sg.apply(7, s, [{"op": "rerun_det", "sha": SHA}], run=run_dispatch)
+    assert lines == [f"#7 rerun {sg.DET_WORKFLOW} (run 42) for {sg.FULL}: FAILED: HTTP 404: Not Found"]
+
+
+def test_reconcile_exit_code_zero_when_rerun_skipped_already_running(monkeypatch):
+    monkeypatch.setattr(sg, "open_labelled", lambda api: [7])
+    monkeypatch.setattr(
+        sg, "process", lambda n, api, run, ev, dry_run: ["#7 rerun muninn (run 55): skipped (already running)"]
+    )
+    assert sg.main(["reconcile"]) == 0
+
+
+def test_reconcile_exit_code_one_when_action_failed(monkeypatch):
+    monkeypatch.setattr(sg, "open_labelled", lambda api: [7])
+    monkeypatch.setattr(
+        sg, "process", lambda n, api, run, ev, dry_run: ["#7 rerun muninn (run 55): FAILED: server error"]
+    )
+    assert sg.main(["reconcile"]) == 1
 
 
 # --- labels and the det planner -------------------------------------------------------------------------------------
@@ -695,3 +779,70 @@ def test_every_reconcile_pass_covers_all_labelled_prs():
     # a cancelled pending pass (one pending run per concurrency group) must not drop a PR until the cron
     rec = (REPO / "templates" / "workflows" / "shepherd-reconcile.yml").read_text(encoding="utf-8")
     assert "--head-sha" not in rec
+
+
+def _merge_of_main(gh, files_merge, files_main, files_pr=(("pr.py", "modified", "p1"),), main_status="behind"):
+    """A PR whose approved head is SHA and whose new head B is a merge of main commit M into it."""
+    b, m = "b" * 40, "e" * 40
+    gh.pr["head"]["sha"] = b
+    gh.parents = {b: [SHA, m]}
+    f = lambda rows: {"files": [{"filename": n, "status": s, "sha": h} for n, s, h in rows]}  # noqa: E731
+    gh.compare = {
+        ("main", m): {"status": main_status},
+        (SHA, b): f(files_merge),
+        (SHA, m): f(files_main),
+        (m, SHA): f(files_pr),
+    }
+
+
+def test_a_clean_merge_of_main_keeps_the_approval_and_the_label():
+    gh = Gh()
+    main_change = (("lib.py", "modified", "m1"),)
+    _merge_of_main(gh, main_change, main_change)
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert not any("unlabel" in x for x in lines)
+    assert not any(sg.REAPPROVE in " ".join(c) for c in gh.cmds)
+    assert any("approval marker for bbbbbbbbbbbb" in x for x in lines)
+    assert merged_by(gh)
+
+
+def test_a_merge_of_main_with_extra_changes_goes_to_reapproval():
+    gh = Gh()
+    _merge_of_main(gh, (("lib.py", "modified", "m1"), ("evil.py", "added", "x1")), (("lib.py", "modified", "m1"),))
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert any("unlabel" in x for x in lines) and not merged_by(gh)
+    assert any(sg.REAPPROVE in " ".join(c) for c in gh.cmds)
+
+
+def test_a_merge_that_resolved_a_conflict_in_a_file_the_pr_changed_goes_to_reapproval():
+    gh = Gh()
+    same = (("pr.py", "modified", "m1"),)
+    _merge_of_main(gh, same, same)  # main and the PR both touch pr.py: not a plain merge we can judge
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert any("unlabel" in x for x in lines) and not merged_by(gh)
+
+
+def test_a_merge_whose_other_parent_is_not_on_main_goes_to_reapproval():
+    gh = Gh()
+    same = (("lib.py", "modified", "m1"),)
+    _merge_of_main(gh, same, same, main_status="diverged")
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert any("unlabel" in x for x in lines) and not merged_by(gh)
+
+
+def test_an_unreadable_compare_falls_back_to_reapproval():
+    gh = Gh()
+    same = (("lib.py", "modified", "m1"),)
+    _merge_of_main(gh, same, same)
+    del gh.compare[(SHA, "e" * 40)]
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert any("unlabel" in x for x in lines) and not merged_by(gh)
+
+
+def test_an_ordinary_new_commit_goes_to_reapproval():
+    gh = Gh()
+    gh.pr["head"]["sha"] = "b" * 40
+    gh.parents = {"b" * 40: [SHA]}  # one parent: a plain commit on the approved head
+    lines = sg.process(7, gh.api, gh.run, None)
+    assert any("unlabel" in x for x in lines) and not merged_by(gh)
+    assert any(sg.REAPPROVE in " ".join(c) for c in gh.cmds)

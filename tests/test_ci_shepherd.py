@@ -17,8 +17,8 @@ class Gh:
     def __init__(self):
         self.prs, self.runs, self.calls = {}, {}, []
 
-    def pr(self, n, sha="a" * 40, state="open", mergeable=True, mstate="clean", runs=()):
-        self.prs[n] = {"number": n, "title": f"pr {n}", "state": state, "merged": state == "merged", "draft": True,
+    def pr(self, n, sha="a" * 40, state="open", mergeable=True, mstate="clean", runs=(), draft=False):
+        self.prs[n] = {"number": n, "title": f"pr {n}", "state": state, "merged": state == "merged", "draft": draft,
                        "head": {"sha": sha}, "node_id": f"N{n}", "mergeable": mergeable, "mergeable_state": mstate}  # fmt: skip
         self.runs[sha] = [{"id": i, "name": name, "status": "completed" if c else "in_progress", "conclusion": c,
                            "app": {"slug": "github-actions"}} for i, (name, c) in enumerate(runs, 1)]  # fmt: skip
@@ -65,6 +65,27 @@ def test_green_pr_is_merged_and_leaves_the_queue():
     did = step(gh, state)
     assert any("MERGED" in d for d in did) and state["queue"] == []
     assert ["gh", "pr", "merge"] == gh.calls[-1][:3]
+
+
+def test_green_draft_is_marked_ready_not_reported_as_a_failed_merge():
+    gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
+    gh.pr(1, draft=True, runs=[("ruff-audit", "success")])
+    did = step(gh, state)
+    assert any("marked ready" in d for d in did) and not any("merge failed" in d for d in did)
+    assert state["queue"] == [1]  # stays queued: a later pass merges once its CI is green
+    assert [c[:3] for c in gh.calls] == [["gh", "pr", "ready"]]
+    gh.prs[1]["draft"] = False  # the next pass sees it ready
+    did = step(gh, state)
+    assert any("MERGED" in d for d in did) and state["queue"] == []
+    assert ["gh", "pr", "merge"] == gh.calls[-1][:3]
+
+
+def test_a_draft_that_cannot_be_marked_ready_still_reports_failure():
+    gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
+    gh.pr(1, draft=True, runs=[("ruff-audit", "success")])
+    gh.run = lambda argv: subprocess.CompletedProcess(argv, 1, "", "boom")
+    did = step(gh, state)
+    assert any("merge failed" in d for d in did) and state["queue"] == [1]
 
 
 def test_pending_pr_waits_and_merged_pr_leaves():
@@ -186,27 +207,22 @@ def test_run_keeps_watching_an_empty_queue_unless_told(tmp_path, monkeypatch):
     assert sleeps == [5]  # an empty queue: it slept and would pass again
 
 
-def test_a_green_pr_behind_main_gets_its_branch_updated_once_per_head():
+def test_a_green_pr_behind_main_is_never_updated_by_the_shepherd():
+    """#5134: a push to a ready PR restarts its CI; being behind main is no reason for one."""
     gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
     gh.pr(1, mstate="behind", runs=[("ruff-audit", "success")])
     did = step(gh, state)
-    assert "#1 behind: branch updated" in did and state["queue"] == [1]
-    assert gh.calls == [["gh", "pr", "update-branch", "1", "-R", cs.REPO_SLUG]]
-    step(gh, state)  # the same head: no second update
-    assert len(gh.calls) == 1
+    assert any(d.startswith("#1 behind main, not updated") for d in did), did
+    step(gh, state)
+    assert gh.calls == [] and state["queue"] == [1]
 
 
-def test_a_pending_pr_behind_main_is_not_updated_yet():
-    gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
-    gh.pr(1, mstate="behind", runs=[("ruff-audit", None)])
-    assert "#1 waiting: 1 pending" in step(gh, state) and gh.calls == []
-
-
-def test_a_behind_pr_with_a_failed_check_is_not_updated():
-    gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
-    gh.pr(1, mstate="behind", runs=[("full-suite", "failure")])
-    step(gh, state, failing("real"))
-    assert not any(c[:3] == ["gh", "pr", "update-branch"] for c in gh.calls)
+def test_a_behind_pr_is_not_updated_pending_or_failed_either():
+    for runs, fail in ((("ruff-audit", None),), None), ((("full-suite", "failure"),), failing("real")):
+        gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
+        gh.pr(1, mstate="behind", runs=list(runs))
+        step(gh, state, *([fail] if fail else []))
+        assert not any(c[:3] == ["gh", "pr", "update-branch"] for c in gh.calls)
 
 
 def test_a_cancelled_non_required_matrix_leg_is_rerun_once_and_logged(monkeypatch):
@@ -232,9 +248,9 @@ def test_a_cancelled_non_required_matrix_leg_is_rerun_once_and_logged(monkeypatc
 
 
 def test_a_pass_that_would_be_silent_logs_the_pr_state(monkeypatch):
-    """Every queued PR gets a line per pass: a behind PR whose branch was already updated says so."""
+    """Every queued PR gets a line per pass, a behind one included."""
     gh, state = Gh(), {"queue": [1], "after": {}, "seen": {}}
     gh.pr(1, mstate="behind", runs=[("ruff-audit", "success")])
     step(gh, state)
-    did = step(gh, state)  # the same head: nothing to do, and the log says so
-    assert did and did[0].startswith("#1 behind main: branch already updated"), did
+    did = step(gh, state)
+    assert did and did[0].startswith("#1 behind main, not updated"), did

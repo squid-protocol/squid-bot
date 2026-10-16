@@ -44,8 +44,8 @@ REPRO: list[tuple[str, str]] = [
     (r"^ruff-audit$", GATES + " --only lint"),
     (r"^mypy-audit$", GATES + " --only audits"),
     (r"^(gauntlet|unicode-gauntlet)$", GATES + " --only gauntlet"),
-    (r"^Vault Sentinel$", GATES + " --only secrets"),
-    (r"^X-Ray Inspector$", GATES + " --only xray"),
+    (r"^Pre-gate \(", GATES + " --only secrets xray"),  # #5132: Vault Sentinel, X-Ray and Supply Chain in one job
+    (r"^(Vault Sentinel|X-Ray Inspector)$", GATES + " --only secrets xray"),  # the pre-#5132 job names
     (r"^crucible-audit", "tests/tools/box/golden-lock.sh " + GATES + " --only golden"),
     (r"^(full-suite|smoke-test)( part \d+/\d+)?$", "python -m pytest -q {tests}"),  # #4828: the suite runs in parts
     (r"^(det|shard \d+/\d+)$", SWEEP + " --cases {cases} --work /tmp/gitgalaxy-scratch/ci-digest/sweep"),
@@ -74,8 +74,10 @@ INFRA_CONCLUSIONS = {"cancelled", "startup_failure", "timed_out"}
 INFRA_LOG = re.compile(r"runner has received a shutdown signal|lost communication with the server|No space left on "
                        r"device|API rate limit exceeded|Could not resolve host|The operation was canceled|"
                        r"Error: The hosted runner|503 Service Unavailable|502 Bad Gateway|429 Too Many Requests|"
-                       r"toomanyrequests|Connection reset by peer|ECONNRESET|TLS handshake timeout|"
-                       r"Build container for action use|failed to solve: .*(registry|docker\.io)", re.I)  # fmt: skip
+                       r"toomanyrequests|504 Gateway Time-out|http status: 504|Gateway Time-out|"
+                       r"DownloadError.*Failed to fetch|Connection reset by peer|ECONNRESET|TLS handshake timeout|"
+                       r"Build container for action use|failed to solve: .*(registry|docker\.io)|"
+                       r"INFRASTRUCTURE \(not a code defect\)", re.I)  # fmt: skip
 ERROR = re.compile(r"##\[error\]|^(FAILED|ERROR) |Traceback \(most recent call last\)|AssertionError|\bFAIL\b|"
                    r"NOT PROVEN|error: |Error: ", re.I)  # fmt: skip
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
