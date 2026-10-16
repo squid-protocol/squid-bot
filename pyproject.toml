@@ -26,6 +26,7 @@ shepherd = "squid_bot.ci_shepherd:main"
 box-status = "squid_bot.box_status:main"
 ci-digest = "squid_bot.ci_digest:main"
 pr-check = "squid_bot.pr_check:main"
+flake-history = "squid_bot.flake_history:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

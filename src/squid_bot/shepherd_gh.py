@@ -20,14 +20,15 @@ Status (set and cleared by this module only): shepherd:needs-fix, shepherd:waiti
 Rules, all in decide() (pure: a snapshot in, actions out):
   * a request label added by someone without write access is removed, with a comment (their label, not ours);
   * a new head (synchronize) removes shepherd:merge with a comment, so a commit nobody approved never merges by
-    label. The one exception is this module's own `gh pr update-branch` (it leaves a marker comment first). The
+    label. The one exception is a plain merge of main (a worker's, or one the bot made before #5134; the latter leaves
+    a marker pair). The
     drop sets shepherd:reapprove, which outlives the request labels, so a PR that lost its approval is findable
     (`label:shepherd:reapprove`) instead of sitting silently (#4858 waited on a dropped label, 2026-10-10);
   * "Depends on #N" in the body blocks auto-merge until #N is merged;
   * an infra/flake failure is rerun up to INFRA_RERUNS times, RETRY_GAP seconds apart (the count is run_attempt
     of the run, kept by GitHub: no local state);
   * a real failure, a merge conflict or a red matrix gets ONE digest comment per head (marker in the comment);
-  * behind main and green on a labelled PR -> `gh pr update-branch`.
+  * behind main is NOT acted on: the bot never updates a branch to keep it current (#5134, option A).
 Nothing here checks out PR code: it reads PR metadata, check runs and job logs through the GitHub API only.
 Reused: pr_check (classify, paged, gh_api, merge conventions), ci_digest (triage and the digest text).
 """
@@ -181,8 +182,10 @@ def decide(s: dict[str, Any]) -> list[dict[str, Any]]:
         acts.append({"op": "approve", "sha": sha, "by": "carried from the bot's update"})
     want = MERGE in labels and not blocked
     if want and s["draft"]:
+        # #5104: a draft head's heavy checks were skipped, and a skip reads as green. Auto-merge waits for the next pass,
+        # after ready_for_review has started the real runs (shepherd-reconcile fires when they finish).
         acts.append({"op": "ready"})
-    if want and not s["auto_merge"]:
+    elif want and not s["auto_merge"]:
         acts.append({"op": "automerge", "on": True, "sha": sha})
     elif not want and s["auto_merge"] and (dropped or s.get("removed") == MERGE or req):
         acts.append({"op": "automerge", "on": False})
@@ -192,13 +195,16 @@ def decide(s: dict[str, Any]) -> list[dict[str, Any]]:
     needs: list[dict[str, Any]] = []
     waiting: list[dict[str, Any]] = []
     retrying: list[dict[str, Any]] = []
+    reran_runs: set[int] = set()
     for f in s["failed"]:
         t = f["triage"]
         if t == "main":
             waiting.append(f)
         elif t in ("infra", "flake") and f.get("run_id") is not None and f.get("attempts", 0) < INFRA_RERUNS:
-            if s["now"] - (f.get("updated_at") or 0) >= RETRY_GAP:
-                acts.append({"op": "rerun", "run_id": f["run_id"], "check": f["check"]})
+            rid = f["run_id"]
+            if rid not in reran_runs and s["now"] - (f.get("updated_at") or 0) >= RETRY_GAP:
+                acts.append({"op": "rerun", "run_id": rid, "check": f["check"]})
+                reran_runs.add(rid)
             retrying.append(f)
         else:  # real, a dirty tree, an infra failure with its reruns used up, or no run to rerun
             needs.append(f)
@@ -207,8 +213,8 @@ def decide(s: dict[str, Any]) -> list[dict[str, Any]]:
     if s["matrix"] == "red":
         needs.append({"check": "full-suite matrix", "triage": "real"})
 
-    if req and HOLD not in labels and s["mergeable_state"] == "behind" and not s["failed"] and not s["pending"]:
-        acts.append({"op": "update_branch"})
+    # no update_branch: a green PR that is merely behind main is not pushed to (#5134). Each push restarts its CI, and
+    # a conflict, a main-caused failure or a re-bless is the worker's reason to merge main, not the bot's.
     if req and needs and not s["digest_posted"]:
         acts.append({"op": "comment", "body": f"<!-- shepherd-digest {sha} -->\n" + s["digest_text"]})
 
@@ -242,6 +248,45 @@ def _attempts(api: Api, run_id: int) -> tuple[int, float | None]:
     return int(r.get("run_attempt") or 1) - 1, _to_epoch(r.get("updated_at"))
 
 
+def _files(api: Api, base: str, head: str) -> dict[str, tuple[str, str]] | None:
+    """{path: (status, blob sha)} of the three-dot compare base...head, or None when it cannot be trusted
+    (an unreadable compare, or a file list GitHub may have truncated at 300 files)."""
+    try:
+        files = pr_check.paged(api, f"repos/{REPO_SLUG}/compare/{base}...{head}", "files", limit=3)
+    except SystemExit:
+        return None
+    if len(files) >= 300:
+        return None
+    return {f["filename"]: (f.get("status", ""), f.get("sha", "")) for f in files}
+
+
+def clean_main_merge(api: Api, approved: str, head: str, base_ref: str) -> bool:
+    """True only when `head` is a plain merge of main into the approved head and brought in nothing but main's changes.
+
+    Parents are exactly (approved head, a commit already on main), in either order. The change the merge made to the
+    approved head must equal main's own change since the merge base, file for file and blob for blob, and the PR's own
+    files must not overlap main's (so no conflict resolution, and no three-way merge to judge). Anything else, or any
+    read that fails, is False: the new head then goes to re-approval (#4948, #4966 waited on this, 2026-10-12)."""
+    try:
+        parents = [x["sha"] for x in api(f"repos/{REPO_SLUG}/commits/{head}").get("parents", [])]
+        if len(parents) != 2 or approved not in parents:
+            return False
+        other = parents[1] if parents[0] == approved else parents[0]
+        if (api(f"repos/{REPO_SLUG}/compare/{quote(base_ref, safe='')}...{other}") or {}).get("status") not in (
+            "behind",
+            "identical",
+        ):
+            return False  # the other parent is not already on main
+        merged = _files(api, approved, head)  # what the merge changed on the approved head
+        theirs = _files(api, approved, other)  # what main changed since the merge base
+        mine = _files(api, other, approved)  # what the PR itself changed against main
+    except (SystemExit, KeyError, TypeError):
+        return False
+    if merged is None or theirs is None or mine is None or not theirs:
+        return False
+    return merged == theirs and not (set(mine) & set(theirs))
+
+
 def _perm(api: Api, login: str) -> str | None:
     try:
         return api(f"repos/{REPO_SLUG}/collaborators/{login}/permission").get("permission")
@@ -260,7 +305,11 @@ def head_pushed_at(api: Api, sha: str) -> str | None:
 
 
 def gather(
-    n: int, api: Api = pr_check.gh_api, event: dict[str, Any] | None = None, now: float | None = None
+    n: int,
+    api: Api = pr_check.gh_api,
+    event: dict[str, Any] | None = None,
+    now: float | None = None,
+    on_main: set[str] | None = None,
 ) -> dict[str, Any]:
     """The snapshot decide() reads for PR n. `event`: the facts of the pull_request_target payload that caused the pass
     (action, label, sender), when there was one. Reconcile passes have none.
@@ -272,6 +321,8 @@ def gather(
       * its sha is the current head -> approved;
       * the head is the bot's own update-branch result (its marker pair from=<approved> to=<head>, and the head's
         first parent is the approved commit) -> approved, carried over;
+      * the head is a plain merge of main into the approved head that brought in nothing but main's changes
+        (clean_main_merge) -> approved, carried over; any other new head is not;
       * the bot's update is between its two markers -> pending, no decision;
       * no trusted marker at all -> awaiting (the labeled run never happened, or was dropped): no drop, quiet;
       * otherwise the head moved without approval -> the label is dropped."""
@@ -293,10 +344,14 @@ def gather(
     checks = pr_check.classify(runs, statuses)
     digest: dict[str, Any] = {"failed": []}
     if checks["failed"]:
-        digest = ci_digest.digest(n, api)
+        digest = ci_digest.digest(n, api, on_main=on_main)
+        attempts_by_run: dict[int, tuple[int, float | None]] = {}
         for f in digest["failed"]:
             if f["triage"] in ("infra", "flake") and f.get("run_id") is not None:
-                f["attempts"], f["updated_at"] = _attempts(api, f["run_id"])
+                rid = f["run_id"]
+                if rid not in attempts_by_run:
+                    attempts_by_run[rid] = _attempts(api, rid)
+                f["attempts"], f["updated_at"] = attempts_by_run[rid]
     # who last added each request label (the timeline; no commit ids are used)
     events = pr_check.paged(api, f"repos/{REPO_SLUG}/issues/{n}/events") if labels else []
     actors: dict[str, dict[str, Any] | None] = {}
@@ -346,6 +401,8 @@ def gather(
             carried = approved = len(parents) == 2 and parents[0] == approved_sha
         elif frm == approved_sha and not to:
             pending = True
+        else:  # someone else's plain merge of main (the web "update branch", a local `git merge`): same approval
+            carried = approved = clean_main_merge(api, approved_sha, sha, (pr.get("base") or {}).get("ref") or "main")
     # no decision either way: the push time or the label time is unknown (a read failed, or the timeline lags)
     awaiting = MERGE in labels and not (approved or pending) and not (pushed and labelled)
     head_fork = head_repo != REPO_SLUG
@@ -415,7 +472,15 @@ def apply(n: int, s: dict[str, Any], acts: list[dict[str, Any]], run: Run = _run
 
     def gh(argv: list[str], what: str) -> None:
         r = run(argv)
-        detail = "ok" if not r.returncode else "FAILED: " + (r.stderr or r.stdout).strip()[:200]
+        err = (r.stderr or r.stdout or "").strip()
+        if not r.returncode:
+            detail = "ok"
+        elif (what.startswith("rerun") or (len(argv) >= 3 and argv[:3] == ["gh", "run", "rerun"])) and (
+            "already running" in f"{r.stderr or ''} {r.stdout or ''}".lower()
+        ):
+            detail = "skipped (already running)"
+        else:
+            detail = "FAILED: " + err[:200]
         log.append(f"#{n} {what}: {detail}")
 
     for a in acts:
@@ -479,39 +544,17 @@ def apply(n: int, s: dict[str, Any], acts: list[dict[str, Any]], run: Run = _run
                 ["gh", "run", "rerun", str(a["run_id"]), "--failed", "-R", REPO_SLUG],
                 f"rerun {a['check']} (run {a['run_id']})",
             )
-        elif op == "update_branch":
-            # the marker first: the synchronize this push causes then keeps the labels (see decide)
-            gh(
-                [
-                    "gh",
-                    "api",
-                    f"repos/{REPO_SLUG}/issues/{n}/comments",
-                    "-f",
-                    f"body=<!-- shepherd-update from={s['head_sha']} -->",
-                ],
-                "update marker",
-            )
-            gh(["gh", "pr", "update-branch", str(n), "-R", REPO_SLUG], "update-branch")
-            # the result marker, always (a failed update records to == from): gather carries approval through this pair
-            r = run(["gh", "api", f"repos/{REPO_SLUG}/pulls/{n}", "-q", ".head.sha"])
-            new = r.stdout.strip() if r.returncode == 0 else ""
-            if re.fullmatch(r"[0-9a-f]{40}", new):
-                gh(
-                    [
-                        "gh",
-                        "api",
-                        f"repos/{REPO_SLUG}/issues/{n}/comments",
-                        "-f",
-                        f"body=<!-- shepherd-update from={s['head_sha']} to={new} -->",
-                    ],
-                    "update result marker",
-                )
-            else:
-                log.append(f"#{n} update result marker: FAILED: could not read the new head")
     return log
 
 
-def process(n: int, api: Api, run: Run, event: dict[str, Any] | None = None, dry_run: bool = False) -> list[str]:
+def process(
+    n: int,
+    api: Api,
+    run: Run,
+    event: dict[str, Any] | None = None,
+    dry_run: bool = False,
+    on_main: set[str] | None = None,
+) -> list[str]:
     event = event or {}
     lines: list[str] = []
     sender, head = event.get("sender"), event.get("head")
@@ -539,7 +582,7 @@ def process(n: int, api: Api, run: Run, event: dict[str, Any] | None = None, dry
             return lines  # no approval, so no auto-merge
         event = {**event, "approved": head}  # gather must not depend on reading back the comment it just posted
     try:
-        s = gather(n, api, event)
+        s = gather(n, api, event, on_main=on_main)
     except SystemExit as e:  # one PR's failed read must not stop the others
         return lines + [f"#{n} skipped: {e}"]
     acts = decide(s)
@@ -617,8 +660,10 @@ def main(argv: list[str] | None = None, api: Api = pr_check.gh_api, run: Run = _
         lines = process(number, api, run, facts, args.dry_run)
     else:
         lines = []
-        for n in prs_for_head(api, args.head_sha) if args.head_sha else open_labelled(api):
-            lines += process(n, api, run, None, args.dry_run)
+        prs = prs_for_head(api, args.head_sha) if args.head_sha else open_labelled(api)
+        on_main = ci_digest.main_failures(api) if len(prs) > 1 else None
+        for n in prs:
+            lines += process(n, api, run, None, args.dry_run, on_main=on_main)
     for line in lines:
         print(line)
     return 1 if any("FAILED" in x for x in lines) else 0
