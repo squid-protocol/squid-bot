@@ -772,6 +772,24 @@
       "title": "ci: pin mypy and run the local audit in the pinned version (#4537) (#4538)"
      }
     ],
+    "reruns": {
+     "attempts": 2,
+     "by_workflow": {
+      "Det Sweep": [
+       1,
+       0,
+       0
+      ],
+      "rosetta-audit": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 2,
+     "runs": 2
+    },
     "runner_min_est": 24208,
     "sampled_min_by_origin": {
      "agent": 123.9,
@@ -856,6 +874,19 @@
       "title": "ci: evidence-refresh det sweep installs the translator extra and fails loudly on a failed sweep (#4270) (#4641)"
      }
     ],
+    "reruns": {
+     "attempts": 1,
+     "by_workflow": {
+      "GitGalaxy Smoke Tests": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 1,
+     "runs": 1
+    },
     "runner_min_est": 6320,
     "sampled_min_by_origin": {
      "agent": 98.4,
@@ -908,6 +939,13 @@
       "title": "ci: evidence-refresh finishes a running refresh instead of cancelling it on every push (#4703) (#4720)"
      }
     ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
     "runner_min_est": 7384,
     "sampled_min_by_origin": {
      "agent": 68.9,
@@ -985,6 +1023,24 @@
       "title": "ci: core checks always report (required-ready); det sweep proves only the ports a translator change moves, shards up to 20 (#4825 1a, #4814 v1) (#4826)"
      }
     ],
+    "reruns": {
+     "attempts": 12,
+     "by_workflow": {
+      "CICS Crucible": [
+       1,
+       0,
+       0
+      ],
+      "Muninn Security Scan": [
+       5,
+       0,
+       1
+      ]
+     },
+     "failed_again": 0,
+     "passed": 6,
+     "runs": 7
+    },
     "runner_min_est": 22730,
     "sampled_min_by_origin": {
      "agent": 87.1,
@@ -1619,7 +1675,7 @@
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 711,
+    "bot_runs": 750,
     "ci_changes": [
      {
       "pr": 5223,
@@ -1651,7 +1707,7 @@
      }
     ],
     "reruns": {
-     "attempts": 8,
+     "attempts": 9,
      "by_workflow": {
       "Det Sweep": [
        1,
@@ -1668,45 +1724,49 @@
      "passed": 1,
      "runs": 7
     },
-    "runner_min_est": 4970,
+    "runner_min_est": 5645,
     "sampled_min_by_origin": {
-     "agent": 3.8,
-     "main": 46.3,
+     "agent": 6.0,
+     "main": 48.1,
      "other": 4.5
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.0,
-     "CI shepherd (reconcile)": 1.6,
+     "CI shepherd (reconcile)": 1.4,
      "CICS Crucible": 18.5,
-     "GitGalaxy Smoke Tests": 0.2,
-     "GitGalaxy Zero-Trust Pipeline": 6.2,
-     "Main Watch": 0.6,
+     "Deploy Museum of Code Docs": 1.4,
+     "Fact Cross-check": 4.5,
+     "Generated Docs": 0.6,
+     "GitGalaxy Smoke Tests": 0.1,
+     "GitGalaxy Zero-Trust Pipeline": 3.9,
+     "Main Watch": 0.4,
      "Mainframe Ground Truth": 20.7,
      "Mypy Audit": 0.6,
-     "Ruff Audit": 0.4,
+     "Ruff Audit": 0.5,
      "Small Audits": 1.1,
-     "pages build and deployment": 0.7
+     "pages build and deployment": 0.7,
+     "post-merge": 0.2
     },
     "sampled_runs": 18,
     "wait_median": 0.03,
-    "wait_p90": 0.47
+    "wait_p90": 1.15
    },
-   "merged": 35,
+   "merged": 38,
    "merged_by_class": {
-    "agent": 26,
+    "agent": 29,
     "automation": 4,
     "other": 5
    },
    "runs": {
-    "cancelled": 279,
-    "failure": 30,
-    "skipped": 489,
-    "success": 1323,
-    "total": 2128
+    "cancelled": 291,
+    "failure": 31,
+    "skipped": 515,
+    "success": 1407,
+    "total": 2249
    }
   }
  },
- "open_prs": 6,
+ "open_prs": 5,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T16:12Z"
+ "updated": "2026-10-16T16:54Z"
 }

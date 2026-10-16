@@ -30,22 +30,22 @@
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="879" height="1071" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: agent fleet CI</text>
-  <text class="meta" x="856" y="34" text-anchor="end">last 30 days · updated 2026-10-16 16:12 UTC</text>
+  <text class="meta" x="856" y="34" text-anchor="end">last 30 days · updated 2026-10-16 16:54 UTC</text>
   <rect class="tile" x="24.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="73">Merged PRs</text>
-  <text class="v" x="38.0" y="101">1,349</text>
+  <text class="v" x="38.0" y="101">1,352</text>
   <text class="sub" x="38.0" y="117">44.0/day over the last 7 days</text>
   <rect class="tile" x="235.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="249.0" y="73">CI runs</text>
-  <text class="v" x="249.0" y="101">43,946</text>
+  <text class="v" x="249.0" y="101">44,067</text>
   <text class="sub" x="249.0" y="117">2,639/day over the last 7 days</text>
   <rect class="tile" x="446.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="460.0" y="73">CI pass rate</text>
   <text class="v" x="460.0" y="101">97.5%</text>
-  <text class="sub" x="460.0" y="117">35,920 passed · 931 failed</text>
+  <text class="sub" x="460.0" y="117">36,004 passed · 932 failed</text>
   <rect class="tile" x="657.0" y="52" width="199.0" height="74" rx="8"/>
   <text class="k" x="671.0" y="73">Open PRs</text>
-  <text class="v" x="671.0" y="101">6</text>
+  <text class="v" x="671.0" y="101">5</text>
   <text class="sub" x="671.0" y="117">right now</text>
   <rect class="tile" x="24.0" y="138" width="199.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="159">Job queue wait (p90)</text>
@@ -65,12 +65,12 @@
   <text class="sub" x="671.0" y="203">last 7 days · ◆ on the wait chart</text>
   <rect class="tile" x="24.0" y="224" width="199.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="245">Reruns</text>
-  <text class="v" x="38.0" y="273">9.0/day</text>
-  <text class="sub" x="38.0" y="289">54 runs rerun · last 7 days</text>
+  <text class="v" x="38.0" y="273">8.7/day</text>
+  <text class="sub" x="38.0" y="289">61 runs rerun · last 7 days</text>
   <rect class="tile" x="235.0" y="224" width="199.0" height="74" rx="8"/>
   <text class="k" x="249.0" y="245">Reruns that passed</text>
-  <text class="v" x="249.0" y="273">65.9%</text>
-  <text class="sub" x="249.0" y="289">29 passed · 15 failed again</text>
+  <text class="v" x="249.0" y="273">70.0%</text>
+  <text class="sub" x="249.0" y="289">35 passed · 15 failed again</text>
   <rect class="tile" x="446.0" y="224" width="199.0" height="74" rx="8"/>
   <text class="k" x="460.0" y="245">Most rerun workflow</text>
   <text class="v" x="460.0" y="273">21</text>
@@ -140,7 +140,7 @@
   <g><title>Oct 13: 31 merged · 29 agent · 2 other · 0 automation</title><rect class="agent" x="751.4" y="543.8" width="24.4" height="34.2"/><path class="other" d="M751.4,541.8 V541.8 Q751.4,539.2 753.9,539.2 H773.3 Q775.8,539.2 775.8,541.8 V541.8 Z"/></g>
   <g><title>Oct 14: 54 merged · 53 agent · 1 other · 0 automation</title><rect class="agent" x="777.8" y="513.8" width="24.4" height="64.2"/><path class="other" d="M777.8,511.8 V511.8 Q777.8,510.5 779.0,510.5 H800.9 Q802.2,510.5 802.2,511.8 V511.8 Z"/></g>
   <g><title>Oct 15: 43 merged · 41 agent · 2 other · 0 automation</title><rect class="agent" x="804.2" y="528.8" width="24.4" height="49.2"/><path class="other" d="M804.2,526.8 V526.8 Q804.2,524.2 806.7,524.2 H826.1 Q828.6,524.2 828.6,526.8 V526.8 Z"/></g>
-  <g class="partial"><title>Oct 16: 35 merged · 26 agent · 5 other · 4 automation (today, so far)</title><rect class="agent" x="830.6" y="547.5" width="24.4" height="30.5"/><rect class="other" x="830.6" y="541.2" width="24.4" height="4.2"/><path class="automation" d="M830.6,539.2 V538.2 Q830.6,534.2 834.6,534.2 H851.0 Q855.0,534.2 855.0,538.2 V539.2 Z"/></g>
+  <g class="partial"><title>Oct 16: 38 merged · 29 agent · 5 other · 4 automation (today, so far)</title><rect class="agent" x="830.6" y="543.8" width="24.4" height="34.2"/><rect class="other" x="830.6" y="537.5" width="24.4" height="4.2"/><path class="automation" d="M830.6,535.5 V534.5 Q830.6,530.5 834.6,530.5 H851.0 Q855.0,530.5 855.0,534.5 V535.5 Z"/></g>
   <text class="lbl" x="288.4" y="444.5" text-anchor="middle">102</text>
   <rect class="automation" x="770.0" y="405" width="10" height="10" rx="2"/>
   <text class="lbl" x="785.0" y="414">automation</text>
@@ -193,7 +193,7 @@
   <g><title>Oct 13: 1,932 runs · 1,590 passed · 37 failed · 305 cancelled/skipped/other</title><rect class="ok" x="751.4" y="748.4" width="24.4" height="57.6"/><rect class="bad" x="751.4" y="745.0" width="24.4" height="1.4"/><path class="na" d="M751.4,745.0 V737.5 Q751.4,733.5 755.4,733.5 H771.8 Q775.8,733.5 775.8,737.5 V745.0 Z"/></g>
   <g><title>Oct 14: 3,691 runs · 2,359 passed · 47 failed · 1,285 cancelled/skipped/other</title><rect class="ok" x="777.8" y="719.5" width="24.4" height="86.5"/><rect class="bad" x="777.8" y="715.8" width="24.4" height="1.8"/><path class="na" d="M777.8,715.8 V671.6 Q777.8,667.6 781.8,667.6 H798.2 Q802.2,667.6 802.2,671.6 V715.8 Z"/></g>
   <g><title>Oct 15: 3,630 runs · 2,472 passed · 77 failed · 1,081 cancelled/skipped/other</title><rect class="ok" x="804.2" y="715.3" width="24.4" height="90.7"/><rect class="bad" x="804.2" y="710.4" width="24.4" height="2.9"/><path class="na" d="M804.2,710.4 V673.9 Q804.2,669.9 808.2,669.9 H824.6 Q828.6,669.9 828.6,673.9 V710.4 Z"/></g>
-  <g class="partial"><title>Oct 16: 2,128 runs · 1,323 passed · 30 failed · 775 cancelled/skipped/other (today, so far)</title><rect class="ok" x="830.6" y="758.4" width="24.4" height="47.6"/><rect class="bad" x="830.6" y="755.3" width="24.4" height="1.1"/><path class="na" d="M830.6,755.3 V730.2 Q830.6,726.2 834.6,726.2 H851.0 Q855.0,726.2 855.0,730.2 V755.3 Z"/></g>
+  <g class="partial"><title>Oct 16: 2,249 runs · 1,407 passed · 31 failed · 811 cancelled/skipped/other (today, so far)</title><rect class="ok" x="830.6" y="755.2" width="24.4" height="50.8"/><rect class="bad" x="830.6" y="752.1" width="24.4" height="1.2"/><path class="na" d="M830.6,752.1 V725.7 Q830.6,721.7 834.6,721.7 H851.0 Q855.0,721.7 855.0,725.7 V752.1 Z"/></g>
   <rect class="na" x="707.0" y="633" width="10" height="10" rx="2"/>
   <text class="lbl" x="722.0" y="642">cancelled / skipped</text>
   <rect class="bad" x="629.0" y="633" width="10" height="10" rx="2"/>
@@ -274,7 +274,7 @@
   <circle class="l1d" cx="790.0" cy="1013.1" r="4"><title>Oct 14: median wait 0.3 min (24 runs sampled)</title></circle>
   <circle class="l1d" cx="816.4" cy="1013.8" r="4"><title>Oct 15: median wait 0.1 min (24 runs sampled)</title></circle>
   <circle class="l1d" cx="842.8" cy="1013.9" r="4"><title>Oct 16: median wait 0.0 min (18 runs sampled)</title></circle>
-  <polyline class="l2" points="77.2,1010.2 103.6,1012.0 130.0,1012.0 156.4,1012.6 182.8,1012.5 209.2,1011.6 235.6,1005.7 262.0,1012.5 288.4,1002.1 314.8,1011.5 341.2,980.4 367.6,1007.3 394.0,1009.7 420.4,1009.7 446.8,1009.9 473.2,1006.6 499.6,1006.0 526.0,1010.2 552.4,991.2 578.8,993.0 605.2,1002.1 631.6,1008.9 658.0,982.6 684.4,989.0 710.8,929.3 737.2,960.3 763.6,1000.1 790.0,963.6 816.4,998.0 842.8,1012.5"/>
+  <polyline class="l2" points="77.2,1010.2 103.6,1012.0 130.0,1012.0 156.4,1012.6 182.8,1012.5 209.2,1011.6 235.6,1005.7 262.0,1012.5 288.4,1002.1 314.8,1011.5 341.2,980.4 367.6,1007.3 394.0,1009.7 420.4,1009.7 446.8,1009.9 473.2,1006.6 499.6,1006.0 526.0,1010.2 552.4,991.2 578.8,993.0 605.2,1002.1 631.6,1008.9 658.0,982.6 684.4,989.0 710.8,929.3 737.2,960.3 763.6,1000.1 790.0,963.6 816.4,998.0 842.8,1010.3"/>
   <circle class="l2d" cx="77.2" cy="1010.2" r="4"><title>Sep 17: p90 wait 1.2 min (24 runs sampled)</title></circle>
   <circle class="l2d" cx="103.6" cy="1012.0" r="4"><title>Sep 18: p90 wait 0.6 min (24 runs sampled)</title></circle>
   <circle class="l2d" cx="130.0" cy="1012.0" r="4"><title>Sep 19: p90 wait 0.6 min (24 runs sampled)</title></circle>
@@ -304,7 +304,7 @@
   <circle class="l2d" cx="763.6" cy="1000.1" r="4"><title>Oct 13: p90 wait 4.3 min (24 runs sampled)</title></circle>
   <circle class="l2d" cx="790.0" cy="963.6" r="4"><title>Oct 14: p90 wait 15.5 min (24 runs sampled)</title></circle>
   <circle class="l2d" cx="816.4" cy="998.0" r="4"><title>Oct 15: p90 wait 4.9 min (24 runs sampled)</title></circle>
-  <circle class="l2d" cx="842.8" cy="1012.5" r="4"><title>Oct 16: p90 wait 0.5 min (18 runs sampled)</title></circle>
+  <circle class="l2d" cx="842.8" cy="1010.3" r="4"><title>Oct 16: p90 wait 1.1 min (18 runs sampled)</title></circle>
   <text class="lbl" x="730.0" y="870">◆ CI change merged</text>
   <circle class="l2d" cx="688.0" cy="866" r="4"/>
   <text class="lbl" x="698.0" y="870">p90</text>
