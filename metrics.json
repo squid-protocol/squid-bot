@@ -535,6 +535,13 @@
       "title": "ci(#4100): bot record merges must not trigger archetype-validation (#4123)"
      }
     ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
     "runner_min_est": 6009,
     "sampled_min_by_origin": {
      "agent": 63.4,
@@ -583,6 +590,13 @@
       "title": "tests: det program expectations follow the one-line Field shape; CI installs the translator's parser (#4220)"
      }
     ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
     "runner_min_est": 3910,
     "sampled_min_by_origin": {
      "agent": 55.2,
@@ -643,6 +657,13 @@
       "title": "chore: Add redirects for moved wiki documentation pages (#4362)"
      }
     ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
     "runner_min_est": 5464,
     "sampled_min_by_origin": {
      "agent": 24.9,
@@ -715,6 +736,74 @@
       "title": "ci: lean PR smoke, pip cache, filter muninn + ground-truth (#4520) (#4521)"
      }
     ],
+    "reruns": {
+     "attempts": 19,
+     "by_workflow": {
+      "CICS Crucible": [
+       2,
+       0,
+       0
+      ],
+      "Det Sweep": [
+       1,
+       0,
+       0
+      ],
+      "Estate Crucible": [
+       1,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
+       4,
+       0,
+       0
+      ],
+      "GitGalaxy Zero-Trust Pipeline": [
+       1,
+       0,
+       0
+      ],
+      "Golden Crucible Resilience Test": [
+       2,
+       0,
+       0
+      ],
+      "Golden Master Change Guard": [
+       1,
+       0,
+       0
+      ],
+      "Mainframe Ground Truth": [
+       1,
+       0,
+       0
+      ],
+      "Ports Compile": [
+       1,
+       0,
+       0
+      ],
+      "Ruff Audit": [
+       1,
+       0,
+       0
+      ],
+      "rosetta-audit": [
+       2,
+       0,
+       0
+      ],
+      "unicode-gauntlet": [
+       2,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 19,
+     "runs": 19
+    },
     "runner_min_est": 7182,
     "sampled_min_by_origin": {
      "agent": 62.7,
@@ -1675,7 +1764,7 @@
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 750,
+    "bot_runs": 790,
     "ci_changes": [
      {
       "pr": 5223,
@@ -1684,6 +1773,10 @@
      {
       "pr": 5225,
       "title": "ci: sweeps skip engine parts outside their import closure; PRs run tests/cobol_mainframe once, in Ground Truth (Part of #5166) (#5225)"
+     },
+     {
+      "pr": 5228,
+      "title": "readiness scanner: per-estate readiness report -- ladder counts, ranked rules to land, era mix (Part of #4725) (#5228)"
      },
      {
       "pr": 5242,
@@ -1724,49 +1817,45 @@
      "passed": 1,
      "runs": 7
     },
-    "runner_min_est": 5645,
+    "runner_min_est": 8975,
     "sampled_min_by_origin": {
-     "agent": 6.0,
-     "main": 48.1,
+     "agent": 38.0,
+     "main": 46.2,
      "other": 4.5
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.0,
-     "CI shepherd (reconcile)": 1.4,
+     "CI shepherd (reconcile)": 0.8,
      "CICS Crucible": 18.5,
-     "Deploy Museum of Code Docs": 1.4,
-     "Fact Cross-check": 4.5,
-     "Generated Docs": 0.6,
-     "GitGalaxy Smoke Tests": 0.1,
-     "GitGalaxy Zero-Trust Pipeline": 3.9,
-     "Main Watch": 0.4,
-     "Mainframe Ground Truth": 20.7,
+     "GitGalaxy Smoke Tests": 19.1,
+     "GitGalaxy Zero-Trust Pipeline": 7.2,
+     "Main Watch": 0.6,
+     "Mainframe Ground Truth": 35.3,
      "Mypy Audit": 0.6,
-     "Ruff Audit": 0.5,
      "Small Audits": 1.1,
-     "pages build and deployment": 0.7,
-     "post-merge": 0.2
+     "pages build and deployment": 1.2,
+     "post-merge": 0.3
     },
     "sampled_runs": 18,
     "wait_median": 0.03,
-    "wait_p90": 1.15
+    "wait_p90": 0.05
    },
-   "merged": 38,
+   "merged": 41,
    "merged_by_class": {
-    "agent": 29,
+    "agent": 32,
     "automation": 4,
     "other": 5
    },
    "runs": {
-    "cancelled": 291,
-    "failure": 31,
-    "skipped": 515,
-    "success": 1407,
-    "total": 2249
+    "cancelled": 296,
+    "failure": 32,
+    "skipped": 519,
+    "success": 1491,
+    "total": 2340
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T16:54Z"
+ "updated": "2026-10-16T18:08Z"
 }
