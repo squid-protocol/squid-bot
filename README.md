@@ -24,11 +24,11 @@ At a glance, `squid-bot` looks like an ecological governor that keeps the swarm 
 
 ## 📊 Live Fleet Dashboard
 
-![GitGalaxy agent fleet activity: merged PRs and CI runs per day](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
+![GitGalaxy coding-factory health over time: delivery, CI verification, and capacity](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
 Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. Add it to any repo to get the same dashboard plus a weekly report: CI cost and queue wait per merged PR, split between agent-made and other PRs, and how many reruns passed versus failed again (a rerun that fails again almost always retried a real failure), with the method published.
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The dashboard aligns three views over time: merged PR delivery, CI workflow-run outcomes (including rerun recovery), and sampled CI capacity (queue wait and runner time per merged PR). The weekly report also includes reruns by workflow and, when the orchestrator publishes its own data, agent factory time and slot use. It does not yet include historical host pressure or post-merge rework.
 
 ---
 

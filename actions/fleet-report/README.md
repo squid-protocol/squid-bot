@@ -1,8 +1,8 @@
 # Fleet CI report
 
-A GitHub Action that measures what your CI costs and how congested it is per unit of output, and splits it between agent-made and other PRs. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a week-over-week report to each run's summary page.
+A GitHub Action that tells a three-part story about an agent-enabled development system: delivery, verification, and CI capacity. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a week-over-week report to each run's summary page.
 
-GitHub's built-in Actions metrics already show queue time and run time per workflow. This report adds three things: cost per merged PR, the agent vs other split, and markers for when your CI changed. It also publishes its data and states its method.
+The dashboard uses aligned trailing seven-day trends so changes in delivery, CI outcomes, and CI pressure can be read together. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -54,12 +54,20 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **Merged PRs per day:** each PR is classed **agent** if its head branch has an agent prefix or its body matches an agent marker. It's **automation** if a bot account opened it (dependabot, renovate, release bots), and **other** otherwise.
 - **Actions runs per day**, by conclusion. Days with more than 2,500 runs are counted in 6-hour windows, since the API caps a single count at 2,500.
 - **Bot workflow runs**, per configured workflow.
-- **CI changes:** PR merges to the default branch that touched `.github/workflows`. They show as ◆ markers on the wait chart.
+- **CI changes:** PR merges to the default branch that touched `.github/workflows`. They show as markers on the queue-wait chart.
 
 **Sampled** (labelled "sampled" or "est." wherever shown): about `sample-runs` completed runs a day, spread over four 6-hour windows. For each run, every job's queue wait (created → picked up by a runner) and runner time (start → end) are read. Jobs that never really ran are excluded. From that:
 - queue wait median and p90
 - runner minutes per day (mean per run × the day's non-skipped runs)
 - runner time split by workflow, and by origin: agent PR, other PR, automation PR, or default branch and schedules
+
+### The three health dimensions
+
+- **Delivery:** merged PRs per day, shown as a trailing seven-day average and split by recorded origin. Agent attribution depends on configured branch prefixes or PR-body markers.
+- **Proof:** the trailing seven-day ratio of successful to successful-plus-failed workflow runs. This is a run-level CI outcome signal; retries can count as separate runs, so it is not first-pass PR success or a measure of post-merge quality.
+- **Capacity:** the trailing mean of daily sampled p90 queue wait and estimated runner hours per merged PR. These use separate plots and scales. Today is marked as incomplete.
+
+The current GitHub API feed does not contain historical local-host PSI, agent review effort, or post-merge rework. The dashboard leaves those out rather than treating CI activity as a substitute for them.
 
 **Days are UTC.** The last 3 days are re-fetched on every run because they can still change; finished days are kept in `metrics.json`.
 

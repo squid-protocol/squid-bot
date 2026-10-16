@@ -1,7 +1,6 @@
 name: Fleet CI report
 description: >-
-  A live dashboard and weekly report of what your CI costs and how congested it is per merged PR, split
-  agent vs other: queue wait, runner time, pass rate, CI changes. Built for repos worked by coding agents.
+  A three-part live health dashboard and weekly report: delivery, CI verification outcomes, and CI capacity over time.
 author: squid-protocol
 branding:
   icon: activity
