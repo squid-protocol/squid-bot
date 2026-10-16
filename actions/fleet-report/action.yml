@@ -24,7 +24,7 @@ inputs:
     description: Days shown on the dashboard.
     default: "30"
   title:
-    description: Dashboard and report heading. Default "<repo>: CI activity".
+    description: 'Dashboard and report heading. Default "<repo>: CI activity".'
     default: ""
   bot-workflows:
     description: Comma-separated workflow names that are an orchestrator's own bookkeeping (counted as a share of runs).
