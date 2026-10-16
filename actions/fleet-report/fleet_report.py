@@ -335,19 +335,20 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
     cur, prev = week_stats(done[-7:]), week_stats(done[-14:-7])
     out = [f"## {cfg.heading}", "",
            f"Updated {data['updated'].replace('T', ' ').replace('Z', ' UTC')}. Last 7 finished days vs the 7 before. "
-           f"Days are UTC; wait and runner time are sampled from about {cfg.sample_runs} runs a day.", ""]
+           f"Days are UTC; queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.", ""]
     if alerts:
         out += ["> [!WARNING]", *[f"> {a}" for a in alerts], ""]
     out += ["| Measure | Last 7 days | Previous 7 days |", "|---|---|---|"]
-    lines = [("Merged PRs / day", "merged_per_day", "n"), ("Agent share of merged PRs", "agent_share", "pct"),
-             ("CI runs / day", "runs_per_day", "n"), ("CI pass rate", "pass_rate", "pct"),
-             ("Job queue wait, median (sampled)", "wait_median", "min"), ("Job queue wait, p90 (sampled)", "wait_p90", "min"),
-             ("Runner time per merged PR (est.)", "runner_h_per_pr", "h")]
-    if cfg.bot_workflows:
-        lines.append(("Bot workflow share of runs", "bot_share", "pct"))
+    lines = [("Delivery · merged PRs / day", "merged_per_day", "n"),
+             ("Delivery · agent-classified share", "agent_share", "pct"),
+             ("Proof · CI workflow-run pass rate", "pass_rate", "pct"),
+             ("Capacity · queue wait p90 (sampled)", "wait_p90", "min"),
+             ("Capacity · runner hours per merged PR (est.)", "runner_h_per_pr", "h")]
     for label, k, kind in lines:
         out.append(f"| {label} | {_fmt(cur.get(k), kind)} | {_fmt(prev.get(k), kind)} |")
-    out.append(f"| CI changes merged | {len(cur.get('ci_changes', []))} | {len(prev.get('ci_changes', []))} |")
+    out.append(f"| Context · CI changes merged | {len(cur.get('ci_changes', []))} | {len(prev.get('ci_changes', []))} |")
+    if cfg.bot_workflows:
+        out += ["", f"Configured bot workflow share of runs (last 7 days): {_fmt(cur.get('bot_share'), 'pct')}."]
     wf = runner_split(done[-7:], "sampled_min_by_workflow")
     if wf:
         out += ["", "### Runner time by workflow (sampled, last 7 days)", "", "| Workflow | Share |", "|---|---|"]
@@ -401,11 +402,12 @@ STYLE = """
   .sub { font-size: 10.5px; fill: var(--ink2); }
   .grid { stroke: var(--grid); stroke-width: 1; }
   .base { stroke: var(--axis); stroke-width: 1; }
-  .s, .agent { fill: var(--series); } .other { fill: var(--series2); } .automation { fill: var(--neutral); }
+  .s, .agent { fill: var(--series); } .other { fill: var(--series2); } .automation, .unknown { fill: var(--neutral); }
   .ok { fill: var(--pass); } .bad { fill: var(--fail); } .na { fill: var(--neutral); }
   .partial { opacity: 0.5; }
   .l1 { fill: none; stroke: var(--series); stroke-width: 2; } .l1d { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
   .l2 { fill: none; stroke: var(--fail); stroke-width: 2; } .l2d { fill: var(--fail); stroke: var(--surface); stroke-width: 2; }
+  .l3 { fill: none; stroke: var(--series2); stroke-width: 2; } .l3d { fill: var(--series2); stroke: var(--surface); stroke-width: 2; }
   .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
 """
 
@@ -434,163 +436,172 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     if not rows:
         raise SystemExit("no data to render")
     today_s = today.isoformat()
-    W, pad = 880, 24
+    width, pad = 920, 24
+    left, right = pad + 42, width - pad
+    slot = (right - left) / len(rows)
     out: list[str] = []
 
     out.append(f'<text class="h1" x="{pad}" y="34">{escape(cfg.heading)}</text>')
-    out.append(f'<text class="meta" x="{W - pad}" y="34" text-anchor="end">last {len(rows)} days · '
+    out.append(f'<text class="meta" x="{width - pad}" y="34" text-anchor="end">last {len(rows)} days · '
                f'updated {escape(data["updated"].replace("T", " ").replace("Z", " UTC"))}</text>')
+    out.append(f'<text class="meta" x="{pad}" y="52">Three views of the same system: delivery, verification, and CI capacity. '
+               f'Trends use trailing 7-day windows.</text>')
 
-    # stat tiles
-    merged = [r["merged"] for _, r in rows]
-    done = finished(rows, today) or [r for _, r in rows]
-    last7 = done[-7:]
-    total_runs = sum(r["runs"]["total"] for _, r in rows)
-    ok = sum(r["runs"]["success"] for _, r in rows)
-    bad = sum(r["runs"]["failure"] for _, r in rows)
-    rate = f"{100 * ok / (ok + bad):.1f}%" if ok + bad else "–"
-    tiles = [
-        ("Merged PRs", f"{sum(merged):,}", f"{sum(r['merged'] for r in last7) / len(last7):.1f}/day over the last 7 days"),
-        ("CI runs", f"{total_runs:,}", f"{sum(r['runs']['total'] for r in last7) / len(last7):,.0f}/day over the last 7 days"),
-        ("CI pass rate", rate, f"{ok:,} passed · {bad:,} failed"),
-        ("Open PRs", f"{data.get('open_prs', 0):,}", "right now"),
+    done = finished(rows, today)
+    current, previous = week_stats(done[-7:]), week_stats(done[-14:-7])
+    card_y, card_h, card_gap = 68, 74, 12
+    card_w = (width - 2 * pad - 2 * card_gap) / 3
+    cards = [
+        ("DELIVERY", _fmt(current.get("merged_per_day"), "n") + " merged / day",
+         f'{_fmt(current.get("agent_share"), "pct")} agent-classified · vs {_fmt(previous.get("merged_per_day"), "n")} / day'),
+        ("PROOF", _fmt(current.get("pass_rate"), "pct") + " CI run pass rate",
+         "workflow-run outcomes; not a per-PR quality score"),
+        ("CAPACITY · SAMPLED CI", _fmt(current.get("wait_p90"), "min") + " queue p90",
+         f'{_fmt(current.get("runner_h_per_pr"), "h")} estimated runner hours / merged PR'),
     ]
-    det7 = [r for r in done if "detail" in r][-7:]
-    if det7:
-        s = week_stats(det7)
-        n7 = s["days"]
-        third = (("Agent share of merged PRs", _fmt(s["agent_share"], "pct"), f"last {n7} days · branch or body marker")
-                 if s["agent_share"] is not None else
-                 ("Bot workflow runs", _fmt(s["bot_share"], "pct"), f"last {n7} days · configured bot workflows"))
-        tiles += [
-            ("Job queue wait (p90)", _fmt(s["wait_p90"], "min"), f"median {_fmt(s['wait_median'], 'min')} · sampled, last {n7} days"),
-            ("Runner time per merged PR", _fmt(s["runner_h_per_pr"], "h"), f"est. from sampled jobs · last {n7} days"),
-            third,
-            ("CI changes merged", f"{len(s['ci_changes'])}", f"last {n7} days · ◆ on the wait chart"),
-        ]
-    gap = 12
-    tw = (W - 2 * pad - 3 * gap) / 4
-    for i, (k, v, sub) in enumerate(tiles):
-        x = pad + (i % 4) * (tw + gap)
-        y = 52 + (i // 4) * 86
-        out.append(f'<rect class="tile" x="{x:.1f}" y="{y}" width="{tw:.1f}" height="74" rx="8"/>')
-        out.append(f'<text class="k" x="{x + 14:.1f}" y="{y + 21}">{k}</text>')
-        out.append(f'<text class="v" x="{x + 14:.1f}" y="{y + 49}">{v}</text>')
-        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{y + 65}">{escape(sub)}</text>')
-    tiles_bottom = 52 + ((len(tiles) - 1) // 4) * 86 + 74
+    for i, (label, value, sub) in enumerate(cards):
+        x = pad + i * (card_w + card_gap)
+        out.append(f'<rect class="tile" x="{x:.1f}" y="{card_y}" width="{card_w:.1f}" height="{card_h}" rx="8"/>')
+        out.append(f'<text class="k" x="{x + 14:.1f}" y="{card_y + 18}">{label}</text>')
+        out.append(f'<text class="v" x="{x + 14:.1f}" y="{card_y + 44}">{escape(value)}</text>')
+        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{card_y + 62}">{escape(sub)}</text>')
 
-    left, right = pad + 40, W - pad
-    slot = (right - left) / len(rows)
-    bw = max(2.0, slot - 2)  # 2px surface gap between adjacent bars
-
-    def axes(top: int, h: int, vmax: int, title: str) -> None:
-        out.append(f'<text class="h2" x="{pad}" y="{top - 14}">{title}</text>')
-        for i in range(5):
-            y = top + h - h * i / 4
-            out.append(f'<line class="{"base" if i == 0 else "grid"}" x1="{left}" x2="{right}" y1="{y:.1f}" y2="{y:.1f}"/>')
-            out.append(f'<text class="tick" x="{left - 8}" y="{y + 3.5:.1f}" text-anchor="end">{int(vmax * i / 4):,}</text>')
-        for idx, (d, _) in enumerate(rows):
+    def axes(top: int, chart_h: int, maximum: float, title: str, formatter) -> None:
+        out.append(f'<text class="h2" x="{pad}" y="{top - 12}">{title}</text>')
+        for tick in range(5):
+            value = maximum * tick / 4
+            y = top + chart_h - chart_h * tick / 4
+            cls = "base" if tick == 0 else "grid"
+            out.append(f'<line class="{cls}" x1="{left}" x2="{right}" y1="{y:.1f}" y2="{y:.1f}"/>')
+            out.append(f'<text class="tick" x="{left - 8}" y="{y + 3.5:.1f}" text-anchor="end">{formatter(value)}</text>')
+        for idx, (day, _) in enumerate(rows):
             if (len(rows) - 1 - idx) % 7 == 0:
-                cx = left + idx * slot + slot / 2
-                out.append(f'<text class="tick" x="{cx:.1f}" y="{top + h + 16}" text-anchor="middle">{_fmt_day(d)}</text>')
+                x = left + idx * slot + slot / 2
+                out.append(f'<text class="tick" x="{x:.1f}" y="{top + chart_h + 16}" text-anchor="middle">{_fmt_day(day)}</text>')
 
-    def legend(y: int, items: list[tuple[str, str]]) -> None:
-        lx = right
-        for label, cls in reversed(items):
-            lx -= 7 * len(label) + 16
-            out.append(f'<rect class="{cls}" x="{lx:.1f}" y="{y - 9}" width="10" height="10" rx="2"/>')
-            out.append(f'<text class="lbl" x="{lx + 15:.1f}" y="{y}">{label}</text>')
-            lx -= 6
+    def line_plot(top: int, chart_h: int, title: str, values: list[float | None], maximum: float,
+                  line_class: str, dot_class: str, formatter, detail: str, markers: bool = False) -> None:
+        axes(top, chart_h, maximum, title, formatter)
+        x_at = lambda i: left + i * slot + slot / 2
+        y_at = lambda value: top + chart_h - chart_h * value / maximum
+        segment: list[str] = []
+        for i, ((day, row), value) in enumerate(zip(rows, values)):
+            if markers and row.get("detail", {}).get("ci_changes"):
+                changes = row["detail"]["ci_changes"]
+                prs = ", ".join(f'#{change["pr"]}' for change in changes[:6])
+                out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
+                           f'<line class="mark" x1="{x_at(i):.1f}" x2="{x_at(i):.1f}" y1="{top}" y2="{top + chart_h}"/>'
+                           f'<path class="markd" d="M{x_at(i):.1f},{top - 5} l4,4 l-4,4 l-4,-4 Z"/></g>')
+            if value is None:
+                if len(segment) > 1:
+                    out.append(f'<polyline class="{line_class}" points="{" ".join(segment)}"/>')
+                segment = []
+                continue
+            x, y = x_at(i), y_at(value)
+            segment.append(f"{x:.1f},{y:.1f}")
+            fade = ' class="partial"' if day == today_s else ""
+            out.append(f'<circle class="{dot_class}" cx="{x:.1f}" cy="{y:.1f}" r="3.5"{fade}>'
+                       f'<title>{_fmt_day(day)}: {formatter(value)} {detail}'
+                       f'{" (today so far)" if day == today_s else ""}</title></circle>')
+        if len(segment) > 1:
+            out.append(f'<polyline class="{line_class}" points="{" ".join(segment)}"/>')
 
-    def stacked(x: float, base: float, h: int, vmax: int, segs: list[tuple[str, int]], partial: bool, tip: str) -> str:
-        segs = [(c, n) for c, n in segs if n > 0]
-        g = ['<g class="partial">' if partial else "<g>", f"<title>{escape(tip)}</title>"]
-        y = base
-        for j, (c, n) in enumerate(segs):
-            sh = h * n / vmax
-            seg_h = sh - (2 if j < len(segs) - 1 and sh > 3 else 0)  # 2px surface gap between segments
-            if j == len(segs) - 1:
-                g.append(f'<path class="{c}" d="{_bar_path(x, y - sh, bw, seg_h, 4)}"/>')
-            else:
-                g.append(f'<rect class="{c}" x="{x:.1f}" y="{y - seg_h:.1f}" width="{bw:.1f}" height="{max(seg_h, 0.5):.1f}"/>')
-            y -= sh
-        g.append("</g>")
-        return "".join(g)
+    def merged_parts(index: int) -> dict[str, float]:
+        window = [row for _, row in rows[max(0, index - 6):index + 1]]
+        parts = Counter()
+        for row in window:
+            counts = row.get("merged_by_class")
+            if counts is None:
+                parts["unknown"] += row["merged"]
+                continue
+            for kind in CLASSES:
+                parts[kind] += counts.get(kind, 0)
+            parts["unknown"] += max(0, row["merged"] - sum(counts.get(kind, 0) for kind in CLASSES))
+        divisor = len(window)
+        return {kind: parts[kind] / divisor for kind in ("agent", "other", "automation", "unknown")}
 
-    # chart 1: merged PRs per day, split by origin when the history carries it
-    top1, h1 = tiles_bottom + 44, 150
-    vmax1 = _nice_max(max(merged) or 1)
-    classed = any("merged_by_class" in r for _, r in rows)
-    axes(top1, h1, vmax1, "Merged PRs per day" + (", by origin" if classed else ""))
-    for idx, (d, r) in enumerate(rows):
-        x = left + idx * slot + (slot - bw) / 2
-        bc = r.get("merged_by_class")
-        segs = [(c, bc[c]) for c in CLASSES] if bc else [("s", r["merged"])]
-        tip = f"{_fmt_day(d)}: {r['merged']} merged" + (
-            f" · {bc['agent']} agent · {bc['other']} other · {bc['automation']} automation" if bc else "") + (
-            " (today, so far)" if d == today_s else "")
-        out.append(stacked(x, top1 + h1, h1, vmax1, segs, d == today_s, tip))
-    peak_i = max(range(len(rows)), key=lambda i: rows[i][1]["merged"])
-    px = left + peak_i * slot + slot / 2
-    py = top1 + h1 - h1 * rows[peak_i][1]["merged"] / vmax1
-    out.append(f'<text class="lbl" x="{px:.1f}" y="{py - 6:.1f}" text-anchor="middle">{rows[peak_i][1]["merged"]}</text>')
-    if classed:
-        legend(top1 - 14, [("agent", "agent"), ("other", "other"), ("automation", "automation")])
+    # Delivery: trailing seven-day average of merged PRs per day, split by recorded origin.
+    delivery_top, delivery_h = 200, 96
+    delivery = [merged_parts(i) for i in range(len(rows))]
+    delivery_max = max(1.0, max(sum(parts.values()) for parts in delivery))
+    axes(delivery_top, delivery_h, delivery_max, "1 · Delivery — merged PRs / day, trailing 7-day average by origin",
+         lambda value: f"{value:.0f}")
+    bar_w = max(2.0, slot - 2)
+    colors = (("agent", "agent"), ("other", "other"), ("automation", "automation"), ("unknown", "unknown"))
+    for i, ((day, _), parts) in enumerate(zip(rows, delivery)):
+        x, base = left + i * slot + (slot - bar_w) / 2, delivery_top + delivery_h
+        elements = []
+        for kind, css in colors:
+            value = parts[kind]
+            if value <= 0:
+                continue
+            bar_height = delivery_h * value / delivery_max
+            elements.append(f'<rect class="{css}" x="{x:.1f}" y="{base - bar_height:.1f}" width="{bar_w:.1f}" height="{bar_height:.1f}"/>')
+            base -= bar_height
+        tip = escape(f'{_fmt_day(day)} · merged PRs · 7-day average per day · ' + ", ".join(f'{k} {parts[k]:.1f}' for k, _ in colors))
+        fade = ' class="partial"' if day == today_s else ""
+        out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
 
-    # chart 2: CI runs per day by outcome (stacked; success at the baseline)
-    top2, h2 = top1 + h1 + 78, 150
-    vmax2 = _nice_max(max(r["runs"]["total"] for _, r in rows) or 1)
-    axes(top2, h2, vmax2, "CI runs per day, by outcome")
-    for idx, (d, r) in enumerate(rows):
-        x = left + idx * slot + (slot - bw) / 2
-        runs = r["runs"]
-        other = max(0, runs["total"] - runs["success"] - runs["failure"])
-        tip = (f"{_fmt_day(d)}: {runs['total']:,} runs · {runs['success']:,} passed · {runs['failure']:,} failed"
-               f" · {other:,} cancelled/skipped/other" + (" (today, so far)" if d == today_s else ""))
-        out.append(stacked(x, top2 + h2, h2, vmax2, [("ok", runs["success"]), ("bad", runs["failure"]), ("na", other)],
-                           d == today_s, tip))
-    legend(top2 - 14, [("✓ passed", "ok"), ("✕ failed", "bad"), ("cancelled / skipped", "na")])
+    legend_y, legend_x = delivery_top - 10, right
+    for label, css in reversed((("agent", "agent"), ("other", "other"), ("automation", "automation"), ("unclassified", "unknown"))):
+        legend_x -= 7 * len(label) + 22
+        out.append(f'<rect class="{css}" x="{legend_x:.1f}" y="{legend_y - 8}" width="9" height="9" rx="2"/>')
+        out.append(f'<text class="lbl" x="{legend_x + 13:.1f}" y="{legend_y}">{label}</text>')
 
-    bottom = top2 + h2
-    # chart 3: job queue wait (sampled), with a marker on each day a CI change merged
-    wrows = [(i, d, r["detail"]) for i, (d, r) in enumerate(rows) if "detail" in r]
-    if wrows:
-        top3, h3 = top2 + h2 + 78, 130
-        vmax3 = _nice_max(max(x["wait_p90"] for _, _, x in wrows) or 1)
-        axes(top3, h3, vmax3, "Job queue wait per day, minutes (sampled)")
-        cx = lambda i: left + i * slot + slot / 2  # noqa: E731
-        cy = lambda v: top3 + h3 - h3 * v / vmax3  # noqa: E731
-        for i, d, x in wrows:
-            if x["ci_changes"]:
-                prs = ", ".join(f"#{c['pr']}" for c in x["ci_changes"][:8]) + (" …" if len(x["ci_changes"]) > 8 else "")
-                out.append(f'<g><title>{_fmt_day(d)}: {len(x["ci_changes"])} CI change(s) merged: {escape(prs)}</title>'
-                           f'<line class="mark" x1="{cx(i):.1f}" x2="{cx(i):.1f}" y1="{top3}" y2="{top3 + h3}"/>'
-                           f'<path class="markd" d="M{cx(i):.1f},{top3 - 5} l4,4 l-4,4 l-4,-4 Z"/></g>')
-        for key, cls, label in (("wait_median", "l1", "median"), ("wait_p90", "l2", "p90")):
-            pts = " ".join(f"{cx(i):.1f},{cy(x[key]):.1f}" for i, _, x in wrows)
-            out.append(f'<polyline class="{cls}" points="{pts}"/>')
-            for i, d, x in wrows:
-                out.append(f'<circle class="{cls}d" cx="{cx(i):.1f}" cy="{cy(x[key]):.1f}" r="4">'
-                           f'<title>{_fmt_day(d)}: {label} wait {x[key]:.1f} min ({x["sampled_runs"]} runs sampled)</title></circle>')
-        ly = top3 - 14
-        lx = right
-        for label, cls in reversed([("median", "l1d"), ("p90", "l2d"), ("◆ CI change merged", "")]):
-            lx -= 7 * len(label) + (16 if cls else 0)
-            if cls:
-                out.append(f'<circle class="{cls}" cx="{lx + 5:.1f}" cy="{ly - 4}" r="4"/>')
-            out.append(f'<text class="lbl" x="{lx + (15 if cls else 0):.1f}" y="{ly}">{label}</text>')
-            lx -= 10
-        bottom = top3 + h3
+    proof_values = []
+    for i in range(len(rows)):
+        window = [row for _, row in rows[max(0, i - 6):i + 1]]
+        passed = sum(row["runs"]["success"] for row in window)
+        total = passed + sum(row["runs"]["failure"] for row in window)
+        proof_values.append(passed / total if total else None)
+    proof_top, proof_h = 354, 96
+    line_plot(proof_top, proof_h, "2 · Proof — CI workflow-run pass rate, trailing 7-day result",
+              proof_values, 1.0, "l1", "l1d", lambda value: f"{100 * value:.0f}%",
+              "CI runs (success / success + failure)")
 
-    H = bottom + 58
-    out.append(f'<text class="meta" x="{pad}" y="{H - 14}">Source: GitHub API. Faded bar = today so far. Days are UTC. '
-               f'Wait and runner time are sampled from about {cfg.sample_runs} runs a day.</text>')
+    details = [row.get("detail", {}) for _, row in rows]
+    wait_values, runner_values = [], []
+    for i in range(len(rows)):
+        window_start = max(0, i - 6)
+        waits = [detail["wait_p90"] for detail in details[window_start:i + 1] if detail.get("wait_p90") is not None]
+        wait_values.append(sum(waits) / len(waits) if waits else None)
+        eligible = [(rows[j][1], details[j]) for j in range(window_start, i + 1)
+                    if details[j].get("runner_min_est") is not None]
+        merged = sum(row["merged"] for row, _ in eligible)
+        minutes = sum(detail["runner_min_est"] for _, detail in eligible)
+        runner_values.append(minutes / merged / 60 if merged else None)
+
+    capacity_available = any(value is not None for value in wait_values + runner_values)
+    if capacity_available:
+        cap_top, cap_h = 520, 82
+        wait_max = max((value for value in wait_values if value is not None), default=1.0)
+        line_plot(cap_top, cap_h, "3 · Capacity — Job queue wait (p90), trailing 7-day mean of sampled days (minutes)",
+                  wait_values, _nice_max(wait_max), "l2", "l2d", lambda value: f"{value:.1f}",
+                  f"minutes · about {cfg.sample_runs} runs sampled per day", markers=True)
+        runner_top, runner_h = 660, 82
+        runner_max = max((value for value in runner_values if value is not None), default=1.0)
+        line_plot(runner_top, runner_h, "Runner time per merged PR — estimated hours (sampled)",
+                  runner_values, max(0.25, runner_max * 1.15), "l3", "l3d", lambda value: f"{value:.2f}",
+                  "runner hours / merged PR")
+        height = runner_top + runner_h + 52
+    else:
+        out.append(f'<text class="h2" x="{pad}" y="508">3 · Capacity</text>')
+        out.append(f'<text class="meta" x="{pad}" y="530">No sampled CI capacity history yet.</text>')
+        height = 584
+    if capacity_available:
+        out.append(f'<text class="meta" x="{pad}" y="{height - 14}">Source: GitHub API. Days are UTC. Faded marks include today so far. '
+                   f'Queue wait and runner time are sampled. CI pass rate is a workflow-run measure, not PR first-pass success. '
+                   f'Local host pressure and post-merge rework are not yet in this history.</text>')
+    else:
+        out.append(f'<text class="meta" x="{pad}" y="{height - 14}">Source: GitHub API. Days are UTC. CI pass rate is a workflow-run measure, '
+                   f'not PR first-pass success. Local host pressure and post-merge rework are not yet in this history.</text>')
     body = "\n  ".join(out)
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-            f'role="img" aria-label="{escape(cfg.heading)}: merged PRs, CI runs and queue wait per day">\n'
-            f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{W - 1}" '
-            f'height="{H - 1}" rx="10"/>\n  {body}\n</g>\n</svg>\n')
-
+    merged_total = sum(row["merged"] for _, row in rows)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
+            f'role="img" aria-label="{escape(cfg.heading)}: delivery, CI verification and capacity over time; '
+            f'{merged_total:,} merged PRs in the selected period">\n'
+            f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" '
+            f'height="{height - 1}" rx="10"/>\n  {body}\n</g>\n</svg>\n')
 
 # ---------------------------------------------------------------- CLI
 
