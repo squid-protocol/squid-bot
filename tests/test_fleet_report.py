@@ -132,3 +132,35 @@ def test_run_origin_finds_the_pr_by_branch_when_github_omits_it(monkeypatch):
     assert origin({"head_branch": "ci/x", "event": "pull_request", "pull_requests": []}) == "agent"
     assert sum("pulls?head=owner:ci/x" in c for c in calls) == 1  # cached per branch
     assert origin({"head_branch": "feature/y", "event": "pull_request"}) == "other"
+
+
+def test_reruns_show_in_the_summary_and_a_tile_row(monkeypatch):
+    data = _data()
+    for d in sorted(data["days"]):
+        data["days"][d]["detail"] = {"bot_runs": 100, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                     "runner_min_est": 600, "sampled_runs": 24,
+                                     "reruns": {"runs": 3, "attempts": 4, "passed": 1, "failed_again": 2,
+                                                "by_workflow": {"GitGalaxy Smoke Tests": [0, 2, 0], "Det Sweep": [1, 0, 0]}}}
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Reruns that passed" in svg and "33.3%" in svg and "GitGalaxy Smoke Tests" in svg
+    md = dashboard.summary_md(data, CFG, 30, TODAY, [])
+    assert "| Reruns / day | 3.0 |" in md and "| GitGalaxy Smoke Tests | 14 | 0 | 14 |" in md
+
+
+def test_rerun_counts_pages_two_hour_windows_and_splits_by_outcome(monkeypatch):
+    calls = []
+
+    def fake(path):
+        calls.append(path)
+        if "T10:00:00Z" in path:
+            return {"workflow_runs": [{"name": "Smoke", "run_attempt": 3, "status": "completed", "conclusion": "failure"},
+                                      {"name": "Det", "run_attempt": 2, "status": "completed", "conclusion": "success"},
+                                      {"name": "Det", "run_attempt": 1, "status": "completed", "conclusion": "failure"}]}
+        return {"workflow_runs": []}
+
+    monkeypatch.setattr(dashboard, "gh_json", fake)
+    r = dashboard.rerun_counts("o/r", "2026-10-15")
+    assert len(calls) == 12
+    assert r == {"runs": 2, "attempts": 3, "passed": 1, "failed_again": 1,
+                 "by_workflow": {"Smoke": [0, 1, 0], "Det": [1, 0, 0]}}

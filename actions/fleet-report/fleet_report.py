@@ -181,6 +181,27 @@ def bot_workflow_ids(repo: str, cfg: Config) -> dict[str, int]:
     return {w["name"]: w["id"] for w in wfs if w["name"] in cfg.bot_workflows}
 
 
+def rerun_counts(repo: str, day: str) -> dict:
+    """Exact: the day's runs that were rerun (run_attempt > 1) and how their latest attempt ended, per workflow.
+    A rerun that failed again usually retried a real failure; one that passed was a flake or an outage."""
+    by_wf: dict[str, list[int]] = {}
+    attempts = 0
+    for h in range(0, 24, 2):  # a listing stops at 1,000 runs: 2-hour windows stay under it on a busy day
+        span = f"{day}T{h:02d}:00:00Z..{day}T{h + 1:02d}:59:59Z"
+        for page in range(1, 11):
+            runs = gh_json(f"repos/{repo}/actions/runs?created={span}&per_page=100&page={page}")["workflow_runs"]
+            for r in runs:
+                if (r.get("run_attempt") or 1) > 1 and r.get("status") == "completed":
+                    attempts += r["run_attempt"] - 1
+                    c = by_wf.setdefault(r["name"], [0, 0, 0])
+                    c[{"success": 0, "failure": 1}.get(r.get("conclusion"), 2)] += 1
+            if len(runs) < 100:
+                break
+    return {"runs": sum(sum(c) for c in by_wf.values()), "attempts": attempts,
+            "passed": sum(c[0] for c in by_wf.values()), "failed_again": sum(c[1] for c in by_wf.values()),
+            "by_workflow": by_wf}
+
+
 def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], origin, cfg: Config) -> dict:
     """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled)."""
     bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
@@ -224,6 +245,7 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
         "sampled_runs": len(run_min),
         "sampled_min_by_workflow": {k: round(v, 1) for k, v in by_wf.items()},
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
+        "reruns": rerun_counts(repo, day),
     }
 
 
@@ -258,7 +280,7 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
     bots = bot_workflow_ids(repo, cfg)
     origin = RunOrigin(repo, cfg)
     missing = [d for d in window if d not in fresh and d in data["days"]
-               and "sampled_min_by_origin" not in data["days"][d].get("detail", {})]
+               and not {"sampled_min_by_origin", "reruns"} <= data["days"][d].get("detail", {}).keys()]
     for d in fresh + missing[:backfill]:
         r = data["days"][d]["runs"]
         try:
@@ -305,7 +327,29 @@ def week_stats(rows: list[dict]) -> dict:
         "runner_h_per_pr": sum(m for m, _ in est) / max(1, sum(k for _, k in est)) / 60 if est else None,
         "bot_share": sum(x["bot_runs"] for x in det) / max(1, sum(r["runs"]["total"] for r in rows if "detail" in r)) if det else None,
         "ci_changes": [c for x in det for c in x["ci_changes"]],
+        **rerun_stats(det),
     }
+
+
+def rerun_stats(det: list[dict]) -> dict:
+    """Reruns per day and the share whose latest attempt passed, over the days that counted them."""
+    rr = [x["reruns"] for x in det if "reruns" in x]
+    if not rr:
+        return {"reruns_per_day": None, "rerun_pass_rate": None}
+    passed, failed = sum(x["passed"] for x in rr), sum(x["failed_again"] for x in rr)
+    return {"reruns_per_day": sum(x["runs"] for x in rr) / len(rr),
+            "rerun_pass_rate": passed / (passed + failed) if passed + failed else None}
+
+
+def rerun_split(rows: list[dict]) -> list[tuple[str, int, int, int]]:
+    """(workflow, reruns, passed, failed again) over the rows, most rerun first."""
+    c: dict[str, list[int]] = {}
+    for r in rows:
+        for k, v in r.get("detail", {}).get("reruns", {}).get("by_workflow", {}).items():
+            s = c.setdefault(k, [0, 0, 0])
+            for i in range(3):
+                s[i] += v[i]
+    return sorted(((k, sum(v), v[0], v[1]) for k, v in c.items()), key=lambda t: (-t[1], t[0]))
 
 
 def runner_split(rows: list[dict], key: str) -> list[tuple[str, float]]:
@@ -345,6 +389,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
              ("Runner time per merged PR (est.)", "runner_h_per_pr", "h")]
     if cfg.bot_workflows:
         lines.append(("Bot workflow share of runs", "bot_share", "pct"))
+    lines += [("Reruns / day", "reruns_per_day", "n"), ("Reruns whose latest attempt passed", "rerun_pass_rate", "pct")]
     for label, k, kind in lines:
         out.append(f"| {label} | {_fmt(cur.get(k), kind)} | {_fmt(prev.get(k), kind)} |")
     out.append(f"| CI changes merged | {len(cur.get('ci_changes', []))} | {len(prev.get('ci_changes', []))} |")
@@ -352,6 +397,12 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
     if wf:
         out += ["", "### Runner time by workflow (sampled, last 7 days)", "", "| Workflow | Share |", "|---|---|"]
         out += [f"| {_md(k)} | {100 * v:.1f}% |" for k, v in wf[:12]]
+    rr = rerun_split(done[-7:])
+    if rr:
+        out += ["", "### Reruns by workflow (last 7 days)", "",
+                "A rerun that failed again usually retried a real failure: runner time spent learning nothing.", "",
+                "| Workflow | Reruns | Passed | Failed again |", "|---|---|---|---|"]
+        out += [f"| {_md(k)} | {n} | {p} | {f} |" for k, n, p, f in rr[:12]]
     org = runner_split(done[-7:], "sampled_min_by_origin")
     if org:
         names = {"agent": "Agent PRs", "other": "Other PRs", "automation": "Automation PRs",
@@ -363,7 +414,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
         out += [f"- #{c['pr']}: {c['title']}" for c in cur["ci_changes"][-25:]]
         if len(cur["ci_changes"]) > 25:
             out.append(f"- …and {len(cur['ci_changes']) - 25} earlier in the week")
-    out += ["", "<sub>Exact: merged PRs, run counts and outcomes, bot runs, CI changes. Sampled: queue wait and runner "
+    out += ["", "<sub>Exact: merged PRs, run counts and outcomes, bot runs, CI changes, reruns. Sampled: queue wait and runner "
             "time. Agent PRs: an agent branch prefix or an agent marker in the PR body.</sub>", ""]
     return "\n".join(out)
 
@@ -424,6 +475,10 @@ def _bar_path(x: float, y: float, w: float, h: float, r: float) -> str:
             f"H{x + w - r:.1f} Q{x + w:.1f},{y:.1f} {x + w:.1f},{y + r:.1f} V{y + h:.1f} Z")
 
 
+def _short(name: str, n: int = 22) -> str:
+    return name if len(name) <= n else name[: n - 1] + "…"
+
+
 def _fmt_day(d: str) -> str:
     return date.fromisoformat(d).strftime("%b %-d")
 
@@ -468,6 +523,16 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             third,
             ("CI changes merged", f"{len(s['ci_changes'])}", f"last {n7} days · ◆ on the wait chart"),
         ]
+        rr = rerun_split(det7)
+        if rr:
+            tot, passed, failed = sum(t[1] for t in rr), sum(t[2] for t in rr), sum(t[3] for t in rr)
+            top, flaky = rr[0], max(rr, key=lambda t: (t[2], -t[3]))
+            tiles += [
+                ("Reruns", _fmt(s["reruns_per_day"], "n") + "/day", f"{tot:,} runs rerun · last {n7} days"),
+                ("Reruns that passed", _fmt(s["rerun_pass_rate"], "pct"), f"{passed:,} passed · {failed:,} failed again"),
+                ("Most rerun workflow", f"{top[1]}", f"{_short(top[0])} · {top[3]} failed again"),
+                ("Most rescued by reruns", f"{flaky[2]}", _short(flaky[0]) if flaky[2] else "no rerun passed"),
+            ]
     gap = 12
     tw = (W - 2 * pad - 3 * gap) / 4
     for i, (k, v, sub) in enumerate(tiles):

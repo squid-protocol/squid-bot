@@ -28,7 +28,7 @@ At a glance, `squid-bot` looks like an ecological governor that keeps the swarm 
 
 Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. Add it to any repo to get the same dashboard plus a weekly report: CI cost and queue wait per merged PR, split between agent-made and other PRs, with the method published.
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. Add it to any repo to get the same dashboard plus a weekly report: CI cost and queue wait per merged PR, split between agent-made and other PRs, and how many reruns passed versus failed again (a rerun that fails again almost always retried a real failure), with the method published.
 
 ---
 
@@ -83,7 +83,7 @@ In molecular biology (from Jacob & Monod's *lac* and *trp* operons to eukaryotic
 | **Promoter-Proximal Pausing** | **Draft PR $\rightarrow$ Ready Gate** | In cells, RNA Polymerase pauses ~50 bp after initiation for cheap quality checks before committing to expensive full-gene elongation. Draft PRs run only fast lint/audit checks until `ci_shepherd` clears the promoter to trigger heavy CI. |
 | **Spliceosome & Feedback Repressors** | **`shepherd_gh.py` & `ci_shepherd.py`** | State-reconciling transcription factors (`shepherd:merge`, `shepherd:hold`, `shepherd:waiting-on-main`) that govern whether a mature transcript is spliced into `main` or held back via negative feedback when `main` itself is red. |
 | **Mismatch Repair (`MMR`) & Excision Signaling** | **`ci_digest.py`** | Instead of flooding the agent's context window with toxic 10,000-line raw logs, classifies the lesion (`real` vs `infra`/`flake`/`main`/`dirty`) and dispatches a targeted local excision-repair command. |
-| **Epigenetic Chromatin Marks** | **Handoffs (`handoff-*.md`) & `lessons-inbox.md`** | Individual polymerase complexes dissociate when context windows compact or sessions end; epigenetic marks preserve reading-frame state and learned regulatory rules across agent generations. |
+| **Epigenetic Chromatin Marks** | **Handoffs (`handoff-*.md`), `lessons-inbox.md`, the shepherd's event ledger & `flake-history`** | Individual polymerase complexes dissociate when context windows compact or sessions end; epigenetic marks preserve reading-frame state and learned regulatory rules across agent generations. The shepherd keeps its own marks too: a bounded ledger of reruns, merges and fixer starts, and the set of checks that history shows are flaky. |
 
 ### What Happens Without Transcriptional Regulation
 
@@ -162,12 +162,14 @@ disk: io-pressure 1.79% (full 1.57%)  tasks blocked on disk 0
 ### 2. Transcriptional Attenuator (`heavy-run.sh`)
 Usage: `scripts/heavy-run.sh <command...>`
 
-In the bacterial *trp* operon, **attenuation** dynamically slows or pauses a transcribing polymerase in response to real-time ribosome supply so multiple polymerases don't stall on the same strand. `heavy-run.sh` implements transcriptional attenuation for compute-intensive builds and test suites:
+In the bacterial *trp* operon, **attenuation** decides, as transcription begins, how far a polymerase should go given the ribosome supply at that moment, so multiple polymerases don't stall on the same strand. `heavy-run.sh` does the same for compute-intensive builds and test suites, once, when each job starts:
 1. It acquires one of $N$ shared slots ($N = \text{cores} / 4$, minimum 1) via kernel `flock`.
 2. It senses how many other polymerases are simultaneously elongating heavy tasks.
-3. It dynamically calculates fair core shares:
+3. It calculates a fair core share for that moment:
    $$\text{SQUID\_BOT\_CORES} = \max\left(1, \frac{\text{online\_cores}}{\text{active\_heavy\_slots}}\right)$$
 4. It exports `SQUID_BOT_CORES` and `GG_JOB_CORES`, which downstream tools (pytest-xdist, compiler jobs, linters) read to size their internal worker pools.
+
+The share is not revised while the job runs: a job that starts alone gets every core, and jobs started after it get smaller shares, so a staggered start can briefly ask for more cores than exist (about 1.8x with 3 slots). The slot count still caps how many heavy jobs run at once.
 
 ---
 
@@ -177,8 +179,11 @@ CLI command: `squid-bot run --every 600` or `shepherd`
 In eukaryotic transcription, RNA Polymerase II initiates a transcript and then enters **promoter-proximal pausing** until regulatory checkpoints verify that the transcript is ready for full elongation and splicing. Furthermore, cellular regulation is driven by **chemical state equilibrium (binding affinity)**, not fragile one-shot events.
 
 In a high-churn code factory, GitHub webhook events drop under burst traffic, arrive out of order, or get canceled by concurrency groups. The Shepherd eliminates event reliance by **reconciling the true GitHub state machine directly** on every pass:
-* **Promoter-Proximal Pausing (Draft $\rightarrow$ Ready):** Agents open PRs as drafts so only cheap, fast checks run. Once fast checks pass, `ci_shepherd` clears the promoter (marks the PR ready for review) to trigger the full CI suite.
+* **Promoter-Proximal Pausing (Draft $\rightarrow$ Ready):** Agents open PRs as drafts so only cheap, fast checks run. Once fast checks pass, `ci_shepherd` clears the promoter (marks the PR ready for review) to trigger the full CI suite, and merges it on a later pass once that suite is green; it never merges a draft in the same step, because a draft's skipped heavy checks read as green. At most `CI_SHEPHERD_MAX_IN_FLIGHT` (default 4) drafts are released per pass, so a burst of drafts doesn't flood the CI runners.
 * **Spliceosome Ligation (`shepherd:merge`):** The moment all required checks pass and the branch is clean, the shepherd squash-merges the transcript into `main`.
+* **No Chasing `main`:** A PR that is merely *behind* `main` is never updated just to stay current: every push restarts its CI. Leave branch protection's "require branches to be up to date" off and let `main`'s own CI catch the rare semantic conflict; with it on, a green-but-behind PR waits for a human.
+* **Proofreading Reruns:** `infra` failures are rerun up to 3 times, 15 minutes apart, and `flake` failures once. The budget belongs to the workflow run, not the check: the failing legs of one matrix run share a single `gh run rerun --failed`.
+* **Catabolite Repression (fixer gating):** With `CI_SHEPHERD_FIXER` set, a `real` failure starts that command (`<fixer> <PR> <digest.json>`) to repair it. The digest comment posts at once, but the fixer starts only when `box-status` reads `GREEN`, at most `CI_SHEPHERD_MAX_FIXERS` (default 1) per pass, and the most useful first: the PR that others wait on (`--after`), then the one with the fewest failing checks.
 * **Repressor Binding (`shepherd:hold`):** Binds the operator to hold a PR open for human inspection without merging.
 * **Enhancer Activation (`shepherd:matrix`):** Induces the full cross-platform OS $\times$ Python matrix suite and gates ligation on a clean run.
 * **Negative Feedback Inhibition (`shepherd:waiting-on-main`):** Automatically applied when a failing check is confirmed to also be failing on `origin/main`, preventing agents from mutating their own branch to fix a broken reference genome.
@@ -208,10 +213,15 @@ $ ci-digest 4976
 
 #### Lesion Taxonomy
 * `infra`: Environmental noise (runner disconnects, Docker Hub 429/504s). The shepherd auto-heals these by retrying up to 3 times, 15 minutes apart.
-* `flake`: Known timing-sensitive locus. Retried once automatically.
-* `main`: Lesion is on the reference strand (`origin/main`). Triggers negative feedback (`shepherd:waiting-on-main`).
+* `flake`: Known timing-sensitive locus: a test listed in `FLAKY`, or the first attempt of a check that `flake-history` learned is flaky. Retried once automatically; if it fails again it is `real`.
+* `main`: Lesion is on the reference strand (`origin/main`). Triggers negative feedback (`shepherd:waiting-on-main`). While `main`'s newest commit is still running a check, the last finished result of that check on `main` (up to 3 commits back) is used, so a PR is not blamed for a failure it inherited in the minutes after a merge.
 * `dirty`: Reading-frame shift (merge conflict with `main`). Signals the agent to merge `origin/main` and regenerate derived artifacts.
 * `real`: True point mutation in the PR transcript. Outputs the **exact local reproduction command** so the agent repairs and verifies the patch locally before pushing once.
+
+#### Learned Flakes (`flake-history`)
+CLI command: `flake-history [--json] [--file-issues]`
+
+GitHub already records the evidence: a rerun workflow run has `run_attempt > 1`, and its jobs from every attempt are listed. `flake-history` finds the jobs that failed and then passed on a rerun of the same run over the last 14 days. A job that passed on a rerun at least twice, with at least half its reruns passing, is *learned flaky*. `ci_shepherd` refreshes that cache in the background every 6 hours and treats such a check's first failure as a `flake`. `--file-issues` opens one cleanup issue per learned-flaky job (once).
 
 ---
 
@@ -275,7 +285,14 @@ scripts/heavy-run.sh pytest tests/
 ### 5. Launch the Shepherd Transcription-Factor Daemon
 ```bash
 nohup squid-bot run --every 600 >> /tmp/squid-bot/shepherd.log 2>&1 &
+squid-bot status   # the queue, plus the ledger's most recent events
 ```
+
+| Environment variable | Default | Effect |
+|---|---|---|
+| `CI_SHEPHERD_FIXER` | unset | Command started for a `real` failure: `<fixer> <PR> <digest.json>` |
+| `CI_SHEPHERD_MAX_FIXERS` | `1` | Fixers started per pass (only while `box-status` is `GREEN`) |
+| `CI_SHEPHERD_MAX_IN_FLIGHT` | `4` | Drafts marked ready per pass |
 
 ---
 
@@ -293,18 +310,18 @@ python scripts/sync.py diff
 # Pull recent regulatory improvements from GitGalaxy into squid-bot
 python scripts/sync.py pull
 
-# Push generalized fixes from squid-bot back to GitGalaxy
+# Push generalized fixes from squid-bot back to GitGalaxy (see the warning below)
 python scripts/sync.py push
 ```
 
-The bridge automatically translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites.
+The bridge translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites. `pull` is safe. **`push` is not a clean reverse:** it writes squid-bot's generalizations into GitGalaxy as well, including the default lock directory, which would split GitGalaxy's heavy-job slots between old and new agents. To move a change into GitGalaxy, `git format-patch` the commit, rewrite its paths (`src/squid_bot/X` → `tests/tools/[box/]X`, `tests/test_X` → `tests/tools/test_X`) and `git apply` it in a fresh GitGalaxy worktree.
 
 ---
 
 ## ❓ Frequently Asked Questions
 
 #### Q: Why frame `squid-bot` as an operon / transcription-factor network instead of just a task queue?
-**A:** A traditional queue only orders jobs. An operon regulates **end-to-end information flow with feedback loops**: it senses host metabolic stall before initiating work (`box-status`), attenuates resource consumption mid-flight (`heavy-run.sh`), pauses nascent drafts before expensive CI elongation (`ci_shepherd`), routes lesions to targeted local mismatch repair (`ci_digest`), and inhibits downstream splicing when the reference genome (`main`) is damaged.
+**A:** A traditional queue only orders jobs. An operon regulates **end-to-end information flow with feedback loops**: it senses host metabolic stall before initiating work (`box-status`), sizes each heavy job's share of the cores as it starts (`heavy-run.sh`), pauses nascent drafts before expensive CI elongation (`ci_shepherd`), routes lesions to targeted local mismatch repair (`ci_digest`), and inhibits downstream splicing when the reference genome (`main`) is damaged.
 
 #### Q: Why measure Linux PSI instead of standard CPU usage?
 **A:** Traditional CPU percentages only measure how much time the processor spent on tasks, which spikes deceivingly during momentary bursts. PSI measures **task stall time**—the percentage of time processes were delayed waiting for CPU, memory, or disk access. High PSI is a direct measure of cellular energy starvation.
