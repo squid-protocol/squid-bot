@@ -71,6 +71,8 @@ MAPPINGS: list[tuple[str, str]] = [
     ),
     ("tests/tools/test_shepherd_gh.py", "tests/test_shepherd_gh.py"),
     ("tests/tools/test_ci_shepherd.py", "tests/test_ci_shepherd.py"),
+    ("tests/tools/flake_history.py", "src/squid_bot/flake_history.py"),
+    ("tests/tools/test_flake_history.py", "tests/test_flake_history.py"),
 ]
 
 
@@ -92,8 +94,13 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
         )
         # Handle sys.path hacking in ci_shepherd.py
         content = re.sub(
-            r'TOOLS = Path\(__file__\)\.resolve\(\)\.parents\[1\]\nsys\.path\.insert\(0,\s*str\(TOOLS\)\)\nimport ci_digest\s+# noqa: E402\nimport pr_check\s+# noqa: E402',
-            'try:\n    from squid_bot import ci_digest, pr_check\nexcept ImportError:\n    TOOLS = Path(__file__).resolve().parents[1]\n    sys.path.insert(0, str(TOOLS))\n    import ci_digest  # noqa: E402\n    import pr_check  # noqa: E402',
+            r'TOOLS = Path\(__file__\)\.resolve\(\)\.parents\[1\]\nsys\.path\.insert\(0,\s*str\(TOOLS\)\)\nimport ci_digest\s+# noqa: E402\n(import flake_history\s+# noqa: E402\n)?import pr_check\s+# noqa: E402',
+            lambda m: (
+                f"try:\n    from squid_bot import ci_digest, {'flake_history, ' if m.group(1) else ''}pr_check\nexcept ImportError:\n"
+                "    TOOLS = Path(__file__).resolve().parents[1]\n    sys.path.insert(0, str(TOOLS))\n    import ci_digest  # noqa: E402\n"
+                + ("    import flake_history  # noqa: E402\n" if m.group(1) else "")
+                + "    import pr_check  # noqa: E402"
+            ),
             content,
         )
 

@@ -34,3 +34,12 @@ def test_transform_for_squid_bot_replaces_exclusive_lock_dir():
     res = sync.transform_for_squid_bot(content, "scripts/exclusive-lock.sh")
     assert "gitgalaxy-scratch" not in res
     assert "SQUID_BOT_LOCK_DIR" in res
+
+
+def test_transform_for_squid_bot_keeps_ci_shepherd_imports_with_and_without_flake_history():
+    head = "TOOLS = Path(__file__).resolve().parents[1]\nsys.path.insert(0, str(TOOLS))\nimport ci_digest  # noqa: E402\n"
+    for extra, want in (("", "from squid_bot import ci_digest, pr_check"),
+                        ("import flake_history  # noqa: E402\n", "from squid_bot import ci_digest, flake_history, pr_check")):
+        res = sync.transform_for_squid_bot(head + extra + "import pr_check  # noqa: E402\n", "src/squid_bot/ci_shepherd.py")
+        assert res.startswith("try:\n    " + want + "\nexcept ImportError:\n")
+        assert ("    import flake_history  # noqa: E402" in res) == bool(extra)

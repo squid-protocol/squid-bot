@@ -107,8 +107,13 @@ runs:
         [ -f dashboard.svg ] || exit 0
         git add dashboard.svg metrics.json
         if ! git diff --cached --quiet; then
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -q -m "fleet report: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push -q origin "$BRANCH"
+          for try in 1 2 3; do
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -q -m "fleet report: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push -q origin "$BRANCH" && break
+            # another writer (an orchestrator publishing factory.json) moved the branch: put only OUR two files on its tip
+            git fetch -q --depth=1 origin "$BRANCH" && git reset -q --mixed FETCH_HEAD && git add dashboard.svg metrics.json
+            git diff --cached --quiet && break
+          done
         fi
         echo "url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${BRANCH}/dashboard.svg" >> "$GITHUB_OUTPUT"
