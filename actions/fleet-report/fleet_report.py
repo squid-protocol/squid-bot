@@ -416,8 +416,8 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
     lines = [("Delivery · merged PRs / day", "merged_per_day", "n"),
              ("Delivery · agent-classified share", "agent_share", "pct"),
              ("Proof · CI workflow-run pass rate", "pass_rate", "pct"),
-             ("Proof · reruns / day", "reruns_per_day", "n"),
-             ("Proof · reruns passed on latest attempt", "rerun_pass_rate", "pct"),
+             ("Reruns / day", "reruns_per_day", "n"),
+             ("Reruns whose latest attempt passed", "rerun_pass_rate", "pct"),
              ("Capacity · queue wait median (sampled)", "wait_median", "min"),
              ("Capacity · queue wait p90 (sampled)", "wait_p90", "min"),
              ("Capacity · runner hours per merged PR (est.)", "runner_h_per_pr", "h")]
@@ -562,20 +562,42 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     capacity_sub = f'{_fmt(current.get("runner_h_per_pr"), "h")} estimated runner hours / merged PR'
     if factory.get("slot_use") is not None:
         capacity_sub += f' · {_fmt(factory.get("slot_use"), "pct")} worker slots used'
+    delivery_detail = [f"Agent-classified share: {_fmt(current.get('agent_share'), 'pct')}"]
+    factory_detail = []
+    if factory:
+        factory_detail = [
+            f"Agent time on new work ({factory['days']}d): {_fmt(factory.get('new_work_share'), 'pct')}",
+            f"Fixes {factory['fix_h']:.1f}h/day; send-backs {factory['sendback_h']:.1f}h/day",
+            f"Worker slots used: {_fmt(factory.get('slot_use'), 'pct')} of {factory.get('max_workers') or '?'}",
+            f"Fix loops per merged PR: {_fmt(factory.get('loops_per_pr'), 'n')}",
+            f"Idle with a free slot: {factory['idle_h']:.1f}h/day",
+        ]
+    delivery_detail.extend(factory_detail)
+    proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
+    reruns = rerun_split(done[-7:])
+    if reruns:
+        total, passed, failed = sum(item[1] for item in reruns), sum(item[2] for item in reruns), sum(item[3] for item in reruns)
+        proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} ({passed} passed, {failed} failed again; {total} total)")
+        proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
+    delivery_title = ". ".join(delivery_detail)
     cards = [
         ("DELIVERY", _fmt(current.get("merged_per_day"), "n") + " merged / day",
-         delivery_sub),
+         delivery_sub, delivery_title),
         ("PROOF", _fmt(current.get("pass_rate"), "pct") + " CI run pass rate",
-         proof_sub),
+         proof_sub, ". ".join(proof_detail)),
         ("CAPACITY · SAMPLED CI", _fmt(current.get("wait_p90"), "min") + " queue p90",
-         capacity_sub),
+         capacity_sub, ". ".join(["Sampled queue wait and runner time.", *factory_detail])),
     ]
-    for i, (label, value, sub) in enumerate(cards):
+    for i, (label, value, sub, detail) in enumerate(cards):
         x = pad + i * (card_w + card_gap)
+        out.append(f'<g><title>{escape(detail)}</title>')
+        if i == 0:
+            out.append("<desc>Merged PRs per day, by origin. Agent share of merged PRs</desc>")
         out.append(f'<rect class="tile" x="{x:.1f}" y="{card_y}" width="{card_w:.1f}" height="{card_h}" rx="8"/>')
         out.append(f'<text class="k" x="{x + 14:.1f}" y="{card_y + 18}">{label}</text>')
         out.append(f'<text class="v" x="{x + 14:.1f}" y="{card_y + 44}">{escape(value)}</text>')
         out.append(f'<text class="sub" x="{x + 14:.1f}" y="{card_y + 62}">{escape(sub)}</text>')
+        out.append("</g>")
 
     def axes(top: int, chart_h: int, maximum: float, title: str, formatter) -> None:
         out.append(f'<text class="h2" x="{pad}" y="{top - 12}">{title}</text>')
@@ -610,8 +632,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                 continue
             x, y = x_at(i), y_at(value)
             segment.append(f"{x:.1f},{y:.1f}")
-            fade = ' class="partial"' if day == today_s else ""
-            out.append(f'<circle class="{dot_class}" cx="{x:.1f}" cy="{y:.1f}" r="3.5"{fade}>'
+            dot_classes = f"{dot_class} partial" if day == today_s else dot_class
+            out.append(f'<circle class="{dot_classes}" cx="{x:.1f}" cy="{y:.1f}" r="3.5">'
                        f'<title>{_fmt_day(day)}: {formatter(value)} {detail}'
                        f'{" (today so far)" if day == today_s else ""}</title></circle>')
         if len(segment) > 1:
