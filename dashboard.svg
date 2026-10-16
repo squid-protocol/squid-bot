@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 794" width="920" height="794" role="img" aria-label="squid-protocol/gitgalaxy: agent fleet CI: delivery, CI verification and capacity over time; 1,362 merged PRs in the selected period">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 794" width="920" height="794" role="img" aria-label="squid-protocol/gitgalaxy: agent fleet CI: delivery, CI verification and capacity over time; 1,364 merged PRs in the selected period">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --series:#2a78d6; --series2:#1baf7a;
@@ -31,7 +31,7 @@
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="919" height="793" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: agent fleet CI</text>
-  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-16 21:21 UTC</text>
+  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-16 21:31 UTC</text>
   <text class="meta" x="24" y="52">Three views of the same system: delivery, verification, and CI capacity. Trends use trailing 7-day windows.</text>
   <g><title>Agent-classified share: 86.0%. Agent time on new work (5d): 70.2%. Fixes 2.1h/day; send-backs 3.9h/day. Worker slots used: 41.5% of 2. Fix loops per merged PR: 1.0. Idle with a free slot: 2.1h/day</title>
   <desc>Merged PRs per day, by origin. Agent share of merged PRs</desc>
@@ -97,7 +97,7 @@
   <g><title>Oct 13 · merged PRs · 7-day average per day · agent 32.6, other 7.1, automation 0.3, unknown 0.0</title><rect class="agent" x="786.3" y="248.8" width="25.7" height="47.2"/><rect class="other" x="786.3" y="238.5" width="25.7" height="10.3"/><rect class="automation" x="786.3" y="238.1" width="25.7" height="0.4"/></g>
   <g><title>Oct 14 · merged PRs · 7-day average per day · agent 35.4, other 5.7, automation 0.3, unknown 0.0</title><rect class="agent" x="814.0" y="244.7" width="25.7" height="51.3"/><rect class="other" x="814.0" y="236.4" width="25.7" height="8.3"/><rect class="automation" x="814.0" y="236.0" width="25.7" height="0.4"/></g>
   <g><title>Oct 15 · merged PRs · 7-day average per day · agent 37.9, other 5.9, automation 0.3, unknown 0.0</title><rect class="agent" x="841.7" y="241.2" width="25.7" height="54.8"/><rect class="other" x="841.7" y="232.7" width="25.7" height="8.5"/><rect class="automation" x="841.7" y="232.3" width="25.7" height="0.4"/></g>
-  <g class="partial"><title>Oct 16 · merged PRs · 7-day average per day · agent 37.0, other 4.0, automation 0.7, unknown 0.0</title><rect class="agent" x="869.3" y="242.4" width="25.7" height="53.6"/><rect class="other" x="869.3" y="236.6" width="25.7" height="5.8"/><rect class="automation" x="869.3" y="235.6" width="25.7" height="1.0"/></g>
+  <g class="partial"><title>Oct 16 · merged PRs · 7-day average per day · agent 37.3, other 4.0, automation 0.7, unknown 0.0</title><rect class="agent" x="869.3" y="242.0" width="25.7" height="54.0"/><rect class="other" x="869.3" y="236.2" width="25.7" height="5.8"/><rect class="automation" x="869.3" y="235.2" width="25.7" height="1.0"/></g>
   <rect class="unknown" x="790.0" y="182" width="9" height="9" rx="2"/>
   <text class="lbl" x="803.0" y="190">unclassified</text>
   <rect class="automation" x="698.0" y="182" width="9" height="9" rx="2"/>
@@ -181,25 +181,25 @@
   <g><title>Sep 23: CI change(s) merged #3378, #3379, #3402, #3415</title><line class="mark" x1="245.8" x2="245.8" y1="520" y2="602"/><path class="markd" d="M245.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
   <circle class="l2d" cx="245.8" cy="598.1" r="3.5"><title>Sep 23: 0.9 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 24: CI change(s) merged #3456, #3525</title><line class="mark" x1="273.5" x2="273.5" y1="520" y2="602"/><path class="markd" d="M273.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="273.5" cy="598.6" r="3.5"><title>Sep 24: 0.8 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="273.5" cy="598.4" r="3.5"><title>Sep 24: 0.9 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 25: CI change(s) merged #3547, #3572, #3630, #3636, #3647, #3661</title><line class="mark" x1="301.2" x2="301.2" y1="520" y2="602"/><path class="markd" d="M301.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="301.2" cy="596.8" r="3.5"><title>Sep 25: 1.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="301.2" cy="597.1" r="3.5"><title>Sep 25: 1.2 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 26: CI change(s) merged #3761, #3777, #3793, #3802, #3818, #3838</title><line class="mark" x1="328.8" x2="328.8" y1="520" y2="602"/><path class="markd" d="M328.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="328.8" cy="596.7" r="3.5"><title>Sep 26: 1.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="328.8" cy="596.9" r="3.5"><title>Sep 26: 1.2 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 27: CI change(s) merged #3864, #3916</title><line class="mark" x1="356.5" x2="356.5" y1="520" y2="602"/><path class="markd" d="M356.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
   <circle class="l2d" cx="356.5" cy="590.9" r="3.5"><title>Sep 27: 2.7 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 28: CI change(s) merged #3961</title><line class="mark" x1="384.2" x2="384.2" y1="520" y2="602"/><path class="markd" d="M384.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="384.2" cy="589.9" r="3.5"><title>Sep 28: 3.0 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="384.2" cy="589.9" r="3.5"><title>Sep 28: 2.9 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 29: CI change(s) merged #4000</title><line class="mark" x1="411.8" x2="411.8" y1="520" y2="602"/><path class="markd" d="M411.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="411.8" cy="589.2" r="3.5"><title>Sep 29: 3.1 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="411.8" cy="589.3" r="3.5"><title>Sep 29: 3.1 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Sep 30: CI change(s) merged #4027</title><line class="mark" x1="439.5" x2="439.5" y1="520" y2="602"/><path class="markd" d="M439.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
   <circle class="l2d" cx="439.5" cy="590.5" r="3.5"><title>Sep 30: 2.8 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 1: CI change(s) merged #4081, #4086</title><line class="mark" x1="467.2" x2="467.2" y1="520" y2="602"/><path class="markd" d="M467.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="467.2" cy="590.0" r="3.5"><title>Oct 1: 2.9 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="467.2" cy="590.2" r="3.5"><title>Oct 1: 2.9 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 2: CI change(s) merged #4097, #4105, #4123</title><line class="mark" x1="494.8" x2="494.8" y1="520" y2="602"/><path class="markd" d="M494.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="494.8" cy="590.8" r="3.5"><title>Oct 2: 2.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="494.8" cy="590.6" r="3.5"><title>Oct 2: 2.8 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 3: CI change(s) merged #4220</title><line class="mark" x1="522.5" x2="522.5" y1="520" y2="602"/><path class="markd" d="M522.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="522.5" cy="589.8" r="3.5"><title>Oct 3: 3.0 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="l2d" cx="522.5" cy="589.6" r="3.5"><title>Oct 3: 3.0 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 4: CI change(s) merged #4313, #4314, #4316, #4362</title><line class="mark" x1="550.2" x2="550.2" y1="520" y2="602"/><path class="markd" d="M550.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
   <circle class="l2d" cx="550.2" cy="595.2" r="3.5"><title>Oct 4: 1.7 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 5: CI change(s) merged #4434, #4446, #4450, #4456, #4466, #4495</title><line class="mark" x1="577.8" x2="577.8" y1="520" y2="602"/><path class="markd" d="M577.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
@@ -225,8 +225,8 @@
   <g><title>Oct 15: CI change(s) merged #5165, #5169, #5177, #5179, #5182, #5183</title><line class="mark" x1="854.5" x2="854.5" y1="520" y2="602"/><path class="markd" d="M854.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
   <circle class="l2d" cx="854.5" cy="552.4" r="3.5"><title>Oct 15: 12.1 minutes · about 24 runs sampled per day</title></circle>
   <g><title>Oct 16: CI change(s) merged #5223, #5225, #5228, #5242, #5243, #5244</title><line class="mark" x1="882.2" x2="882.2" y1="520" y2="602"/><path class="markd" d="M882.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d partial" cx="882.2" cy="557.9" r="3.5"><title>Oct 16: 10.8 minutes · about 24 runs sampled per day (today so far)</title></circle>
-  <polyline class="l2" points="79.8,597.2 107.5,598.3 135.2,598.7 162.8,599.1 190.5,599.3 218.2,599.2 245.8,598.1 273.5,598.6 301.2,596.8 328.8,596.7 356.5,590.9 384.2,589.9 411.8,589.2 439.5,590.5 467.2,590.0 494.8,590.8 522.5,589.8 550.2,595.2 577.8,592.3 605.5,589.6 633.2,587.7 660.8,587.6 688.5,583.2 716.2,580.2 743.8,565.6 771.5,560.1 799.2,561.3 826.8,554.4 854.5,552.4 882.2,557.9"/>
+  <circle class="l2d partial" cx="882.2" cy="558.1" r="3.5"><title>Oct 16: 10.7 minutes · about 24 runs sampled per day (today so far)</title></circle>
+  <polyline class="l2" points="79.8,597.2 107.5,598.3 135.2,598.7 162.8,599.1 190.5,599.3 218.2,599.2 245.8,598.1 273.5,598.4 301.2,597.1 328.8,596.9 356.5,590.9 384.2,589.9 411.8,589.3 439.5,590.5 467.2,590.2 494.8,590.6 522.5,589.6 550.2,595.2 577.8,592.3 605.5,589.6 633.2,587.7 660.8,587.6 688.5,583.2 716.2,580.2 743.8,565.6 771.5,560.1 799.2,561.3 826.8,554.4 854.5,552.4 882.2,558.1"/>
   <text class="h2" x="24" y="648">Runner time per merged PR — estimated hours (sampled)</text>
   <line class="base" x1="66" x2="896" y1="742.0" y2="742.0"/>
   <text class="tick" x="58" y="745.5" text-anchor="end">0.00</text>
@@ -250,16 +250,16 @@
   <circle class="l3d" cx="190.5" cy="736.3" r="3.5"><title>Sep 21: 0.92 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="218.2" cy="736.8" r="3.5"><title>Sep 22: 0.84 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="245.8" cy="737.2" r="3.5"><title>Sep 23: 0.76 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="273.5" cy="738.2" r="3.5"><title>Sep 24: 0.61 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="301.2" cy="737.5" r="3.5"><title>Sep 25: 0.72 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="328.8" cy="736.8" r="3.5"><title>Sep 26: 0.83 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="356.5" cy="734.8" r="3.5"><title>Sep 27: 1.16 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="384.2" cy="733.9" r="3.5"><title>Sep 28: 1.29 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="411.8" cy="733.1" r="3.5"><title>Sep 29: 1.42 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="439.5" cy="732.2" r="3.5"><title>Sep 30: 1.57 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="467.2" cy="730.8" r="3.5"><title>Oct 1: 1.79 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="494.8" cy="729.5" r="3.5"><title>Oct 2: 1.99 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="522.5" cy="729.2" r="3.5"><title>Oct 3: 2.04 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="273.5" cy="737.9" r="3.5"><title>Sep 24: 0.66 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="301.2" cy="737.1" r="3.5"><title>Sep 25: 0.79 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="328.8" cy="736.7" r="3.5"><title>Sep 26: 0.85 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="356.5" cy="736.0" r="3.5"><title>Sep 27: 0.95 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="384.2" cy="735.2" r="3.5"><title>Sep 28: 1.09 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="411.8" cy="734.4" r="3.5"><title>Sep 29: 1.21 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="439.5" cy="733.6" r="3.5"><title>Sep 30: 1.33 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="467.2" cy="732.7" r="3.5"><title>Oct 1: 1.49 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="494.8" cy="731.8" r="3.5"><title>Oct 2: 1.63 runner hours / merged PR</title></circle>
+  <circle class="l3d" cx="522.5" cy="731.5" r="3.5"><title>Oct 3: 1.68 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="550.2" cy="731.4" r="3.5"><title>Oct 4: 1.70 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="577.8" cy="732.5" r="3.5"><title>Oct 5: 1.51 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="605.5" cy="727.4" r="3.5"><title>Oct 6: 2.32 runner hours / merged PR</title></circle>
@@ -272,8 +272,8 @@
   <circle class="l3d" cx="799.2" cy="688.8" r="3.5"><title>Oct 13: 8.51 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="826.8" cy="670.7" r="3.5"><title>Oct 14: 11.39 runner hours / merged PR</title></circle>
   <circle class="l3d" cx="854.5" cy="674.5" r="3.5"><title>Oct 15: 10.79 runner hours / merged PR</title></circle>
-  <circle class="l3d partial" cx="882.2" cy="676.4" r="3.5"><title>Oct 16: 10.47 runner hours / merged PR (today so far)</title></circle>
-  <polyline class="l3" points="79.8,734.4 107.5,735.8 135.2,736.2 162.8,736.3 190.5,736.3 218.2,736.8 245.8,737.2 273.5,738.2 301.2,737.5 328.8,736.8 356.5,734.8 384.2,733.9 411.8,733.1 439.5,732.2 467.2,730.8 494.8,729.5 522.5,729.2 550.2,731.4 577.8,732.5 605.5,727.4 633.2,727.2 660.8,725.6 688.5,721.0 716.2,705.2 743.8,698.0 771.5,688.5 799.2,688.8 826.8,670.7 854.5,674.5 882.2,676.4"/>
+  <circle class="l3d partial" cx="882.2" cy="676.7" r="3.5"><title>Oct 16: 10.42 runner hours / merged PR (today so far)</title></circle>
+  <polyline class="l3" points="79.8,734.4 107.5,735.8 135.2,736.2 162.8,736.3 190.5,736.3 218.2,736.8 245.8,737.2 273.5,737.9 301.2,737.1 328.8,736.7 356.5,736.0 384.2,735.2 411.8,734.4 439.5,733.6 467.2,732.7 494.8,731.8 522.5,731.5 550.2,731.4 577.8,732.5 605.5,727.4 633.2,727.2 660.8,725.6 688.5,721.0 716.2,705.2 743.8,698.0 771.5,688.5 799.2,688.8 826.8,670.7 854.5,674.5 882.2,676.7"/>
   <text class="meta" x="24" y="780">Source: GitHub API. Days are UTC. Faded marks include today so far. Queue wait and runner time are sampled. CI pass rate is a workflow-run measure, not PR first-pass success. Local host pressure and post-merge rework are not yet in this history.</text>
 </g>
 </svg>

@@ -251,10 +251,41 @@
       "title": "CI/CD: signal-contract render gate, Full Suite Gate label bursts, self-scan Job Summary (#3525)"
      }
     ],
-    "runner_min_est": 2232,
+    "reruns": {
+     "attempts": 1,
+     "by_workflow": {
+      "Golden Crucible Resilience Test": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 1,
+     "runs": 1
+    },
+    "runner_min_est": 2964,
+    "sampled_min_by_origin": {
+     "agent": 53.1,
+     "main": 1.8,
+     "other": 5.3
+    },
+    "sampled_min_by_workflow": {
+     "CodeQL Security Scan": 7.4,
+     "Dead Key Audit": 0.1,
+     "GitGalaxy Smoke Tests": 16.8,
+     "GitGalaxy Zero-Trust Pipeline": 2.8,
+     "Golden Crucible Resilience Test": 8.6,
+     "Golden Master Change Guard": 2.0,
+     "Mainframe Ground Truth": 1.5,
+     "Muninn Security Scan": 17.9,
+     "Mypy Audit": 1.0,
+     "Ruff Audit": 0.4,
+     "pages build and deployment": 1.8
+    },
     "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 0.45
+    "wait_p90": 0.7
    },
    "merged": 82,
    "merged_by_class": {
@@ -303,10 +334,38 @@
       "title": "CI: skip the Java compile when a PR does not change the generated Java (#3664)"
      }
     ],
-    "runner_min_est": 6163,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 6605,
+    "sampled_min_by_origin": {
+     "agent": 65.1,
+     "main": 11.4,
+     "other": 7.6
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 1.1,
+     "Answer Key Guard": 1.1,
+     "CodeQL Security Scan": 5.3,
+     "Dead Key Audit": 0.4,
+     "Deploy Museum of Code Docs": 1.2,
+     "Generated Java Compiles": 6.7,
+     "GitGalaxy Smoke Tests": 33.0,
+     "Golden Crucible Resilience Test": 10.1,
+     "Golden Master Change Guard": 1.0,
+     "Mainframe Ground Truth": 4.1,
+     "Muninn Security Scan": 17.8,
+     "Mypy Audit": 0.4,
+     "Tri-Comparison Audit": 0.8,
+     "pages build and deployment": 1.0
+    },
     "sampled_runs": 24,
-    "wait_median": 0.38,
-    "wait_p90": 3.67
+    "wait_median": 0.08,
+    "wait_p90": 2.95
    },
    "merged": 102,
    "merged_by_class": {
@@ -351,10 +410,35 @@
       "title": "SCIP call-graph adapter; Java measured vs scip-java; SCIP-vs-tsc cross-check (#3783) (#3838)"
      }
     ],
-    "runner_min_est": 6337,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 5673,
+    "sampled_min_by_origin": {
+     "agent": 53.6,
+     "main": 27.4,
+     "other": 4.2
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 1.1,
+     "Dead Key Audit": 0.6,
+     "Generated Java Compiles": 45.8,
+     "GitGalaxy Zero-Trust Pipeline": 1.6,
+     "Mainframe Ground Truth": 9.1,
+     "Muninn Security Scan": 14.2,
+     "Mypy Audit": 1.1,
+     "Ruff Audit": 1.1,
+     "Tri-Comparison Audit": 0.8,
+     "Tri-Comparison History": 4.0,
+     "rosetta-audit": 5.8
+    },
     "sampled_runs": 24,
-    "wait_median": 0.03,
-    "wait_p90": 0.77
+    "wait_median": 0.05,
+    "wait_p90": 0.85
    },
    "merged": 89,
    "merged_by_class": {
@@ -383,10 +467,37 @@
       "title": "#3913: Full Suite Gate out of its timeout: small scans skip the worker pool, and Windows/macOS scans now match Linux (#3916)"
      }
     ],
-    "runner_min_est": 12681,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 6567,
+    "sampled_min_by_origin": {
+     "agent": 72.8,
+     "main": 21.2,
+     "other": 0.9
+    },
+    "sampled_min_by_workflow": {
+     "Dead Key Audit": 0.3,
+     "Deploy Museum of Code Docs": 1.2,
+     "Detection Accuracy Audit": 0.5,
+     "Generated Java Compiles": 43.2,
+     "GitGalaxy Smoke Tests": 18.6,
+     "GitGalaxy Zero-Trust Pipeline": 5.1,
+     "Golden Master Change Guard": 3.7,
+     "Graph Accuracy Audit": 6.4,
+     "Mainframe Ground Truth": 6.9,
+     "Mypy Audit": 0.9,
+     "pages build and deployment": 0.9,
+     "rosetta-audit": 6.5,
+     "unicode-gauntlet": 0.7
+    },
     "sampled_runs": 24,
-    "wait_median": 1.12,
-    "wait_p90": 10.33
+    "wait_median": 0.23,
+    "wait_p90": 10.65
    },
    "merged": 75,
    "merged_by_class": {
@@ -1878,7 +1989,7 @@
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 972,
+    "bot_runs": 981,
     "ci_changes": [
      {
       "pr": 5223,
@@ -1915,6 +2026,10 @@
      {
       "pr": 5281,
       "title": "Generated progress page: burned-estate ladder, components, eras, burn-down, Gap Atlas; READMEs link it (Part of #5280) (#5281)"
+     },
+     {
+      "pr": 5287,
+      "title": "Status slide: generated progress.svg in the CICS-to-Java READMEs, refreshed nightly (Part of #5286) (#5287)"
      }
     ],
     "reruns": {
@@ -1935,48 +2050,48 @@
      "passed": 1,
      "runs": 7
     },
-    "runner_min_est": 6840,
+    "runner_min_est": 7210,
     "sampled_min_by_origin": {
-     "agent": 19.7,
-     "main": 48.4,
+     "agent": 22.3,
+     "main": 48.8,
      "other": 4.5
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.0,
-     "CI shepherd (label events)": 0.9,
+     "CI shepherd (label events)": 0.6,
      "CI shepherd (reconcile)": 1.2,
      "CICS Crucible": 18.5,
      "Deploy Museum of Code Docs": 1.4,
-     "Det Sweep": 1.3,
      "GitGalaxy Smoke Tests": 0.1,
-     "GitGalaxy Zero-Trust Pipeline": 7.7,
+     "GitGalaxy Zero-Trust Pipeline": 3.9,
      "Main Watch": 0.7,
      "Mainframe Ground Truth": 33.2,
+     "Muninn Security Scan": 7.7,
      "Mypy Audit": 0.6,
-     "Ports Compile": 0.1,
+     "Ruff Audit": 0.4,
      "Small Audits": 1.1,
-     "pages build and deployment": 2.0
+     "pages build and deployment": 2.3
     },
     "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 0.28
+    "wait_p90": 0.05
    },
-   "merged": 48,
+   "merged": 50,
    "merged_by_class": {
-    "agent": 39,
+    "agent": 41,
     "automation": 4,
     "other": 5
    },
    "runs": {
-    "cancelled": 406,
+    "cancelled": 408,
     "failure": 35,
-    "skipped": 623,
-    "success": 1812,
-    "total": 2883
+    "skipped": 629,
+    "success": 1838,
+    "total": 2918
    }
   }
  },
  "open_prs": 3,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T21:21Z"
+ "updated": "2026-10-16T21:31Z"
 }
