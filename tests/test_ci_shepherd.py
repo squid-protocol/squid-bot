@@ -292,7 +292,7 @@ def test_fixer_waits_for_a_green_box_but_the_digest_posts_at_once(monkeypatch, t
 
 
 def test_main_failures_keeps_the_last_known_verdict_while_main_tip_is_still_running():
-    from squid_bot import ci_digest
+    ci_digest = cs.ci_digest
 
     def run(name, conclusion=None):
         return {"id": 1, "name": name, "status": "completed" if conclusion else "in_progress", "conclusion": conclusion}
