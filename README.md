@@ -1,6 +1,6 @@
 # 🦑 squid-bot
 
-**Ecosystem balance for autonomous coding fleets: managing compute, CI, and state so agent swarms thrive without devouring their habitat.**
+**Transcriptional regulation for autonomous coding fleets: dynamic transcription factors that govern compute, CI checkpoints, and information flow so agent swarms express verified code without devouring their host.**
 
 [![Tests](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml)
 [![Dashboard](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml)
@@ -10,15 +10,15 @@
 
 ---
 
-## ⚡ The 15-Second Pitch: Why You Need This
+## ⚡ The 15-Second Pitch: The Grasshopper Problem
 
-> You give 5 autonomous coding agents tasks simultaneously. 
-> 
-> Ten minutes later: your machine fans are howling, CPU load is 74 on a 12-core box, tests time out randomly because regex engines were starved of clock cycles, your GitHub Actions queue is backed up for two hours, and two agents crashed mid-sentence because the kernel ran out of memory. 
+> You give 5 autonomous coding agents tasks simultaneously.
+>
+> Ten minutes later: your machine fans are howling, CPU load is 74 on a 12-core box, tests time out randomly because regex engines were starved of clock cycles, your GitHub Actions queue is backed up for two hours, and two agents crashed mid-sentence because the kernel ran out of memory.
 
-Autonomous agents are greedy by default. Left unmanaged, an agent population behaves like a **plague of crickets**—they consume every available core, saturate disk I/O, burn through CI budgets with speculative PRs, and trample shared state until their host environment collapses.
+Autonomous agents are greedy by default. Left unmanaged, an agent population behaves like a **plague of grasshoppers**—they consume every available core, saturate disk I/O, burn through CI budgets with speculative PRs, and trample shared state until their host habitat collapses.
 
-`squid-bot` is the **ecological governor** for autonomous code factories. It continuously monitors your system's carrying capacity, dynamically meters resources, enforces admission control, and provides a deterministic CI merge shepherd so an agent population can work sustainably in *any* resource environment—from a laptop to a 128-core workstation.
+At a glance, `squid-bot` looks like an ecological governor that keeps the swarm within its habitat's carrying capacity. **Under the hood, what it actually builds is an operon**: a self-regulating system of **dynamic transcription factors** that govern how information flows from your issue backlog into `main`—regulating initiation, throttling elongation under metabolic stress, pausing drafts at promoter checkpoints, excising point failures locally, and splicing only verified transcripts into the genome.
 
 ---
 
@@ -32,97 +32,113 @@ It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. Add
 
 ---
 
-## 🦗 The Ecosystem Analogy: The Swarm & The Habitat
+## 🧬 From Swarm to Operon: Regulating Information Flow
 
-In biological ecology, an environment has a **carrying capacity**—the maximum population size that the habitat's resources can sustain without permanent degradation:
+The grasshopper analogy explains why an *unmanaged* swarm crashes a machine, but grasshoppers in a field are independent organisms competing for grass—they are not collaborating to synthesize and maintain a **single shared genome (`origin/main`)** under strict proof constraints.
+
+A high-velocity autonomous code factory is not a pasture; it is a **gene-regulatory network (an operon)**.
+
+In molecular biology (from Jacob & Monod's *lac* and *trp* operons to eukaryotic transcription networks), the cell's core engineering problem is identical to autonomous software engineering: **how do you transcribe DNA into functional proteins at maximum throughput without exhausting cellular ATP or allowing misfolded, mutated transcripts into the organism?**
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        THE HARDWARE HABITAT                            │
-│                                                                        │
-│   🌾 Compute & Cores (The Vegetation)  💧 Disk I/O & Memory (The Water)│
-│   ☀️ CI Runner Minutes (The Sunlight)  🌳 Common Seams (The Canopy)    │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                       Continuous PSI Monitoring
-                         (Is the habitat stressed?)
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                    THE SQUID-BOT GOVERNOR                              │
-│                                                                        │
-│   • Admission Control (GREEN / YELLOW / RED)                           │
-│   • Dynamic Core Slicing (Fair-share per active worker)                │
-│   • Worktree & Process Reaper (Cleans dead agent carcasses)            │
-│   • Deterministic CI Shepherd (Meters PRs into main branch)            │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                               Sustained
-                               Population
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                  THE AGENTIC POPULATION (SWARM)                        │
-│                                                                        │
-│   🦗 Claude Code     🦗 Antigravity / Gemini     🦗 Cursor / Aider      │
-└────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     THE GENOME (origin/main + Issue Backlog)                 │
+│                                                                              │
+│   ═══╡ Locus #4893 ╞═══╡ Locus #5166 ╞═══╡ Operator ╞═══╡ Promoter ╞═══      │
+│        (Issues, specs, and unported programs waiting to be expressed)        │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+            1. Initiation Gated by Allosteric Metabolic Sensors
+               • box-status (PSI stall sensor: GREEN / YELLOW / RED)
+               • Represses new transcription when cellular ATP (CPU/RAM/IO) drops
+                                       │
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│              RNA POLYMERASES (Claude Code / Gemini / Cursor)                 │
+│                                                                              │
+│   Bind to an isolated worktree locus and synthesize a nascent transcript     │
+│   (branch + Draft PR), paced by heavy-run.sh (transcriptional attenuation)   │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+            2. Promoter-Proximal Pausing & Post-Transcriptional Proofreading
+               • Draft PR pauses heavy CI until cheap fast-gates clear
+               • ci_digest isolates point mutations & dispatches local MMR repro
+               • ci_shepherd + shepherd_gh reconcile state & splice into main
+                                       │
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│                    EXPRESSED PHENOTYPE (Verified Squash Merge)               │
+│                                                                              │
+│   Clean, proven code ligated into origin/main; epigenetic marks written      │
+│   to handoff-*.md and lessons-inbox.md for the next generation of agents     │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-When you deploy autonomous developers, every agent consumes finite ecological resources:
+### The Operon Mapping: How Every Component Regulates Information Flow
 
-| Habitat Resource | What Agents Do To It | What Happens Without Governance |
+| Molecular Biology (The Operon) | `squid-bot` Transcription Factor | Information-Flow Role |
 |---|---|---|
-| **CPU Cores & Threads** | Every agent spawns compilation passes, test suites, and linters. | Greedily grabs `nproc` workers; load average spikes to 60+; clock starvation triggers false test timeouts. |
-| **Memory & Swap** | Agents run language servers, AST parsers, and containerized databases. | Kernel memory pressure spikes; page swapping begins; OOM killer terminates running agent sessions. |
-| **Disk Bandwidth & Inodes** | Agents create multi-gigabyte git worktrees, SQLite WAL logs, and scratch files. | Disk stalls in uninterruptible sleep (`D` state); builds crawl to a standstill. |
-| **CI Runner Minutes** | Agents push speculative commits to verify their code via GitHub Actions. | Exhausts monthly CI budgets in days; matrix runs queue up and block human PRs. |
-| **Shared State & Seams** | Agents touch shared contract files, golden masters, and baseline fixtures. | Upstream merges invalidate in-flight branches; agents enter infinite rebase/re-bless loops. |
+| **The Genome (`DNA`)** | **`origin/main` + Issue Backlog** | The canonical sequence of truth. Every issue or unported module is a structural gene waiting to be expressed into verified production code. |
+| **RNA Polymerase (`RNAP`)** | **Coding Agents** *(Claude, Gemini, Cursor)* | Processive, energy-hungry enzymes that bind to a locus (worktree) and synthesize a nascent transcript (branch / PR). Left unregulated, they transcribe everything at once and deplete cellular ATP. |
+| **Allosteric Metabolic Sensor (`AMPK` / *trp* Repressor)** | **`box-status` (`GREEN` / `YELLOW` / `RED` PSI)** | Senses real-time cellular energy stall (`/proc/pressure/cpu`, `memory`, `io`). When stall pressure rises, it allosterically represses new transcription initiation before the host hits metabolic collapse. |
+| **Transcriptional Attenuation** | **`heavy-run.sh` (`nproc / active_slots`)** | Dynamically modulates elongation speed mid-transcription—slicing thread pools (`SQUID_BOT_CORES`) so concurrent polymerases share cores without starving each other's clock cycles. |
+| **Promoter-Proximal Pausing** | **Draft PR $\rightarrow$ Ready Gate** | In cells, RNA Polymerase pauses ~50 bp after initiation for cheap quality checks before committing to expensive full-gene elongation. Draft PRs run only fast lint/audit checks until `ci_shepherd` clears the promoter to trigger heavy CI. |
+| **Spliceosome & Feedback Repressors** | **`shepherd_gh.py` & `ci_shepherd.py`** | State-reconciling transcription factors (`shepherd:merge`, `shepherd:hold`, `shepherd:waiting-on-main`) that govern whether a mature transcript is spliced into `main` or held back via negative feedback when `main` itself is red. |
+| **Mismatch Repair (`MMR`) & Excision Signaling** | **`ci_digest.py`** | Instead of flooding the agent's context window with toxic 10,000-line raw logs, classifies the lesion (`real` vs `infra`/`flake`/`main`/`dirty`) and dispatches a targeted local excision-repair command. |
+| **Epigenetic Chromatin Marks** | **Handoffs (`handoff-*.md`) & `lessons-inbox.md`** | Individual polymerase complexes dissociate when context windows compact or sessions end; epigenetic marks preserve reading-frame state and learned regulatory rules across agent generations. |
 
-`squid-bot` balances this ecosystem by treating **compute, time, and attention as assets to be metered and conserved**.
+### What Happens Without Transcriptional Regulation
+
+| Cellular / Host Resource | Unregulated Polymerase Swarm | Operon Regulation (`squid-bot`) |
+|---|---|---|
+| **CPU Cores & Threads** | Every agent spawns `nproc` workers; load spikes to 60+; clock starvation triggers false regex/test timeouts. | `heavy-run.sh` attenuates elongation speed to fair-share cores (`online_cores / active_heavy_slots`). |
+| **Memory & Swap** | Concurrent AST parsers, JVMs, and containers exhaust RAM; OOM killer terminates active agent sessions. | `box-status` senses `/proc/pressure/memory` stall and represses heavy initiation (`YELLOW` / `RED`). |
+| **CI Runner Minutes** | Agents push speculative commits to test hypotheses on GitHub Actions, exhausting runner queues. | Draft pausing + `ci_digest` local repro forces mismatch repair locally before a single re-push. |
+| **Shared Genome (`main`)** | Upstream merges invalidate in-flight branches; agents enter infinite rebase loops or chase `main` failures. | `shepherd_gh` serializes splicing into `main` and tags `shepherd:waiting-on-main` during negative feedback. |
 
 ---
 
-## 🏛️ How It Works: The 3 Governance Layers
+## 🏛️ How the Regulatory Network Operates
 
 ```mermaid
 flowchart TD
-    subgraph POP["Agent Swarm (Claude / Gemini / Cursor)"]
-        A1["Worker Agent 1\n(Worktree A)"]
-        A2["Worker Agent 2\n(Worktree B)"]
-        A3["Worker Agent 3\n(Worktree C)"]
+    subgraph GENOME["1. Initiation & Allosteric Repression (Host Habitat)"]
+        BS["box-status\n(Allosteric PSI Metabolic Sensor)"]
+        HR["heavy-run.sh\n(Transcriptional Attenuator: nproc / slots)"]
+        LK["exclusive-lock.sh\n(Chromatin Insulator Lock)"]
     end
 
-    subgraph HABITAT["Layer 1: Host Habitat Admission"]
-        BS["box-status\n(Linux PSI Pressure Stall Inspection)"]
-        HR["heavy-run.sh\n(Dynamic Core Slicing: nproc / slots)"]
-        LK["exclusive-lock.sh\n(Serialized Golden Baselines)"]
+    subgraph RNAP["2. Elongation (RNA Polymerase Fleet)"]
+        A1["Agent Polymerase 1\n(Worktree Locus A)"]
+        A2["Agent Polymerase 2\n(Worktree Locus B)"]
+        A3["Agent Polymerase 3\n(Worktree Locus C)"]
     end
 
-    subgraph CI["Layer 2: CI Feeding Ground & Shepherd"]
-        GH["shepherd_gh\n(State Reconciliation, Not Events)"]
-        SHP["ci_shepherd daemon\n(Autonomous Label Merge Queue)"]
-        DIG["ci_digest\n(Root-Cause Triage & Local Repro)"]
+    subgraph TF["3. Promoter Clearance, Splicing & Mismatch Repair"]
+        GH["shepherd_gh\n(State-Reconciling Operator)"]
+        SHP["ci_shepherd daemon\n(Promoter Clearance & Splice Ligase)"]
+        DIG["ci_digest\n(Mismatch-Repair Excision Signal)"]
     end
 
-    subgraph SHIFT["Layer 3: Shift-Work Persistence"]
-        HO["Markdown Handoffs\n(handoff-*.md, lessons-inbox)"]
+    subgraph EPIGEN["4. Epigenetic Inheritance"]
+        HO["Chromatin Marks\n(handoff-*.md, lessons-inbox)"]
     end
 
-    POP -->|"1. Check Habitat Pressure"| BS
-    POP -->|"2. Run Sliced Gates"| HR
-    POP -->|"3. Open Draft PR & Label"| GH
-    GH -->|"4. Required Checks Pass"| SHP
-    GH -->|"5. On Failure -> Structured Triage"| DIG
-    DIG -->|"6. Reproduce Locally & Push Once"| POP
-    POP -.->|"7. Preemption / End of Turn"| HO
+    BS -->|"GREEN / YELLOW / RED\n(Allosteric Signal)"| RNAP
+    RNAP -->|"Elongate Under\nAttenuated Core Slice"| HR
+    RNAP -->|"Synthesize Nascent\nDraft PR Transcript"| GH
+    GH -->|"Clear Promoter (Draft -> Ready)\n& Splice When Green"| SHP
+    GH -->|"Lesion Detected\n(Check Failed)"| DIG
+    DIG -->|"Targeted Local Repro\n(Excision Repair)"| RNAP
+    RNAP -.->|"Polymerase Dissociation /\nShift Handoff"| HO
 ```
 
 ---
 
-## 🔍 Core Component Deep Dive
+## 🔍 Transcription Factor Deep Dive
 
-### 1. Host Admission Supervisor (`box-status`)
+### 1. Allosteric Metabolic Sensor (`box-status`)
 CLI command: `box-status`
 
-Instead of relying on crude CPU percentages (which spike deceivingly during brief bursts), `box-status` queries Linux **Pressure Stall Information (PSI)** from `/proc/pressure/cpu`, `/proc/pressure/memory`, and `/proc/pressure/io`.
+In a cell, transcription factors don't guess energy availability by counting how many enzymes exist—they sense actual metabolic stall (such as AMP/ATP ratios). Similarly, instead of relying on crude CPU percentages (which spike deceivingly during brief bursts), `box-status` queries Linux **Pressure Stall Information (PSI)** from `/proc/pressure/cpu`, `/proc/pressure/memory`, and `/proc/pressure/io`.
 
 ```bash
 $ box-status
@@ -136,43 +152,46 @@ busiest (cores in use, by worktree or command):
 disk: io-pressure 1.79% (full 1.57%)  tasks blocked on disk 0
 ```
 
-#### Ecological Decision Engine
-* **`GREEN` (Plentiful Habitat):** Load is healthy, pressure is negligible, free heavy slots exist. Agents are cleared to launch heavy verification sweeps, Docker containers, or parallel gauntlets.
-* **`YELLOW` (Habitat Constrained):** Heavy slots are fully occupied, memory available is under 20%, or load exceeds 70% of core count. Agents must downgrade to lightweight scouting, narrow unit tests, or code edits only.
-* **`RED` (Severe Overgrazing):** CPU pressure $\ge 40\%$, memory available $< 10\%$, or swap paging is active. Orchestrators must pause new agent launches immediately and instruct running workers to checkpoint their work.
+#### Allosteric Regulatory States
+* **`GREEN` (Induced / Open Promoter):** Metabolic pressure is negligible and heavy slots are open. Polymerases (agents) are cleared to initiate heavy verification sweeps, Docker containers, or parallel gauntlets.
+* **`YELLOW` (Attenuated Transcription):** Heavy slots are occupied, available memory is under 20%, or load exceeds 70% of core count. Agents down-shift to lightweight scouting, narrow unit tests, or code edits only.
+* **`RED` (Allosteric Repression):** CPU stall pressure $\ge 40\%$, available memory $< 10\%$, or swap paging is active. The operator is bound by the repressor: orchestrators pause new agent launches immediately and instruct active workers to write epigenetic checkpoints.
 
 ---
 
-### 2. Dynamic Core Slicer (`heavy-run.sh`)
+### 2. Transcriptional Attenuator (`heavy-run.sh`)
 Usage: `scripts/heavy-run.sh <command...>`
 
-When an agent needs to run a heavy test suite or compiler pass, it must never assume it owns the whole machine. `heavy-run.sh` acts as a dynamic resource valve:
-1. It acquires one of $N$ shared slots ($N = \text{cores} / 4$, minimum 1) via `flock`.
-2. It detects how many other agents are currently executing heavy work.
+In the bacterial *trp* operon, **attenuation** dynamically slows or pauses a transcribing polymerase in response to real-time ribosome supply so multiple polymerases don't stall on the same strand. `heavy-run.sh` implements transcriptional attenuation for compute-intensive builds and test suites:
+1. It acquires one of $N$ shared slots ($N = \text{cores} / 4$, minimum 1) via kernel `flock`.
+2. It senses how many other polymerases are simultaneously elongating heavy tasks.
 3. It dynamically calculates fair core shares:
    $$\text{SQUID\_BOT\_CORES} = \max\left(1, \frac{\text{online\_cores}}{\text{active\_heavy\_slots}}\right)$$
-4. It exports `SQUID_BOT_CORES` and `GG_JOB_CORES`, which downstream tools (pytest xdist, compiler jobs, linters) consume to size their internal thread pools.
+4. It exports `SQUID_BOT_CORES` and `GG_JOB_CORES`, which downstream tools (pytest-xdist, compiler jobs, linters) read to size their internal worker pools.
 
 ---
 
-### 3. State-Reconciling Merge Shepherd (`shepherd_gh.py` & `ci_shepherd.py`)
+### 3. Promoter Clearance & Spliceosome Shepherd (`shepherd_gh.py` & `ci_shepherd.py`)
 CLI command: `squid-bot run --every 600` or `shepherd`
 
-In a high-churn code factory, GitHub webhook events are unreliable—they drop under burst traffic, arrive out of order, or get canceled by concurrency groups. The Shepherd eliminates event reliance by **reconciling the true GitHub state machine directly** on every pass.
+In eukaryotic transcription, RNA Polymerase II initiates a transcript and then enters **promoter-proximal pausing** until regulatory checkpoints verify that the transcript is ready for full elongation and splicing. Furthermore, cellular regulation is driven by **chemical state equilibrium (binding affinity)**, not fragile one-shot events.
 
-#### Supported Labels
-* `shepherd:merge`: Directs the shepherd to mark the PR ready, update its branch against `main`, and squash-merge the second all required checks pass.
-* `shepherd:hold`: Freezes auto-merge, keeping the PR open for human inspection.
-* `shepherd:matrix`: Dispatches full cross-platform matrix suites and gates merge on a clean run.
-* `shepherd:needs-fix`: Automatically set by the shepherd when a real test failure or merge conflict occurs; accompanies a triage digest comment.
-* `shepherd:waiting-on-main`: Automatically set when a check failure is confirmed to also be failing on `origin/main` (preventing agents from chasing phantom bugs).
+In a high-churn code factory, GitHub webhook events drop under burst traffic, arrive out of order, or get canceled by concurrency groups. The Shepherd eliminates event reliance by **reconciling the true GitHub state machine directly** on every pass:
+* **Promoter-Proximal Pausing (Draft $\rightarrow$ Ready):** Agents open PRs as drafts so only cheap, fast checks run. Once fast checks pass, `ci_shepherd` clears the promoter (marks the PR ready for review) to trigger the full CI suite.
+* **Spliceosome Ligation (`shepherd:merge`):** The moment all required checks pass and the branch is clean, the shepherd squash-merges the transcript into `main`.
+* **Repressor Binding (`shepherd:hold`):** Binds the operator to hold a PR open for human inspection without merging.
+* **Enhancer Activation (`shepherd:matrix`):** Induces the full cross-platform OS $\times$ Python matrix suite and gates ligation on a clean run.
+* **Negative Feedback Inhibition (`shepherd:waiting-on-main`):** Automatically applied when a failing check is confirmed to also be failing on `origin/main`, preventing agents from mutating their own branch to fix a broken reference genome.
+* **Excision Flagging (`shepherd:needs-fix`):** Applied when a real regression or conflict (`dirty`) is detected, paired with a structured `ci_digest` report.
 
 ---
 
-### 4. Structured CI Triage (`ci_digest.py`)
+### 4. Mismatch Repair & Excision Signaling (`ci_digest.py`)
 CLI command: `ci-digest <PR_NUMBER>`
 
-When CI fails on a PR, agents should never waste tokens reading 10,000 lines of raw GitHub Actions ANSI output. `ci_digest` scrapes the logs, strips noise, classifies the failure, and emits an unambiguous triage block:
+When a replication error occurs in DNA, the Mismatch Repair (`MMR`) complex (`MutS`/`MutL`) does not destroy the entire chromosome—it locates the exact mismatched base pair, nick-excises the local region, and resynthesizes that patch.
+
+When CI fails on a PR, dumping 10,000 lines of raw GitHub Actions ANSI logs into an LLM's context window is cellular toxicity. `ci_digest` acts as the `MutS`/`MutL` recognition complex: it scans the failure, filters out environmental noise, classifies the mutation, and emits the exact local excision-repair coordinates:
 
 ```bash
 $ ci-digest 4976
@@ -187,27 +206,29 @@ $ ci-digest 4976
     python -m pytest tests/core/test_parser.py -k test_utf8_bom_handling
 ```
 
-#### Failure Taxonomy
-* `infra`: Runner disconnects, Docker Hub rate limits (429/504), network drops. The shepherd automatically retries these up to 3 times, 15 minutes apart.
-* `flake`: Known wall-clock/timing test. Re-run once automatically.
-* `main`: Failure reproduces on `origin/main`. Tagged as a repository blocker; does not block PR author.
-* `dirty`: Conflicts with `main`.
-* `real`: Legitimate code regression. Outputs the **exact local reproduction command** so the agent reproduces and fixes it locally in seconds, pushing only once.
+#### Lesion Taxonomy
+* `infra`: Environmental noise (runner disconnects, Docker Hub 429/504s). The shepherd auto-heals these by retrying up to 3 times, 15 minutes apart.
+* `flake`: Known timing-sensitive locus. Retried once automatically.
+* `main`: Lesion is on the reference strand (`origin/main`). Triggers negative feedback (`shepherd:waiting-on-main`).
+* `dirty`: Reading-frame shift (merge conflict with `main`). Signals the agent to merge `origin/main` and regenerate derived artifacts.
+* `real`: True point mutation in the PR transcript. Outputs the **exact local reproduction command** so the agent repairs and verifies the patch locally before pushing once.
 
 ---
 
-### 5. Shift-Work & Handoff Resilience
-Autonomous agents suffer from hard limits: context window compaction, API rate limits, and model preemptions. `squid-bot` establishes a markdown-based shift-work handoff protocol ([`handoff-*.md`](templates/skills/parallel-agents/SKILL.md) and `lessons-inbox.md`):
-* Agents log active worktrees, scratch directories, running PID lists, and open triage items before yielding turns.
-* Incoming agents take over in-flight branches without re-running expensive proofs or losing architectural context.
-* Durable lessons learned in PR bodies are logged to `lessons-inbox.md` and systematically promoted to agent rule files.
+### 5. Epigenetic Inheritance (`handoff-*.md` & `lessons-inbox.md`)
+Individual RNA polymerase molecules dissociate from the template after a finite run length; similarly, coding agents hit context window compaction, API rate limits, and session preemptions.
+
+`squid-bot` implements **epigenetic memory** via structured markdown handoffs ([`handoff-*.md`](templates/skills/parallel-agents/SKILL.md)) and `lessons-inbox.md`:
+* Before dissociating at the end of a turn or shift, an agent records active worktree loci, running background PIDs, verification levels reached, and open blockers.
+* The next agent binds directly to that worktree and resumes elongation in the exact reading frame without re-running expensive proofs.
+* Regulatory lessons discovered during a run are written to `lessons-inbox.md` and promoted into permanent agent rules—evolving the operon's regulatory network over time.
 
 ---
 
 ## 🛠️ Installation & Quickstart
 
 ### Prerequisites
-* Linux (with `/proc` PSI support recommended for full admission control).
+* Linux (with `/proc` PSI support recommended for allosteric admission control).
 * Python 3.10 or higher.
 * GitHub CLI (`gh`) authenticated with repository access.
 
@@ -218,7 +239,7 @@ cd squid-bot
 pip install -e .
 ```
 
-### 2. Configure Your Repository (`squid-bot.toml`)
+### 2. Configure Your Operon (`squid-bot.toml`)
 Create a `squid-bot.toml` in your repository root:
 
 ```toml
@@ -226,7 +247,7 @@ Create a `squid-bot.toml` in your repository root:
 slug = "owner/repo"
 
 [shepherd]
-# Required CI checks before auto-merging a PR with shepherd:merge
+# Required CI checkpoints before splicing a PR with shepherd:merge into main
 required_checks = [
     "test",
     "lint",
@@ -240,18 +261,18 @@ lock_dir = "/tmp/squid-bot/locks"
 heavy_slots = 3
 ```
 
-### 3. Check Habitat Capacity
+### 3. Sense Metabolic Capacity
 ```bash
 box-status
 # Output: GREEN: headroom (cores: 12, load: 2.1, free heavy slots: 3)
 ```
 
-### 4. Execute Work Under Dynamic Core Slicing
+### 4. Elongate Work Under Transcriptional Attenuation
 ```bash
 scripts/heavy-run.sh pytest tests/
 ```
 
-### 5. Launch the Shepherd Daemon
+### 5. Launch the Shepherd Transcription-Factor Daemon
 ```bash
 nohup squid-bot run --every 600 >> /tmp/squid-bot/shepherd.log 2>&1 &
 ```
@@ -260,39 +281,42 @@ nohup squid-bot run --every 600 >> /tmp/squid-bot/shepherd.log 2>&1 &
 
 ## 🔄 The GitGalaxy Live Crucible & Sync Bridge
 
-`squid-bot` was forged inside **[GitGalaxy](https://github.com/squid-protocol/gitgalaxy)**, where it manages high-velocity multi-agent churn across **5,000+ pull requests**.
+`squid-bot` was forged inside **[GitGalaxy](https://github.com/squid-protocol/gitgalaxy)**, where its transcriptional regulatory network governs multi-agent churn across **5,200+ pull requests**.
 
-To allow continuous experimentation in GitGalaxy while maintaining a clean, generalized, open-source repository, `squid-bot` includes a built-in bi-directional sync engine (`scripts/sync.py`):
+To allow continuous evolution inside GitGalaxy while maintaining a clean, generalized open-source package, `squid-bot` includes a bi-directional sync bridge (`scripts/sync.py`):
 
 ```bash
 # Check drift between GitGalaxy and squid-bot
 python scripts/sync.py status
 python scripts/sync.py diff
 
-# Pull recent improvements from GitGalaxy into squid-bot (with automated parameterization)
+# Pull recent regulatory improvements from GitGalaxy into squid-bot
 python scripts/sync.py pull
 
 # Push generalized fixes from squid-bot back to GitGalaxy
 python scripts/sync.py push
 ```
 
-The bridge translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites. The shepherd workflows ship as templates in `templates/workflows/`: copy them into your own repo's `.github/workflows/` and adjust the required-check names.
+The bridge automatically translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites.
 
 ---
 
 ## ❓ Frequently Asked Questions
 
+#### Q: Why frame `squid-bot` as an operon / transcription-factor network instead of just a task queue?
+**A:** A traditional queue only orders jobs. An operon regulates **end-to-end information flow with feedback loops**: it senses host metabolic stall before initiating work (`box-status`), attenuates resource consumption mid-flight (`heavy-run.sh`), pauses nascent drafts before expensive CI elongation (`ci_shepherd`), routes lesions to targeted local mismatch repair (`ci_digest`), and inhibits downstream splicing when the reference genome (`main`) is damaged.
+
 #### Q: Why measure Linux PSI instead of standard CPU usage?
-**A:** Traditional CPU percentages only measure how much time the processor spent on tasks, which spikes deceivingly during momentary operations (like unzipping a file). PSI measures **task stall time**—the percentage of time processes were delayed while actively waiting for CPU, memory, or disk access. A high PSI reading indicates true resource starvation.
+**A:** Traditional CPU percentages only measure how much time the processor spent on tasks, which spikes deceivingly during momentary bursts. PSI measures **task stall time**—the percentage of time processes were delayed waiting for CPU, memory, or disk access. High PSI is a direct measure of cellular energy starvation.
 
 #### Q: Does `squid-bot` replace GitHub Merge Queue or Mergify?
-**A:** No, it solves a different problem. Human merge queues assume developers submit tested code, wait patiently for CI, and read log outputs in their browser. `squid-bot` is built for **machine developers**: it throttles local host load, eliminates token-burning polling loops, and provides structured local repro commands specifically designed for LLM reasoning loops.
+**A:** No, it solves a different problem. Human merge queues assume developers submit tested code, wait patiently for CI, and read log outputs in their browser. `squid-bot` is built for **autonomous agent polymerases**: it regulates local host metabolism, eliminates token-burning polling loops, and provides structured local mismatch-repair commands designed for LLM reasoning loops.
 
 #### Q: What happens if an agent gets killed mid-task?
-**A:** `squid-bot` includes `scripts/kill-by-cwd.sh` to safely reclaim processes tied to orphaned worktrees, and `exclusive-lock.sh` / `heavy-run.sh` use POSIX kernel file locks (`flock`) that automatically release the instant a process dies, ensuring the habitat never deadlocks.
+**A:** `squid-bot` includes `scripts/kill-by-cwd.sh` to safely reclaim processes tied to orphaned worktrees, and `exclusive-lock.sh` / `heavy-run.sh` use POSIX kernel file locks (`flock`) that automatically release the instant a process dissociates, ensuring the operator never deadlocks.
 
 ---
 
 ## 📜 License
 
-MIT License; see [LICENSE](LICENSE). Copyright (c) 2026 Joe Esquibel / Squid Protocol.
+MIT License. Copyright (c) 2026 Joe Esquibel / Squid Protocol.
