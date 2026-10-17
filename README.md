@@ -48,6 +48,7 @@ That is gene editing, and the way labs do it safely is a good model for doing it
             1. Initiation: promoter-bot switches editing on or off
                • box-status: editor toxicity / host capacity (GREEN/YELLOW/RED)
                • usage limits, connectivity, owner holds: when and how many
+               • comms-bot: the owner's sign-off, asked and answered by phone
                                        │
 ┌──────────────────────────────────────▼───────────────────────────────────────┐
 │          THE EDITORS (Claude Code / Gemini / Cursor), one per culture        │
@@ -84,6 +85,7 @@ That is gene editing, and the way labs do it safely is a good model for doing it
 | **Screening clones; off-target sequencing** | **CI: draft checks, then the full suite** | Does the edit fix the defect, and did it break anything elsewhere (off-target effects = regressions)? |
 | **Genotyping a failed clone** | **`ci_digest`** | Classifies a failure (`real` / `infra` / `flake` / `main` / `dirty`) and hands the editor the exact local repro. |
 | **Integrase** (writes a verified sequence into the genome) | **integrase-bot** (formerly the shepherd) | Merges a green PR into `main`; holds, reruns and flags the rest. Also: it does Continuous Integration. |
+| **The physician's sign-off** (the clinician who ordered the therapy decides what the lab can't) | **comms-bot** | Takes the fleet's questions to the owner's phone in plain language, brings the decisions back, and sends a daily lab report. Uses no model tokens. |
 | **Discarding a failed clone** | **Closing a broken PR** | An edit that cannot be verified never reaches the genome. |
 | **Two edits at the same locus** | **Merge conflicts** | Caught as `dirty` and sent back for a rebuild against the current genome. |
 | **The CRISPR array** (bacteria store spacers from past infections to recognise them again) | **Handoffs, `lessons-inbox.md`, the integrase ledger & `flake-history`** | Memory of past failures carried to the next generation of editors. |
@@ -126,6 +128,11 @@ flowchart TD
         HO["handoff-*.md, lessons-inbox,\nledger, flake-history"]
     end
 
+    subgraph SIGN["5. Sign-off (comms-bot)"]
+        CB["comms-bot\n(Questions Out, Decisions In)"]
+        OWN["Owner's Phone\n(Private Channel)"]
+    end
+
     BS -->|"GREEN / YELLOW / RED"| PB
     PB -->|"Start an Edit"| EDIT
     EDIT -->|"Heavy Jobs"| HR
@@ -134,6 +141,9 @@ flowchart TD
     GH -->|"Check Failed"| DIG
     DIG -->|"Exact Local Repro"| EDIT
     EDIT -.->|"Session Ends /\nHandoff"| HO
+    PB -->|"Owner Question"| CB
+    CB <-->|"Buttons / Replies"| OWN
+    CB -->|"Owner Decision"| PB
 ```
 
 ---
@@ -185,7 +195,7 @@ promoter-bot decides which issues get worked, when, and how many at once, and la
 * **Signals that switch editing off:** `box-status` RED, a usage limit (paused until its reset, weekly resets included), lost connectivity (workers that died offline are requeued), a run of failing workers, or a stop file.
 * **Dose:** at most `max_workers` agents at once, only into free heavy slots.
 * **Targets:** a tiered queue that refills itself from labelled issues.
-* **Housekeeping and alerts:** removes finished worktrees, reaps stale containers, keeps a daily scorecard, and sends phone alerts (ntfy) when it needs a human.
+* **Housekeeping and alerts:** removes finished worktrees, reaps stale containers, keeps a daily scorecard, and sends phone alerts when it needs a human (through comms-bot's private ntfy server).
 
 ---
 
@@ -244,6 +254,20 @@ squid-bot keeps that memory in structured markdown handoffs ([`handoff-*.md`](te
 * Before a session ends, an agent records its active worktrees, running background PIDs, the verification level reached, and open blockers.
 * The next agent picks up that worktree where it stopped, without re-running expensive proofs.
 * Lessons learned during a run go to `lessons-inbox.md` and are promoted into permanent agent rules, so the fleet stops repeating a mistake it has already made.
+
+---
+
+### 7. Sign-off: `comms-bot` (the physician's sign-off)
+*Status: runs privately on GitGalaxy today (added 2026-10-17); not yet packaged in this repo.*
+
+In a cell therapy, the lab does the editing, but some calls belong to the physician who ordered it: release this batch, retry that culture, stop. A fleet has the same kind of calls (retry a PR the agents have failed to fix four times today, release a held PR, make a ruling only the owner can make), and until comms-bot its only way to reach the owner was a log nobody was reading. On the day it shipped, the scorecard counted 24 idle ticks, about 2.9 hours with free slots and nothing to launch, all of them waiting on owner decisions.
+
+comms-bot is a two-way channel between the fleet and the owner's phone that uses no model tokens:
+* **Private by construction:** a self-hosted [ntfy](https://ntfy.sh) server reachable only over a private VPN, with no anonymous access. Only the owner's account can post commands and only the box's account can post alerts, so every command is the owner's.
+* **Plain-language questions:** the model that parks an item writes the question at that moment, in a fixed private format (question, context, and what each button will do). Calls the gate makes on its own (for example, the fix-retry cap) get fixed templates, filled in with the PR and issue titles.
+* **Buttons that mean something:** each question comes with buttons that fit it ("Try again / Drop / Pause"). The answer is recorded with exactly what the button promised, and a tick is woken two minutes after the last tap to apply it, so a burst of answers costs one tick.
+* **Commands and a daily report:** `status`, `owner`, `pause`, `resume` and `workers N` from the phone, plus a morning digest with merges, spend, evidence levels and crucible cells, and what changed since the last one.
+* **Nothing sensitive on GitHub:** a public repo only ever gets a neutral "waiting on an owner decision" / "the owner decided" note; the question itself stays private.
 
 ---
 
@@ -333,7 +357,7 @@ The bridge translates paths, abstracts repository slugs, maps package imports, u
 ## ❓ Frequently Asked Questions
 
 #### Q: Why frame `squid-bot` as gene editing instead of just a task queue?
-**A:** Because the hard part isn't ordering jobs; it's making heritable changes to one shared genome safely. A queue only orders work. squid-bot regulates the whole edit: it starts edits only when the host can take them (`promoter-bot`, `box-status`), edits in isolation (worktrees), sizes each heavy job's share of the cores as it starts (`heavy-run.sh`), screens cheaply before screening expensively (draft PRs), genotypes failures so they are fixed locally (`ci_digest`), and integrates only verified edits, never while the reference genome itself is broken (`integrase-bot`).
+**A:** Because the hard part isn't ordering jobs; it's making heritable changes to one shared genome safely. A queue only orders work. squid-bot regulates the whole edit: it starts edits only when the host can take them (`promoter-bot`, `box-status`), edits in isolation (worktrees), sizes each heavy job's share of the cores as it starts (`heavy-run.sh`), screens cheaply before screening expensively (draft PRs), genotypes failures so they are fixed locally (`ci_digest`), and integrates only verified edits, never while the reference genome itself is broken (`integrase-bot`). When only a human can decide, it asks the owner in plain language and waits for the answer (`comms-bot`).
 
 #### Q: Why measure Linux PSI instead of standard CPU usage?
 **A:** CPU percentages only measure how much time the processor spent on tasks, which spikes deceivingly during momentary bursts. PSI measures **task stall time**: the percentage of time processes were delayed waiting for CPU, memory, or disk. High PSI is a direct measure of a host under stress.
