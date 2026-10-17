@@ -230,7 +230,7 @@ def test_render_tells_the_before_and_with_bot_story():
     assert 'class="band"' in svg and svg.count('class="start"') == 4  # the band and start line run through every panel
     assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg  # 25 of 40 merges a day since it started
     assert "before promoter-bot: 15.0 · +167%" in svg  # merged / day: 40 with vs 15 before
-    assert "avg 40.0" in svg and "avg 15.0" in svg and "avg 2.0 min" in svg and "avg 8.0 min" in svg
+    assert "avg " not in svg and 'class="avg"' not in svg  # averages live in the cards, not on the charts
     assert "175 of the 280 PRs merged since then were its own" in svg
     md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
     assert "| Measure | With promoter-bot | Before promoter-bot |" in md

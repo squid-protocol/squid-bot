@@ -2,7 +2,7 @@
 
 A GitHub Action that shows what an agent bot changed in your repo. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a report to each run's summary page.
 
-Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and CI runs that failed or were cancelled. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and dashed lines give each measure's average before the bot and with it. The cards compare the same two periods. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
+Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and CI runs that failed or were cancelled. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 

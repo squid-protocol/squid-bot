@@ -570,9 +570,6 @@ STYLE = """
   .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
   .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
-  .avg { stroke: var(--ink2); stroke-width: 1.25; stroke-dasharray: 5 3; fill: none; }
-  .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2); paint-order: stroke; stroke: var(--surface);
-          stroke-width: 3px; stroke-linejoin: round; }
   .seg { stroke: var(--surface); stroke-width: 1; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
   .failed { fill: var(--failed); } .cancelled { fill: var(--cancelled); }
@@ -620,8 +617,8 @@ def _origin_parts(row: dict) -> dict[str, float]:
 
 
 def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str:
-    """The dashboard: one UTC day per mark. When a bot is configured (or found), a band marks the days it ran and dashed
-    lines give each measure's average before it and with it, so the charts read as a before/after."""
+    """The dashboard: one UTC day per mark. When a bot is configured (or found), a band marks the days it ran, and the
+    cards compare its averages with the days before it."""
     cfg = cfg or Config(repo=data["repo"])
     rows = window_rows(data, shown_days(data, cfg, days, today), today)
     if not rows:
@@ -698,8 +695,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         out.append("</g>")
     span = lambda ds: f"{_fmt_day(ds[0])}–{_fmt_day(ds[-1])}" if ds else "no days yet"
     out.append(f'<text class="meta" x="{pad}" y="{card_y + card_h + 18}">Cards: {escape(cmp["cur_label"])} '
-               f'({span(cmp["cur_days"])}, finished days) vs {escape(cmp["prev_label"])} ({span(cmp["prev_days"])}). '
-               f'Dashed lines on the charts are the same two averages.</text>')
+               f'({span(cmp["cur_days"])}, finished days) vs {escape(cmp["prev_label"])} ({span(cmp["prev_days"])}).</text>')
 
     # Shared furniture for every panel
     events = [(d, label) for d, label in cfg.events if d in index]
@@ -747,18 +743,6 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out.append(f'<text class="{cls}" x="{(x - 5 if before else x + 5):.1f}" y="{top - 8 - 13 * row}" '
                        f'text-anchor="{anchor}">{escape(text)}</text>')
 
-    def averages(top: int, chart_h: int, maximum: float, key: str, formatter) -> None:
-        """Dashed average lines over the before and with-bot periods."""
-        for stats, ds in ((prev, cmp["prev_days"]), (cur, cmp["cur_days"])):
-            value = stats.get(key)
-            ids = [index[d] for d in ds if d in index]
-            if not start or value is None or not ids:
-                continue
-            y = top + chart_h - chart_h * min(value, maximum) / maximum
-            x0, x1 = x_left(min(ids)) + 1, x_left(max(ids)) + slot - 1
-            out.append(f'<line class="avg" x1="{x0:.1f}" x2="{x1:.1f}" y1="{y:.1f}" y2="{y:.1f}"/>')
-            out.append(f'<text class="avgl" x="{x0 + 3:.1f}" y="{y - 5:.1f}">avg {formatter(value)}</text>')
-
     def line_series(top: int, chart_h: int, values: list[float | None], maximum: float, formatter, detail: str) -> None:
         y_at = lambda value: top + chart_h - chart_h * value / maximum
         segment: list[str] = []
@@ -787,7 +771,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # 1 · Delivery: merged PRs each day, by origin
     y = card_y + card_h + 18 + 62
-    top, chart_h = y, 130
+    top, chart_h = y, 195
     delivery = [_origin_parts(row) for _, row in rows]
     delivery_max = _nice_max(max(1.0, max(sum(parts.values()) for parts in delivery)))
     frame(top, chart_h, delivery_max, "1 · Delivery — merged PRs per day, by origin", lambda v: f"{v:g}")
@@ -811,7 +795,6 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                      + ", ".join(f"{label} {parts[kind]:.0f}" for kind, label in origins))
         fade = ' class="partial"' if day == today_s else ""
         out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
-    averages(top, chart_h, delivery_max, "merged_per_day", lambda v: f"{v:.1f}")
     annotate(top)
     legend(top - 30, [(label, kind) for kind, label in origins if kind != "unknown" or any(p["unknown"] for p in delivery)])
     y = top + chart_h + 70
@@ -822,7 +805,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     runner_values = [detail["runner_min_est"] / row["merged"] / 60 if detail.get("runner_min_est") is not None
                      and row["merged"] else None for (_, row), detail in zip(rows, details)]
     if any(v is not None for v in wait_values + runner_values):
-        top, chart_h = y, 80
+        top, chart_h = y, 120
         wait_max = _nice_max(max((v for v in wait_values if v is not None), default=1.0))
         frame(top, chart_h, wait_max, "2 · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
         for i, (day, row) in enumerate(rows):
@@ -833,14 +816,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                            f'<path class="markd" d="M{x_mid(i):.1f},{top - 9} l3,3 l-3,3 l-3,-3 Z"/></g>')
         line_series(top, chart_h, wait_values, wait_max, lambda v: f"{v:.1f}",
                     f"minutes · about {cfg.sample_runs} runs sampled per day")
-        averages(top, chart_h, wait_max, "wait_p90", lambda v: f"{v:.1f} min")
         legend(top - 30, [("CI change merged", "markd")])
         y = top + chart_h + 70
         top = y
         runner_max = _nice_max(max((v for v in runner_values if v is not None), default=1.0))
         frame(top, chart_h, runner_max, "3 · Cost — runner time per merged PR, estimated hours (sampled)", lambda v: f"{v:g}")
         line_series(top, chart_h, runner_values, runner_max, lambda v: f"{v:.2f}", "runner hours / merged PR")
-        averages(top, chart_h, runner_max, "runner_h_per_pr", lambda v: f"{v:.1f} h")
         y = top + chart_h + 70
     else:
         out.append(f'<text class="h2" x="{pad}" y="{y - 30}">2 · Speed and 3 · Cost</text>')
@@ -855,7 +836,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
                             f"({passed} passed, {failed} failed again; {total} total)")
         proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
-    top, chart_h = y, 80
+    top, chart_h = y, 120
     waste_max = _nice_max(max(1.0, max(row["runs"]["failure"] + row["runs"]["cancelled"] for _, row in rows)))
     frame(top, chart_h, waste_max, "4 · Waste — CI runs that failed or were cancelled, per day", lambda v: f"{v:g}",
           ". ".join(proof_detail))
