@@ -201,29 +201,63 @@ def bot_workflow_ids(repo: str, cfg: Config) -> dict[str, int]:
     return {w["name"]: w["id"] for w in wfs if w["name"] in cfg.bot_workflows}
 
 
-def rerun_counts(repo: str, day: str) -> dict:
-    """Exact: the day's runs that were rerun (run_attempt > 1) and how their latest attempt ended, per workflow.
-    A rerun that failed again usually retried a real failure; one that passed was a flake or an outage."""
-    by_wf: dict[str, list[int]] = {}
-    attempts = 0
+def day_runs(repo: str, day: str) -> list[dict]:
+    """Every workflow run created on the day."""
+    out = []
     for h in range(0, 24, 2):  # a listing stops at 1,000 runs: 2-hour windows stay under it on a busy day
         span = f"{day}T{h:02d}:00:00Z..{day}T{h + 1:02d}:59:59Z"
         for page in range(1, 11):
             runs = gh_json(f"repos/{repo}/actions/runs?created={span}&per_page=100&page={page}")["workflow_runs"]
-            for r in runs:
-                if (r.get("run_attempt") or 1) > 1 and r.get("status") == "completed":
-                    attempts += r["run_attempt"] - 1
-                    c = by_wf.setdefault(r["name"], [0, 0, 0])
-                    c[{"success": 0, "failure": 1}.get(r.get("conclusion"), 2)] += 1
+            out += runs
             if len(runs) < 100:
                 break
+    return out
+
+
+def rerun_counts(repo: str, day: str, runs: list[dict] | None = None) -> dict:
+    """Exact: the day's runs that were rerun (run_attempt > 1) and how their latest attempt ended, per workflow.
+    A rerun that failed again usually retried a real failure; one that passed was a flake or an outage."""
+    by_wf: dict[str, list[int]] = {}
+    attempts = 0
+    for r in day_runs(repo, day) if runs is None else runs:
+        if (r.get("run_attempt") or 1) > 1 and r.get("status") == "completed":
+            attempts += r["run_attempt"] - 1
+            c = by_wf.setdefault(r["name"], [0, 0, 0])
+            c[{"success": 0, "failure": 1}.get(r.get("conclusion"), 2)] += 1
     return {"runs": sum(sum(c) for c in by_wf.values()), "attempts": attempts,
             "passed": sum(c[0] for c in by_wf.values()), "failed_again": sum(c[1] for c in by_wf.values()),
             "by_workflow": by_wf}
 
 
+def minutes_saved(runs: list[dict], skip: set[str]) -> dict:
+    """Estimated run minutes that early cancellation saved, in run wall time (start to finish). A cancelled run would
+    have taken about as long as the day's median successful run of the same workflow; what it saved is that minus what
+    it ran. Workflows in `skip` (an orchestrator's bookkeeping) are left out of both sides. Cancelled runs of a workflow
+    with no successful run that day can't be priced and are counted as `unpriced`."""
+    def wall(r: dict) -> float:
+        return max(0.0, (_iso(r["updated_at"]) - _iso(r["run_started_at"])).total_seconds() / 60)
+    done = [r for r in runs if r.get("status") == "completed" and r.get("conclusion") != "skipped"
+            and r.get("run_started_at") and r.get("updated_at") and r.get("name") not in skip]
+    full: dict[str, list[float]] = {}
+    for r in done:
+        if r.get("conclusion") == "success":
+            full.setdefault(r["name"], []).append(wall(r))
+    saved, unpriced, cancelled = 0.0, 0, 0
+    for r in done:
+        if r.get("conclusion") == "cancelled":
+            cancelled += 1
+            if r["name"] in full:
+                saved += max(0.0, _pct(full[r["name"]], 0.5) - wall(r))
+            else:
+                unpriced += 1
+    return {"wall_min": round(sum(wall(r) for r in done)), "saved_min_est": round(saved),
+            "cancelled": cancelled, "unpriced": unpriced}
+
+
 def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], origin, cfg: Config) -> dict:
-    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled)."""
+    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled); minutes saved by early
+    cancellation (estimated from every run of the day)."""
+    everything = day_runs(repo, day)
     bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
     changes: dict[int, str] = {}
     for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
@@ -265,7 +299,8 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
         "sampled_runs": len(run_min),
         "sampled_min_by_workflow": {k: round(v, 1) for k, v in by_wf.items()},
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
-        "reruns": rerun_counts(repo, day),
+        "reruns": rerun_counts(repo, day, everything),
+        "cancel_savings": minutes_saved(everything, set(bots)),
     }
 
 
@@ -300,13 +335,9 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
         if d in data["days"] and (classes is None or (cfg.bot_prefixes and "bot" not in classes)):
             data["days"][d].update(merged_counts(repo, d, cfg))
     bots = bot_workflow_ids(repo, cfg)
-    for d in window:  # the bot workflows' own cancelled runs (a newer bookkeeping run replaced them): kept out of chart 4
-        if bots and d in data["days"] and "bot_cancelled" not in data["days"][d]:
-            data["days"][d]["bot_cancelled"] = sum(
-                gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={d}&status=cancelled&per_page=1") for i in bots.values())
     origin = RunOrigin(repo, cfg)
     missing = [d for d in window if d not in fresh and d in data["days"]
-               and not {"sampled_min_by_origin", "reruns"} <= data["days"][d].get("detail", {}).keys()]
+               and not {"sampled_min_by_origin", "reruns", "cancel_savings"} <= data["days"][d].get("detail", {}).keys()]
     for d in fresh + missing[:backfill]:
         r = data["days"][d]["runs"]
         try:
@@ -386,6 +417,8 @@ def week_stats(rows: list[dict]) -> dict:
         "bot_merge_share": bot / max(1, sum(r["merged"] for r in classed)) if classed else None,
         "runs_per_day": runs / n,
         "pass_rate": ok / (ok + bad) if ok + bad else None,
+        "fail_rate": bad / (ok + bad) if ok + bad else None,
+        **saved_stats([x["cancel_savings"] for x in det if "cancel_savings" in x]),
         "wait_median": sum(x["wait_median"] for x in det) / len(det) if det else None,
         "wait_p90": sum(x["wait_p90"] for x in det) / len(det) if det else None,
         "runner_h_per_pr": sum(m for m, _ in est) / max(1, sum(k for _, k in est)) / 60 if est else None,
@@ -393,6 +426,19 @@ def week_stats(rows: list[dict]) -> dict:
         "ci_changes": [c for x in det for c in x["ci_changes"]],
         **rerun_stats(det),
     }
+
+
+def saved_share(c: dict) -> float | None:
+    """Share of the minutes the runs would have taken that early cancellation saved (estimated)."""
+    total = c["wall_min"] + c["saved_min_est"]
+    return c["saved_min_est"] / total if total else None
+
+
+def saved_stats(cs: list[dict]) -> dict:
+    if not cs:
+        return {}
+    merged = {"wall_min": sum(c["wall_min"] for c in cs), "saved_min_est": sum(c["saved_min_est"] for c in cs)}
+    return {"saved_share": saved_share(merged), "saved_min_per_day": merged["saved_min_est"] / len(cs)}
 
 
 def rerun_stats(det: list[dict]) -> dict:
@@ -486,6 +532,8 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
              *([(f"Delivery · {cfg.bot_name}-made share", "bot_merge_share", "pct")] if cmp["start"] else []),
              ("Delivery · agent-classified share", "agent_share", "pct"),
              ("Proof · CI workflow-run pass rate", "pass_rate", "pct"),
+             ("Proof · failed runs", "fail_rate", "pct"),
+             ("Efficiency · run minutes saved by early cancellation (est.)", "saved_share", "pct"),
              ("Reruns / day", "reruns_per_day", "n"),
              ("Reruns whose latest attempt passed", "rerun_pass_rate", "pct"),
              ("Capacity · queue wait median (sampled)", "wait_median", "min"),
@@ -551,7 +599,7 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
 STYLE = """
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
-          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; }
+          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
             --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
@@ -577,7 +625,9 @@ STYLE = """
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
-  .failed { fill: var(--failed); } .early { fill: var(--neutral); }
+  .failed { fill: var(--failed); } .saved { fill: var(--good); }
+  .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
+  .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
   .partial { opacity: 0.5; }
   .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
 """
@@ -753,23 +803,25 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out.append(f'<text class="{cls}" x="{(x - 5 if before else x + 5):.1f}" y="{top - 8 - 13 * row}" '
                        f'text-anchor="{anchor}">{escape(text)}</text>')
 
-    def line_series(top: int, chart_h: int, values: list[float | None], maximum: float, formatter, detail: str) -> None:
+    def line_series(top: int, chart_h: int, values: list[float | None], maximum: float, formatter=None, detail: str = "",
+                    tips: list[str] | None = None, cls: str = "") -> None:
         y_at = lambda value: top + chart_h - chart_h * value / maximum
         segment: list[str] = []
         dots = []
         for i, ((day, _), value) in enumerate(zip(rows, values)):
             if value is None:
                 if len(segment) > 1:
-                    out.append(f'<polyline class="line" points="{" ".join(segment)}"/>')
+                    out.append(f'<polyline class="line {cls}" points="{" ".join(segment)}"/>')
                 segment = []
                 continue
             segment.append(f"{x_mid(i):.1f},{y_at(value):.1f}")
             partial = day == today_s
-            dots.append(f'<circle class="dot{" partial" if partial else ""}" cx="{x_mid(i):.1f}" cy="{y_at(value):.1f}" '
-                        f'r="4"><title>{_fmt_day(day)}: {formatter(value)} {detail}'
+            text = tips[i] if tips else f"{formatter(value)} {detail}"
+            dots.append(f'<circle class="dot {cls}{" partial" if partial else ""}" cx="{x_mid(i):.1f}" cy="{y_at(value):.1f}" '
+                        f'r="4"><title>{_fmt_day(day)}: {escape(text)}'
                         f'{" (today so far)" if partial else ""}</title></circle>')
         if len(segment) > 1:
-            out.append(f'<polyline class="line" points="{" ".join(segment)}"/>')
+            out.append(f'<polyline class="line {cls}" points="{" ".join(segment)}"/>')
         out.extend(dots)
 
     def legend(y: int, items: list[tuple[str, str]]) -> None:
@@ -841,7 +893,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
         y += 20
 
-    # 4 · Outcomes: failed runs (waste) and runs cancelled early (a newer push replaced them, so their time was cut short)
+    # 4 · Efficiency: share of run minutes early cancellation saved (est.) and share of runs that failed
     proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
     reruns = rerun_split(finished(rows, today)[-7:])
     if reruns:
@@ -849,31 +901,29 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
                             f"({passed} passed, {failed} failed again; {total} total)")
         proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
-    early = [max(0, row["runs"]["cancelled"] - row.get("bot_cancelled", 0)) for _, row in rows]
-    top, chart_h = y, 120
-    outcome_axis = _nice_axis(max(1.0, max(row["runs"]["failure"] + e for (_, row), e in zip(rows, early))))
-    frame(top, chart_h, outcome_axis, "4 · Outcomes — CI runs that failed, and runs cancelled early, per day", lambda v: f"{v:g}",
-          ". ".join(proof_detail))
-    for i, ((day, row), cut) in enumerate(zip(rows, early)):
+    saved_values, saved_tips, failed_values, failed_tips = [], [], [], []
+    for _, row in rows:
+        c = row.get("detail", {}).get("cancel_savings")
+        share = saved_share(c) if c else None
+        saved_values.append(None if share is None else 100 * share)
+        if share is None:
+            saved_tips.append("")
+        else:
+            unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
+            saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
+                              f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
         r = row["runs"]
-        x, base = x_left(i) + (slot - bar_w) / 2, top + chart_h
-        elements = []
-        shown = [(css, value) for css, value in (("failed", r["failure"]), ("early", cut)) if value > 0]
-        for n, (css, value) in enumerate(shown):
-            h = chart_h * value / outcome_axis[0]
-            if n == len(shown) - 1:
-                elements.append(f'<path class="{css} seg" d="{_bar_path(x, base - h, bar_w, h, 4)}"/>')
-            else:
-                elements.append(f'<rect class="{css} seg" x="{x:.1f}" y="{base - h:.1f}" width="{bar_w:.1f}" height="{h:.1f}"/>')
-            base -= h
         judged = r["success"] + r["failure"]
-        rate = f'{100 * r["success"] / judged:.1f}%' if judged else "–"
-        bookkeeping = f' (+{row["bot_cancelled"]} bot bookkeeping runs replaced by newer ones, not shown)' if row.get("bot_cancelled") else ""
-        fade = ' class="partial"' if day == today_s else ""
-        tip = escape(f'{_fmt_day(day)}: {r["total"]:,} CI runs · {r["failure"]} failed · {cut} cancelled early{bookkeeping} · '
-                     f'pass rate {rate} (success / success + failure){" (today so far)" if day == today_s else ""}')
-        out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
-    legend(top - 30, [("failed", "failed"), ("cancelled early (newer push)", "early")])
+        failed_values.append(100 * r["failure"] / judged if judged else None)
+        failed_tips.append(f'{100 * r["failure"] / judged:.1f}% of runs failed ({r["failure"]:,} of {judged:,} CI runs that '
+                           f'passed or failed)' if judged else "")
+    top, chart_h = y, 120
+    pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
+    frame(top, chart_h, pct_axis, "4 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
+          lambda v: f"{v:g}%", ". ".join(proof_detail))
+    line_series(top, chart_h, saved_values, pct_axis[0], tips=saved_tips, cls="saved")
+    line_series(top, chart_h, failed_values, pct_axis[0], tips=failed_tips, cls="failedl")
+    legend(top - 30, [("minutes saved (est.)", "saved"), ("runs failed", "failed")])
     y = top + chart_h + 44
 
     prefixes = ", ".join(cfg.bot_prefixes)
@@ -881,8 +931,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                f'Queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.</text>')
     out.append(f'<text class="meta" x="{pad}" y="{y + 15}">'
                + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
-                        + "Other agents = agent branch prefixes or PR-body markers. Pass rate is per workflow run, "
-                          "not per PR.") + '</text>')
+                        + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
+                          "minutes saved is estimated.") + '</text>')
     height = y + 34
     body = "\n  ".join(out)
     merged_total = sum(row["merged"] for _, row in rows)

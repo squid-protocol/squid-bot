@@ -40,7 +40,7 @@ def test_render_is_valid_svg_with_one_bar_per_day_and_real_totals():
     assert sum("runs" in t for t in titles) == 30
     merged_total = sum(30 + i for i in range(30))
     assert f"{merged_total:,}" in svg
-    assert "97.4%" in svg  # 1500 / (1500 + 40)
+    assert "2.6% of runs failed (40 of 1,540" in svg  # 40 / (1500 + 40)
 
 
 def test_render_ignores_history_outside_the_window():
@@ -190,7 +190,7 @@ def test_charts_show_each_days_own_numbers_not_a_trailing_average():
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
     assert "Oct 14 · 71 merged PRs (today so far)" in svg
-    assert "1,000 CI runs · 100 failed · 0 cancelled early · pass rate 90.0%" in svg
+    assert "Oct 14: 10.0% of runs failed (100 of 1,000" in svg
     assert "Oct 13 · 31 merged PRs ·" in svg
     assert "7-day average" not in svg and "trailing" not in svg
 
@@ -244,9 +244,31 @@ def test_axes_use_the_tightest_round_step():
     assert dashboard._nice_axis(0.4) == (0.4, 0.1)
 
 
-def test_bot_bookkeeping_cancellations_stay_out_of_the_outcomes_chart():
+def _run(name, conclusion, minutes):
+    return {"name": name, "status": "completed", "conclusion": conclusion,
+            "run_started_at": "2026-10-14T10:00:00Z", "updated_at": f"2026-10-14T10:{minutes:02d}:00Z"}
+
+
+def test_minutes_saved_prices_a_cancelled_run_at_its_workflows_median_success():
+    runs = [_run("Smoke", "success", 20), _run("Smoke", "success", 30), _run("Smoke", "success", 40),
+            _run("Smoke", "cancelled", 5),        # would have run 30: saved 25
+            _run("Lint", "cancelled", 1),         # no successful Lint run to price it
+            _run("Shepherd", "cancelled", 0), _run("Shepherd", "success", 1),  # bookkeeping: skipped
+            {**_run("Smoke", "skipped", 0)}]
+    c = dashboard.minutes_saved(runs, {"Shepherd"})
+    assert c == {"wall_min": 96, "saved_min_est": 25, "cancelled": 2, "unpriced": 1}
+    assert round(dashboard.saved_share(c), 3) == round(25 / 121, 3)
+
+
+def test_the_efficiency_chart_plots_minutes_saved_and_failed_runs_as_percentages():
     data = _data()
-    data["days"][TODAY.isoformat()]["bot_cancelled"] = 250  # of the fixture's 300 cancelled runs
+    data["days"][TODAY.isoformat()]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                                 "runner_min_est": 600, "sampled_runs": 24,
+                                                 "cancel_savings": {"wall_min": 900, "saved_min_est": 100,
+                                                                    "cancelled": 12, "unpriced": 0}}
     svg = dashboard.render(data, 30, TODAY)
-    assert "40 failed · 50 cancelled early (+250 bot bookkeeping runs replaced by newer ones, not shown)" in svg
-    assert "cancelled early (newer push)" in svg
+    ET.fromstring(svg)
+    assert "10.0% of run minutes saved by early cancellation (est. 100 of 1,000 min; 12 runs cancelled)" in svg
+    assert "minutes saved (est.)" in svg and "runs failed" in svg
+    md = dashboard.summary_md(data, CFG, 30, TODAY, [])
+    assert "| Proof · failed runs |" in md
