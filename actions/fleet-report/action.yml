@@ -1,6 +1,7 @@
 name: Fleet CI report
 description: >-
-  A three-part live health dashboard and weekly report: delivery, CI verification outcomes, and CI capacity over time.
+  A live dashboard and weekly report of what an agent bot changed: delivery, queue wait, CI cost and CI waste per day,
+  before and with the bot.
 author: squid-protocol
 branding:
   icon: activity
@@ -33,6 +34,20 @@ inputs:
     default: "claude/,codex/,copilot/,cursor/,devin/"
   agent-markers:
     description: Regex matched against PR bodies that marks a PR as agent-made. Empty = the built-in list (Claude Code, Copilot, Devin, Cursor, Codex, Gemini CLI trailers).
+    default: ""
+  bot-branch-prefixes:
+    description: >-
+      Comma-separated head-branch prefixes of the bot this dashboard follows (e.g. your orchestrator's worker branches).
+      Its PRs get their own class, and the charts show the days before it and with it. Empty = no bot.
+    default: ""
+  bot-name:
+    description: Name shown for the bot.
+    default: "bot"
+  bot-start:
+    description: YYYY-MM-DD the bot went live. Empty = the day of its first merged PR.
+    default: ""
+  events:
+    description: "Dates to mark on the charts, as 'YYYY-MM-DD: label; YYYY-MM-DD: label'."
     default: ""
   sample-runs:
     description: Runs sampled per day for queue wait and runner time (each costs one API call).
@@ -84,6 +99,10 @@ runs:
         I_PREFIXES: ${{ inputs.agent-branch-prefixes }}
         I_MARKERS: ${{ inputs.agent-markers }}
         I_SAMPLE: ${{ inputs.sample-runs }}
+        I_BOT_PREFIXES: ${{ inputs.bot-branch-prefixes }}
+        I_BOT_NAME: ${{ inputs.bot-name }}
+        I_BOT_START: ${{ inputs.bot-start }}
+        I_EVENTS: ${{ inputs.events }}
         I_BACKFILL: ${{ inputs.detail-backfill }}
         I_MAX_WAIT: ${{ inputs.max-wait-p90 }}
         I_MAX_H: ${{ inputs.max-runner-hours-per-pr }}
@@ -91,7 +110,8 @@ runs:
       run: |
         args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
               --agent-branch-prefixes "$I_PREFIXES" --sample-runs "$I_SAMPLE" --detail-backfill "$I_BACKFILL"
-              --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY")
+              --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY"
+              --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS")
         [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
         [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)
         python3 "$GITHUB_ACTION_PATH/fleet_report.py" "${args[@]}"

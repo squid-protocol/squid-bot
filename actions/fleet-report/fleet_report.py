@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import re
 import subprocess
@@ -43,11 +44,23 @@ DETAIL_BACKFILL = 4  # older days missing the sampled detail, filled a few per r
 DEFAULT_AGENT_PREFIXES = "claude/,codex/,copilot/,cursor/,devin/"
 DEFAULT_AGENT_MARKERS = (r"Generated with \[?Claude Code|Co-Authored-By: Claude|Co-authored-by: Copilot|"
                          r"agy-authored|Devin AI|Cursor Agent|OpenAI Codex|Gemini CLI")
-CLASSES = ("agent", "other", "automation")
+CLASSES = ("bot", "agent", "other", "automation")
+SHOW_BEFORE = 14  # days before the bot started kept on the charts and used as its "before" baseline
+MAX_DAYS = 90
 
 
 def _csv(s: str) -> list[str]:
     return [x.strip() for x in s.split(",") if x.strip()]
+
+
+def _events(s: str) -> list[tuple[str, str]]:
+    """'2026-10-10: shepherd on; 2026-10-12: paused' -> [(day, label), ...]"""
+    out = []
+    for item in s.split(";"):
+        day, _, label = item.partition(":")
+        if day.strip() and label.strip():
+            out.append((day.strip(), label.strip()))
+    return out
 
 
 @dataclass
@@ -58,6 +71,10 @@ class Config:
     agent_prefixes: list[str] = field(default_factory=lambda: _csv(DEFAULT_AGENT_PREFIXES))
     agent_markers: str = DEFAULT_AGENT_MARKERS
     sample_runs: int = 24
+    bot_prefixes: list[str] = field(default_factory=list)
+    bot_name: str = "bot"
+    bot_start: str = ""
+    events: list[tuple[str, str]] = field(default_factory=list)
 
     @property
     def heading(self) -> str:
@@ -104,9 +121,12 @@ def _pct(xs: list[float], q: float) -> float:
 # ---------------------------------------------------------------- classification
 
 def classify_pr(pr: dict, cfg: Config) -> str:
-    """agent: an agent branch prefix or an agent marker in the body; automation: any other bot account
-    (dependabot, renovate, release bots); other: everything else (people, or agents that leave no trace)."""
+    """bot: one of the bot's own branch prefixes (the orchestrator this dashboard follows); agent: an agent branch
+    prefix or an agent marker in the body; automation: any other bot account (dependabot, renovate, release bots);
+    other: everything else (people, or agents that leave no trace)."""
     branch = pr.get("headRefName") or ""
+    if any(branch.startswith(p) for p in cfg.bot_prefixes):
+        return "bot"
     if any(branch.startswith(p) for p in cfg.agent_prefixes):
         return "agent"
     if cfg.agent_markers and re.search(cfg.agent_markers, pr.get("bodyText") or "", re.I):
@@ -181,29 +201,63 @@ def bot_workflow_ids(repo: str, cfg: Config) -> dict[str, int]:
     return {w["name"]: w["id"] for w in wfs if w["name"] in cfg.bot_workflows}
 
 
-def rerun_counts(repo: str, day: str) -> dict:
-    """Exact: the day's runs that were rerun (run_attempt > 1) and how their latest attempt ended, per workflow.
-    A rerun that failed again usually retried a real failure; one that passed was a flake or an outage."""
-    by_wf: dict[str, list[int]] = {}
-    attempts = 0
+def day_runs(repo: str, day: str) -> list[dict]:
+    """Every workflow run created on the day."""
+    out = []
     for h in range(0, 24, 2):  # a listing stops at 1,000 runs: 2-hour windows stay under it on a busy day
         span = f"{day}T{h:02d}:00:00Z..{day}T{h + 1:02d}:59:59Z"
         for page in range(1, 11):
             runs = gh_json(f"repos/{repo}/actions/runs?created={span}&per_page=100&page={page}")["workflow_runs"]
-            for r in runs:
-                if (r.get("run_attempt") or 1) > 1 and r.get("status") == "completed":
-                    attempts += r["run_attempt"] - 1
-                    c = by_wf.setdefault(r["name"], [0, 0, 0])
-                    c[{"success": 0, "failure": 1}.get(r.get("conclusion"), 2)] += 1
+            out += runs
             if len(runs) < 100:
                 break
+    return out
+
+
+def rerun_counts(repo: str, day: str, runs: list[dict] | None = None) -> dict:
+    """Exact: the day's runs that were rerun (run_attempt > 1) and how their latest attempt ended, per workflow.
+    A rerun that failed again usually retried a real failure; one that passed was a flake or an outage."""
+    by_wf: dict[str, list[int]] = {}
+    attempts = 0
+    for r in day_runs(repo, day) if runs is None else runs:
+        if (r.get("run_attempt") or 1) > 1 and r.get("status") == "completed":
+            attempts += r["run_attempt"] - 1
+            c = by_wf.setdefault(r["name"], [0, 0, 0])
+            c[{"success": 0, "failure": 1}.get(r.get("conclusion"), 2)] += 1
     return {"runs": sum(sum(c) for c in by_wf.values()), "attempts": attempts,
             "passed": sum(c[0] for c in by_wf.values()), "failed_again": sum(c[1] for c in by_wf.values()),
             "by_workflow": by_wf}
 
 
+def minutes_saved(runs: list[dict], skip: set[str]) -> dict:
+    """Estimated run minutes that early cancellation saved, in run wall time (start to finish). A cancelled run would
+    have taken about as long as the day's median successful run of the same workflow; what it saved is that minus what
+    it ran. Workflows in `skip` (an orchestrator's bookkeeping) are left out of both sides. Cancelled runs of a workflow
+    with no successful run that day can't be priced and are counted as `unpriced`."""
+    def wall(r: dict) -> float:
+        return max(0.0, (_iso(r["updated_at"]) - _iso(r["run_started_at"])).total_seconds() / 60)
+    done = [r for r in runs if r.get("status") == "completed" and r.get("conclusion") != "skipped"
+            and r.get("run_started_at") and r.get("updated_at") and r.get("name") not in skip]
+    full: dict[str, list[float]] = {}
+    for r in done:
+        if r.get("conclusion") == "success":
+            full.setdefault(r["name"], []).append(wall(r))
+    saved, unpriced, cancelled = 0.0, 0, 0
+    for r in done:
+        if r.get("conclusion") == "cancelled":
+            cancelled += 1
+            if r["name"] in full:
+                saved += max(0.0, _pct(full[r["name"]], 0.5) - wall(r))
+            else:
+                unpriced += 1
+    return {"wall_min": round(sum(wall(r) for r in done)), "saved_min_est": round(saved),
+            "cancelled": cancelled, "unpriced": unpriced}
+
+
 def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], origin, cfg: Config) -> dict:
-    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled)."""
+    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled); minutes saved by early
+    cancellation (estimated from every run of the day)."""
+    everything = day_runs(repo, day)
     bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
     changes: dict[int, str] = {}
     for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
@@ -245,7 +299,8 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
         "sampled_runs": len(run_min),
         "sampled_min_by_workflow": {k: round(v, 1) for k, v in by_wf.items()},
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
-        "reruns": rerun_counts(repo, day),
+        "reruns": rerun_counts(repo, day, everything),
+        "cancel_savings": minutes_saved(everything, set(bots)),
     }
 
 
@@ -270,17 +325,19 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
     repo = cfg.repo
     if data.get("repo") != repo:
         data = {"repo": repo, "days": {}}
+    days = shown_days(data, cfg, days, today)
     fresh = days_to_fetch(data["days"], today, days)
     for d in fresh:
         data["days"][d] = fetch_day(repo, d, cfg)
     window = [(today - timedelta(days=i)).isoformat() for i in range(days)]
-    for d in window:  # history from before PR classing: one GraphQL query a day fills it in
-        if d in data["days"] and "merged_by_class" not in data["days"][d]:
+    for d in window:  # history from before PR classing (or before the bot class): one GraphQL query a day fills it in
+        classes = data["days"].get(d, {}).get("merged_by_class")
+        if d in data["days"] and (classes is None or (cfg.bot_prefixes and "bot" not in classes)):
             data["days"][d].update(merged_counts(repo, d, cfg))
     bots = bot_workflow_ids(repo, cfg)
     origin = RunOrigin(repo, cfg)
     missing = [d for d in window if d not in fresh and d in data["days"]
-               and not {"sampled_min_by_origin", "reruns"} <= data["days"][d].get("detail", {}).keys()]
+               and not {"sampled_min_by_origin", "reruns", "cancel_savings"} <= data["days"][d].get("detail", {}).keys()]
     for d in fresh + missing[:backfill]:
         r = data["days"][d]["runs"]
         try:
@@ -293,6 +350,41 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
 
 
 # ---------------------------------------------------------------- aggregation
+
+def bot_start(data: dict, cfg: Config) -> str | None:
+    """The day the bot went live: configured, else the first day with a bot-made merge."""
+    if cfg.bot_start:
+        return cfg.bot_start
+    live = sorted(d for d, r in data.get("days", {}).items() if (r.get("merged_by_class") or {}).get("bot"))
+    return live[0] if live else None
+
+
+def shown_days(data: dict, cfg: Config, days: int, today: date) -> int:
+    """Days on the charts: the configured window, stretched so the bot's start and SHOW_BEFORE days before it stay in view."""
+    start = bot_start(data, cfg)
+    if not start or start > today.isoformat():
+        return days
+    return min(MAX_DAYS, max(days, (today - date.fromisoformat(start)).days + SHOW_BEFORE + 1))
+
+
+def compare(data: dict, cfg: Config, days: int, today: date) -> dict:
+    """The two periods the cards and the report compare: with the bot vs the SHOW_BEFORE days before it, or (no bot)
+    the last 7 finished days vs the 7 before."""
+    start = bot_start(data, cfg)
+    if start and start <= today.isoformat():
+        rows = sorted(data["days"].items())
+        first = (date.fromisoformat(start) - timedelta(days=SHOW_BEFORE)).isoformat()
+        before = [(d, r) for d, r in rows if first <= d < start]
+        with_bot = [(d, r) for d, r in rows if start <= d < today.isoformat()]
+        if before or with_bot:
+            return {"start": start, "cur": week_stats([r for _, r in with_bot]), "prev": week_stats([r for _, r in before]),
+                    "cur_days": [d for d, _ in with_bot], "prev_days": [d for d, _ in before],
+                    "cur_label": f"with {cfg.bot_name}", "prev_label": f"before {cfg.bot_name}"}
+    done = [(d, r) for d, r in window_rows(data, days, today) if d != today.isoformat()]
+    return {"start": None, "cur": week_stats([r for _, r in done[-7:]]), "prev": week_stats([r for _, r in done[-14:-7]]),
+            "cur_days": [d for d, _ in done[-7:]], "prev_days": [d for d, _ in done[-14:-7]],
+            "cur_label": "last 7 days", "prev_label": "previous 7 days"}
+
 
 def window_rows(data: dict, days: int, today: date) -> list[tuple[str, dict]]:
     window = [(today - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
@@ -310,7 +402,8 @@ def week_stats(rows: list[dict]) -> dict:
         return {}
     merged = sum(r["merged"] for r in rows)
     classed = [r for r in rows if "merged_by_class" in r]
-    agent = sum(r["merged_by_class"]["agent"] for r in classed)
+    agent = sum(r["merged_by_class"].get("agent", 0) + r["merged_by_class"].get("bot", 0) for r in classed)
+    bot = sum(r["merged_by_class"].get("bot", 0) for r in classed)
     runs = sum(r["runs"]["total"] for r in rows)
     ok = sum(r["runs"]["success"] for r in rows)
     bad = sum(r["runs"]["failure"] for r in rows)
@@ -320,8 +413,12 @@ def week_stats(rows: list[dict]) -> dict:
         "days": n,
         "merged_per_day": merged / n,
         "agent_share": agent / max(1, sum(r["merged"] for r in classed)) if classed else None,
+        "bot_merged": bot,
+        "bot_merge_share": bot / max(1, sum(r["merged"] for r in classed)) if classed else None,
         "runs_per_day": runs / n,
         "pass_rate": ok / (ok + bad) if ok + bad else None,
+        "fail_rate": bad / (ok + bad) if ok + bad else None,
+        **saved_stats([x["cancel_savings"] for x in det if "cancel_savings" in x]),
         "wait_median": sum(x["wait_median"] for x in det) / len(det) if det else None,
         "wait_p90": sum(x["wait_p90"] for x in det) / len(det) if det else None,
         "runner_h_per_pr": sum(m for m, _ in est) / max(1, sum(k for _, k in est)) / 60 if est else None,
@@ -329,6 +426,19 @@ def week_stats(rows: list[dict]) -> dict:
         "ci_changes": [c for x in det for c in x["ci_changes"]],
         **rerun_stats(det),
     }
+
+
+def saved_share(c: dict) -> float | None:
+    """Share of the minutes the runs would have taken that early cancellation saved (estimated)."""
+    total = c["wall_min"] + c["saved_min_est"]
+    return c["saved_min_est"] / total if total else None
+
+
+def saved_stats(cs: list[dict]) -> dict:
+    if not cs:
+        return {}
+    merged = {"wall_min": sum(c["wall_min"] for c in cs), "saved_min_est": sum(c["saved_min_est"] for c in cs)}
+    return {"saved_share": saved_share(merged), "saved_min_per_day": merged["saved_min_est"] / len(cs)}
 
 
 def rerun_stats(det: list[dict]) -> dict:
@@ -369,7 +479,7 @@ def factory_stats(rows: list[tuple[str, dict]]) -> dict:
         wh.update(r.get("worker_hours") or {})
     worked = sum(wh.values())
     loops, merged = sum(r.get("loop_runs") or 0 for _, r in rows), sum(r.get("churn_merged") or 0 for _, r in rows)
-    avg = lambda k: sum(r.get(k) or 0 for _, r in rows) / len(rows)  # noqa: E731
+    avg = lambda k: sum(r.get(k) or 0 for _, r in rows) / len(rows)
     slots = [r["slot_use"] for _, r in rows if r.get("slot_use") is not None]
     return {
         "days": len(rows), "new_work_share": wh["new_work"] / worked if worked else None,
@@ -405,17 +515,25 @@ def _md(s: str) -> str:
 
 
 def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str]) -> str:
+    days = shown_days(data, cfg, days, today)
     done = finished(window_rows(data, days, today), today)
-    cur, prev = week_stats(done[-7:]), week_stats(done[-14:-7])
+    cmp = compare(data, cfg, days, today)
+    cur, prev = cmp["cur"], cmp["prev"]
+    span = lambda ds: f"{ds[0]} to {ds[-1]}, {len(ds)} days" if ds else "no days"  # noqa: E731
+    period = (f"{cfg.bot_name} live since {cmp['start']}: {cmp['cur_label']} ({span(cmp['cur_days'])}) vs "
+              f"{cmp['prev_label']} ({span(cmp['prev_days'])})." if cmp["start"] else "Last 7 finished days vs the 7 before.")
     out = [f"## {cfg.heading}", "",
-           f"Updated {data['updated'].replace('T', ' ').replace('Z', ' UTC')}. Last 7 finished days vs the 7 before. "
+           f"Updated {data['updated'].replace('T', ' ').replace('Z', ' UTC')}. {period} "
            f"Days are UTC; queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.", ""]
     if alerts:
         out += ["> [!WARNING]", *[f"> {a}" for a in alerts], ""]
-    out += ["| Measure | Last 7 days | Previous 7 days |", "|---|---|---|"]
+    out += [f"| Measure | {cmp['cur_label'].capitalize()} | {cmp['prev_label'].capitalize()} |", "|---|---|---|"]
     lines = [("Delivery · merged PRs / day", "merged_per_day", "n"),
+             *([(f"Delivery · {cfg.bot_name}-made share", "bot_merge_share", "pct")] if cmp["start"] else []),
              ("Delivery · agent-classified share", "agent_share", "pct"),
              ("Proof · CI workflow-run pass rate", "pass_rate", "pct"),
+             ("Proof · failed runs", "fail_rate", "pct"),
+             ("Efficiency · run minutes saved by early cancellation (est.)", "saved_share", "pct"),
              ("Reruns / day", "reruns_per_day", "n"),
              ("Reruns whose latest attempt passed", "rerun_pass_rate", "pct"),
              ("Capacity · queue wait median (sampled)", "wait_median", "min"),
@@ -452,7 +570,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
                        f"{r.get('paused_hours', 0):.1f} | {r.get('ci_busy_hours', 0):.1f} | {(r.get('idle_ticks') or 0) / 6:.1f} |")
     org = runner_split(done[-7:], "sampled_min_by_origin")
     if org:
-        names = {"agent": "Agent PRs", "other": "Other PRs", "automation": "Automation PRs",
+        names = {"bot": f"{cfg.bot_name} PRs", "agent": "Agent PRs", "other": "Other PRs", "automation": "Automation PRs",
                  "main": "Default branch & schedules"}
         out += ["", "### Runner time by origin (sampled, last 7 days)", "", "| Origin | Share |", "|---|---|"]
         out += [f"| {names.get(k, k)} | {100 * v:.1f}% |" for k, v in org]
@@ -462,7 +580,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
         if len(cur["ci_changes"]) > 25:
             out.append(f"- …and {len(cur['ci_changes']) - 25} earlier in the week")
     out += ["", "<sub>Exact: merged PRs, run counts and outcomes, bot runs, CI changes, reruns. Sampled: queue wait and runner "
-            "time. Agent PRs: an agent branch prefix or an agent marker in the PR body.</sub>", ""]
+            "time. Agent PRs (bot PRs included): an agent branch prefix or an agent marker in the PR body.</sub>", ""]
     return "\n".join(out)
 
 
@@ -480,40 +598,50 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
 
 STYLE = """
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
-          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --series:#2a78d6; --series2:#1baf7a;
-          --pass:#2a78d6; --fail:#eb6834; --neutral:#c3c2b7; }
+          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
-            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --series:#3987e5; --series2:#199e70;
-            --pass:#3987e5; --fail:#d95926; --neutral:#5c5c58; }
+            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --neutral:#5c5c58; --band:rgba(57,135,229,0.12); }
   }
   text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
   .bg { fill: var(--surface); stroke: var(--border); }
   .tile { fill: var(--tile); }
   .h1 { font-size: 16px; font-weight: 650; }
+  .lead { font-size: 12.5px; fill: var(--ink2); }
   .h2 { font-size: 12.5px; font-weight: 600; }
   .meta, .tick, .lbl { font-size: 10.5px; fill: var(--muted); }
   .tick { font-variant-numeric: tabular-nums; }
-  .k { font-size: 11px; fill: var(--ink2); }
-  .v { font-size: 22px; font-weight: 650; }
+  .k { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; fill: var(--ink2); }
+  .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
   .sub { font-size: 10.5px; fill: var(--ink2); }
   .grid { stroke: var(--grid); stroke-width: 1; }
   .base { stroke: var(--axis); stroke-width: 1; }
-  .s, .agent { fill: var(--series); } .other { fill: var(--series2); } .automation, .unknown { fill: var(--neutral); }
-  .ok { fill: var(--pass); } .bad { fill: var(--fail); } .na { fill: var(--neutral); }
-  .partial { opacity: 0.5; }
-  .l1 { fill: none; stroke: var(--series); stroke-width: 2; } .l1d { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
-  .l2 { fill: none; stroke: var(--fail); stroke-width: 2; } .l2d { fill: var(--fail); stroke: var(--surface); stroke-width: 2; }
-  .l3 { fill: none; stroke: var(--series2); stroke-width: 2; } .l3d { fill: var(--series2); stroke: var(--surface); stroke-width: 2; }
+  .band { fill: var(--band); }
+  .start { stroke: var(--s1); stroke-width: 1.5; }
+  .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
   .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
+  .evl { font-size: 10.5px; fill: var(--ink2); }
+  .seg { stroke: var(--surface); stroke-width: 1; }
+  .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
+  .failed { fill: var(--failed); } .saved { fill: var(--good); }
+  .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
+  .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
+  .partial { opacity: 0.5; }
+  .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
 """
 
 
-def _nice_max(v: float) -> int:
-    for step in (1, 2, 3, 5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 5000):
-        if v <= step * 4:
-            return step * 4
-    return int(v) + 1
+def _nice_axis(v: float) -> tuple[float, float]:
+    """(top, step) of the tightest axis with a round step (1, 2, 2.5 or 5 x 10^k) and at most 5 intervals: 26 -> (30, 10)."""
+    v = max(v, 1e-9)
+    for k in range(-2, 7):
+        for m in (1, 2, 2.5, 5):
+            step = m * 10 ** k
+            if math.ceil(v / step - 1e-9) <= 5:
+                return math.ceil(v / step - 1e-9) * step, step
+    return v, v / 4
 
 
 def _bar_path(x: float, y: float, w: float, h: float, r: float) -> str:
@@ -531,38 +659,61 @@ def _fmt_day(d: str) -> str:
     return date.fromisoformat(d).strftime("%b %-d")
 
 
+def _delta(cur: float | None, prev: float | None) -> str:
+    if cur is None or prev is None or not prev:
+        return ""
+    return f" · {100 * (cur - prev) / prev:+.0f}%"
+
+
+def _origin_parts(row: dict) -> dict[str, float]:
+    counts = row.get("merged_by_class")
+    if counts is None:
+        return {"bot": 0, "agent": 0, "other": 0, "automation": 0, "unknown": row["merged"]}
+    parts = {kind: counts.get(kind, 0) for kind in CLASSES}
+    parts["unknown"] = max(0, row["merged"] - sum(parts.values()))
+    return parts
+
+
 def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str:
+    """The dashboard: one UTC day per mark. When a bot is configured (or found), a band marks the days it ran, and the
+    cards compare its averages with the days before it."""
     cfg = cfg or Config(repo=data["repo"])
-    rows = window_rows(data, days, today)
+    rows = window_rows(data, shown_days(data, cfg, days, today), today)
     if not rows:
         raise SystemExit("no data to render")
     today_s = today.isoformat()
     width, pad = 920, 24
     left, right = pad + 42, width - pad
     slot = (right - left) / len(rows)
+    bar_w = max(2.0, slot - 2)
+    x_left = lambda i: left + i * slot
+    x_mid = lambda i: left + i * slot + slot / 2
+    index = {day: i for i, (day, _) in enumerate(rows)}
+    cmp = compare(data, cfg, days, today)
+    cur, prev = cmp["cur"], cmp["prev"]
+    start = cmp["start"]
+    start_i = next((i for i, (day, _) in enumerate(rows) if day >= start), None) if start else None
     out: list[str] = []
 
+    # Heading and the one-sentence story
     out.append(f'<text class="h1" x="{pad}" y="34">{escape(cfg.heading)}</text>')
     out.append(f'<text class="meta" x="{width - pad}" y="34" text-anchor="end">last {len(rows)} days · '
                f'updated {escape(data["updated"].replace("T", " ").replace("Z", " UTC"))}</text>')
-    out.append(f'<text class="meta" x="{pad}" y="52">Three views of the same system: delivery, verification, and CI capacity. '
-               f'Trends use trailing 7-day windows.</text>')
+    today_row = data["days"].get(today_s)
+    today_note = f' Today so far: {today_row["merged"]} merged.' if today_row else ""
+    if start:
+        since = [r for d, r in data["days"].items() if d >= start]
+        merged_since = sum(r["merged"] for r in since)
+        bot_since = sum((r.get("merged_by_class") or {}).get("bot", 0) for r in since)
+        share = f" ({100 * bot_since / merged_since:.0f}%)" if merged_since else ""
+        lead = (f"{cfg.bot_name} has run since {_fmt_day(start)}: {bot_since:,} of the {merged_since:,} PRs merged since "
+                f"then were its own{share}.{today_note}")
+    else:
+        lead = f"Each mark is one UTC day; the cards compare the last 7 days with the 7 before.{today_note}"
+    out.append(f'<text class="lead" x="{pad}" y="54">{escape(lead)}</text>')
 
-    done = finished(rows, today)
-    current, previous = week_stats(done[-7:]), week_stats(done[-14:-7])
-    card_y, card_h, card_gap = 68, 86, 12
-    card_w = (width - 2 * pad - 2 * card_gap) / 3
+    # Cards: the period with the bot vs the period before it
     factory = factory_stats(factory_rows(data, today))
-    delivery_sub = f'{_fmt(current.get("agent_share"), "pct")} agent-classified · vs {_fmt(previous.get("merged_per_day"), "n")} / day'
-    if factory:
-        delivery_sub += f' · {_fmt(factory.get("new_work_share"), "pct")} factory time on new work'
-    proof_sub = "workflow-run outcomes; not a per-PR quality score"
-    if current.get("reruns_per_day") is not None:
-        proof_sub += f' · {_fmt(current.get("reruns_per_day"), "n")}/day rerun, {_fmt(current.get("rerun_pass_rate"), "pct")} passed'
-    capacity_sub = f'{_fmt(current.get("runner_h_per_pr"), "h")} estimated runner hours / merged PR'
-    if factory.get("slot_use") is not None:
-        capacity_sub += f' · {_fmt(factory.get("slot_use"), "pct")} worker slots used'
-    delivery_detail = [f"Agent-classified share: {_fmt(current.get('agent_share'), 'pct')}"]
     factory_detail = []
     if factory:
         factory_detail = [
@@ -572,169 +723,226 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             f"Fix loops per merged PR: {_fmt(factory.get('loops_per_pr'), 'n')}",
             f"Idle with a free slot: {factory['idle_h']:.1f}h/day",
         ]
-    delivery_detail.extend(factory_detail)
-    proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
-    reruns = rerun_split(done[-7:])
-    if reruns:
-        total, passed, failed = sum(item[1] for item in reruns), sum(item[2] for item in reruns), sum(item[3] for item in reruns)
-        proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} ({passed} passed, {failed} failed again; {total} total)")
-        proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
-    delivery_title = ". ".join(delivery_detail)
+    was = f'{cmp["prev_label"]}:'
+    if start:
+        share_card = (f"{cfg.bot_name.upper()}-MADE SHARE", _fmt(cur.get("bot_merge_share"), "pct"),
+                      f'{cur.get("bot_merged", 0):,} PRs · all agents {_fmt(cur.get("agent_share"), "pct")}')
+    else:
+        share_card = ("AGENT-MADE SHARE", _fmt(cur.get("agent_share"), "pct"),
+                      f'{was} {_fmt(prev.get("agent_share"), "pct")}')
     cards = [
-        ("DELIVERY", _fmt(current.get("merged_per_day"), "n") + " merged / day",
-         delivery_sub, delivery_title),
-        ("PROOF", _fmt(current.get("pass_rate"), "pct") + " CI run pass rate",
-         proof_sub, ". ".join(proof_detail)),
-        ("CAPACITY · SAMPLED CI", _fmt(current.get("wait_p90"), "min") + " queue p90",
-         capacity_sub, ". ".join(["Sampled queue wait and runner time.", *factory_detail])),
+        ("MERGED PRs / DAY", _fmt(cur.get("merged_per_day"), "n"),
+         f'{was} {_fmt(prev.get("merged_per_day"), "n")}{_delta(cur.get("merged_per_day"), prev.get("merged_per_day"))}', []),
+        (*share_card, factory_detail),
+        ("RUNNER HOURS / MERGED PR", _fmt(cur.get("runner_h_per_pr"), "h"),
+         f'{was} {_fmt(prev.get("runner_h_per_pr"), "h")}{_delta(cur.get("runner_h_per_pr"), prev.get("runner_h_per_pr"))}', []),
+        ("QUEUE WAIT P90", _fmt(cur.get("wait_p90"), "min"),
+         f'{was} {_fmt(prev.get("wait_p90"), "min")}{_delta(cur.get("wait_p90"), prev.get("wait_p90"))}', []),
     ]
+    card_y, card_h, card_gap = 68, 74, 12
+    card_w = (width - 2 * pad - 3 * card_gap) / 4
     for i, (label, value, sub, detail) in enumerate(cards):
         x = pad + i * (card_w + card_gap)
-        out.append(f'<g><title>{escape(detail)}</title>')
-        if i == 0:
+        out.append("<g>" + (f"<title>{escape('. '.join(detail))}</title>" if detail else ""))
+        if i == 1:
             out.append("<desc>Merged PRs per day, by origin. Agent share of merged PRs</desc>")
         out.append(f'<rect class="tile" x="{x:.1f}" y="{card_y}" width="{card_w:.1f}" height="{card_h}" rx="8"/>')
-        out.append(f'<text class="k" x="{x + 14:.1f}" y="{card_y + 18}">{label}</text>')
-        out.append(f'<text class="v" x="{x + 14:.1f}" y="{card_y + 44}">{escape(value)}</text>')
-        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{card_y + 62}">{escape(sub)}</text>')
+        out.append(f'<text class="k" x="{x + 14:.1f}" y="{card_y + 20}">{escape(label)}</text>')
+        out.append(f'<text class="v" x="{x + 14:.1f}" y="{card_y + 46}">{escape(value)}</text>')
+        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{card_y + 63}">{escape(sub)}</text>')
         out.append("</g>")
+    span = lambda ds: f"{_fmt_day(ds[0])}–{_fmt_day(ds[-1])}" if ds else "no days yet"
+    out.append(f'<text class="meta" x="{pad}" y="{card_y + card_h + 18}">Cards: {escape(cmp["cur_label"])} '
+               f'({span(cmp["cur_days"])}, finished days) vs {escape(cmp["prev_label"])} ({span(cmp["prev_days"])}).</text>')
 
-    def axes(top: int, chart_h: int, maximum: float, title: str, formatter) -> None:
-        out.append(f'<text class="h2" x="{pad}" y="{top - 12}">{title}</text>')
-        for tick in range(5):
-            value = maximum * tick / 4
-            y = top + chart_h - chart_h * tick / 4
+    # Shared furniture for every panel
+    events = [(d, label) for d, label in cfg.events if d in index]
+
+    def frame(top: int, chart_h: int, axis: tuple[float, float], title: str, formatter, title_detail: str = "") -> None:
+        maximum, step = axis
+        intervals = round(maximum / step)
+        if start_i is not None:
+            out.append(f'<rect class="band" x="{x_left(start_i):.1f}" y="{top}" width="{right - x_left(start_i):.1f}" '
+                       f'height="{chart_h}"/>')
+        tip = f"<title>{escape(title_detail)}</title>" if title_detail else ""
+        out.append(f'<g>{tip}<text class="h2" x="{pad}" y="{top - 30}">{escape(title)}</text></g>')
+        for tick in range(intervals + 1):
+            value = step * tick
+            y = top + chart_h - chart_h * tick / intervals
             cls = "base" if tick == 0 else "grid"
             out.append(f'<line class="{cls}" x1="{left}" x2="{right}" y1="{y:.1f}" y2="{y:.1f}"/>')
             out.append(f'<text class="tick" x="{left - 8}" y="{y + 3.5:.1f}" text-anchor="end">{formatter(value)}</text>')
         for idx, (day, _) in enumerate(rows):
             if (len(rows) - 1 - idx) % 7 == 0:
-                x = left + idx * slot + slot / 2
-                out.append(f'<text class="tick" x="{x:.1f}" y="{top + chart_h + 16}" text-anchor="middle">{_fmt_day(day)}</text>')
+                out.append(f'<text class="tick" x="{x_mid(idx):.1f}" y="{top + chart_h + 16}" '
+                           f'text-anchor="middle">{_fmt_day(day)}</text>')
+        for day, label in events:
+            x = x_left(index[day])
+            out.append(f'<g><title>{_fmt_day(day)}: {escape(label)}</title><line class="mark" x1="{x:.1f}" x2="{x:.1f}" '
+                       f'y1="{top - 4}" y2="{top + chart_h}"/></g>')
+        if start_i is not None:
+            x = x_left(start_i)
+            out.append(f'<line class="start" x1="{x:.1f}" x2="{x:.1f}" y1="{top - 4}" y2="{top + chart_h}"/>')
 
-    def line_plot(top: int, chart_h: int, title: str, values: list[float | None], maximum: float,
-                  line_class: str, dot_class: str, formatter, detail: str, markers: bool = False) -> None:
-        axes(top, chart_h, maximum, title, formatter)
-        x_at = lambda i: left + i * slot + slot / 2
+    def annotate(top: int) -> None:
+        """Labels for the bot's start and the events, in the lane above the first chart (two rows, no overlaps)."""
+        labels = [(x_left(index[d]), f"{_fmt_day(d)} · {label}", d < (start or "9999")) for d, label in events]
+        if start_i is not None:
+            labels.append((x_left(start_i), f"{cfg.bot_name} live · {_fmt_day(start)}", False))
+        taken: list[list[tuple[float, float]]] = [[], []]
+        for x, text, before in sorted(labels, key=lambda item: item[2]):
+            w = 6.2 * len(text)
+            x0, x1 = (x - 5 - w, x - 5) if before else (x + 5, x + 5 + w)
+            if x1 > right:
+                x0, x1 = x - 5 - w, x - 5
+                before = True
+            row = next((r for r in (0, 1) if all(x1 < a or x0 > b for a, b in taken[r])), 1)
+            taken[row].append((x0, x1))
+            cls = "startl" if text.startswith(f"{cfg.bot_name} live") else "evl"
+            anchor = "end" if before else "start"
+            out.append(f'<text class="{cls}" x="{(x - 5 if before else x + 5):.1f}" y="{top - 8 - 13 * row}" '
+                       f'text-anchor="{anchor}">{escape(text)}</text>')
+
+    def line_series(top: int, chart_h: int, values: list[float | None], maximum: float, formatter=None, detail: str = "",
+                    tips: list[str] | None = None, cls: str = "") -> None:
         y_at = lambda value: top + chart_h - chart_h * value / maximum
         segment: list[str] = []
-        for i, ((day, row), value) in enumerate(zip(rows, values)):
-            if markers and row.get("detail", {}).get("ci_changes"):
-                changes = row["detail"]["ci_changes"]
-                prs = ", ".join(f'#{change["pr"]}' for change in changes[:6])
-                out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
-                           f'<line class="mark" x1="{x_at(i):.1f}" x2="{x_at(i):.1f}" y1="{top}" y2="{top + chart_h}"/>'
-                           f'<path class="markd" d="M{x_at(i):.1f},{top - 5} l4,4 l-4,4 l-4,-4 Z"/></g>')
+        dots = []
+        for i, ((day, _), value) in enumerate(zip(rows, values)):
             if value is None:
                 if len(segment) > 1:
-                    out.append(f'<polyline class="{line_class}" points="{" ".join(segment)}"/>')
+                    out.append(f'<polyline class="line {cls}" points="{" ".join(segment)}"/>')
                 segment = []
                 continue
-            x, y = x_at(i), y_at(value)
-            segment.append(f"{x:.1f},{y:.1f}")
-            dot_classes = f"{dot_class} partial" if day == today_s else dot_class
-            out.append(f'<circle class="{dot_classes}" cx="{x:.1f}" cy="{y:.1f}" r="3.5">'
-                       f'<title>{_fmt_day(day)}: {formatter(value)} {detail}'
-                       f'{" (today so far)" if day == today_s else ""}</title></circle>')
+            segment.append(f"{x_mid(i):.1f},{y_at(value):.1f}")
+            partial = day == today_s
+            text = tips[i] if tips else f"{formatter(value)} {detail}"
+            dots.append(f'<circle class="dot {cls}{" partial" if partial else ""}" cx="{x_mid(i):.1f}" cy="{y_at(value):.1f}" '
+                        f'r="4"><title>{_fmt_day(day)}: {escape(text)}'
+                        f'{" (today so far)" if partial else ""}</title></circle>')
         if len(segment) > 1:
-            out.append(f'<polyline class="{line_class}" points="{" ".join(segment)}"/>')
+            out.append(f'<polyline class="line {cls}" points="{" ".join(segment)}"/>')
+        out.extend(dots)
 
-    def merged_parts(index: int) -> dict[str, float]:
-        window = [row for _, row in rows[max(0, index - 6):index + 1]]
-        parts = Counter()
-        for row in window:
-            counts = row.get("merged_by_class")
-            if counts is None:
-                parts["unknown"] += row["merged"]
-                continue
-            for kind in CLASSES:
-                parts[kind] += counts.get(kind, 0)
-            parts["unknown"] += max(0, row["merged"] - sum(counts.get(kind, 0) for kind in CLASSES))
-        divisor = len(window)
-        return {kind: parts[kind] / divisor for kind in ("agent", "other", "automation", "unknown")}
+    def legend(y: int, items: list[tuple[str, str]]) -> None:
+        x = right
+        for label, css in reversed(items):
+            x -= 6.2 * len(label) + 22
+            out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 8}" width="9" height="9" rx="2"/>')
+            out.append(f'<text class="lbl" x="{x + 13:.1f}" y="{y}">{escape(label)}</text>')
 
-    # Delivery: trailing seven-day average of merged PRs per day, split by recorded origin.
-    delivery_top, delivery_h = 200, 96
-    delivery = [merged_parts(i) for i in range(len(rows))]
-    delivery_max = max(1.0, max(sum(parts.values()) for parts in delivery))
-    axes(delivery_top, delivery_h, delivery_max, "1 · Delivery — merged PRs / day, trailing 7-day average by origin",
-         lambda value: f"{value:.0f}")
-    bar_w = max(2.0, slot - 2)
-    colors = (("agent", "agent"), ("other", "other"), ("automation", "automation"), ("unknown", "unknown"))
+    # 1 · Delivery: merged PRs each day, by origin
+    y = card_y + card_h + 18 + 62
+    top, chart_h = y, 195
+    delivery = [_origin_parts(row) for _, row in rows]
+    delivery_axis = _nice_axis(max(1.0, max(sum(parts.values()) for parts in delivery)))
+    delivery_max = delivery_axis[0]
+    frame(top, chart_h, delivery_axis, "1 · Delivery — merged PRs per day, by origin", lambda v: f"{v:g}")
+    origins = [("bot", cfg.bot_name), ("agent", "other agents"), ("other", "other"), ("automation", "automation"),
+               ("unknown", "unclassified")]
+    if not start and not any(parts["bot"] for parts in delivery):
+        origins = origins[1:]
     for i, ((day, _), parts) in enumerate(zip(rows, delivery)):
-        x, base = left + i * slot + (slot - bar_w) / 2, delivery_top + delivery_h
+        x, base = x_left(i) + (slot - bar_w) / 2, top + chart_h
+        shown = [(kind, parts[kind]) for kind, _ in origins if parts[kind] > 0]
         elements = []
-        for kind, css in colors:
-            value = parts[kind]
-            if value <= 0:
-                continue
-            bar_height = delivery_h * value / delivery_max
-            elements.append(f'<rect class="{css}" x="{x:.1f}" y="{base - bar_height:.1f}" width="{bar_w:.1f}" height="{bar_height:.1f}"/>')
-            base -= bar_height
-        tip = escape(f'{_fmt_day(day)} · merged PRs · 7-day average per day · ' + ", ".join(f'{k} {parts[k]:.1f}' for k, _ in colors))
+        for n, (kind, value) in enumerate(shown):
+            h = chart_h * value / delivery_max
+            if n == len(shown) - 1:
+                elements.append(f'<path class="{kind} seg" d="{_bar_path(x, base - h, bar_w, h, 4)}"/>')
+            else:
+                elements.append(f'<rect class="{kind} seg" x="{x:.1f}" y="{base - h:.1f}" width="{bar_w:.1f}" height="{h:.1f}"/>')
+            base -= h
+        total = sum(parts.values())
+        tip = escape(f'{_fmt_day(day)} · {total:.0f} merged PRs{" (today so far)" if day == today_s else ""} · '
+                     + ", ".join(f"{label} {parts[kind]:.0f}" for kind, label in origins))
         fade = ' class="partial"' if day == today_s else ""
         out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
+    annotate(top)
+    legend(top - 30, [(label, kind) for kind, label in origins if kind != "unknown" or any(p["unknown"] for p in delivery)])
+    y = top + chart_h + 70
 
-    legend_y, legend_x = delivery_top - 10, right
-    for label, css in reversed((("agent", "agent"), ("other", "other"), ("automation", "automation"), ("unclassified", "unknown"))):
-        legend_x -= 7 * len(label) + 22
-        out.append(f'<rect class="{css}" x="{legend_x:.1f}" y="{legend_y - 8}" width="9" height="9" rx="2"/>')
-        out.append(f'<text class="lbl" x="{legend_x + 13:.1f}" y="{legend_y}">{label}</text>')
-
-    proof_values = []
-    for i in range(len(rows)):
-        window = [row for _, row in rows[max(0, i - 6):i + 1]]
-        passed = sum(row["runs"]["success"] for row in window)
-        total = passed + sum(row["runs"]["failure"] for row in window)
-        proof_values.append(passed / total if total else None)
-    proof_top, proof_h = 354, 96
-    line_plot(proof_top, proof_h, "2 · Proof — CI workflow-run pass rate, trailing 7-day result",
-              proof_values, 1.0, "l1", "l1d", lambda value: f"{100 * value:.0f}%",
-              "CI runs (success / success + failure)")
-
+    # 2 · Queue wait and 3 · CI cost (sampled)
     details = [row.get("detail", {}) for _, row in rows]
-    wait_values, runner_values = [], []
-    for i in range(len(rows)):
-        window_start = max(0, i - 6)
-        waits = [detail["wait_p90"] for detail in details[window_start:i + 1] if detail.get("wait_p90") is not None]
-        wait_values.append(sum(waits) / len(waits) if waits else None)
-        eligible = [(rows[j][1], details[j]) for j in range(window_start, i + 1)
-                    if details[j].get("runner_min_est") is not None]
-        merged = sum(row["merged"] for row, _ in eligible)
-        minutes = sum(detail["runner_min_est"] for _, detail in eligible)
-        runner_values.append(minutes / merged / 60 if merged else None)
+    wait_values = [detail.get("wait_p90") for detail in details]
+    runner_values = [detail["runner_min_est"] / row["merged"] / 60 if detail.get("runner_min_est") is not None
+                     and row["merged"] else None for (_, row), detail in zip(rows, details)]
+    if any(v is not None for v in wait_values + runner_values):
+        top, chart_h = y, 120
+        wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
+        wait_max = wait_axis[0]
+        frame(top, chart_h, wait_axis, "2 · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
+        for i, (day, row) in enumerate(rows):
+            changes = row.get("detail", {}).get("ci_changes")
+            if changes:
+                prs = ", ".join(f'#{change["pr"]}' for change in changes[:6])
+                out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
+                           f'<path class="markd" d="M{x_mid(i):.1f},{top - 9} l3,3 l-3,3 l-3,-3 Z"/></g>')
+        line_series(top, chart_h, wait_values, wait_max, lambda v: f"{v:.1f}",
+                    f"minutes · about {cfg.sample_runs} runs sampled per day")
+        legend(top - 30, [("CI change merged", "markd")])
+        y = top + chart_h + 70
+        top = y
+        runner_axis = _nice_axis(max((v for v in runner_values if v is not None), default=1.0))
+        runner_max = runner_axis[0]
+        frame(top, chart_h, runner_axis, "3 · Cost — runner time per merged PR, estimated hours (sampled)", lambda v: f"{v:g}")
+        line_series(top, chart_h, runner_values, runner_max, lambda v: f"{v:.2f}", "runner hours / merged PR")
+        y = top + chart_h + 70
+    else:
+        out.append(f'<text class="h2" x="{pad}" y="{y - 30}">2 · Speed and 3 · Cost</text>')
+        out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
+        y += 20
 
-    capacity_available = any(value is not None for value in wait_values + runner_values)
-    if capacity_available:
-        cap_top, cap_h = 520, 82
-        wait_max = max((value for value in wait_values if value is not None), default=1.0)
-        line_plot(cap_top, cap_h, "3 · Capacity — Job queue wait (p90), trailing 7-day mean of sampled days (minutes)",
-                  wait_values, _nice_max(wait_max), "l2", "l2d", lambda value: f"{value:.1f}",
-                  f"minutes · about {cfg.sample_runs} runs sampled per day", markers=True)
-        runner_top, runner_h = 660, 82
-        runner_max = max((value for value in runner_values if value is not None), default=1.0)
-        line_plot(runner_top, runner_h, "Runner time per merged PR — estimated hours (sampled)",
-                  runner_values, max(0.25, runner_max * 1.15), "l3", "l3d", lambda value: f"{value:.2f}",
-                  "runner hours / merged PR")
-        height = runner_top + runner_h + 52
-    else:
-        out.append(f'<text class="h2" x="{pad}" y="508">3 · Capacity</text>')
-        out.append(f'<text class="meta" x="{pad}" y="530">No sampled CI capacity history yet.</text>')
-        height = 584
-    if capacity_available:
-        out.append(f'<text class="meta" x="{pad}" y="{height - 14}">Source: GitHub API. Days are UTC. Faded marks include today so far. '
-                   f'Queue wait and runner time are sampled. CI pass rate is a workflow-run measure, not PR first-pass success. '
-                   f'Local host pressure and post-merge rework are not yet in this history.</text>')
-    else:
-        out.append(f'<text class="meta" x="{pad}" y="{height - 14}">Source: GitHub API. Days are UTC. CI pass rate is a workflow-run measure, '
-                   f'not PR first-pass success. Local host pressure and post-merge rework are not yet in this history.</text>')
+    # 4 · Efficiency: share of run minutes early cancellation saved (est.) and share of runs that failed
+    proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
+    reruns = rerun_split(finished(rows, today)[-7:])
+    if reruns:
+        total, passed, failed = sum(item[1] for item in reruns), sum(item[2] for item in reruns), sum(item[3] for item in reruns)
+        proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
+                            f"({passed} passed, {failed} failed again; {total} total)")
+        proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
+    saved_values, saved_tips, failed_values, failed_tips = [], [], [], []
+    for _, row in rows:
+        c = row.get("detail", {}).get("cancel_savings")
+        share = saved_share(c) if c else None
+        saved_values.append(None if share is None else 100 * share)
+        if share is None:
+            saved_tips.append("")
+        else:
+            unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
+            saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
+                              f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
+        r = row["runs"]
+        judged = r["success"] + r["failure"]
+        failed_values.append(100 * r["failure"] / judged if judged else None)
+        failed_tips.append(f'{100 * r["failure"] / judged:.1f}% of runs failed ({r["failure"]:,} of {judged:,} CI runs that '
+                           f'passed or failed)' if judged else "")
+    top, chart_h = y, 120
+    pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
+    frame(top, chart_h, pct_axis, "4 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
+          lambda v: f"{v:g}%", ". ".join(proof_detail))
+    line_series(top, chart_h, saved_values, pct_axis[0], tips=saved_tips, cls="saved")
+    line_series(top, chart_h, failed_values, pct_axis[0], tips=failed_tips, cls="failedl")
+    legend(top - 30, [("minutes saved (est.)", "saved"), ("runs failed", "failed")])
+    y = top + chart_h + 44
+
+    prefixes = ", ".join(cfg.bot_prefixes)
+    out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far. '
+               f'Queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{y + 15}">'
+               + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
+                        + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
+                          "minutes saved is estimated.") + '</text>')
+    height = y + 34
     body = "\n  ".join(out)
     merged_total = sum(row["merged"] for _, row in rows)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
-            f'role="img" aria-label="{escape(cfg.heading)}: delivery, CI verification and capacity over time; '
+            f'role="img" aria-label="{escape(cfg.heading)}: delivery, speed, cost and CI waste per day'
+            f'{f", before and with {escape(cfg.bot_name)}" if start else ""}; '
             f'{merged_total:,} merged PRs in the selected period">\n'
             f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" '
             f'height="{height - 1}" rx="10"/>\n  {body}\n</g>\n</svg>\n')
+
 
 # ---------------------------------------------------------------- CLI
 
@@ -752,6 +960,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--bot-workflows", default="", help="comma-separated names of an orchestrator's own bookkeeping workflows")
     p.add_argument("--agent-branch-prefixes", default=DEFAULT_AGENT_PREFIXES)
     p.add_argument("--agent-markers", default=DEFAULT_AGENT_MARKERS, help="regex matched against PR bodies")
+    p.add_argument("--bot-branch-prefixes", default="", help="head-branch prefixes of the bot this dashboard follows")
+    p.add_argument("--bot-name", default="bot")
+    p.add_argument("--bot-start", default="", help="YYYY-MM-DD the bot went live (default: its first merged PR)")
+    p.add_argument("--events", default="", help="'YYYY-MM-DD: label; ...' marked on the charts")
     p.add_argument("--sample-runs", type=int, default=24)
     p.add_argument("--detail-backfill", type=int, default=DETAIL_BACKFILL,
                    help="older days to fill with the sampled detail this run (each costs ~30 API calls)")
@@ -764,7 +976,9 @@ def main(argv: list[str] | None = None) -> int:
     if not a.repo:
         p.error("--repo is required (or GITHUB_REPOSITORY)")
     cfg = Config(repo=a.repo, title=a.title, bot_workflows=_csv(a.bot_workflows),
-                 agent_prefixes=_csv(a.agent_branch_prefixes), agent_markers=a.agent_markers, sample_runs=a.sample_runs)
+                 agent_prefixes=_csv(a.agent_branch_prefixes), agent_markers=a.agent_markers, sample_runs=a.sample_runs,
+                 bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
+                 events=_events(a.events))
     a.out.mkdir(parents=True, exist_ok=True)
     data_file = a.out / "metrics.json"
     data = json.loads(data_file.read_text()) if data_file.exists() else {}

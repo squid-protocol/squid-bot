@@ -40,7 +40,7 @@ def test_render_is_valid_svg_with_one_bar_per_day_and_real_totals():
     assert sum("runs" in t for t in titles) == 30
     merged_total = sum(30 + i for i in range(30))
     assert f"{merged_total:,}" in svg
-    assert "97.4%" in svg  # 1500 / (1500 + 40)
+    assert "2.6% of runs failed (40 of 1,540" in svg  # 40 / (1500 + 40)
 
 
 def test_render_ignores_history_outside_the_window():
@@ -56,11 +56,11 @@ def test_render_adds_the_ci_cost_row_and_wait_chart_when_detail_exists():
                                      "wait_median": 1.0, "wait_p90": 4.0, "runner_min_est": 600, "sampled_runs": 24}
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
-    assert "Job queue wait (p90)" in svg and "4.0 min" in svg
-    assert "Runner time per merged PR" in svg
+    assert "job queue wait (p90)" in svg and "4.0 min" in svg
+    assert "runner time per merged PR" in svg
     assert svg.count("CI change(s) merged") == 3
     # without detail the extra row and chart stay out
-    assert "Job queue wait" not in dashboard.render(_data(), 30, TODAY)
+    assert "job queue wait" not in dashboard.render(_data(), 30, TODAY)
 
 
 CFG = dashboard.Config(repo="owner/repo", agent_prefixes=["churn/", "claude/"])
@@ -182,3 +182,93 @@ def test_an_orchestrators_factory_json_adds_an_agent_row_and_a_summary_table():
     md = dashboard.summary_md(data, CFG, 30, TODAY, [])
     assert "### Agent factory" in md and md.count("| 2026-10-") >= 7 and str(TODAY) not in md.split("### Agent factory")[1]
     assert "Agent time" not in dashboard.render(_data(), 30, TODAY)  # no factory.json: no row
+
+
+def test_charts_show_each_days_own_numbers_not_a_trailing_average():
+    data = _data()
+    data["days"][TODAY.isoformat()] = _day(71, 900, 100, 0)  # a spike today: 71 merged, 90% pass
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Oct 14 · 71 merged PRs (today so far)" in svg
+    assert "Oct 14: 10.0% of runs failed (100 of 1,000" in svg
+    assert "Oct 13 · 31 merged PRs ·" in svg
+    assert "7-day average" not in svg and "trailing" not in svg
+
+
+BOT = dashboard.Config(repo="owner/repo", agent_prefixes=["claude/"], bot_prefixes=["churn/"], bot_name="promoter-bot",
+                       events=[("2026-10-06", "shepherd on")])
+
+
+def _with_bot(start: str = "2026-10-08") -> dict:
+    data = _data()
+    for d in sorted(data["days"]):
+        bot = 25 if d >= start else 0
+        data["days"][d]["merged_by_class"] = {"bot": bot, "agent": 5, "other": 10, "automation": 0}
+        data["days"][d]["merged"] = bot + 15
+        data["days"][d]["detail"] = {"bot_runs": 100, "ci_changes": [], "wait_median": 1.0, "sampled_runs": 24,
+                                     "wait_p90": 2.0 if d >= start else 8.0, "runner_min_est": 600}
+    return data
+
+
+def test_bot_branches_are_their_own_class_ahead_of_agent_prefixes():
+    assert dashboard.classify_pr({"headRefName": "churn/5164-x"}, BOT) == "bot"
+    assert dashboard.classify_pr({"headRefName": "claude/x"}, BOT) == "agent"
+
+
+def test_the_bot_start_is_found_from_its_first_merge_and_kept_in_view():
+    data = _with_bot()
+    assert dashboard.bot_start(data, BOT) == "2026-10-08"
+    assert dashboard.bot_start(data, dashboard.Config(repo="owner/repo", bot_start="2026-10-01")) == "2026-10-01"
+    assert dashboard.shown_days(data, BOT, 30, TODAY) == 30
+    assert dashboard.shown_days(data, dashboard.Config(repo="o/r", bot_start="2026-09-01"), 30, TODAY) == 58
+
+
+def test_render_tells_the_before_and_with_bot_story():
+    svg = dashboard.render(_with_bot(), 30, TODAY, BOT)
+    ET.fromstring(svg)
+    assert "promoter-bot live · Oct 8" in svg and "Oct 6 · shepherd on" in svg
+    assert 'class="band"' in svg and svg.count('class="start"') == 4  # the band and start line run through every panel
+    assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg  # 25 of 40 merges a day since it started
+    assert "before promoter-bot: 15.0 · +167%" in svg  # merged / day: 40 with vs 15 before
+    assert "avg " not in svg and 'class="avg"' not in svg  # averages live in the cards, not on the charts
+    assert "175 of the 280 PRs merged since then were its own" in svg
+    md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
+    assert "| Measure | With promoter-bot | Before promoter-bot |" in md
+    assert "| Delivery · promoter-bot-made share | 62.5% | 0.0% |" in md
+
+
+def test_axes_use_the_tightest_round_step():
+    assert dashboard._nice_axis(26.05) == (30, 10)
+    assert dashboard._nice_axis(102) == (125, 25)
+    assert dashboard._nice_axis(790) == (800, 200)
+    assert dashboard._nice_axis(0.4) == (0.4, 0.1)
+
+
+def _run(name, conclusion, minutes):
+    return {"name": name, "status": "completed", "conclusion": conclusion,
+            "run_started_at": "2026-10-14T10:00:00Z", "updated_at": f"2026-10-14T10:{minutes:02d}:00Z"}
+
+
+def test_minutes_saved_prices_a_cancelled_run_at_its_workflows_median_success():
+    runs = [_run("Smoke", "success", 20), _run("Smoke", "success", 30), _run("Smoke", "success", 40),
+            _run("Smoke", "cancelled", 5),        # would have run 30: saved 25
+            _run("Lint", "cancelled", 1),         # no successful Lint run to price it
+            _run("Shepherd", "cancelled", 0), _run("Shepherd", "success", 1),  # bookkeeping: skipped
+            {**_run("Smoke", "skipped", 0)}]
+    c = dashboard.minutes_saved(runs, {"Shepherd"})
+    assert c == {"wall_min": 96, "saved_min_est": 25, "cancelled": 2, "unpriced": 1}
+    assert round(dashboard.saved_share(c), 3) == round(25 / 121, 3)
+
+
+def test_the_efficiency_chart_plots_minutes_saved_and_failed_runs_as_percentages():
+    data = _data()
+    data["days"][TODAY.isoformat()]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                                 "runner_min_est": 600, "sampled_runs": 24,
+                                                 "cancel_savings": {"wall_min": 900, "saved_min_est": 100,
+                                                                    "cancelled": 12, "unpriced": 0}}
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "10.0% of run minutes saved by early cancellation (est. 100 of 1,000 min; 12 runs cancelled)" in svg
+    assert "minutes saved (est.)" in svg and "runs failed" in svg
+    md = dashboard.summary_md(data, CFG, 30, TODAY, [])
+    assert "| Proof · failed runs |" in md
