@@ -1,279 +1,321 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 794" width="920" height="794" role="img" aria-label="squid-protocol/gitgalaxy: agent fleet CI: delivery, CI verification and capacity over time; 1,417 merged PRs in the selected period">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1065" width="920" height="1065" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, speed, cost and CI waste per day, before and with promoter-bot; 1,428 merged PRs in the selected period">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
-          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --series:#2a78d6; --series2:#1baf7a;
-          --pass:#2a78d6; --fail:#eb6834; --neutral:#c3c2b7; }
+          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
-            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --series:#3987e5; --series2:#199e70;
-            --pass:#3987e5; --fail:#d95926; --neutral:#5c5c58; }
+            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --neutral:#5c5c58; --band:rgba(57,135,229,0.12); }
   }
   text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
   .bg { fill: var(--surface); stroke: var(--border); }
   .tile { fill: var(--tile); }
   .h1 { font-size: 16px; font-weight: 650; }
+  .lead { font-size: 12.5px; fill: var(--ink2); }
   .h2 { font-size: 12.5px; font-weight: 600; }
   .meta, .tick, .lbl { font-size: 10.5px; fill: var(--muted); }
   .tick { font-variant-numeric: tabular-nums; }
-  .k { font-size: 11px; fill: var(--ink2); }
-  .v { font-size: 22px; font-weight: 650; }
+  .k { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; fill: var(--ink2); }
+  .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
   .sub { font-size: 10.5px; fill: var(--ink2); }
   .grid { stroke: var(--grid); stroke-width: 1; }
   .base { stroke: var(--axis); stroke-width: 1; }
-  .s, .agent { fill: var(--series); } .other { fill: var(--series2); } .automation, .unknown { fill: var(--neutral); }
-  .ok { fill: var(--pass); } .bad { fill: var(--fail); } .na { fill: var(--neutral); }
-  .partial { opacity: 0.5; }
-  .l1 { fill: none; stroke: var(--series); stroke-width: 2; } .l1d { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
-  .l2 { fill: none; stroke: var(--fail); stroke-width: 2; } .l2d { fill: var(--fail); stroke: var(--surface); stroke-width: 2; }
-  .l3 { fill: none; stroke: var(--series2); stroke-width: 2; } .l3d { fill: var(--series2); stroke: var(--surface); stroke-width: 2; }
+  .band { fill: var(--band); }
+  .start { stroke: var(--s1); stroke-width: 1.5; }
+  .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
   .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
+  .evl { font-size: 10.5px; fill: var(--ink2); }
+  .seg { stroke: var(--surface); stroke-width: 1; }
+  .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
+  .failed { fill: var(--failed); } .saved { fill: var(--good); }
+  .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
+  .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
+  .partial { opacity: 0.5; }
+  .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
 </style>
 <g class="root">
-  <rect class="bg" x="0.5" y="0.5" width="919" height="793" rx="10"/>
-  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: agent fleet CI</text>
-  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-17 22:05 UTC</text>
-  <text class="meta" x="24" y="52">Three views of the same system: delivery, verification, and CI capacity. Trends use trailing 7-day windows.</text>
-  <g><title>Agent-classified share: 89.0%. Agent time on new work (6d): 71.7%. Fixes 2.1h/day; send-backs 3.6h/day. Worker slots used: 41.9% of 2. Fix loops per merged PR: 1.0. Idle with a free slot: 3.2h/day</title>
+  <rect class="bg" x="0.5" y="0.5" width="919" height="1064" rx="10"/>
+  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet</text>
+  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-17 23:45 UTC</text>
+  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 254 of the 350 PRs merged since then were its own (73%). Today so far: 82 merged.</text>
+  <g>
+  <rect class="tile" x="24.0" y="68" width="209.0" height="74" rx="8"/>
+  <text class="k" x="38.0" y="88">MERGED PRs / DAY</text>
+  <text class="v" x="38.0" y="114">44.7</text>
+  <text class="sub" x="38.0" y="131">before promoter-bot: 45.9 · -3%</text>
+  </g>
+  <g><title>Agent time on new work (6d): 71.7%. Fixes 2.1h/day; send-backs 3.6h/day. Worker slots used: 41.9% of 2. Fix loops per merged PR: 1.0. Idle with a free slot: 3.2h/day</title>
   <desc>Merged PRs per day, by origin. Agent share of merged PRs</desc>
-  <rect class="tile" x="24.0" y="68" width="282.7" height="86" rx="8"/>
-  <text class="k" x="38.0" y="86">DELIVERY</text>
-  <text class="v" x="38.0" y="112">43.0 merged / day</text>
-  <text class="sub" x="38.0" y="130">89.0% agent-classified · vs 54.7 / day · 71.7% factory time on new work</text>
+  <rect class="tile" x="245.0" y="68" width="209.0" height="74" rx="8"/>
+  <text class="k" x="259.0" y="88">PROMOTER-BOT-MADE SHARE</text>
+  <text class="v" x="259.0" y="114">67.2%</text>
+  <text class="sub" x="259.0" y="131">180 PRs · all agents 89.2%</text>
   </g>
-  <g><title>CI workflow-run outcomes; not a per-PR quality score. Reruns that passed: 62.3% (33 passed, 20 failed again; 65 total). Mainframe Ground Truth: 22 reruns, 16 passed, 0 failed again. Det Sweep: 20 reruns, 12 passed, 5 failed again. GitGalaxy Smoke Tests: 13 reruns, 3 passed, 10 failed again. Muninn Security Scan: 6 reruns, 0 passed, 4 failed again. Full Suite Gate (All OS x Python): 3 reruns, 1 passed, 1 failed again. Generated Docs: 1 reruns, 1 passed, 0 failed again</title>
-  <rect class="tile" x="318.7" y="68" width="282.7" height="86" rx="8"/>
-  <text class="k" x="332.7" y="86">PROOF</text>
-  <text class="v" x="332.7" y="112">97.6% CI run pass rate</text>
-  <text class="sub" x="332.7" y="130">workflow-run outcomes; not a per-PR quality score · 9.3/day rerun, 62.3% passed</text>
+  <g>
+  <rect class="tile" x="466.0" y="68" width="209.0" height="74" rx="8"/>
+  <text class="k" x="480.0" y="88">RUNNER HOURS / MERGED PR</text>
+  <text class="v" x="480.0" y="114">8.1 h</text>
+  <text class="sub" x="480.0" y="131">before promoter-bot: 4.0 h · +102%</text>
   </g>
-  <g><title>Sampled queue wait and runner time.. Agent time on new work (6d): 71.7%. Fixes 2.1h/day; send-backs 3.6h/day. Worker slots used: 41.9% of 2. Fix loops per merged PR: 1.0. Idle with a free slot: 3.2h/day</title>
-  <rect class="tile" x="613.3" y="68" width="282.7" height="86" rx="8"/>
-  <text class="k" x="627.3" y="86">CAPACITY · SAMPLED CI</text>
-  <text class="v" x="627.3" y="112">10.7 min queue p90</text>
-  <text class="sub" x="627.3" y="130">10.1 h estimated runner hours / merged PR · 41.9% worker slots used</text>
+  <g>
+  <rect class="tile" x="687.0" y="68" width="209.0" height="74" rx="8"/>
+  <text class="k" x="701.0" y="88">QUEUE WAIT P90</text>
+  <text class="v" x="701.0" y="114">11.2 min</text>
+  <text class="sub" x="701.0" y="131">before promoter-bot: 4.2 min · +169%</text>
   </g>
-  <text class="h2" x="24" y="188">1 · Delivery — merged PRs / day, trailing 7-day average by origin</text>
-  <line class="base" x1="66" x2="896" y1="296.0" y2="296.0"/>
-  <text class="tick" x="58" y="299.5" text-anchor="end">0</text>
-  <line class="grid" x1="66" x2="896" y1="272.0" y2="272.0"/>
-  <text class="tick" x="58" y="275.5" text-anchor="end">17</text>
-  <line class="grid" x1="66" x2="896" y1="248.0" y2="248.0"/>
-  <text class="tick" x="58" y="251.5" text-anchor="end">33</text>
-  <line class="grid" x1="66" x2="896" y1="224.0" y2="224.0"/>
-  <text class="tick" x="58" y="227.5" text-anchor="end">50</text>
-  <line class="grid" x1="66" x2="896" y1="200.0" y2="200.0"/>
-  <text class="tick" x="58" y="203.5" text-anchor="end">66</text>
-  <text class="tick" x="107.5" y="312" text-anchor="middle">Sep 19</text>
-  <text class="tick" x="301.2" y="312" text-anchor="middle">Sep 26</text>
-  <text class="tick" x="494.8" y="312" text-anchor="middle">Oct 3</text>
-  <text class="tick" x="688.5" y="312" text-anchor="middle">Oct 10</text>
-  <text class="tick" x="882.2" y="312" text-anchor="middle">Oct 17</text>
-  <g><title>Sep 18 · merged PRs · 7-day average per day · agent 13.0, other 6.0, automation 6.0, unknown 0.0</title><rect class="agent" x="67.0" y="277.2" width="25.7" height="18.8"/><rect class="other" x="67.0" y="268.5" width="25.7" height="8.7"/><rect class="automation" x="67.0" y="259.8" width="25.7" height="8.7"/></g>
-  <g><title>Sep 19 · merged PRs · 7-day average per day · agent 13.0, other 5.0, automation 3.0, unknown 0.0</title><rect class="agent" x="94.7" y="277.2" width="25.7" height="18.8"/><rect class="other" x="94.7" y="269.9" width="25.7" height="7.2"/><rect class="automation" x="94.7" y="265.6" width="25.7" height="4.3"/></g>
-  <g><title>Sep 20 · merged PRs · 7-day average per day · agent 12.7, other 5.0, automation 2.0, unknown 0.0</title><rect class="agent" x="122.3" y="277.7" width="25.7" height="18.3"/><rect class="other" x="122.3" y="270.4" width="25.7" height="7.2"/><rect class="automation" x="122.3" y="267.5" width="25.7" height="2.9"/></g>
-  <g><title>Sep 21 · merged PRs · 7-day average per day · agent 9.5, other 5.5, automation 1.5, unknown 0.0</title><rect class="agent" x="150.0" y="282.2" width="25.7" height="13.8"/><rect class="other" x="150.0" y="274.3" width="25.7" height="8.0"/><rect class="automation" x="150.0" y="272.1" width="25.7" height="2.2"/></g>
-  <g><title>Sep 22 · merged PRs · 7-day average per day · agent 10.0, other 6.8, automation 1.2, unknown 0.0</title><rect class="agent" x="177.7" y="281.5" width="25.7" height="14.5"/><rect class="other" x="177.7" y="271.7" width="25.7" height="9.8"/><rect class="automation" x="177.7" y="269.9" width="25.7" height="1.7"/></g>
-  <g><title>Sep 23 · merged PRs · 7-day average per day · agent 15.8, other 10.3, automation 1.0, unknown 0.0</title><rect class="agent" x="205.3" y="273.1" width="25.7" height="22.9"/><rect class="other" x="205.3" y="258.1" width="25.7" height="15.0"/><rect class="automation" x="205.3" y="256.7" width="25.7" height="1.4"/></g>
-  <g><title>Sep 24 · merged PRs · 7-day average per day · agent 19.3, other 14.9, automation 0.9, unknown 0.0</title><rect class="agent" x="233.0" y="268.1" width="25.7" height="27.9"/><rect class="other" x="233.0" y="246.6" width="25.7" height="21.5"/><rect class="automation" x="233.0" y="245.3" width="25.7" height="1.2"/></g>
-  <g><title>Sep 25 · merged PRs · 7-day average per day · agent 25.3, other 20.0, automation 0.7, unknown 0.0</title><rect class="agent" x="260.7" y="259.4" width="25.7" height="36.6"/><rect class="other" x="260.7" y="230.4" width="25.7" height="29.0"/><rect class="automation" x="260.7" y="229.4" width="25.7" height="1.0"/></g>
-  <g><title>Sep 26 · merged PRs · 7-day average per day · agent 29.9, other 25.7, automation 0.7, unknown 0.0</title><rect class="agent" x="288.3" y="252.8" width="25.7" height="43.2"/><rect class="other" x="288.3" y="215.5" width="25.7" height="37.2"/><rect class="automation" x="288.3" y="214.5" width="25.7" height="1.0"/></g>
-  <g><title>Sep 27 · merged PRs · 7-day average per day · agent 34.7, other 29.1, automation 0.7, unknown 0.0</title><rect class="agent" x="316.0" y="245.7" width="25.7" height="50.3"/><rect class="other" x="316.0" y="203.5" width="25.7" height="42.2"/><rect class="automation" x="316.0" y="202.5" width="25.7" height="1.0"/></g>
-  <g><title>Sep 28 · merged PRs · 7-day average per day · agent 35.9, other 29.6, automation 0.9, unknown 0.0</title><rect class="agent" x="343.7" y="244.1" width="25.7" height="51.9"/><rect class="other" x="343.7" y="201.2" width="25.7" height="42.8"/><rect class="automation" x="343.7" y="200.0" width="25.7" height="1.2"/></g>
-  <g><title>Sep 29 · merged PRs · 7-day average per day · agent 36.6, other 28.3, automation 0.9, unknown 0.0</title><rect class="agent" x="371.3" y="243.0" width="25.7" height="53.0"/><rect class="other" x="371.3" y="202.1" width="25.7" height="41.0"/><rect class="automation" x="371.3" y="200.8" width="25.7" height="1.2"/></g>
-  <g><title>Sep 30 · merged PRs · 7-day average per day · agent 31.9, other 24.9, automation 0.9, unknown 0.0</title><rect class="agent" x="399.0" y="249.9" width="25.7" height="46.1"/><rect class="other" x="399.0" y="213.9" width="25.7" height="36.0"/><rect class="automation" x="399.0" y="212.6" width="25.7" height="1.2"/></g>
-  <g><title>Oct 1 · merged PRs · 7-day average per day · agent 29.1, other 20.1, automation 0.9, unknown 0.0</title><rect class="agent" x="426.7" y="253.8" width="25.7" height="42.2"/><rect class="other" x="426.7" y="224.6" width="25.7" height="29.2"/><rect class="automation" x="426.7" y="223.4" width="25.7" height="1.2"/></g>
-  <g><title>Oct 2 · merged PRs · 7-day average per day · agent 28.0, other 16.7, automation 0.3, unknown 0.0</title><rect class="agent" x="454.3" y="255.4" width="25.7" height="40.6"/><rect class="other" x="454.3" y="231.2" width="25.7" height="24.2"/><rect class="automation" x="454.3" y="230.8" width="25.7" height="0.4"/></g>
-  <g><title>Oct 3 · merged PRs · 7-day average per day · agent 26.3, other 14.6, automation 0.3, unknown 0.0</title><rect class="agent" x="482.0" y="257.9" width="25.7" height="38.1"/><rect class="other" x="482.0" y="236.8" width="25.7" height="21.1"/><rect class="automation" x="482.0" y="236.4" width="25.7" height="0.4"/></g>
-  <g><title>Oct 4 · merged PRs · 7-day average per day · agent 24.1, other 14.9, automation 0.3, unknown 0.0</title><rect class="agent" x="509.7" y="261.0" width="25.7" height="35.0"/><rect class="other" x="509.7" y="239.5" width="25.7" height="21.5"/><rect class="automation" x="509.7" y="239.1" width="25.7" height="0.4"/></g>
-  <g><title>Oct 5 · merged PRs · 7-day average per day · agent 30.0, other 17.3, automation 0.1, unknown 0.0</title><rect class="agent" x="537.3" y="252.6" width="25.7" height="43.4"/><rect class="other" x="537.3" y="227.5" width="25.7" height="25.0"/><rect class="automation" x="537.3" y="227.3" width="25.7" height="0.2"/></g>
-  <g><title>Oct 6 · merged PRs · 7-day average per day · agent 34.0, other 17.6, automation 0.1, unknown 0.0</title><rect class="agent" x="565.0" y="246.8" width="25.7" height="49.2"/><rect class="other" x="565.0" y="221.3" width="25.7" height="25.4"/><rect class="automation" x="565.0" y="221.1" width="25.7" height="0.2"/></g>
-  <g><title>Oct 7 · merged PRs · 7-day average per day · agent 37.0, other 18.6, automation 0.1, unknown 0.0</title><rect class="agent" x="592.7" y="242.4" width="25.7" height="53.6"/><rect class="other" x="592.7" y="215.5" width="25.7" height="26.9"/><rect class="automation" x="592.7" y="215.3" width="25.7" height="0.2"/></g>
-  <g><title>Oct 8 · merged PRs · 7-day average per day · agent 37.4, other 17.4, automation 0.1, unknown 0.0</title><rect class="agent" x="620.3" y="241.8" width="25.7" height="54.2"/><rect class="other" x="620.3" y="216.6" width="25.7" height="25.2"/><rect class="automation" x="620.3" y="216.3" width="25.7" height="0.2"/></g>
-  <g><title>Oct 9 · merged PRs · 7-day average per day · agent 37.1, other 17.4, automation 0.1, unknown 0.0</title><rect class="agent" x="648.0" y="242.2" width="25.7" height="53.8"/><rect class="other" x="648.0" y="217.0" width="25.7" height="25.2"/><rect class="automation" x="648.0" y="216.8" width="25.7" height="0.2"/></g>
-  <g><title>Oct 10 · merged PRs · 7-day average per day · agent 36.6, other 13.9, automation 0.1, unknown 0.0</title><rect class="agent" x="675.7" y="243.0" width="25.7" height="53.0"/><rect class="other" x="675.7" y="223.0" width="25.7" height="20.1"/><rect class="automation" x="675.7" y="222.8" width="25.7" height="0.2"/></g>
-  <g><title>Oct 11 · merged PRs · 7-day average per day · agent 37.0, other 10.3, automation 0.1, unknown 0.0</title><rect class="agent" x="703.3" y="242.4" width="25.7" height="53.6"/><rect class="other" x="703.3" y="227.5" width="25.7" height="14.9"/><rect class="automation" x="703.3" y="227.3" width="25.7" height="0.2"/></g>
-  <g><title>Oct 12 · merged PRs · 7-day average per day · agent 34.9, other 7.6, automation 0.3, unknown 0.0</title><rect class="agent" x="731.0" y="245.5" width="25.7" height="50.5"/><rect class="other" x="731.0" y="234.6" width="25.7" height="11.0"/><rect class="automation" x="731.0" y="234.1" width="25.7" height="0.4"/></g>
-  <g><title>Oct 13 · merged PRs · 7-day average per day · agent 32.6, other 7.1, automation 0.3, unknown 0.0</title><rect class="agent" x="758.7" y="248.8" width="25.7" height="47.2"/><rect class="other" x="758.7" y="238.5" width="25.7" height="10.3"/><rect class="automation" x="758.7" y="238.1" width="25.7" height="0.4"/></g>
-  <g><title>Oct 14 · merged PRs · 7-day average per day · agent 35.4, other 5.7, automation 0.3, unknown 0.0</title><rect class="agent" x="786.3" y="244.7" width="25.7" height="51.3"/><rect class="other" x="786.3" y="236.4" width="25.7" height="8.3"/><rect class="automation" x="786.3" y="236.0" width="25.7" height="0.4"/></g>
-  <g><title>Oct 15 · merged PRs · 7-day average per day · agent 37.9, other 5.9, automation 0.3, unknown 0.0</title><rect class="agent" x="814.0" y="241.2" width="25.7" height="54.8"/><rect class="other" x="814.0" y="232.7" width="25.7" height="8.5"/><rect class="automation" x="814.0" y="232.3" width="25.7" height="0.4"/></g>
-  <g><title>Oct 16 · merged PRs · 7-day average per day · agent 38.3, other 4.0, automation 0.7, unknown 0.0</title><rect class="agent" x="841.7" y="240.6" width="25.7" height="55.4"/><rect class="other" x="841.7" y="234.8" width="25.7" height="5.8"/><rect class="automation" x="841.7" y="233.7" width="25.7" height="1.0"/></g>
-  <g class="partial"><title>Oct 17 · merged PRs · 7-day average per day · agent 44.1, other 3.6, automation 0.7, unknown 0.0</title><rect class="agent" x="869.3" y="232.1" width="25.7" height="63.9"/><rect class="other" x="869.3" y="226.9" width="25.7" height="5.2"/><rect class="automation" x="869.3" y="225.9" width="25.7" height="1.0"/></g>
-  <rect class="unknown" x="790.0" y="182" width="9" height="9" rx="2"/>
-  <text class="lbl" x="803.0" y="190">unclassified</text>
-  <rect class="automation" x="698.0" y="182" width="9" height="9" rx="2"/>
-  <text class="lbl" x="711.0" y="190">automation</text>
-  <rect class="other" x="641.0" y="182" width="9" height="9" rx="2"/>
-  <text class="lbl" x="654.0" y="190">other</text>
-  <rect class="agent" x="584.0" y="182" width="9" height="9" rx="2"/>
-  <text class="lbl" x="597.0" y="190">agent</text>
-  <text class="h2" x="24" y="342">2 · Proof — CI workflow-run pass rate, trailing 7-day result</text>
-  <line class="base" x1="66" x2="896" y1="450.0" y2="450.0"/>
-  <text class="tick" x="58" y="453.5" text-anchor="end">0%</text>
-  <line class="grid" x1="66" x2="896" y1="426.0" y2="426.0"/>
-  <text class="tick" x="58" y="429.5" text-anchor="end">25%</text>
-  <line class="grid" x1="66" x2="896" y1="402.0" y2="402.0"/>
-  <text class="tick" x="58" y="405.5" text-anchor="end">50%</text>
+  <text class="meta" x="24" y="160">Cards: with promoter-bot (Oct 11–Oct 16, finished days) vs before promoter-bot (Sep 27–Oct 10).</text>
+  <rect class="band" x="702.3" y="222" width="193.7" height="195"/>
+  <g><text class="h2" x="24" y="192">1 · Delivery — merged PRs per day, by origin</text></g>
+  <line class="base" x1="66" x2="896" y1="417.0" y2="417.0"/>
+  <text class="tick" x="58" y="420.5" text-anchor="end">0</text>
   <line class="grid" x1="66" x2="896" y1="378.0" y2="378.0"/>
-  <text class="tick" x="58" y="381.5" text-anchor="end">75%</text>
-  <line class="grid" x1="66" x2="896" y1="354.0" y2="354.0"/>
-  <text class="tick" x="58" y="357.5" text-anchor="end">100%</text>
-  <text class="tick" x="107.5" y="466" text-anchor="middle">Sep 19</text>
-  <text class="tick" x="301.2" y="466" text-anchor="middle">Sep 26</text>
-  <text class="tick" x="494.8" y="466" text-anchor="middle">Oct 3</text>
-  <text class="tick" x="688.5" y="466" text-anchor="middle">Oct 10</text>
-  <text class="tick" x="882.2" y="466" text-anchor="middle">Oct 17</text>
-  <circle class="l1d" cx="79.8" cy="356.4" r="3.5"><title>Sep 18: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="107.5" cy="358.6" r="3.5"><title>Sep 19: 95% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="135.2" cy="358.5" r="3.5"><title>Sep 20: 95% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="162.8" cy="359.0" r="3.5"><title>Sep 21: 95% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="190.5" cy="358.7" r="3.5"><title>Sep 22: 95% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="218.2" cy="357.1" r="3.5"><title>Sep 23: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="245.8" cy="356.5" r="3.5"><title>Sep 24: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="273.5" cy="356.3" r="3.5"><title>Sep 25: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="301.2" cy="355.6" r="3.5"><title>Sep 26: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="328.8" cy="355.4" r="3.5"><title>Sep 27: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="356.5" cy="355.4" r="3.5"><title>Sep 28: 99% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="384.2" cy="355.2" r="3.5"><title>Sep 29: 99% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="411.8" cy="355.4" r="3.5"><title>Sep 30: 99% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="439.5" cy="355.5" r="3.5"><title>Oct 1: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="467.2" cy="355.6" r="3.5"><title>Oct 2: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="494.8" cy="355.9" r="3.5"><title>Oct 3: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="522.5" cy="356.1" r="3.5"><title>Oct 4: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="550.2" cy="356.2" r="3.5"><title>Oct 5: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="577.8" cy="356.4" r="3.5"><title>Oct 6: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="605.5" cy="356.8" r="3.5"><title>Oct 7: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="633.2" cy="356.8" r="3.5"><title>Oct 8: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="660.8" cy="357.0" r="3.5"><title>Oct 9: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="688.5" cy="357.1" r="3.5"><title>Oct 10: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="716.2" cy="357.0" r="3.5"><title>Oct 11: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="743.8" cy="357.1" r="3.5"><title>Oct 12: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="771.5" cy="356.9" r="3.5"><title>Oct 13: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="799.2" cy="356.5" r="3.5"><title>Oct 14: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="826.8" cy="356.6" r="3.5"><title>Oct 15: 97% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d" cx="854.5" cy="356.3" r="3.5"><title>Oct 16: 98% CI runs (success / success + failure)</title></circle>
-  <circle class="l1d partial" cx="882.2" cy="356.2" r="3.5"><title>Oct 17: 98% CI runs (success / success + failure) (today so far)</title></circle>
-  <polyline class="l1" points="79.8,356.4 107.5,358.6 135.2,358.5 162.8,359.0 190.5,358.7 218.2,357.1 245.8,356.5 273.5,356.3 301.2,355.6 328.8,355.4 356.5,355.4 384.2,355.2 411.8,355.4 439.5,355.5 467.2,355.6 494.8,355.9 522.5,356.1 550.2,356.2 577.8,356.4 605.5,356.8 633.2,356.8 660.8,357.0 688.5,357.1 716.2,357.0 743.8,357.1 771.5,356.9 799.2,356.5 826.8,356.6 854.5,356.3 882.2,356.2"/>
-  <text class="h2" x="24" y="508">3 · Capacity — Job queue wait (p90), trailing 7-day mean of sampled days (minutes)</text>
-  <line class="base" x1="66" x2="896" y1="602.0" y2="602.0"/>
-  <text class="tick" x="58" y="605.5" text-anchor="end">0.0</text>
-  <line class="grid" x1="66" x2="896" y1="581.5" y2="581.5"/>
-  <text class="tick" x="58" y="585.0" text-anchor="end">5.0</text>
-  <line class="grid" x1="66" x2="896" y1="561.0" y2="561.0"/>
-  <text class="tick" x="58" y="564.5" text-anchor="end">10.0</text>
-  <line class="grid" x1="66" x2="896" y1="540.5" y2="540.5"/>
-  <text class="tick" x="58" y="544.0" text-anchor="end">15.0</text>
-  <line class="grid" x1="66" x2="896" y1="520.0" y2="520.0"/>
-  <text class="tick" x="58" y="523.5" text-anchor="end">20.0</text>
-  <text class="tick" x="107.5" y="618" text-anchor="middle">Sep 19</text>
-  <text class="tick" x="301.2" y="618" text-anchor="middle">Sep 26</text>
-  <text class="tick" x="494.8" y="618" text-anchor="middle">Oct 3</text>
-  <text class="tick" x="688.5" y="618" text-anchor="middle">Oct 10</text>
-  <text class="tick" x="882.2" y="618" text-anchor="middle">Oct 17</text>
-  <g><title>Sep 18: CI change(s) merged #3168</title><line class="mark" x1="79.8" x2="79.8" y1="520" y2="602"/><path class="markd" d="M79.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="79.8" cy="599.3" r="3.5"><title>Sep 18: 0.7 minutes · about 24 runs sampled per day</title></circle>
-  <circle class="l2d" cx="107.5" cy="599.7" r="3.5"><title>Sep 19: 0.6 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 20: CI change(s) merged #3232</title><line class="mark" x1="135.2" x2="135.2" y1="520" y2="602"/><path class="markd" d="M135.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="135.2" cy="599.6" r="3.5"><title>Sep 20: 0.6 minutes · about 24 runs sampled per day</title></circle>
-  <circle class="l2d" cx="162.8" cy="599.7" r="3.5"><title>Sep 21: 0.6 minutes · about 24 runs sampled per day</title></circle>
-  <circle class="l2d" cx="190.5" cy="599.1" r="3.5"><title>Sep 22: 0.7 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 23: CI change(s) merged #3378, #3379, #3402, #3415</title><line class="mark" x1="218.2" x2="218.2" y1="520" y2="602"/><path class="markd" d="M218.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="218.2" cy="597.9" r="3.5"><title>Sep 23: 1.0 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 24: CI change(s) merged #3456, #3525</title><line class="mark" x1="245.8" x2="245.8" y1="520" y2="602"/><path class="markd" d="M245.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="245.8" cy="598.1" r="3.5"><title>Sep 24: 1.0 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 25: CI change(s) merged #3547, #3572, #3630, #3636, #3647, #3661</title><line class="mark" x1="273.5" x2="273.5" y1="520" y2="602"/><path class="markd" d="M273.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="273.5" cy="596.8" r="3.5"><title>Sep 25: 1.3 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 26: CI change(s) merged #3761, #3777, #3793, #3802, #3818, #3838</title><line class="mark" x1="301.2" x2="301.2" y1="520" y2="602"/><path class="markd" d="M301.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="301.2" cy="596.5" r="3.5"><title>Sep 26: 1.3 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 27: CI change(s) merged #3864, #3916</title><line class="mark" x1="328.8" x2="328.8" y1="520" y2="602"/><path class="markd" d="M328.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="328.8" cy="590.7" r="3.5"><title>Sep 27: 2.8 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 28: CI change(s) merged #3961</title><line class="mark" x1="356.5" x2="356.5" y1="520" y2="602"/><path class="markd" d="M356.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="356.5" cy="589.6" r="3.5"><title>Sep 28: 3.0 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 29: CI change(s) merged #4000</title><line class="mark" x1="384.2" x2="384.2" y1="520" y2="602"/><path class="markd" d="M384.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="384.2" cy="589.3" r="3.5"><title>Sep 29: 3.1 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Sep 30: CI change(s) merged #4027</title><line class="mark" x1="411.8" x2="411.8" y1="520" y2="602"/><path class="markd" d="M411.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="411.8" cy="590.5" r="3.5"><title>Sep 30: 2.8 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 1: CI change(s) merged #4081, #4086</title><line class="mark" x1="439.5" x2="439.5" y1="520" y2="602"/><path class="markd" d="M439.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="439.5" cy="590.2" r="3.5"><title>Oct 1: 2.9 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 2: CI change(s) merged #4097, #4105, #4123</title><line class="mark" x1="467.2" x2="467.2" y1="520" y2="602"/><path class="markd" d="M467.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="467.2" cy="590.6" r="3.5"><title>Oct 2: 2.8 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 3: CI change(s) merged #4220</title><line class="mark" x1="494.8" x2="494.8" y1="520" y2="602"/><path class="markd" d="M494.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="494.8" cy="589.6" r="3.5"><title>Oct 3: 3.0 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 4: CI change(s) merged #4313, #4314, #4316, #4362</title><line class="mark" x1="522.5" x2="522.5" y1="520" y2="602"/><path class="markd" d="M522.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="522.5" cy="595.2" r="3.5"><title>Oct 4: 1.7 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 5: CI change(s) merged #4434, #4446, #4450, #4456, #4466, #4495</title><line class="mark" x1="550.2" x2="550.2" y1="520" y2="602"/><path class="markd" d="M550.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="550.2" cy="592.3" r="3.5"><title>Oct 5: 2.4 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 6: CI change(s) merged #4497, #4536, #4538</title><line class="mark" x1="577.8" x2="577.8" y1="520" y2="602"/><path class="markd" d="M577.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="577.8" cy="589.6" r="3.5"><title>Oct 6: 3.0 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 7: CI change(s) merged #4595, #4597, #4603, #4604, #4611, #4617</title><line class="mark" x1="605.5" x2="605.5" y1="520" y2="602"/><path class="markd" d="M605.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="605.5" cy="587.7" r="3.5"><title>Oct 7: 3.5 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 8: CI change(s) merged #4705, #4720</title><line class="mark" x1="633.2" x2="633.2" y1="520" y2="602"/><path class="markd" d="M633.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="633.2" cy="587.6" r="3.5"><title>Oct 8: 3.5 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 9: CI change(s) merged #4740, #4745, #4757, #4761, #4774, #4779</title><line class="mark" x1="660.8" x2="660.8" y1="520" y2="602"/><path class="markd" d="M660.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="660.8" cy="583.2" r="3.5"><title>Oct 9: 4.6 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 10: CI change(s) merged #4827, #4828, #4829, #4830, #4832, #4833</title><line class="mark" x1="688.5" x2="688.5" y1="520" y2="602"/><path class="markd" d="M688.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="688.5" cy="580.2" r="3.5"><title>Oct 10: 5.3 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 11: CI change(s) merged #4866, #4906, #4907, #4908, #4912, #4913</title><line class="mark" x1="716.2" x2="716.2" y1="520" y2="602"/><path class="markd" d="M716.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="716.2" cy="565.6" r="3.5"><title>Oct 11: 8.9 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 12: CI change(s) merged #4942, #4961, #4962, #4966, #4995, #5001</title><line class="mark" x1="743.8" x2="743.8" y1="520" y2="602"/><path class="markd" d="M743.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="743.8" cy="560.1" r="3.5"><title>Oct 12: 10.2 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 13: CI change(s) merged #5017, #5022, #5047, #5062</title><line class="mark" x1="771.5" x2="771.5" y1="520" y2="602"/><path class="markd" d="M771.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="771.5" cy="561.3" r="3.5"><title>Oct 13: 9.9 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 14: CI change(s) merged #5071, #5086, #5105, #5111, #5138, #5139</title><line class="mark" x1="799.2" x2="799.2" y1="520" y2="602"/><path class="markd" d="M799.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="799.2" cy="554.4" r="3.5"><title>Oct 14: 11.6 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 15: CI change(s) merged #5165, #5169, #5177, #5179, #5182, #5183</title><line class="mark" x1="826.8" x2="826.8" y1="520" y2="602"/><path class="markd" d="M826.8,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="826.8" cy="552.4" r="3.5"><title>Oct 15: 12.1 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 16: CI change(s) merged #5223, #5225, #5228, #5242, #5243, #5244</title><line class="mark" x1="854.5" x2="854.5" y1="520" y2="602"/><path class="markd" d="M854.5,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d" cx="854.5" cy="558.1" r="3.5"><title>Oct 16: 10.7 minutes · about 24 runs sampled per day</title></circle>
-  <g><title>Oct 17: CI change(s) merged #5264, #5358, #5371</title><line class="mark" x1="882.2" x2="882.2" y1="520" y2="602"/><path class="markd" d="M882.2,515 l4,4 l-4,4 l-4,-4 Z"/></g>
-  <circle class="l2d partial" cx="882.2" cy="560.1" r="3.5"><title>Oct 17: 10.2 minutes · about 24 runs sampled per day (today so far)</title></circle>
-  <polyline class="l2" points="79.8,599.3 107.5,599.7 135.2,599.6 162.8,599.7 190.5,599.1 218.2,597.9 245.8,598.1 273.5,596.8 301.2,596.5 328.8,590.7 356.5,589.6 384.2,589.3 411.8,590.5 439.5,590.2 467.2,590.6 494.8,589.6 522.5,595.2 550.2,592.3 577.8,589.6 605.5,587.7 633.2,587.6 660.8,583.2 688.5,580.2 716.2,565.6 743.8,560.1 771.5,561.3 799.2,554.4 826.8,552.4 854.5,558.1 882.2,560.1"/>
-  <text class="h2" x="24" y="648">Runner time per merged PR — estimated hours (sampled)</text>
-  <line class="base" x1="66" x2="896" y1="742.0" y2="742.0"/>
-  <text class="tick" x="58" y="745.5" text-anchor="end">0.00</text>
-  <line class="grid" x1="66" x2="896" y1="721.5" y2="721.5"/>
-  <text class="tick" x="58" y="725.0" text-anchor="end">3.27</text>
-  <line class="grid" x1="66" x2="896" y1="701.0" y2="701.0"/>
-  <text class="tick" x="58" y="704.5" text-anchor="end">6.55</text>
-  <line class="grid" x1="66" x2="896" y1="680.5" y2="680.5"/>
-  <text class="tick" x="58" y="684.0" text-anchor="end">9.82</text>
-  <line class="grid" x1="66" x2="896" y1="660.0" y2="660.0"/>
-  <text class="tick" x="58" y="663.5" text-anchor="end">13.10</text>
-  <text class="tick" x="107.5" y="758" text-anchor="middle">Sep 19</text>
-  <text class="tick" x="301.2" y="758" text-anchor="middle">Sep 26</text>
-  <text class="tick" x="494.8" y="758" text-anchor="middle">Oct 3</text>
-  <text class="tick" x="688.5" y="758" text-anchor="middle">Oct 10</text>
-  <text class="tick" x="882.2" y="758" text-anchor="middle">Oct 17</text>
-  <circle class="l3d" cx="79.8" cy="736.0" r="3.5"><title>Sep 18: 0.96 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="107.5" cy="734.2" r="3.5"><title>Sep 19: 1.25 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="135.2" cy="735.4" r="3.5"><title>Sep 20: 1.05 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="162.8" cy="735.2" r="3.5"><title>Sep 21: 1.09 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="190.5" cy="736.1" r="3.5"><title>Sep 22: 0.94 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="218.2" cy="736.7" r="3.5"><title>Sep 23: 0.85 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="245.8" cy="737.2" r="3.5"><title>Sep 24: 0.77 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="273.5" cy="736.7" r="3.5"><title>Sep 25: 0.85 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="301.2" cy="736.6" r="3.5"><title>Sep 26: 0.86 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="328.8" cy="735.9" r="3.5"><title>Sep 27: 0.97 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="356.5" cy="735.1" r="3.5"><title>Sep 28: 1.11 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="384.2" cy="734.3" r="3.5"><title>Sep 29: 1.23 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="411.8" cy="733.6" r="3.5"><title>Sep 30: 1.33 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="439.5" cy="732.7" r="3.5"><title>Oct 1: 1.49 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="467.2" cy="731.8" r="3.5"><title>Oct 2: 1.63 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="494.8" cy="731.5" r="3.5"><title>Oct 3: 1.68 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="522.5" cy="731.4" r="3.5"><title>Oct 4: 1.70 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="550.2" cy="732.5" r="3.5"><title>Oct 5: 1.51 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="577.8" cy="727.4" r="3.5"><title>Oct 6: 2.32 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="605.5" cy="727.2" r="3.5"><title>Oct 7: 2.36 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="633.2" cy="725.6" r="3.5"><title>Oct 8: 2.62 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="660.8" cy="721.0" r="3.5"><title>Oct 9: 3.36 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="688.5" cy="705.2" r="3.5"><title>Oct 10: 5.89 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="716.2" cy="698.0" r="3.5"><title>Oct 11: 7.03 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="743.8" cy="688.5" r="3.5"><title>Oct 12: 8.55 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="771.5" cy="688.8" r="3.5"><title>Oct 13: 8.51 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="799.2" cy="670.7" r="3.5"><title>Oct 14: 11.39 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="826.8" cy="675.5" r="3.5"><title>Oct 15: 10.63 runner hours / merged PR</title></circle>
-  <circle class="l3d" cx="854.5" cy="678.9" r="3.5"><title>Oct 16: 10.08 runner hours / merged PR</title></circle>
-  <circle class="l3d partial" cx="882.2" cy="700.2" r="3.5"><title>Oct 17: 6.68 runner hours / merged PR (today so far)</title></circle>
-  <polyline class="l3" points="79.8,736.0 107.5,734.2 135.2,735.4 162.8,735.2 190.5,736.1 218.2,736.7 245.8,737.2 273.5,736.7 301.2,736.6 328.8,735.9 356.5,735.1 384.2,734.3 411.8,733.6 439.5,732.7 467.2,731.8 494.8,731.5 522.5,731.4 550.2,732.5 577.8,727.4 605.5,727.2 633.2,725.6 660.8,721.0 688.5,705.2 716.2,698.0 743.8,688.5 771.5,688.8 799.2,670.7 826.8,675.5 854.5,678.9 882.2,700.2"/>
-  <text class="meta" x="24" y="780">Source: GitHub API. Days are UTC. Faded marks include today so far. Queue wait and runner time are sampled. CI pass rate is a workflow-run measure, not PR first-pass success. Local host pressure and post-merge rework are not yet in this history.</text>
+  <text class="tick" x="58" y="381.5" text-anchor="end">25</text>
+  <line class="grid" x1="66" x2="896" y1="339.0" y2="339.0"/>
+  <text class="tick" x="58" y="342.5" text-anchor="end">50</text>
+  <line class="grid" x1="66" x2="896" y1="300.0" y2="300.0"/>
+  <text class="tick" x="58" y="303.5" text-anchor="end">75</text>
+  <line class="grid" x1="66" x2="896" y1="261.0" y2="261.0"/>
+  <text class="tick" x="58" y="264.5" text-anchor="end">100</text>
+  <line class="grid" x1="66" x2="896" y1="222.0" y2="222.0"/>
+  <text class="tick" x="58" y="225.5" text-anchor="end">125</text>
+  <text class="tick" x="107.5" y="433" text-anchor="middle">Sep 19</text>
+  <text class="tick" x="301.2" y="433" text-anchor="middle">Sep 26</text>
+  <text class="tick" x="494.8" y="433" text-anchor="middle">Oct 3</text>
+  <text class="tick" x="688.5" y="433" text-anchor="middle">Oct 10</text>
+  <text class="tick" x="882.2" y="433" text-anchor="middle">Oct 17</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="674.7" x2="674.7" y1="218" y2="417"/></g>
+  <line class="start" x1="702.3" x2="702.3" y1="218" y2="417"/>
+  <g><title>Sep 18 · 25 merged PRs · promoter-bot 0, other agents 13, other 6, automation 6, unclassified 0</title><rect class="agent seg" x="67.0" y="396.7" width="25.7" height="20.3"/><rect class="other seg" x="67.0" y="387.4" width="25.7" height="9.4"/><path class="automation seg" d="M67.0,387.4 V382.0 Q67.0,378.0 71.0,378.0 H88.7 Q92.7,378.0 92.7,382.0 V387.4 Z"/></g>
+  <g><title>Sep 19 · 17 merged PRs · promoter-bot 0, other agents 13, other 4, automation 0, unclassified 0</title><rect class="agent seg" x="94.7" y="396.7" width="25.7" height="20.3"/><path class="other seg" d="M94.7,396.7 V394.5 Q94.7,390.5 98.7,390.5 H116.3 Q120.3,390.5 120.3,394.5 V396.7 Z"/></g>
+  <g><title>Sep 20 · 17 merged PRs · promoter-bot 0, other agents 12, other 5, automation 0, unclassified 0</title><rect class="agent seg" x="122.3" y="398.3" width="25.7" height="18.7"/><path class="other seg" d="M122.3,398.3 V394.5 Q122.3,390.5 126.3,390.5 H144.0 Q148.0,390.5 148.0,394.5 V398.3 Z"/></g>
+  <g><title>Sep 21 · 7 merged PRs · promoter-bot 0, other agents 0, other 7, automation 0, unclassified 0</title><path class="other seg" d="M150.0,417.0 V410.1 Q150.0,406.1 154.0,406.1 H171.7 Q175.7,406.1 175.7,410.1 V417.0 Z"/></g>
+  <g><title>Sep 22 · 24 merged PRs · promoter-bot 0, other agents 12, other 12, automation 0, unclassified 0</title><rect class="agent seg" x="177.7" y="398.3" width="25.7" height="18.7"/><path class="other seg" d="M177.7,398.3 V383.6 Q177.7,379.6 181.7,379.6 H199.3 Q203.3,379.6 203.3,383.6 V398.3 Z"/></g>
+  <g><title>Sep 23 · 73 merged PRs · promoter-bot 0, other agents 45, other 28, automation 0, unclassified 0</title><rect class="agent seg" x="205.3" y="346.8" width="25.7" height="70.2"/><path class="other seg" d="M205.3,346.8 V307.1 Q205.3,303.1 209.3,303.1 H227.0 Q231.0,303.1 231.0,307.1 V346.8 Z"/></g>
+  <g><title>Sep 24 · 82 merged PRs · promoter-bot 0, other agents 40, other 42, automation 0, unclassified 0</title><rect class="agent seg" x="233.0" y="354.6" width="25.7" height="62.4"/><path class="other seg" d="M233.0,354.6 V293.1 Q233.0,289.1 237.0,289.1 H254.7 Q258.7,289.1 258.7,293.1 V354.6 Z"/></g>
+  <g><title>Sep 25 · 102 merged PRs · promoter-bot 0, other agents 55, other 42, automation 5, unclassified 0</title><rect class="agent seg" x="260.7" y="331.2" width="25.7" height="85.8"/><rect class="other seg" x="260.7" y="265.7" width="25.7" height="65.5"/><path class="automation seg" d="M260.7,265.7 V261.9 Q260.7,257.9 264.7,257.9 H282.3 Q286.3,257.9 286.3,261.9 V265.7 Z"/></g>
+  <g><title>Sep 26 · 89 merged PRs · promoter-bot 0, other agents 45, other 44, automation 0, unclassified 0</title><rect class="agent seg" x="288.3" y="346.8" width="25.7" height="70.2"/><path class="other seg" d="M288.3,346.8 V282.2 Q288.3,278.2 292.3,278.2 H310.0 Q314.0,278.2 314.0,282.2 V346.8 Z"/></g>
+  <g><title>Sep 27 · 75 merged PRs · promoter-bot 0, other agents 46, other 29, automation 0, unclassified 0</title><rect class="agent seg" x="316.0" y="345.2" width="25.7" height="71.8"/><path class="other seg" d="M316.0,345.2 V304.0 Q316.0,300.0 320.0,300.0 H337.7 Q341.7,300.0 341.7,304.0 V345.2 Z"/></g>
+  <g><title>Sep 28 · 19 merged PRs · promoter-bot 0, other agents 8, other 10, automation 1, unclassified 0</title><rect class="agent seg" x="343.7" y="404.5" width="25.7" height="12.5"/><rect class="other seg" x="343.7" y="388.9" width="25.7" height="15.6"/><path class="automation seg" d="M343.7,388.9 V388.9 Q343.7,387.4 345.2,387.4 H367.8 Q369.3,387.4 369.3,388.9 V388.9 Z"/></g>
+  <g><title>Sep 29 · 20 merged PRs · promoter-bot 0, other agents 17, other 3, automation 0, unclassified 0</title><rect class="agent seg" x="371.3" y="390.5" width="25.7" height="26.5"/><path class="other seg" d="M371.3,390.5 V389.8 Q371.3,385.8 375.3,385.8 H393.0 Q397.0,385.8 397.0,389.8 V390.5 Z"/></g>
+  <g><title>Sep 30 · 16 merged PRs · promoter-bot 0, other agents 12, other 4, automation 0, unclassified 0</title><rect class="agent seg" x="399.0" y="398.3" width="25.7" height="18.7"/><path class="other seg" d="M399.0,398.3 V396.0 Q399.0,392.0 403.0,392.0 H420.7 Q424.7,392.0 424.7,396.0 V398.3 Z"/></g>
+  <g><title>Oct 1 · 30 merged PRs · promoter-bot 0, other agents 21, other 9, automation 0, unclassified 0</title><rect class="agent seg" x="426.7" y="384.2" width="25.7" height="32.8"/><path class="other seg" d="M426.7,384.2 V374.2 Q426.7,370.2 430.7,370.2 H448.3 Q452.3,370.2 452.3,374.2 V384.2 Z"/></g>
+  <g><title>Oct 2 · 66 merged PRs · promoter-bot 0, other agents 47, other 18, automation 1, unclassified 0</title><rect class="agent seg" x="454.3" y="343.7" width="25.7" height="73.3"/><rect class="other seg" x="454.3" y="315.6" width="25.7" height="28.1"/><path class="automation seg" d="M454.3,315.6 V315.6 Q454.3,314.0 455.9,314.0 H478.4 Q480.0,314.0 480.0,315.6 V315.6 Z"/></g>
+  <g><title>Oct 3 · 62 merged PRs · promoter-bot 0, other agents 33, other 29, automation 0, unclassified 0</title><rect class="agent seg" x="482.0" y="365.5" width="25.7" height="51.5"/><path class="other seg" d="M482.0,365.5 V324.3 Q482.0,320.3 486.0,320.3 H503.7 Q507.7,320.3 507.7,324.3 V365.5 Z"/></g>
+  <g><title>Oct 4 · 62 merged PRs · promoter-bot 0, other agents 31, other 31, automation 0, unclassified 0</title><rect class="agent seg" x="509.7" y="368.6" width="25.7" height="48.4"/><path class="other seg" d="M509.7,368.6 V324.3 Q509.7,320.3 513.7,320.3 H531.3 Q535.3,320.3 535.3,324.3 V368.6 Z"/></g>
+  <g><title>Oct 5 · 76 merged PRs · promoter-bot 0, other agents 49, other 27, automation 0, unclassified 0</title><rect class="agent seg" x="537.3" y="340.6" width="25.7" height="76.4"/><path class="other seg" d="M537.3,340.6 V302.4 Q537.3,298.4 541.3,298.4 H559.0 Q563.0,298.4 563.0,302.4 V340.6 Z"/></g>
+  <g><title>Oct 6 · 50 merged PRs · promoter-bot 0, other agents 45, other 5, automation 0, unclassified 0</title><rect class="agent seg" x="565.0" y="346.8" width="25.7" height="70.2"/><path class="other seg" d="M565.0,346.8 V343.0 Q565.0,339.0 569.0,339.0 H586.7 Q590.7,339.0 590.7,343.0 V346.8 Z"/></g>
+  <g><title>Oct 7 · 44 merged PRs · promoter-bot 0, other agents 33, other 11, automation 0, unclassified 0</title><rect class="agent seg" x="592.7" y="365.5" width="25.7" height="51.5"/><path class="other seg" d="M592.7,365.5 V352.4 Q592.7,348.4 596.7,348.4 H614.3 Q618.3,348.4 618.3,352.4 V365.5 Z"/></g>
+  <g><title>Oct 8 · 25 merged PRs · promoter-bot 0, other agents 24, other 1, automation 0, unclassified 0</title><rect class="agent seg" x="620.3" y="379.6" width="25.7" height="37.4"/><path class="other seg" d="M620.3,379.6 V379.6 Q620.3,378.0 621.9,378.0 H644.4 Q646.0,378.0 646.0,379.6 V379.6 Z"/></g>
+  <g><title>Oct 9 · 64 merged PRs · promoter-bot 0, other agents 45, other 18, automation 1, unclassified 0</title><rect class="agent seg" x="648.0" y="346.8" width="25.7" height="70.2"/><rect class="other seg" x="648.0" y="318.7" width="25.7" height="28.1"/><path class="automation seg" d="M648.0,318.7 V318.7 Q648.0,317.2 649.6,317.2 H672.1 Q673.7,317.2 673.7,318.7 V318.7 Z"/></g>
+  <g><title>Oct 10 · 33 merged PRs · promoter-bot 0, other agents 29, other 4, automation 0, unclassified 0</title><rect class="agent seg" x="675.7" y="371.8" width="25.7" height="45.2"/><path class="other seg" d="M675.7,371.8 V369.5 Q675.7,365.5 679.7,365.5 H697.3 Q701.3,365.5 701.3,369.5 V371.8 Z"/></g>
+  <g><title>Oct 11 · 40 merged PRs · promoter-bot 1, other agents 33, other 6, automation 0, unclassified 0</title><rect class="bot seg" x="703.3" y="415.4" width="25.7" height="1.6"/><rect class="agent seg" x="703.3" y="364.0" width="25.7" height="51.5"/><path class="other seg" d="M703.3,364.0 V358.6 Q703.3,354.6 707.3,354.6 H725.0 Q729.0,354.6 729.0,358.6 V364.0 Z"/></g>
+  <g><title>Oct 12 · 43 merged PRs · promoter-bot 25, other agents 9, other 8, automation 1, unclassified 0</title><rect class="bot seg" x="731.0" y="378.0" width="25.7" height="39.0"/><rect class="agent seg" x="731.0" y="364.0" width="25.7" height="14.0"/><rect class="other seg" x="731.0" y="351.5" width="25.7" height="12.5"/><path class="automation seg" d="M731.0,351.5 V351.5 Q731.0,349.9 732.6,349.9 H755.1 Q756.7,349.9 756.7,351.5 V351.5 Z"/></g>
+  <g><title>Oct 13 · 31 merged PRs · promoter-bot 25, other agents 4, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="758.7" y="378.0" width="25.7" height="39.0"/><rect class="agent seg" x="758.7" y="371.8" width="25.7" height="6.2"/><path class="other seg" d="M758.7,371.8 V371.8 Q758.7,368.6 761.8,368.6 H781.2 Q784.3,368.6 784.3,371.8 V371.8 Z"/></g>
+  <g><title>Oct 14 · 54 merged PRs · promoter-bot 49, other agents 4, other 1, automation 0, unclassified 0</title><rect class="bot seg" x="786.3" y="340.6" width="25.7" height="76.4"/><rect class="agent seg" x="786.3" y="334.3" width="25.7" height="6.2"/><path class="other seg" d="M786.3,334.3 V334.3 Q786.3,332.8 787.9,332.8 H810.4 Q812.0,332.8 812.0,334.3 V334.3 Z"/></g>
+  <g><title>Oct 15 · 43 merged PRs · promoter-bot 36, other agents 5, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="814.0" y="360.8" width="25.7" height="56.2"/><rect class="agent seg" x="814.0" y="353.0" width="25.7" height="7.8"/><path class="other seg" d="M814.0,353.0 V353.0 Q814.0,349.9 817.1,349.9 H836.5 Q839.7,349.9 839.7,353.0 V353.0 Z"/></g>
+  <g><title>Oct 16 · 57 merged PRs · promoter-bot 44, other agents 4, other 5, automation 4, unclassified 0</title><rect class="bot seg" x="841.7" y="348.4" width="25.7" height="68.6"/><rect class="agent seg" x="841.7" y="342.1" width="25.7" height="6.2"/><rect class="other seg" x="841.7" y="334.3" width="25.7" height="7.8"/><path class="automation seg" d="M841.7,334.3 V332.1 Q841.7,328.1 845.7,328.1 H863.3 Q867.3,328.1 867.3,332.1 V334.3 Z"/></g>
+  <g class="partial"><title>Oct 17 · 82 merged PRs (today so far) · promoter-bot 74, other agents 6, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="869.3" y="301.6" width="25.7" height="115.4"/><rect class="agent seg" x="869.3" y="292.2" width="25.7" height="9.4"/><path class="other seg" d="M869.3,292.2 V292.2 Q869.3,289.1 872.5,289.1 H891.9 Q895.0,289.1 895.0,292.2 V292.2 Z"/></g>
+  <text class="startl" x="707.3" y="214" text-anchor="start">promoter-bot live · Oct 11</text>
+  <text class="evl" x="669.7" y="214" text-anchor="end">Oct 10 · integrase-bot (CI shepherd) on</text>
+  <rect class="automation" x="812.0" y="184" width="9" height="9" rx="2"/>
+  <text class="lbl" x="825.0" y="192">automation</text>
+  <rect class="other" x="759.0" y="184" width="9" height="9" rx="2"/>
+  <text class="lbl" x="772.0" y="192">other</text>
+  <rect class="agent" x="662.6" y="184" width="9" height="9" rx="2"/>
+  <text class="lbl" x="675.6" y="192">other agents</text>
+  <rect class="bot" x="566.2" y="184" width="9" height="9" rx="2"/>
+  <text class="lbl" x="579.2" y="192">promoter-bot</text>
+  <rect class="band" x="702.3" y="487" width="193.7" height="120"/>
+  <g><text class="h2" x="24" y="457">2 · Speed — job queue wait (p90) per day, sampled (minutes)</text></g>
+  <line class="base" x1="66" x2="896" y1="607.0" y2="607.0"/>
+  <text class="tick" x="58" y="610.5" text-anchor="end">0</text>
+  <line class="grid" x1="66" x2="896" y1="567.0" y2="567.0"/>
+  <text class="tick" x="58" y="570.5" text-anchor="end">10</text>
+  <line class="grid" x1="66" x2="896" y1="527.0" y2="527.0"/>
+  <text class="tick" x="58" y="530.5" text-anchor="end">20</text>
+  <line class="grid" x1="66" x2="896" y1="487.0" y2="487.0"/>
+  <text class="tick" x="58" y="490.5" text-anchor="end">30</text>
+  <text class="tick" x="107.5" y="623" text-anchor="middle">Sep 19</text>
+  <text class="tick" x="301.2" y="623" text-anchor="middle">Sep 26</text>
+  <text class="tick" x="494.8" y="623" text-anchor="middle">Oct 3</text>
+  <text class="tick" x="688.5" y="623" text-anchor="middle">Oct 10</text>
+  <text class="tick" x="882.2" y="623" text-anchor="middle">Oct 17</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="674.7" x2="674.7" y1="483" y2="607"/></g>
+  <line class="start" x1="702.3" x2="702.3" y1="483" y2="607"/>
+  <g><title>Sep 18: CI change(s) merged #3168</title><path class="markd" d="M79.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 20: CI change(s) merged #3232</title><path class="markd" d="M135.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 23: CI change(s) merged #3378, #3379, #3402, #3415</title><path class="markd" d="M218.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 24: CI change(s) merged #3456, #3525</title><path class="markd" d="M245.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 25: CI change(s) merged #3547, #3572, #3630, #3636, #3647, #3661</title><path class="markd" d="M273.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 26: CI change(s) merged #3761, #3777, #3793, #3802, #3818, #3838</title><path class="markd" d="M301.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 27: CI change(s) merged #3864, #3916</title><path class="markd" d="M328.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 28: CI change(s) merged #3961</title><path class="markd" d="M356.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 29: CI change(s) merged #4000</title><path class="markd" d="M384.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Sep 30: CI change(s) merged #4027</title><path class="markd" d="M411.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 1: CI change(s) merged #4081, #4086</title><path class="markd" d="M439.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 2: CI change(s) merged #4097, #4105, #4123</title><path class="markd" d="M467.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 3: CI change(s) merged #4220</title><path class="markd" d="M494.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 4: CI change(s) merged #4313, #4314, #4316, #4362</title><path class="markd" d="M522.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 5: CI change(s) merged #4434, #4446, #4450, #4456, #4466, #4495</title><path class="markd" d="M550.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 6: CI change(s) merged #4497, #4536, #4538</title><path class="markd" d="M577.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 7: CI change(s) merged #4595, #4597, #4603, #4604, #4611, #4617</title><path class="markd" d="M605.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 8: CI change(s) merged #4705, #4720</title><path class="markd" d="M633.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 9: CI change(s) merged #4740, #4745, #4757, #4761, #4774, #4779</title><path class="markd" d="M660.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 10: CI change(s) merged #4827, #4828, #4829, #4830, #4832, #4833</title><path class="markd" d="M688.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 11: CI change(s) merged #4866, #4906, #4907, #4908, #4912, #4913</title><path class="markd" d="M716.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 12: CI change(s) merged #4942, #4961, #4962, #4966, #4995, #5001</title><path class="markd" d="M743.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 13: CI change(s) merged #5017, #5022, #5047, #5062</title><path class="markd" d="M771.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 14: CI change(s) merged #5071, #5086, #5105, #5111, #5138, #5139</title><path class="markd" d="M799.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 15: CI change(s) merged #5165, #5169, #5177, #5179, #5182, #5183</title><path class="markd" d="M826.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 16: CI change(s) merged #5223, #5225, #5228, #5242, #5243, #5244</title><path class="markd" d="M854.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <g><title>Oct 17: CI change(s) merged #5264, #5358, #5371</title><path class="markd" d="M882.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <polyline class="line " points="79.8,604.3 107.5,605.1 135.2,604.5 162.8,605.2 190.5,601.9 218.2,597.0 245.8,604.2 273.5,595.2 301.2,603.6 328.8,564.4 356.5,598.2 384.2,599.8 411.8,605.1 439.5,601.9 467.2,597.9 494.8,597.1 522.5,602.3 550.2,578.9 577.8,581.2 605.5,592.3 633.2,600.7 660.8,568.3 688.5,576.3 716.2,502.8 743.8,540.9 771.5,589.9 799.2,544.9 826.8,587.3 854.5,606.8 882.2,570.0"/>
+  <circle class="dot " cx="79.8" cy="604.3" r="4"><title>Sep 18: 0.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="107.5" cy="605.1" r="4"><title>Sep 19: 0.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="135.2" cy="604.5" r="4"><title>Sep 20: 0.6 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="162.8" cy="605.2" r="4"><title>Sep 21: 0.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="190.5" cy="601.9" r="4"><title>Sep 22: 1.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="218.2" cy="597.0" r="4"><title>Sep 23: 2.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="245.8" cy="604.2" r="4"><title>Sep 24: 0.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="273.5" cy="595.2" r="4"><title>Sep 25: 3.0 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="301.2" cy="603.6" r="4"><title>Sep 26: 0.8 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="328.8" cy="564.4" r="4"><title>Sep 27: 10.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="356.5" cy="598.2" r="4"><title>Sep 28: 2.2 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="384.2" cy="599.8" r="4"><title>Sep 29: 1.8 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="411.8" cy="605.1" r="4"><title>Sep 30: 0.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="439.5" cy="601.9" r="4"><title>Oct 1: 1.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="467.2" cy="597.9" r="4"><title>Oct 2: 2.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="494.8" cy="597.1" r="4"><title>Oct 3: 2.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="522.5" cy="602.3" r="4"><title>Oct 4: 1.2 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="550.2" cy="578.9" r="4"><title>Oct 5: 7.0 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="577.8" cy="581.2" r="4"><title>Oct 6: 6.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="605.5" cy="592.3" r="4"><title>Oct 7: 3.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="633.2" cy="600.7" r="4"><title>Oct 8: 1.6 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="660.8" cy="568.3" r="4"><title>Oct 9: 9.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="688.5" cy="576.3" r="4"><title>Oct 10: 7.7 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="716.2" cy="502.8" r="4"><title>Oct 11: 26.1 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="743.8" cy="540.9" r="4"><title>Oct 12: 16.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="771.5" cy="589.9" r="4"><title>Oct 13: 4.3 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="799.2" cy="544.9" r="4"><title>Oct 14: 15.5 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="826.8" cy="587.3" r="4"><title>Oct 15: 4.9 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot " cx="854.5" cy="606.8" r="4"><title>Oct 16: 0.1 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="570.0" r="4"><title>Oct 17: 9.2 minutes · about 24 runs sampled per day (today so far)</title></circle>
+  <rect class="markd" x="774.8" y="449" width="9" height="9" rx="2"/>
+  <text class="lbl" x="787.8" y="457">CI change merged</text>
+  <rect class="band" x="702.3" y="677" width="193.7" height="120"/>
+  <g><text class="h2" x="24" y="647">3 · Cost — runner time per merged PR, estimated hours (sampled)</text></g>
+  <line class="base" x1="66" x2="896" y1="797.0" y2="797.0"/>
+  <text class="tick" x="58" y="800.5" text-anchor="end">0</text>
+  <line class="grid" x1="66" x2="896" y1="757.0" y2="757.0"/>
+  <text class="tick" x="58" y="760.5" text-anchor="end">10</text>
+  <line class="grid" x1="66" x2="896" y1="717.0" y2="717.0"/>
+  <text class="tick" x="58" y="720.5" text-anchor="end">20</text>
+  <line class="grid" x1="66" x2="896" y1="677.0" y2="677.0"/>
+  <text class="tick" x="58" y="680.5" text-anchor="end">30</text>
+  <text class="tick" x="107.5" y="813" text-anchor="middle">Sep 19</text>
+  <text class="tick" x="301.2" y="813" text-anchor="middle">Sep 26</text>
+  <text class="tick" x="494.8" y="813" text-anchor="middle">Oct 3</text>
+  <text class="tick" x="688.5" y="813" text-anchor="middle">Oct 10</text>
+  <text class="tick" x="882.2" y="813" text-anchor="middle">Oct 17</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="674.7" x2="674.7" y1="673" y2="797"/></g>
+  <line class="start" x1="702.3" x2="702.3" y1="673" y2="797"/>
+  <polyline class="line " points="79.8,793.2 107.5,790.2 135.2,794.7 162.8,791.3 190.5,794.9 218.2,794.0 245.8,794.6 273.5,792.7 301.2,792.8 328.8,791.2 356.5,779.5 384.2,784.0 411.8,790.4 439.5,792.2 467.2,790.9 494.8,792.8 522.5,791.1 550.2,790.7 577.8,764.7 605.5,787.4 633.2,777.3 660.8,773.3 688.5,692.5 716.2,762.9 743.8,765.1 771.5,767.5 799.2,720.9 826.8,788.4 854.5,787.2 882.2,790.8"/>
+  <circle class="dot " cx="79.8" cy="793.2" r="4"><title>Sep 18: 0.96 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="107.5" cy="790.2" r="4"><title>Sep 19: 1.69 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="135.2" cy="794.7" r="4"><title>Sep 20: 0.56 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="162.8" cy="791.3" r="4"><title>Sep 21: 1.42 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="190.5" cy="794.9" r="4"><title>Sep 22: 0.52 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="218.2" cy="794.0" r="4"><title>Sep 23: 0.75 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="245.8" cy="794.6" r="4"><title>Sep 24: 0.60 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="273.5" cy="792.7" r="4"><title>Sep 25: 1.08 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="301.2" cy="792.8" r="4"><title>Sep 26: 1.06 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="328.8" cy="791.2" r="4"><title>Sep 27: 1.46 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="356.5" cy="779.5" r="4"><title>Sep 28: 4.38 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="384.2" cy="784.0" r="4"><title>Sep 29: 3.24 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="411.8" cy="790.4" r="4"><title>Sep 30: 1.64 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="439.5" cy="792.2" r="4"><title>Oct 1: 1.19 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="467.2" cy="790.9" r="4"><title>Oct 2: 1.52 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="494.8" cy="792.8" r="4"><title>Oct 3: 1.05 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="522.5" cy="791.1" r="4"><title>Oct 4: 1.47 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="550.2" cy="790.7" r="4"><title>Oct 5: 1.57 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="577.8" cy="764.7" r="4"><title>Oct 6: 8.07 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="605.5" cy="787.4" r="4"><title>Oct 7: 2.39 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="633.2" cy="777.3" r="4"><title>Oct 8: 4.92 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="660.8" cy="773.3" r="4"><title>Oct 9: 5.92 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="688.5" cy="692.5" r="4"><title>Oct 10: 26.12 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="716.2" cy="762.9" r="4"><title>Oct 11: 8.53 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="743.8" cy="765.1" r="4"><title>Oct 12: 7.96 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="771.5" cy="767.5" r="4"><title>Oct 13: 7.39 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="799.2" cy="720.9" r="4"><title>Oct 14: 19.02 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="826.8" cy="788.4" r="4"><title>Oct 15: 2.15 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="854.5" cy="787.2" r="4"><title>Oct 16: 2.44 runner hours / merged PR</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="790.8" r="4"><title>Oct 17: 1.55 runner hours / merged PR (today so far)</title></circle>
+  <rect class="band" x="702.3" y="867" width="193.7" height="120"/>
+  <g><title>CI workflow-run outcomes; not a per-PR quality score. Reruns that passed: 62.3% (33 passed, 20 failed again; 65 total). Mainframe Ground Truth: 22 reruns, 16 passed, 0 failed again. Det Sweep: 20 reruns, 12 passed, 5 failed again. GitGalaxy Smoke Tests: 13 reruns, 3 passed, 10 failed again. Muninn Security Scan: 6 reruns, 0 passed, 4 failed again. Full Suite Gate (All OS x Python): 3 reruns, 1 passed, 1 failed again. Generated Docs: 1 reruns, 1 passed, 0 failed again</title><text class="h2" x="24" y="837">4 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed</text></g>
+  <line class="base" x1="66" x2="896" y1="987.0" y2="987.0"/>
+  <text class="tick" x="58" y="990.5" text-anchor="end">0%</text>
+  <line class="grid" x1="66" x2="896" y1="963.0" y2="963.0"/>
+  <text class="tick" x="58" y="966.5" text-anchor="end">2%</text>
+  <line class="grid" x1="66" x2="896" y1="939.0" y2="939.0"/>
+  <text class="tick" x="58" y="942.5" text-anchor="end">4%</text>
+  <line class="grid" x1="66" x2="896" y1="915.0" y2="915.0"/>
+  <text class="tick" x="58" y="918.5" text-anchor="end">6%</text>
+  <line class="grid" x1="66" x2="896" y1="891.0" y2="891.0"/>
+  <text class="tick" x="58" y="894.5" text-anchor="end">8%</text>
+  <line class="grid" x1="66" x2="896" y1="867.0" y2="867.0"/>
+  <text class="tick" x="58" y="870.5" text-anchor="end">10%</text>
+  <text class="tick" x="107.5" y="1003" text-anchor="middle">Sep 19</text>
+  <text class="tick" x="301.2" y="1003" text-anchor="middle">Sep 26</text>
+  <text class="tick" x="494.8" y="1003" text-anchor="middle">Oct 3</text>
+  <text class="tick" x="688.5" y="1003" text-anchor="middle">Oct 10</text>
+  <text class="tick" x="882.2" y="1003" text-anchor="middle">Oct 17</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="674.7" x2="674.7" y1="863" y2="987"/></g>
+  <line class="start" x1="702.3" x2="702.3" y1="863" y2="987"/>
+  <polyline class="line saved" points="716.2,922.6 743.8,941.3 771.5,932.5 799.2,893.4 826.8,955.6 854.5,891.6 882.2,936.6"/>
+  <circle class="dot saved" cx="716.2" cy="922.6" r="4"><title>Oct 11: 5.4% of run minutes saved by early cancellation (est. 558 of 10,398 min; 82 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="743.8" cy="941.3" r="4"><title>Oct 12: 3.8% of run minutes saved by early cancellation (est. 553 of 14,516 min; 164 runs cancelled, 3 not priced)</title></circle>
+  <circle class="dot saved" cx="771.5" cy="932.5" r="4"><title>Oct 13: 4.5% of run minutes saved by early cancellation (est. 509 of 11,200 min; 106 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="799.2" cy="893.4" r="4"><title>Oct 14: 7.8% of run minutes saved by early cancellation (est. 2,580 of 33,066 min; 295 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="826.8" cy="955.6" r="4"><title>Oct 15: 2.6% of run minutes saved by early cancellation (est. 407 of 15,534 min; 68 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="854.5" cy="891.6" r="4"><title>Oct 16: 8.0% of run minutes saved by early cancellation (est. 847 of 10,653 min; 177 runs cancelled)</title></circle>
+  <circle class="dot saved partial" cx="882.2" cy="936.6" r="4"><title>Oct 17: 4.2% of run minutes saved by early cancellation (est. 666 of 15,846 min; 172 runs cancelled) (today so far)</title></circle>
+  <polyline class="line failedl" points="79.8,956.8 107.5,894.7 135.2,931.6 162.8,889.4 190.5,940.6 218.2,978.8 245.8,977.6 273.5,965.3 301.2,976.1 328.8,971.3 356.5,950.5 384.2,969.4 411.8,955.7 439.5,964.7 467.2,960.8 494.8,958.7 522.5,959.4 550.2,955.1 577.8,947.6 605.5,924.5 633.2,956.1 660.8,944.3 688.5,949.9 716.2,964.9 743.8,948.3 771.5,959.7 799.2,963.6 826.8,950.8 854.5,966.0 882.2,960.2"/>
+  <circle class="dot failedl" cx="79.8" cy="956.8" r="4"><title>Sep 18: 2.5% of runs failed (13 of 516 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="107.5" cy="894.7" r="4"><title>Sep 19: 7.7% of runs failed (30 of 390 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="135.2" cy="931.6" r="4"><title>Sep 20: 4.6% of runs failed (15 of 325 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="162.8" cy="889.4" r="4"><title>Sep 21: 8.1% of runs failed (17 of 209 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="190.5" cy="940.6" r="4"><title>Sep 22: 3.9% of runs failed (17 of 440 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="218.2" cy="978.8" r="4"><title>Sep 23: 0.7% of runs failed (8 of 1,173 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="245.8" cy="977.6" r="4"><title>Sep 24: 0.8% of runs failed (9 of 1,149 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="273.5" cy="965.3" r="4"><title>Sep 25: 1.8% of runs failed (31 of 1,715 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="301.2" cy="976.1" r="4"><title>Sep 26: 0.9% of runs failed (13 of 1,428 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="328.8" cy="971.3" r="4"><title>Sep 27: 1.3% of runs failed (20 of 1,525 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="356.5" cy="950.5" r="4"><title>Sep 28: 3.0% of runs failed (13 of 427 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="384.2" cy="969.4" r="4"><title>Sep 29: 1.5% of runs failed (10 of 683 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="411.8" cy="955.7" r="4"><title>Sep 30: 2.6% of runs failed (10 of 383 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="439.5" cy="964.7" r="4"><title>Oct 1: 1.9% of runs failed (11 of 593 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="467.2" cy="960.8" r="4"><title>Oct 2: 2.2% of runs failed (35 of 1,603 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="494.8" cy="958.7" r="4"><title>Oct 3: 2.4% of runs failed (29 of 1,229 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="522.5" cy="959.4" r="4"><title>Oct 4: 2.3% of runs failed (29 of 1,260 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="550.2" cy="955.1" r="4"><title>Oct 5: 2.7% of runs failed (53 of 1,995 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="577.8" cy="947.6" r="4"><title>Oct 6: 3.3% of runs failed (49 of 1,491 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="605.5" cy="924.5" r="4"><title>Oct 7: 5.2% of runs failed (64 of 1,229 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="633.2" cy="956.1" r="4"><title>Oct 8: 2.6% of runs failed (33 of 1,280 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="660.8" cy="944.3" r="4"><title>Oct 9: 3.6% of runs failed (80 of 2,249 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="688.5" cy="949.9" r="4"><title>Oct 10: 3.1% of runs failed (37 of 1,198 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="716.2" cy="964.9" r="4"><title>Oct 11: 1.8% of runs failed (33 of 1,791 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="743.8" cy="948.3" r="4"><title>Oct 12: 3.2% of runs failed (71 of 2,204 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="771.5" cy="959.7" r="4"><title>Oct 13: 2.3% of runs failed (37 of 1,627 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="799.2" cy="963.6" r="4"><title>Oct 14: 2.0% of runs failed (47 of 2,406 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="826.8" cy="950.8" r="4"><title>Oct 15: 3.0% of runs failed (77 of 2,549 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl" cx="854.5" cy="966.0" r="4"><title>Oct 16: 1.7% of runs failed (38 of 2,176 CI runs that passed or failed)</title></circle>
+  <circle class="dot failedl partial" cx="882.2" cy="960.2" r="4"><title>Oct 17: 2.2% of runs failed (57 of 2,557 CI runs that passed or failed) (today so far)</title></circle>
+  <rect class="failed" x="805.8" y="829" width="9" height="9" rx="2"/>
+  <text class="lbl" x="818.8" y="837">runs failed</text>
+  <rect class="saved" x="659.8" y="829" width="9" height="9" rx="2"/>
+  <text class="lbl" x="672.8" y="837">minutes saved (est.)</text>
+  <text class="meta" x="24" y="1031">Source: GitHub API. Days are UTC; faded marks are today so far. Queue wait and runner time are sampled from about 24 runs a day.</text>
+  <text class="meta" x="24" y="1046">promoter-bot = PRs from churn/, agy/ branches. Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; minutes saved is estimated.</text>
 </g>
 </svg>

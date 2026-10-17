@@ -119,6 +119,7 @@
    "merged_by_class": {
     "agent": 13,
     "automation": 6,
+    "bot": 0,
     "other": 6
    },
    "runs": {
@@ -168,6 +169,7 @@
    "merged_by_class": {
     "agent": 13,
     "automation": 0,
+    "bot": 0,
     "other": 4
    },
    "runs": {
@@ -222,6 +224,7 @@
    "merged_by_class": {
     "agent": 12,
     "automation": 0,
+    "bot": 0,
     "other": 5
    },
    "runs": {
@@ -270,6 +273,7 @@
    "merged_by_class": {
     "agent": 0,
     "automation": 0,
+    "bot": 0,
     "other": 7
    },
    "runs": {
@@ -320,6 +324,7 @@
    "merged_by_class": {
     "agent": 12,
     "automation": 0,
+    "bot": 0,
     "other": 12
    },
    "runs": {
@@ -397,6 +402,7 @@
    "merged_by_class": {
     "agent": 45,
     "automation": 0,
+    "bot": 0,
     "other": 28
    },
    "runs": {
@@ -460,6 +466,7 @@
    "merged_by_class": {
     "agent": 40,
     "automation": 0,
+    "bot": 0,
     "other": 42
    },
    "runs": {
@@ -540,6 +547,7 @@
    "merged_by_class": {
     "agent": 55,
     "automation": 5,
+    "bot": 0,
     "other": 42
    },
    "runs": {
@@ -613,6 +621,7 @@
    "merged_by_class": {
     "agent": 45,
     "automation": 0,
+    "bot": 0,
     "other": 44
    },
    "runs": {
@@ -672,6 +681,7 @@
    "merged_by_class": {
     "agent": 46,
     "automation": 0,
+    "bot": 0,
     "other": 29
    },
    "runs": {
@@ -725,6 +735,7 @@
    "merged_by_class": {
     "agent": 8,
     "automation": 1,
+    "bot": 0,
     "other": 10
    },
    "runs": {
@@ -781,6 +792,7 @@
    "merged_by_class": {
     "agent": 17,
     "automation": 0,
+    "bot": 0,
     "other": 3
    },
    "runs": {
@@ -842,6 +854,7 @@
    "merged_by_class": {
     "agent": 12,
     "automation": 0,
+    "bot": 0,
     "other": 4
    },
    "runs": {
@@ -902,6 +915,7 @@
    "merged_by_class": {
     "agent": 21,
     "automation": 0,
+    "bot": 0,
     "other": 9
    },
    "runs": {
@@ -965,6 +979,7 @@
    "merged_by_class": {
     "agent": 47,
     "automation": 1,
+    "bot": 0,
     "other": 18
    },
    "runs": {
@@ -1020,6 +1035,7 @@
    "merged_by_class": {
     "agent": 33,
     "automation": 0,
+    "bot": 0,
     "other": 29
    },
    "runs": {
@@ -1083,6 +1099,7 @@
    "merged_by_class": {
     "agent": 31,
     "automation": 0,
+    "bot": 0,
     "other": 31
    },
    "runs": {
@@ -1228,6 +1245,7 @@
    "merged_by_class": {
     "agent": 49,
     "automation": 0,
+    "bot": 0,
     "other": 27
    },
    "runs": {
@@ -1306,6 +1324,7 @@
    "merged_by_class": {
     "agent": 45,
     "automation": 0,
+    "bot": 0,
     "other": 5
    },
    "runs": {
@@ -1399,6 +1418,7 @@
    "merged_by_class": {
     "agent": 33,
     "automation": 0,
+    "bot": 0,
     "other": 11
    },
    "runs": {
@@ -1459,6 +1479,7 @@
    "merged_by_class": {
     "agent": 24,
     "automation": 0,
+    "bot": 0,
     "other": 1
    },
    "runs": {
@@ -1553,6 +1574,7 @@
    "merged_by_class": {
     "agent": 45,
     "automation": 1,
+    "bot": 0,
     "other": 18
    },
    "runs": {
@@ -1693,6 +1715,7 @@
    "merged_by_class": {
     "agent": 29,
     "automation": 0,
+    "bot": 0,
     "other": 4
    },
    "runs": {
@@ -1706,6 +1729,12 @@
   "2026-10-11": {
    "detail": {
     "bot_runs": 1410,
+    "cancel_savings": {
+     "cancelled": 82,
+     "saved_min_est": 558,
+     "unpriced": 0,
+     "wall_min": 9840
+    },
     "ci_changes": [
      {
       "pr": 4866,
@@ -1753,7 +1782,8 @@
     },
     "runner_min_est": 20466,
     "sampled_min_by_origin": {
-     "agent": 161.3,
+     "agent": 154.1,
+     "bot": 7.2,
      "main": 43.1
     },
     "sampled_min_by_workflow": {
@@ -1777,8 +1807,9 @@
    },
    "merged": 40,
    "merged_by_class": {
-    "agent": 34,
+    "agent": 33,
     "automation": 0,
+    "bot": 1,
     "other": 6
    },
    "runs": {
@@ -1792,6 +1823,12 @@
   "2026-10-12": {
    "detail": {
     "bot_runs": 867,
+    "cancel_savings": {
+     "cancelled": 164,
+     "saved_min_est": 553,
+     "unpriced": 3,
+     "wall_min": 13963
+    },
     "ci_changes": [
      {
       "pr": 4942,
@@ -1842,7 +1879,8 @@
     },
     "runner_min_est": 20546,
     "sampled_min_by_origin": {
-     "agent": 154.8,
+     "agent": 20.5,
+     "bot": 134.3,
      "main": 27.2,
      "other": 15.2
     },
@@ -1867,8 +1905,9 @@
    },
    "merged": 43,
    "merged_by_class": {
-    "agent": 34,
+    "agent": 9,
     "automation": 1,
+    "bot": 25,
     "other": 8
    },
    "runs": {
@@ -1882,6 +1921,12 @@
   "2026-10-13": {
    "detail": {
     "bot_runs": 637,
+    "cancel_savings": {
+     "cancelled": 106,
+     "saved_min_est": 509,
+     "unpriced": 0,
+     "wall_min": 10691
+    },
     "ci_changes": [
      {
       "pr": 5017,
@@ -1915,7 +1960,7 @@
     },
     "runner_min_est": 13738,
     "sampled_min_by_origin": {
-     "agent": 176.2,
+     "bot": 176.2,
      "main": 6.9
     },
     "sampled_min_by_workflow": {
@@ -1939,8 +1984,9 @@
    },
    "merged": 31,
    "merged_by_class": {
-    "agent": 29,
+    "agent": 4,
     "automation": 0,
+    "bot": 25,
     "other": 2
    },
    "runs": {
@@ -1954,6 +2000,12 @@
   "2026-10-14": {
    "detail": {
     "bot_runs": 1293,
+    "cancel_savings": {
+     "cancelled": 295,
+     "saved_min_est": 2580,
+     "unpriced": 0,
+     "wall_min": 30486
+    },
     "ci_changes": [
      {
       "pr": 5071,
@@ -2025,7 +2077,7 @@
     },
     "runner_min_est": 61617,
     "sampled_min_by_origin": {
-     "agent": 183.9,
+     "bot": 183.9,
      "main": 285.2
     },
     "sampled_min_by_workflow": {
@@ -2050,8 +2102,9 @@
    },
    "merged": 54,
    "merged_by_class": {
-    "agent": 53,
+    "agent": 4,
     "automation": 0,
+    "bot": 49,
     "other": 1
    },
    "runs": {
@@ -2065,6 +2118,12 @@
   "2026-10-15": {
    "detail": {
     "bot_runs": 1263,
+    "cancel_savings": {
+     "cancelled": 68,
+     "saved_min_est": 407,
+     "unpriced": 0,
+     "wall_min": 15127
+    },
     "ci_changes": [
      {
       "pr": 5165,
@@ -2123,7 +2182,8 @@
     },
     "runner_min_est": 5547,
     "sampled_min_by_origin": {
-     "agent": 43.6,
+     "agent": 3.8,
+     "bot": 39.8,
      "main": 2.4
     },
     "sampled_min_by_workflow": {
@@ -2144,8 +2204,9 @@
    },
    "merged": 43,
    "merged_by_class": {
-    "agent": 41,
+    "agent": 5,
     "automation": 0,
+    "bot": 36,
     "other": 2
    },
    "runs": {
@@ -2159,6 +2220,12 @@
   "2026-10-16": {
    "detail": {
     "bot_runs": 1144,
+    "cancel_savings": {
+     "cancelled": 177,
+     "saved_min_est": 847,
+     "unpriced": 0,
+     "wall_min": 9806
+    },
     "ci_changes": [
      {
       "pr": 5223,
@@ -2236,7 +2303,7 @@
     },
     "runner_min_est": 8340,
     "sampled_min_by_origin": {
-     "agent": 23.6,
+     "bot": 23.6,
      "main": 47.4,
      "other": 4.5
     },
@@ -2261,8 +2328,9 @@
    },
    "merged": 57,
    "merged_by_class": {
-    "agent": 48,
+    "agent": 4,
     "automation": 4,
+    "bot": 44,
     "other": 5
    },
    "runs": {
@@ -2275,7 +2343,13 @@
   },
   "2026-10-17": {
    "detail": {
-    "bot_runs": 1390,
+    "bot_runs": 1571,
+    "cancel_savings": {
+     "cancelled": 172,
+     "saved_min_est": 666,
+     "unpriced": 0,
+     "wall_min": 15180
+    },
     "ci_changes": [
      {
       "pr": 5264,
@@ -2313,44 +2387,46 @@
      "passed": 5,
      "runs": 7
     },
-    "runner_min_est": 5580,
+    "runner_min_est": 7611,
     "sampled_min_by_origin": {
-     "agent": 10.7,
-     "main": 32.1
+     "bot": 23.8,
+     "main": 27.6
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.1,
-     "CI shepherd (label events)": 1.2,
-     "CI shepherd (reconcile)": 1.1,
-     "Det Sweep": 2.4,
+     "CI shepherd (label events)": 1.8,
+     "CI shepherd (reconcile)": 0.7,
+     "Det Sweep": 1.0,
      "Generated Docs": 0.7,
-     "GitGalaxy Smoke Tests": 24.9,
-     "Main Watch": 0.5,
+     "GitGalaxy Smoke Tests": 14.1,
+     "Main Watch": 0.7,
+     "Mainframe Ground Truth": 20.3,
      "Muninn Security Scan": 5.5,
-     "Small Audits": 1.6,
-     "pages build and deployment": 0.5,
+     "Small Audits": 1.3,
+     "pages build and deployment": 0.9,
      "post-merge": 0.2
     },
     "sampled_runs": 24,
-    "wait_median": 0.07,
-    "wait_p90": 4.12
+    "wait_median": 0.1,
+    "wait_p90": 9.25
    },
-   "merged": 71,
+   "merged": 82,
    "merged_by_class": {
-    "agent": 70,
+    "agent": 6,
     "automation": 0,
-    "other": 1
+    "bot": 74,
+    "other": 2
    },
    "runs": {
-    "cancelled": 503,
-    "failure": 50,
-    "skipped": 863,
+    "cancelled": 628,
+    "failure": 57,
+    "skipped": 987,
     "success": 2500,
-    "total": 3992
+    "total": 4541
    }
   }
  },
- "open_prs": 9,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-17T22:05Z"
+ "updated": "2026-10-17T23:45Z"
 }
