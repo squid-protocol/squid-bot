@@ -2275,13 +2275,27 @@
   },
   "2026-10-17": {
    "detail": {
-    "bot_runs": 1007,
-    "ci_changes": [],
+    "bot_runs": 1243,
+    "ci_changes": [
+     {
+      "pr": 5264,
+      "title": "CI: ground-truth parts cut by pytest-split least_duration (Part of #5133) (#5264)"
+     },
+     {
+      "pr": 5358,
+      "title": "CI: the language-crucible corpus clone retries a network failure, names it infrastructure (Part of #5048) (#5358)"
+     }
+    ],
     "reruns": {
-     "attempts": 4,
+     "attempts": 6,
      "by_workflow": {
       "Det Sweep": [
+       2,
        1,
+       0
+      ],
+      "GitGalaxy Zero-Trust Pipeline": [
+       0,
        1,
        0
       ],
@@ -2291,48 +2305,50 @@
        0
       ]
      },
-     "failed_again": 1,
-     "passed": 3,
-     "runs": 4
+     "failed_again": 2,
+     "passed": 4,
+     "runs": 6
     },
-    "runner_min_est": 5934,
+    "runner_min_est": 5640,
     "sampled_min_by_origin": {
-     "agent": 14.0,
-     "main": 33.2
+     "agent": 16.3,
+     "main": 31.8
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.1,
-     "CI shepherd (label events)": 1.5,
-     "CI shepherd (reconcile)": 1.2,
-     "CodeQL Security Scan": 4.7,
-     "GitGalaxy Smoke Tests": 26.9,
-     "Main Watch": 0.2,
+     "CI shepherd (label events)": 1.2,
+     "CI shepherd (reconcile)": 0.8,
+     "Det Sweep": 1.2,
+     "Generated Docs": 0.7,
+     "GitGalaxy Smoke Tests": 24.9,
+     "Main Watch": 0.5,
      "Muninn Security Scan": 5.5,
-     "Ruff Audit": 0.5,
-     "Small Audits": 1.7,
+     "Small Audits": 1.0,
      "pages build and deployment": 0.5,
-     "post-merge": 0.2
+     "post-merge": 0.2,
+     "rosetta-audit": 3.0,
+     "unicode-gauntlet": 4.3
     },
-    "sampled_runs": 18,
+    "sampled_runs": 24,
     "wait_median": 0.03,
     "wait_p90": 4.12
    },
-   "merged": 53,
+   "merged": 66,
    "merged_by_class": {
-    "agent": 52,
+    "agent": 65,
     "automation": 0,
     "other": 1
    },
    "runs": {
-    "cancelled": 362,
-    "failure": 36,
-    "skipped": 627,
-    "success": 1855,
-    "total": 2889
+    "cancelled": 410,
+    "failure": 44,
+    "skipped": 791,
+    "success": 2343,
+    "total": 3602
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 7,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-17T16:25Z"
+ "updated": "2026-10-17T20:47Z"
 }
