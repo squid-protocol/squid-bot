@@ -546,7 +546,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     out.append(f'<text class="meta" x="{width - pad}" y="34" text-anchor="end">last {len(rows)} days · '
                f'updated {escape(data["updated"].replace("T", " ").replace("Z", " UTC"))}</text>')
     out.append(f'<text class="meta" x="{pad}" y="52">Three views of the same system: delivery, verification, and CI capacity. '
-               f'Trends use trailing 7-day windows.</text>')
+               f'Charts show each day on its own; the cards compare the last 7 days with the 7 before.</text>')
 
     done = finished(rows, today)
     current, previous = week_stats(done[-7:]), week_stats(done[-14:-7])
@@ -639,25 +639,19 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         if len(segment) > 1:
             out.append(f'<polyline class="{line_class}" points="{" ".join(segment)}"/>')
 
-    def merged_parts(index: int) -> dict[str, float]:
-        window = [row for _, row in rows[max(0, index - 6):index + 1]]
-        parts = Counter()
-        for row in window:
-            counts = row.get("merged_by_class")
-            if counts is None:
-                parts["unknown"] += row["merged"]
-                continue
-            for kind in CLASSES:
-                parts[kind] += counts.get(kind, 0)
-            parts["unknown"] += max(0, row["merged"] - sum(counts.get(kind, 0) for kind in CLASSES))
-        divisor = len(window)
-        return {kind: parts[kind] / divisor for kind in ("agent", "other", "automation", "unknown")}
+    def merged_parts(row: dict) -> dict[str, float]:
+        counts = row.get("merged_by_class")
+        if counts is None:
+            return {"agent": 0, "other": 0, "automation": 0, "unknown": row["merged"]}
+        parts = {kind: counts.get(kind, 0) for kind in CLASSES}
+        parts["unknown"] = max(0, row["merged"] - sum(parts.values()))
+        return {kind: parts.get(kind, 0) for kind in ("agent", "other", "automation", "unknown")}
 
-    # Delivery: trailing seven-day average of merged PRs per day, split by recorded origin.
+    # Delivery: merged PRs each day, split by recorded origin.
     delivery_top, delivery_h = 200, 96
-    delivery = [merged_parts(i) for i in range(len(rows))]
+    delivery = [merged_parts(row) for _, row in rows]
     delivery_max = max(1.0, max(sum(parts.values()) for parts in delivery))
-    axes(delivery_top, delivery_h, delivery_max, "1 · Delivery — merged PRs / day, trailing 7-day average by origin",
+    axes(delivery_top, delivery_h, delivery_max, "1 · Delivery — merged PRs per day, by origin",
          lambda value: f"{value:.0f}")
     bar_w = max(2.0, slot - 2)
     colors = (("agent", "agent"), ("other", "other"), ("automation", "automation"), ("unknown", "unknown"))
@@ -671,7 +665,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             bar_height = delivery_h * value / delivery_max
             elements.append(f'<rect class="{css}" x="{x:.1f}" y="{base - bar_height:.1f}" width="{bar_w:.1f}" height="{bar_height:.1f}"/>')
             base -= bar_height
-        tip = escape(f'{_fmt_day(day)} · merged PRs · 7-day average per day · ' + ", ".join(f'{k} {parts[k]:.1f}' for k, _ in colors))
+        tip = escape(f'{_fmt_day(day)} · {sum(parts.values()):.0f} merged PRs' + (" (today so far)" if day == today_s else "") + ' · '
+                     + ", ".join(f'{k} {parts[k]:.0f}' for k, _ in colors))
         fade = ' class="partial"' if day == today_s else ""
         out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
 
@@ -682,33 +677,27 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         out.append(f'<text class="lbl" x="{legend_x + 13:.1f}" y="{legend_y}">{label}</text>')
 
     proof_values = []
-    for i in range(len(rows)):
-        window = [row for _, row in rows[max(0, i - 6):i + 1]]
-        passed = sum(row["runs"]["success"] for row in window)
-        total = passed + sum(row["runs"]["failure"] for row in window)
+    for _, row in rows:
+        passed = row["runs"]["success"]
+        total = passed + row["runs"]["failure"]
         proof_values.append(passed / total if total else None)
     proof_top, proof_h = 354, 96
-    line_plot(proof_top, proof_h, "2 · Proof — CI workflow-run pass rate, trailing 7-day result",
+    line_plot(proof_top, proof_h, "2 · Proof — CI workflow-run pass rate per day",
               proof_values, 1.0, "l1", "l1d", lambda value: f"{100 * value:.0f}%",
               "CI runs (success / success + failure)")
 
     details = [row.get("detail", {}) for _, row in rows]
     wait_values, runner_values = [], []
-    for i in range(len(rows)):
-        window_start = max(0, i - 6)
-        waits = [detail["wait_p90"] for detail in details[window_start:i + 1] if detail.get("wait_p90") is not None]
-        wait_values.append(sum(waits) / len(waits) if waits else None)
-        eligible = [(rows[j][1], details[j]) for j in range(window_start, i + 1)
-                    if details[j].get("runner_min_est") is not None]
-        merged = sum(row["merged"] for row, _ in eligible)
-        minutes = sum(detail["runner_min_est"] for _, detail in eligible)
-        runner_values.append(minutes / merged / 60 if merged else None)
+    for (_, row), detail in zip(rows, details):
+        wait_values.append(detail.get("wait_p90"))
+        minutes = detail.get("runner_min_est")
+        runner_values.append(minutes / row["merged"] / 60 if minutes is not None and row["merged"] else None)
 
     capacity_available = any(value is not None for value in wait_values + runner_values)
     if capacity_available:
         cap_top, cap_h = 520, 82
         wait_max = max((value for value in wait_values if value is not None), default=1.0)
-        line_plot(cap_top, cap_h, "3 · Capacity — Job queue wait (p90), trailing 7-day mean of sampled days (minutes)",
+        line_plot(cap_top, cap_h, "3 · Capacity — Job queue wait (p90) per day, sampled (minutes)",
                   wait_values, _nice_max(wait_max), "l2", "l2d", lambda value: f"{value:.1f}",
                   f"minutes · about {cfg.sample_runs} runs sampled per day", markers=True)
         runner_top, runner_h = 660, 82

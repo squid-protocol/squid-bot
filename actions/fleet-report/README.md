@@ -2,7 +2,7 @@
 
 A GitHub Action that tells a three-part story about an agent-enabled development system: delivery, verification, and CI capacity. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a week-over-week report to each run's summary page.
 
-The dashboard uses aligned trailing seven-day trends so changes in delivery, CI outcomes, and CI pressure can be read together. It also publishes its source data and explains which measures are exact or sampled.
+The dashboard charts each day's own numbers, aligned so changes in delivery, CI outcomes, and CI pressure can be read together; the headline cards compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -63,9 +63,9 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 
 ### The three health dimensions
 
-- **Delivery:** merged PRs per day, shown as a trailing seven-day average and split by recorded origin. Agent attribution depends on configured branch prefixes or PR-body markers.
-- **Proof:** the trailing seven-day ratio of successful to successful-plus-failed workflow runs. This is a run-level CI outcome signal; retries can count as separate runs, so it is not first-pass PR success or a measure of post-merge quality.
-- **Capacity:** the trailing mean of daily sampled p90 queue wait and estimated runner hours per merged PR. These use separate plots and scales. Today is marked as incomplete.
+- **Delivery:** merged PRs per day, split by recorded origin. Agent attribution depends on configured branch prefixes or PR-body markers.
+- **Proof:** each day's ratio of successful to successful-plus-failed workflow runs. This is a run-level CI outcome signal; retries can count as separate runs, so it is not first-pass PR success or a measure of post-merge quality.
+- **Capacity:** each day's sampled p90 queue wait and estimated runner hours per merged PR. These use separate plots and scales. Today is marked as incomplete.
 
 The current GitHub API feed does not contain historical local-host PSI, agent review effort, or post-merge rework. The dashboard leaves those out rather than treating CI activity as a substitute for them.
 

@@ -182,3 +182,14 @@ def test_an_orchestrators_factory_json_adds_an_agent_row_and_a_summary_table():
     md = dashboard.summary_md(data, CFG, 30, TODAY, [])
     assert "### Agent factory" in md and md.count("| 2026-10-") >= 7 and str(TODAY) not in md.split("### Agent factory")[1]
     assert "Agent time" not in dashboard.render(_data(), 30, TODAY)  # no factory.json: no row
+
+
+def test_charts_show_each_days_own_numbers_not_a_trailing_average():
+    data = _data()
+    data["days"][TODAY.isoformat()] = _day(71, 900, 100, 0)  # a spike today: 71 merged, 90% pass
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Oct 14 · 71 merged PRs (today so far)" in svg
+    assert "Oct 14: 90% CI runs" in svg
+    assert "Oct 13 · 31 merged PRs ·" in svg
+    assert "7-day average" not in svg and "trailing" not in svg
