@@ -133,10 +133,36 @@
       "title": "ci(#3209): workflow_dispatch for the Full Suite Gate matrix (#3232)"
      }
     ],
-    "runner_min_est": 864,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 576,
+    "sampled_min_by_origin": {
+     "agent": 28.7,
+     "main": 8.4,
+     "other": 3.8
+    },
+    "sampled_min_by_workflow": {
+     "Dead Key Audit": 0.3,
+     "Deploy Museum of Code Docs": 2.0,
+     "Detection Accuracy Audit": 0.4,
+     "GitGalaxy Smoke Tests": 15.7,
+     "GitGalaxy Zero-Trust Pipeline": 2.0,
+     "Golden Crucible Resilience Test": 3.7,
+     "Golden Master Change Guard": 1.5,
+     "Muninn Security Scan": 12.4,
+     "Mypy Audit": 0.5,
+     "Ruff Audit": 0.2,
+     "Signal Contract Audit": 0.1,
+     "pages build and deployment": 2.1
+    },
     "sampled_runs": 24,
     "wait_median": 0.03,
-    "wait_p90": 0.43
+    "wait_p90": 0.62
    },
    "merged": 17,
    "merged_by_class": {
@@ -156,9 +182,34 @@
    "detail": {
     "bot_runs": 0,
     "ci_changes": [],
-    "runner_min_est": 400,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 597,
+    "sampled_min_by_origin": {
+     "main": 9.8,
+     "other": 54.5
+    },
+    "sampled_min_by_workflow": {
+     "CodeQL Security Scan": 6.6,
+     "Dead Key Audit": 0.2,
+     "Deploy Museum of Code Docs": 1.0,
+     "GitGalaxy Smoke Tests": 31.3,
+     "GitGalaxy Zero-Trust Pipeline": 4.4,
+     "Golden Master Change Guard": 2.4,
+     "Muninn Security Scan": 14.5,
+     "Mypy Audit": 0.5,
+     "Ruff Audit": 0.6,
+     "Tree-sitter Accuracy Audit": 1.6,
+     "Tri-Comparison Audit": 0.9,
+     "pages build and deployment": 0.4
+    },
     "sampled_runs": 24,
-    "wait_median": 0.03,
+    "wait_median": 0.05,
     "wait_p90": 0.45
    },
    "merged": 7,
@@ -179,10 +230,37 @@
    "detail": {
     "bot_runs": 0,
     "ci_changes": [],
-    "runner_min_est": 752,
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 743,
+    "sampled_min_by_origin": {
+     "agent": 12.8,
+     "main": 13.8,
+     "other": 13.2
+    },
+    "sampled_min_by_workflow": {
+     "AST Accuracy Audit": 1.3,
+     "Dead Key Audit": 0.1,
+     "Detection Accuracy Audit": 0.8,
+     "GitGalaxy Zero-Trust Pipeline": 1.4,
+     "Golden Crucible Resilience Test": 11.9,
+     "Golden Master Change Guard": 0.9,
+     "Muninn Security Scan": 5.4,
+     "Mypy Audit": 0.6,
+     "Signal Contract Audit": 0.9,
+     "Tree-sitter Accuracy Audit": 1.9,
+     "Tree-sitter Accuracy History": 10.5,
+     "Tri-Comparison Audit": 0.8,
+     "pages build and deployment": 3.2
+    },
     "sampled_runs": 24,
     "wait_median": 0.05,
-    "wait_p90": 0.73
+    "wait_p90": 1.27
    },
    "merged": 24,
    "merged_by_class": {
@@ -219,10 +297,47 @@
       "title": "ci: mainframe ground-truth ledger, gated on every PR (#3415)"
      }
     ],
-    "runner_min_est": 2823,
+    "reruns": {
+     "attempts": 2,
+     "by_workflow": {
+      "CodeQL Security Scan": [
+       1,
+       0,
+       0
+      ],
+      "Muninn Security Scan": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 2,
+     "runs": 2
+    },
+    "runner_min_est": 3286,
+    "sampled_min_by_origin": {
+     "agent": 49.0,
+     "main": 9.8,
+     "other": 5.5
+    },
+    "sampled_min_by_workflow": {
+     "Deploy Museum of Code Docs": 1.2,
+     "GitGalaxy Smoke Tests": 30.1,
+     "GitGalaxy Zero-Trust Pipeline": 2.4,
+     "Golden Crucible Resilience Test": 8.8,
+     "Golden Master Change Guard": 1.8,
+     "Muninn Security Scan": 10.1,
+     "Mypy Audit": 1.0,
+     "Ruff Audit": 0.6,
+     "Signal Contract Audit": 0.1,
+     "Tri-Comparison Audit": 2.3,
+     "Tri-Comparison History": 4.1,
+     "pages build and deployment": 1.7
+    },
     "sampled_runs": 24,
     "wait_median": 0.05,
-    "wait_p90": 2.55
+    "wait_p90": 2.5
    },
    "merged": 73,
    "merged_by_class": {
@@ -1989,7 +2104,7 @@
   },
   "2026-10-16": {
    "detail": {
-    "bot_runs": 981,
+    "bot_runs": 1144,
     "ci_changes": [
      {
       "pr": 5223,
@@ -2033,9 +2148,24 @@
      }
     ],
     "reruns": {
-     "attempts": 9,
+     "attempts": 13,
      "by_workflow": {
       "Det Sweep": [
+       1,
+       1,
+       0
+      ],
+      "Generated Docs": [
+       1,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
+       1,
+       0,
+       0
+      ],
+      "Mainframe Ground Truth": [
        1,
        0,
        0
@@ -2046,52 +2176,98 @@
        2
       ]
      },
-     "failed_again": 4,
-     "passed": 1,
-     "runs": 7
+     "failed_again": 5,
+     "passed": 4,
+     "runs": 11
     },
-    "runner_min_est": 7210,
+    "runner_min_est": 9492,
     "sampled_min_by_origin": {
-     "agent": 22.3,
-     "main": 48.8,
+     "agent": 34.1,
+     "main": 47.4,
      "other": 4.5
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.0,
-     "CI shepherd (label events)": 0.6,
+     "CI shepherd (label events)": 1.1,
      "CI shepherd (reconcile)": 1.2,
      "CICS Crucible": 18.5,
-     "Deploy Museum of Code Docs": 1.4,
-     "GitGalaxy Smoke Tests": 0.1,
+     "Generated Docs": 0.6,
+     "GitGalaxy Smoke Tests": 18.6,
      "GitGalaxy Zero-Trust Pipeline": 3.9,
      "Main Watch": 0.7,
-     "Mainframe Ground Truth": 33.2,
-     "Muninn Security Scan": 7.7,
+     "Mainframe Ground Truth": 34.0,
      "Mypy Audit": 0.6,
-     "Ruff Audit": 0.4,
      "Small Audits": 1.1,
-     "pages build and deployment": 2.3
+     "pages build and deployment": 1.7
     },
     "sampled_runs": 24,
     "wait_median": 0.03,
     "wait_p90": 0.05
    },
-   "merged": 50,
+   "merged": 57,
    "merged_by_class": {
-    "agent": 41,
+    "agent": 48,
     "automation": 4,
     "other": 5
    },
    "runs": {
-    "cancelled": 408,
-    "failure": 35,
-    "skipped": 629,
-    "success": 1838,
-    "total": 2918
+    "cancelled": 474,
+    "failure": 38,
+    "skipped": 742,
+    "success": 2138,
+    "total": 3392
+   }
+  },
+  "2026-10-17": {
+   "detail": {
+    "bot_runs": 60,
+    "ci_changes": [],
+    "reruns": {
+     "attempts": 1,
+     "by_workflow": {
+      "Mainframe Ground Truth": [
+       1,
+       0,
+       0
+      ]
+     },
+     "failed_again": 0,
+     "passed": 1,
+     "runs": 1
+    },
+    "runner_min_est": 55,
+    "sampled_min_by_origin": {
+     "agent": 2.2,
+     "main": 0.7
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.3,
+     "CI shepherd (reconcile)": 0.0,
+     "Det Sweep": 1.2,
+     "Generated Java Compiles": 0.2,
+     "Mypy Audit": 0.6,
+     "pages build and deployment": 0.5
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.03,
+    "wait_p90": 2.95
+   },
+   "merged": 2,
+   "merged_by_class": {
+    "agent": 2,
+    "automation": 0,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 6,
+    "failure": 0,
+    "skipped": 27,
+    "success": 106,
+    "total": 141
    }
   }
  },
- "open_prs": 3,
+ "open_prs": 7,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T21:31Z"
+ "updated": "2026-10-17T04:42Z"
 }
