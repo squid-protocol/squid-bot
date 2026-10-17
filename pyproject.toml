@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "squid-bot"
 version = "0.1.0"
-description = "Autonomous CI/CD Shepherd, Host Admission Supervisor & Fleet Orchestrator for AI Coding Fleets"
+description = "Gene editing for codebases: host admission, CI screening and verified integration (integrase-bot) for AI coding fleets"
 readme = "README.md"
 authors = [
     { name = "Joe Esquibel", email = "joe.m.esquibel@gmail.com" }
@@ -23,6 +23,7 @@ dev = [
 [project.scripts]
 squid-bot = "squid_bot.ci_shepherd:main"
 shepherd = "squid_bot.ci_shepherd:main"
+integrase-bot = "squid_bot.ci_shepherd:main"
 box-status = "squid_bot.box_status:main"
 ci-digest = "squid_bot.ci_digest:main"
 pr-check = "squid_bot.pr_check:main"
