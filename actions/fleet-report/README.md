@@ -2,7 +2,7 @@
 
 A GitHub Action that shows what an agent bot changed in your repo. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a report to each run's summary page.
 
-Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and CI runs that failed or were cancelled. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
+Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and CI runs that failed or were cancelled early. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -70,7 +70,7 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **Delivery:** merged PRs per day, split by recorded origin (bot, other agents, other, automation). Attribution depends on configured branch prefixes or PR-body markers.
 - **Speed:** each day's sampled p90 job queue wait.
 - **Cost:** each day's estimated runner hours per merged PR.
-- **Waste:** each day's failed and cancelled workflow runs. Hover a day for its pass rate (success / success + failure), a run-level signal: retries count as separate runs, so it is not first-pass PR success.
+- **Outcomes:** each day's failed workflow runs, and runs cancelled early (usually because a newer push replaced them, which cut their time short). Cancelled runs of the configured `bot-workflows` (bookkeeping runs replaced by newer ones) are counted but left off the chart; the day's tooltip shows them. GitHub can't tell how long a cancelled run would have taken, so the chart doesn't claim minutes saved. Hover a day for its pass rate (success / success + failure), a run-level signal: retries count as separate runs, so it is not first-pass PR success.
 
 Today is drawn faded, as incomplete. The "with bot" averages and cards use finished days only.
 

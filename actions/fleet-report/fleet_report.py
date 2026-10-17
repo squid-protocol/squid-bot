@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import re
 import subprocess
@@ -299,6 +300,10 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
         if d in data["days"] and (classes is None or (cfg.bot_prefixes and "bot" not in classes)):
             data["days"][d].update(merged_counts(repo, d, cfg))
     bots = bot_workflow_ids(repo, cfg)
+    for d in window:  # the bot workflows' own cancelled runs (a newer bookkeeping run replaced them): kept out of chart 4
+        if bots and d in data["days"] and "bot_cancelled" not in data["days"][d]:
+            data["days"][d]["bot_cancelled"] = sum(
+                gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={d}&status=cancelled&per_page=1") for i in bots.values())
     origin = RunOrigin(repo, cfg)
     missing = [d for d in window if d not in fresh and d in data["days"]
                and not {"sampled_min_by_origin", "reruns"} <= data["days"][d].get("detail", {}).keys()]
@@ -546,7 +551,7 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
 STYLE = """
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
-          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; --cancelled:#fab219; }
+          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
             --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
@@ -572,18 +577,21 @@ STYLE = """
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
-  .failed { fill: var(--failed); } .cancelled { fill: var(--cancelled); }
+  .failed { fill: var(--failed); } .early { fill: var(--neutral); }
   .partial { opacity: 0.5; }
   .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
 """
 
 
-def _nice_max(v: float) -> float:
-    for step in (0.25, 0.5, 1, 2, 3, 5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000,
-                 1500, 2000, 2500, 5000):
-        if v <= step * 4:
-            return step * 4
-    return int(v) + 1
+def _nice_axis(v: float) -> tuple[float, float]:
+    """(top, step) of the tightest axis with a round step (1, 2, 2.5 or 5 x 10^k) and at most 5 intervals: 26 -> (30, 10)."""
+    v = max(v, 1e-9)
+    for k in range(-2, 7):
+        for m in (1, 2, 2.5, 5):
+            step = m * 10 ** k
+            if math.ceil(v / step - 1e-9) <= 5:
+                return math.ceil(v / step - 1e-9) * step, step
+    return v, v / 4
 
 
 def _bar_path(x: float, y: float, w: float, h: float, r: float) -> str:
@@ -700,15 +708,17 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     # Shared furniture for every panel
     events = [(d, label) for d, label in cfg.events if d in index]
 
-    def frame(top: int, chart_h: int, maximum: float, title: str, formatter, title_detail: str = "") -> None:
+    def frame(top: int, chart_h: int, axis: tuple[float, float], title: str, formatter, title_detail: str = "") -> None:
+        maximum, step = axis
+        intervals = round(maximum / step)
         if start_i is not None:
             out.append(f'<rect class="band" x="{x_left(start_i):.1f}" y="{top}" width="{right - x_left(start_i):.1f}" '
                        f'height="{chart_h}"/>')
         tip = f"<title>{escape(title_detail)}</title>" if title_detail else ""
         out.append(f'<g>{tip}<text class="h2" x="{pad}" y="{top - 30}">{escape(title)}</text></g>')
-        for tick in range(5):
-            value = maximum * tick / 4
-            y = top + chart_h - chart_h * tick / 4
+        for tick in range(intervals + 1):
+            value = step * tick
+            y = top + chart_h - chart_h * tick / intervals
             cls = "base" if tick == 0 else "grid"
             out.append(f'<line class="{cls}" x1="{left}" x2="{right}" y1="{y:.1f}" y2="{y:.1f}"/>')
             out.append(f'<text class="tick" x="{left - 8}" y="{y + 3.5:.1f}" text-anchor="end">{formatter(value)}</text>')
@@ -773,8 +783,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     y = card_y + card_h + 18 + 62
     top, chart_h = y, 195
     delivery = [_origin_parts(row) for _, row in rows]
-    delivery_max = _nice_max(max(1.0, max(sum(parts.values()) for parts in delivery)))
-    frame(top, chart_h, delivery_max, "1 · Delivery — merged PRs per day, by origin", lambda v: f"{v:g}")
+    delivery_axis = _nice_axis(max(1.0, max(sum(parts.values()) for parts in delivery)))
+    delivery_max = delivery_axis[0]
+    frame(top, chart_h, delivery_axis, "1 · Delivery — merged PRs per day, by origin", lambda v: f"{v:g}")
     origins = [("bot", cfg.bot_name), ("agent", "other agents"), ("other", "other"), ("automation", "automation"),
                ("unknown", "unclassified")]
     if not start and not any(parts["bot"] for parts in delivery):
@@ -806,8 +817,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                      and row["merged"] else None for (_, row), detail in zip(rows, details)]
     if any(v is not None for v in wait_values + runner_values):
         top, chart_h = y, 120
-        wait_max = _nice_max(max((v for v in wait_values if v is not None), default=1.0))
-        frame(top, chart_h, wait_max, "2 · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
+        wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
+        wait_max = wait_axis[0]
+        frame(top, chart_h, wait_axis, "2 · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
         for i, (day, row) in enumerate(rows):
             changes = row.get("detail", {}).get("ci_changes")
             if changes:
@@ -819,8 +831,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         legend(top - 30, [("CI change merged", "markd")])
         y = top + chart_h + 70
         top = y
-        runner_max = _nice_max(max((v for v in runner_values if v is not None), default=1.0))
-        frame(top, chart_h, runner_max, "3 · Cost — runner time per merged PR, estimated hours (sampled)", lambda v: f"{v:g}")
+        runner_axis = _nice_axis(max((v for v in runner_values if v is not None), default=1.0))
+        runner_max = runner_axis[0]
+        frame(top, chart_h, runner_axis, "3 · Cost — runner time per merged PR, estimated hours (sampled)", lambda v: f"{v:g}")
         line_series(top, chart_h, runner_values, runner_max, lambda v: f"{v:.2f}", "runner hours / merged PR")
         y = top + chart_h + 70
     else:
@@ -828,7 +841,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
         y += 20
 
-    # 4 · Waste: runs that failed or were cancelled
+    # 4 · Outcomes: failed runs (waste) and runs cancelled early (a newer push replaced them, so their time was cut short)
     proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
     reruns = rerun_split(finished(rows, today)[-7:])
     if reruns:
@@ -836,30 +849,31 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
                             f"({passed} passed, {failed} failed again; {total} total)")
         proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
+    early = [max(0, row["runs"]["cancelled"] - row.get("bot_cancelled", 0)) for _, row in rows]
     top, chart_h = y, 120
-    waste_max = _nice_max(max(1.0, max(row["runs"]["failure"] + row["runs"]["cancelled"] for _, row in rows)))
-    frame(top, chart_h, waste_max, "4 · Waste — CI runs that failed or were cancelled, per day", lambda v: f"{v:g}",
+    outcome_axis = _nice_axis(max(1.0, max(row["runs"]["failure"] + e for (_, row), e in zip(rows, early))))
+    frame(top, chart_h, outcome_axis, "4 · Outcomes — CI runs that failed, and runs cancelled early, per day", lambda v: f"{v:g}",
           ". ".join(proof_detail))
-    for i, (day, row) in enumerate(rows):
+    for i, ((day, row), cut) in enumerate(zip(rows, early)):
         r = row["runs"]
         x, base = x_left(i) + (slot - bar_w) / 2, top + chart_h
         elements = []
-        shown = [(kind, r[kind]) for kind in ("failure", "cancelled") if r[kind] > 0]
-        for n, (kind, value) in enumerate(shown):
-            h = chart_h * value / waste_max
-            css = "failed seg" if kind == "failure" else "cancelled seg"
+        shown = [(css, value) for css, value in (("failed", r["failure"]), ("early", cut)) if value > 0]
+        for n, (css, value) in enumerate(shown):
+            h = chart_h * value / outcome_axis[0]
             if n == len(shown) - 1:
-                elements.append(f'<path class="{css}" d="{_bar_path(x, base - h, bar_w, h, 4)}"/>')
+                elements.append(f'<path class="{css} seg" d="{_bar_path(x, base - h, bar_w, h, 4)}"/>')
             else:
-                elements.append(f'<rect class="{css}" x="{x:.1f}" y="{base - h:.1f}" width="{bar_w:.1f}" height="{h:.1f}"/>')
+                elements.append(f'<rect class="{css} seg" x="{x:.1f}" y="{base - h:.1f}" width="{bar_w:.1f}" height="{h:.1f}"/>')
             base -= h
         judged = r["success"] + r["failure"]
         rate = f'{100 * r["success"] / judged:.1f}%' if judged else "–"
+        bookkeeping = f' (+{row["bot_cancelled"]} bot bookkeeping runs replaced by newer ones, not shown)' if row.get("bot_cancelled") else ""
         fade = ' class="partial"' if day == today_s else ""
-        tip = escape(f'{_fmt_day(day)}: {r["total"]:,} CI runs · {r["failure"]} failed, {r["cancelled"]} cancelled · '
+        tip = escape(f'{_fmt_day(day)}: {r["total"]:,} CI runs · {r["failure"]} failed · {cut} cancelled early{bookkeeping} · '
                      f'pass rate {rate} (success / success + failure){" (today so far)" if day == today_s else ""}')
         out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
-    legend(top - 30, [("failed", "failed"), ("cancelled", "cancelled")])
+    legend(top - 30, [("failed", "failed"), ("cancelled early (newer push)", "early")])
     y = top + chart_h + 44
 
     prefixes = ", ".join(cfg.bot_prefixes)

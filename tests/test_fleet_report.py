@@ -190,7 +190,7 @@ def test_charts_show_each_days_own_numbers_not_a_trailing_average():
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
     assert "Oct 14 · 71 merged PRs (today so far)" in svg
-    assert "1,000 CI runs · 100 failed, 0 cancelled · pass rate 90.0%" in svg
+    assert "1,000 CI runs · 100 failed · 0 cancelled early · pass rate 90.0%" in svg
     assert "Oct 13 · 31 merged PRs ·" in svg
     assert "7-day average" not in svg and "trailing" not in svg
 
@@ -235,3 +235,18 @@ def test_render_tells_the_before_and_with_bot_story():
     md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
     assert "| Measure | With promoter-bot | Before promoter-bot |" in md
     assert "| Delivery · promoter-bot-made share | 62.5% | 0.0% |" in md
+
+
+def test_axes_use_the_tightest_round_step():
+    assert dashboard._nice_axis(26.05) == (30, 10)
+    assert dashboard._nice_axis(102) == (125, 25)
+    assert dashboard._nice_axis(790) == (800, 200)
+    assert dashboard._nice_axis(0.4) == (0.4, 0.1)
+
+
+def test_bot_bookkeeping_cancellations_stay_out_of_the_outcomes_chart():
+    data = _data()
+    data["days"][TODAY.isoformat()]["bot_cancelled"] = 250  # of the fixture's 300 cancelled runs
+    svg = dashboard.render(data, 30, TODAY)
+    assert "40 failed · 50 cancelled early (+250 bot bookkeeping runs replaced by newer ones, not shown)" in svg
+    assert "cancelled early (newer push)" in svg
