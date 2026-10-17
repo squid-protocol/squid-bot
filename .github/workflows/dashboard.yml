@@ -26,7 +26,11 @@ jobs:
       - uses: ./actions/fleet-report
         with:
           repo: squid-protocol/gitgalaxy
-          title: "squid-protocol/gitgalaxy: agent fleet CI"
+          title: "squid-protocol/gitgalaxy: promoter-bot fleet"
           bot-workflows: "CI shepherd (reconcile),CI shepherd (label events),Main Watch"
           agent-branch-prefixes: "churn/,agy/,claude/,codex/,copilot/,cursor/,devin/"
+          bot-branch-prefixes: "churn/,agy/"
+          bot-name: promoter-bot
+          bot-start: "2026-10-11"
+          events: "2026-10-10: integrase-bot (CI shepherd) on"
           max-wait-p90: "15"

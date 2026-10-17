@@ -1,8 +1,8 @@
 # Fleet CI report
 
-A GitHub Action that tells a three-part story about an agent-enabled development system: delivery, verification, and CI capacity. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a week-over-week report to each run's summary page.
+A GitHub Action that shows what an agent bot changed in your repo. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a report to each run's summary page.
 
-The dashboard charts each day's own numbers, aligned so changes in delivery, CI outcomes, and CI pressure can be read together; the headline cards compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
+Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and CI runs that failed or were cancelled. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and dashed lines give each measure's average before the bot and with it. The cards compare the same two periods. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -38,6 +38,10 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `days` | `30` | Days on the dashboard |
 | `title` | `<repo>: CI activity` | Heading |
 | `agent-branch-prefixes` | `claude/,codex/,copilot/,cursor/,devin/` | Head-branch prefixes that mark a PR as agent-made |
+| `bot-branch-prefixes` | none | Head-branch prefixes of the bot the dashboard follows (e.g. `churn/`). Its PRs are classed **bot**, ahead of the agent prefixes |
+| `bot-name` | `bot` | Name shown for the bot |
+| `bot-start` | its first merged PR | `YYYY-MM-DD` the bot went live. The charts stretch (up to 90 days) to keep 14 days before it in view; those 14 days are the "before" baseline |
+| `events` | none | Dates to mark, as `YYYY-MM-DD: label; YYYY-MM-DD: label` |
 | `agent-markers` | built-in list | Regex on PR bodies that marks a PR as agent-made (Claude Code, Copilot, Devin, Cursor, Codex and Gemini CLI trailers by default) |
 | `bot-workflows` | none | Workflow names that are your orchestrator's own bookkeeping, reported as a share of runs |
 | `sample-runs` | `24` | Runs sampled per day for queue wait and runner time |
@@ -51,7 +55,7 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 ## Method
 
 **Exact** (counted by the GitHub API):
-- **Merged PRs per day:** each PR is classed **agent** if its head branch has an agent prefix or its body matches an agent marker. It's **automation** if a bot account opened it (dependabot, renovate, release bots), and **other** otherwise.
+- **Merged PRs per day:** each PR is classed **bot** if its head branch has a bot prefix, **agent** if its head branch has an agent prefix or its body matches an agent marker. It's **automation** if a bot account opened it (dependabot, renovate, release bots), and **other** otherwise.
 - **Actions runs per day**, by conclusion. Days with more than 2,500 runs are counted in 6-hour windows, since the API caps a single count at 2,500.
 - **Bot workflow runs**, per configured workflow.
 - **CI changes:** PR merges to the default branch that touched `.github/workflows`. They show as markers on the queue-wait chart.
@@ -61,11 +65,14 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - runner minutes per day (mean per run × the day's non-skipped runs)
 - runner time split by workflow, and by origin: agent PR, other PR, automation PR, or default branch and schedules
 
-### The three health dimensions
+### The four charts
 
-- **Delivery:** merged PRs per day, split by recorded origin. Agent attribution depends on configured branch prefixes or PR-body markers.
-- **Proof:** each day's ratio of successful to successful-plus-failed workflow runs. This is a run-level CI outcome signal; retries can count as separate runs, so it is not first-pass PR success or a measure of post-merge quality.
-- **Capacity:** each day's sampled p90 queue wait and estimated runner hours per merged PR. These use separate plots and scales. Today is marked as incomplete.
+- **Delivery:** merged PRs per day, split by recorded origin (bot, other agents, other, automation). Attribution depends on configured branch prefixes or PR-body markers.
+- **Speed:** each day's sampled p90 job queue wait.
+- **Cost:** each day's estimated runner hours per merged PR.
+- **Waste:** each day's failed and cancelled workflow runs. Hover a day for its pass rate (success / success + failure), a run-level signal: retries count as separate runs, so it is not first-pass PR success.
+
+Today is drawn faded, as incomplete. The "with bot" averages and cards use finished days only.
 
 The current GitHub API feed does not contain historical local-host PSI, agent review effort, or post-merge rework. The dashboard leaves those out rather than treating CI activity as a substitute for them.
 

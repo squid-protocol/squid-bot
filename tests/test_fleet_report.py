@@ -56,11 +56,11 @@ def test_render_adds_the_ci_cost_row_and_wait_chart_when_detail_exists():
                                      "wait_median": 1.0, "wait_p90": 4.0, "runner_min_est": 600, "sampled_runs": 24}
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
-    assert "Job queue wait (p90)" in svg and "4.0 min" in svg
-    assert "Runner time per merged PR" in svg
+    assert "job queue wait (p90)" in svg and "4.0 min" in svg
+    assert "runner time per merged PR" in svg
     assert svg.count("CI change(s) merged") == 3
     # without detail the extra row and chart stay out
-    assert "Job queue wait" not in dashboard.render(_data(), 30, TODAY)
+    assert "job queue wait" not in dashboard.render(_data(), 30, TODAY)
 
 
 CFG = dashboard.Config(repo="owner/repo", agent_prefixes=["churn/", "claude/"])
@@ -190,6 +190,48 @@ def test_charts_show_each_days_own_numbers_not_a_trailing_average():
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
     assert "Oct 14 · 71 merged PRs (today so far)" in svg
-    assert "Oct 14: 90% CI runs" in svg
+    assert "1,000 CI runs · 100 failed, 0 cancelled · pass rate 90.0%" in svg
     assert "Oct 13 · 31 merged PRs ·" in svg
     assert "7-day average" not in svg and "trailing" not in svg
+
+
+BOT = dashboard.Config(repo="owner/repo", agent_prefixes=["claude/"], bot_prefixes=["churn/"], bot_name="promoter-bot",
+                       events=[("2026-10-06", "shepherd on")])
+
+
+def _with_bot(start: str = "2026-10-08") -> dict:
+    data = _data()
+    for d in sorted(data["days"]):
+        bot = 25 if d >= start else 0
+        data["days"][d]["merged_by_class"] = {"bot": bot, "agent": 5, "other": 10, "automation": 0}
+        data["days"][d]["merged"] = bot + 15
+        data["days"][d]["detail"] = {"bot_runs": 100, "ci_changes": [], "wait_median": 1.0, "sampled_runs": 24,
+                                     "wait_p90": 2.0 if d >= start else 8.0, "runner_min_est": 600}
+    return data
+
+
+def test_bot_branches_are_their_own_class_ahead_of_agent_prefixes():
+    assert dashboard.classify_pr({"headRefName": "churn/5164-x"}, BOT) == "bot"
+    assert dashboard.classify_pr({"headRefName": "claude/x"}, BOT) == "agent"
+
+
+def test_the_bot_start_is_found_from_its_first_merge_and_kept_in_view():
+    data = _with_bot()
+    assert dashboard.bot_start(data, BOT) == "2026-10-08"
+    assert dashboard.bot_start(data, dashboard.Config(repo="owner/repo", bot_start="2026-10-01")) == "2026-10-01"
+    assert dashboard.shown_days(data, BOT, 30, TODAY) == 30
+    assert dashboard.shown_days(data, dashboard.Config(repo="o/r", bot_start="2026-09-01"), 30, TODAY) == 58
+
+
+def test_render_tells_the_before_and_with_bot_story():
+    svg = dashboard.render(_with_bot(), 30, TODAY, BOT)
+    ET.fromstring(svg)
+    assert "promoter-bot live · Oct 8" in svg and "Oct 6 · shepherd on" in svg
+    assert 'class="band"' in svg and svg.count('class="start"') == 4  # the band and start line run through every panel
+    assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg  # 25 of 40 merges a day since it started
+    assert "before promoter-bot: 15.0 · +167%" in svg  # merged / day: 40 with vs 15 before
+    assert "avg 40.0" in svg and "avg 15.0" in svg and "avg 2.0 min" in svg and "avg 8.0 min" in svg
+    assert "175 of the 280 PRs merged since then were its own" in svg
+    md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
+    assert "| Measure | With promoter-bot | Before promoter-bot |" in md
+    assert "| Delivery · promoter-bot-made share | 62.5% | 0.0% |" in md
