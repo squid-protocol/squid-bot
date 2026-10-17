@@ -185,8 +185,48 @@
     "precheck_retry": 0.0,
     "send_back": 3.1
    }
+  },
+  "2026-10-16": {
+   "churn_merged": 44,
+   "ci_busy_hours": 0.9,
+   "holds": {
+    "pace": 6,
+    "paused": 27,
+    "prs-need-work": 0
+   },
+   "idle_blockers": {},
+   "idle_causes": {
+    "backfill-calm": 5,
+    "empty": 1,
+    "owner": 2,
+    "plan-overlap": 3,
+    "wait": 7
+   },
+   "idle_hours": 6.9,
+   "idle_ticks": 52,
+   "loop_runs": 40,
+   "loops_per_merged_pr": 0.91,
+   "max_workers": 2,
+   "new_work_share": 0.785,
+   "paused_hours": 3.77,
+   "pr_open_to_merge_h_median": 0.54,
+   "precheck": {
+    "failed_again": 3,
+    "passed": 30,
+    "sent_back": 10
+   },
+   "review_wait_min_median": 1.0,
+   "slot_use": 0.443,
+   "usd": 264.55,
+   "usd_per_merged_churn_pr": 6.01,
+   "worker_hours": {
+    "new_work": 16.68,
+    "pr_fix": 2.48,
+    "precheck_retry": 0.35,
+    "send_back": 1.73
+   }
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-16T14:58Z"
+ "updated": "2026-10-17T00:01Z"
 }
