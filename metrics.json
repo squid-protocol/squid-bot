@@ -2275,7 +2275,7 @@
   },
   "2026-10-17": {
    "detail": {
-    "bot_runs": 1243,
+    "bot_runs": 1390,
     "ci_changes": [
      {
       "pr": 5264,
@@ -2284,10 +2284,14 @@
      {
       "pr": 5358,
       "title": "CI: the language-crucible corpus clone retries a network failure, names it infrastructure (Part of #5048) (#5358)"
+     },
+     {
+      "pr": 5371,
+      "title": "CI: drop the Python 3.10 legs (Part of #3322) (#5371)"
      }
     ],
     "reruns": {
-     "attempts": 6,
+     "attempts": 7,
      "by_workflow": {
       "Det Sweep": [
        2,
@@ -2300,55 +2304,53 @@
        0
       ],
       "Mainframe Ground Truth": [
-       2,
+       3,
        0,
        0
       ]
      },
      "failed_again": 2,
-     "passed": 4,
-     "runs": 6
+     "passed": 5,
+     "runs": 7
     },
-    "runner_min_est": 5640,
+    "runner_min_est": 5580,
     "sampled_min_by_origin": {
-     "agent": 16.3,
-     "main": 31.8
+     "agent": 10.7,
+     "main": 32.1
     },
     "sampled_min_by_workflow": {
      "Archetype Validation": 4.1,
      "CI shepherd (label events)": 1.2,
-     "CI shepherd (reconcile)": 0.8,
-     "Det Sweep": 1.2,
+     "CI shepherd (reconcile)": 1.1,
+     "Det Sweep": 2.4,
      "Generated Docs": 0.7,
      "GitGalaxy Smoke Tests": 24.9,
      "Main Watch": 0.5,
      "Muninn Security Scan": 5.5,
-     "Small Audits": 1.0,
+     "Small Audits": 1.6,
      "pages build and deployment": 0.5,
-     "post-merge": 0.2,
-     "rosetta-audit": 3.0,
-     "unicode-gauntlet": 4.3
+     "post-merge": 0.2
     },
     "sampled_runs": 24,
-    "wait_median": 0.03,
+    "wait_median": 0.07,
     "wait_p90": 4.12
    },
-   "merged": 66,
+   "merged": 71,
    "merged_by_class": {
-    "agent": 65,
+    "agent": 70,
     "automation": 0,
     "other": 1
    },
    "runs": {
-    "cancelled": 410,
-    "failure": 44,
-    "skipped": 791,
-    "success": 2343,
-    "total": 3602
+    "cancelled": 503,
+    "failure": 50,
+    "skipped": 863,
+    "success": 2500,
+    "total": 3992
    }
   }
  },
- "open_prs": 7,
+ "open_prs": 9,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-17T20:47Z"
+ "updated": "2026-10-17T22:05Z"
 }
