@@ -179,7 +179,7 @@ The share is not revised while the job runs: a job that starts alone gets every 
 ---
 
 ### 3. Initiation: `promoter-bot` (the inducible promoter)
-*Status: runs on GitGalaxy today (formerly `churn`); not yet packaged in this repo.*
+*Status: runs on GitGalaxy today (formerly `churn`). Source: [squid-protocol/promoter-bot](https://github.com/squid-protocol/promoter-bot); not yet packaged in this repo.*
 
 promoter-bot decides which issues get worked, when, and how many at once, and launches the agents that work them. It runs as a cheap gate every 10 minutes and starts a model session only when something needs judgment:
 * **Signals that switch editing off:** `box-status` RED, a usage limit (paused until its reset, weekly resets included), lost connectivity (workers that died offline are requeued), a run of failing workers, or a stop file.
