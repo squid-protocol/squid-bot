@@ -133,6 +133,12 @@
   "2026-09-19": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 25,
+     "saved_min_est": 104,
+     "unpriced": 0,
+     "wall_min": 664
+    },
     "ci_changes": [],
     "reruns": {
      "attempts": 0,
@@ -183,6 +189,12 @@
   "2026-09-20": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 13,
+     "saved_min_est": 63,
+     "unpriced": 0,
+     "wall_min": 556
+    },
     "ci_changes": [
      {
       "pr": 3232,
@@ -2547,12 +2559,12 @@
   },
   "2026-10-18": {
    "detail": {
-    "bot_runs": 1755,
+    "bot_runs": 1993,
     "cancel_savings": {
-     "cancelled": 296,
-     "saved_min_est": 1920,
+     "cancelled": 335,
+     "saved_min_est": 2147,
      "unpriced": 0,
-     "wall_min": 20759
+     "wall_min": 23756
     },
     "ci_changes": [
      {
@@ -2582,11 +2594,20 @@
      {
       "pr": 5486,
       "title": "ci: full-suite-gate runs the per-test time ratchet on its Linux legs (Part of #5257) (#5486)"
+     },
+     {
+      "pr": 5530,
+      "title": "ci: shard the CICS Crucible PR job into 4 balanced shards plus a merging required check (Part of #5498) (#5530)"
      }
     ],
     "reruns": {
-     "attempts": 1,
+     "attempts": 2,
      "by_workflow": {
+      "Graph Accuracy Audit": [
+       0,
+       0,
+       1
+      ],
       "Mainframe Ground Truth": [
        0,
        1,
@@ -2595,50 +2616,51 @@
      },
      "failed_again": 1,
      "passed": 0,
-     "runs": 1
+     "runs": 2
     },
-    "runner_min_est": 4624,
+    "runner_min_est": 6622,
     "sampled_min_by_origin": {
-     "bot": 24.6,
-     "main": 3.0
+     "agent": 1.6,
+     "bot": 23.7,
+     "main": 9.2
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 1.0,
+     "CI shepherd (label events)": 0.5,
      "CI shepherd (reconcile)": 0.0,
      "CodeQL Security Scan": 3.7,
-     "Deploy Museum of Code Docs": 1.4,
-     "Detection Accuracy Audit": 0.5,
+     "Det Sweep": 1.0,
      "Estate Crucible": 0.5,
      "Fact Cross-check": 4.4,
      "Generated Docs": 0.6,
      "GitGalaxy Zero-Trust Pipeline": 5.0,
-     "Main Watch": 0.2,
-     "Mypy Audit": 0.5,
+     "Graph Comparison History": 8.5,
+     "Main Watch": 0.4,
+     "Mypy Audit": 1.1,
      "Ports Compile": 4.0,
-     "pages build and deployment": 1.4,
+     "post-merge": 0.3,
      "unicode-gauntlet": 4.5
     },
     "sampled_runs": 24,
-    "wait_median": 3.32,
+    "wait_median": 0.97,
     "wait_p90": 8.88
    },
-   "merged": 98,
+   "merged": 115,
    "merged_by_class": {
     "agent": 6,
     "automation": 0,
-    "bot": 90,
+    "bot": 107,
     "other": 2
    },
    "runs": {
-    "cancelled": 1089,
-    "failure": 44,
-    "skipped": 1215,
+    "cancelled": 1271,
+    "failure": 56,
+    "skipped": 1393,
     "success": 2500,
-    "total": 5231
+    "total": 6015
    }
   }
  },
  "open_prs": 5,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-18T18:27Z"
+ "updated": "2026-10-18T20:57Z"
 }
