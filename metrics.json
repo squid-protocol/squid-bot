@@ -238,6 +238,12 @@
   "2026-09-21": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 14,
+     "saved_min_est": 7,
+     "unpriced": 0,
+     "wall_min": 377
+    },
     "ci_changes": [],
     "reruns": {
      "attempts": 0,
@@ -287,6 +293,12 @@
   "2026-09-22": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 9,
+     "saved_min_est": 16,
+     "unpriced": 0,
+     "wall_min": 915
+    },
     "ci_changes": [],
     "reruns": {
      "attempts": 0,
@@ -338,6 +350,12 @@
   "2026-09-23": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 54,
+     "saved_min_est": 72,
+     "unpriced": 0,
+     "wall_min": 2853
+    },
     "ci_changes": [
      {
       "pr": 3378,
@@ -416,6 +434,12 @@
   "2026-09-24": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 33,
+     "saved_min_est": 69,
+     "unpriced": 0,
+     "wall_min": 2632
+    },
     "ci_changes": [
      {
       "pr": 3456,
@@ -2523,12 +2547,12 @@
   },
   "2026-10-18": {
    "detail": {
-    "bot_runs": 1446,
+    "bot_runs": 1755,
     "cancel_savings": {
-     "cancelled": 225,
-     "saved_min_est": 1506,
+     "cancelled": 296,
+     "saved_min_est": 1920,
      "unpriced": 0,
-     "wall_min": 17769
+     "wall_min": 20759
     },
     "ci_changes": [
      {
@@ -2554,6 +2578,10 @@
      {
       "pr": 5469,
       "title": "architecture brief: publish to the generated branch instead of an auto-merged PR (Part of #4963) (#5469)"
+     },
+     {
+      "pr": 5486,
+      "title": "ci: full-suite-gate runs the per-test time ratchet on its Linux legs (Part of #5257) (#5486)"
      }
     ],
     "reruns": {
@@ -2569,43 +2597,48 @@
      "passed": 0,
      "runs": 1
     },
-    "runner_min_est": 2608,
+    "runner_min_est": 4624,
     "sampled_min_by_origin": {
-     "bot": 14.0,
-     "main": 0.2
+     "bot": 24.6,
+     "main": 3.0
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.5,
+     "CI shepherd (label events)": 1.0,
      "CI shepherd (reconcile)": 0.0,
      "CodeQL Security Scan": 3.7,
+     "Deploy Museum of Code Docs": 1.4,
+     "Detection Accuracy Audit": 0.5,
      "Estate Crucible": 0.5,
+     "Fact Cross-check": 4.4,
      "Generated Docs": 0.6,
-     "GitGalaxy Zero-Trust Pipeline": 3.5,
+     "GitGalaxy Zero-Trust Pipeline": 5.0,
      "Main Watch": 0.2,
-     "Ruff Audit": 0.8,
+     "Mypy Audit": 0.5,
+     "Ports Compile": 4.0,
+     "pages build and deployment": 1.4,
      "unicode-gauntlet": 4.5
     },
-    "sampled_runs": 18,
-    "wait_median": 4.88,
-    "wait_p90": 12.47
+    "sampled_runs": 24,
+    "wait_median": 3.32,
+    "wait_p90": 8.88
    },
-   "merged": 78,
+   "merged": 98,
    "merged_by_class": {
-    "agent": 5,
+    "agent": 6,
     "automation": 0,
-    "bot": 71,
+    "bot": 90,
     "other": 2
    },
    "runs": {
-    "cancelled": 853,
-    "failure": 36,
-    "skipped": 971,
-    "success": 2388,
-    "total": 4273
+    "cancelled": 1089,
+    "failure": 44,
+    "skipped": 1215,
+    "success": 2500,
+    "total": 5231
    }
   }
  },
- "open_prs": 12,
+ "open_prs": 5,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-18T16:11Z"
+ "updated": "2026-10-18T18:27Z"
 }
