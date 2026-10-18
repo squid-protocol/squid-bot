@@ -268,6 +268,277 @@
    }
   }
  },
+ "hosts": {
+  "melek": {
+   "2026-10-10": {
+    "churn_merged": 0,
+    "ci_busy_hours": 0.0,
+    "holds": {
+     "pace": 0,
+     "paused": 0,
+     "prs-need-work": 0
+    },
+    "idle_ticks": 0,
+    "loop_runs": 0,
+    "loops_per_merged_pr": null,
+    "max_workers": 2,
+    "new_work_share": null,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": null,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": null,
+    "slot_use": 0.0,
+    "usd": 0.0,
+    "usd_per_merged_churn_pr": null,
+    "worker_hours": {
+     "new_work": 0.0,
+     "pr_fix": 0.0,
+     "precheck_retry": 0.0,
+     "send_back": 0.0
+    }
+   },
+   "2026-10-11": {
+    "churn_merged": 1,
+    "ci_busy_hours": 0.0,
+    "holds": {
+     "pace": 0,
+     "paused": 4,
+     "prs-need-work": 0
+    },
+    "idle_ticks": 0,
+    "loop_runs": 3,
+    "loops_per_merged_pr": 3.0,
+    "max_workers": 2,
+    "new_work_share": 0.641,
+    "paused_hours": 1.58,
+    "pr_open_to_merge_h_median": 0.42,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": null,
+    "slot_use": 0.045,
+    "usd": 11.85,
+    "usd_per_merged_churn_pr": 11.85,
+    "worker_hours": {
+     "new_work": 1.4,
+     "pr_fix": 0.0,
+     "precheck_retry": 0.0,
+     "send_back": 0.78
+    }
+   },
+   "2026-10-12": {
+    "churn_merged": 25,
+    "ci_busy_hours": 0.0,
+    "holds": {
+     "pace": 0,
+     "paused": 31,
+     "prs-need-work": 2
+    },
+    "idle_ticks": 3,
+    "loop_runs": 14,
+    "loops_per_merged_pr": 0.56,
+    "max_workers": 2,
+    "new_work_share": 0.808,
+    "paused_hours": 12.23,
+    "pr_open_to_merge_h_median": 2.23,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": null,
+    "slot_use": 0.351,
+    "usd": 123.94,
+    "usd_per_merged_churn_pr": 4.96,
+    "worker_hours": {
+     "new_work": 13.62,
+     "pr_fix": 0.12,
+     "precheck_retry": 0.0,
+     "send_back": 3.12
+    }
+   },
+   "2026-10-13": {
+    "churn_merged": 25,
+    "ci_busy_hours": 0.0,
+    "holds": {
+     "pace": 0,
+     "paused": 5,
+     "prs-need-work": 10
+    },
+    "idle_ticks": 6,
+    "loop_runs": 15,
+    "loops_per_merged_pr": 0.6,
+    "max_workers": 2,
+    "new_work_share": 0.753,
+    "paused_hours": 2.45,
+    "pr_open_to_merge_h_median": 0.68,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.423,
+    "usd": 117.32,
+    "usd_per_merged_churn_pr": 4.69,
+    "worker_hours": {
+     "new_work": 15.3,
+     "pr_fix": 0.0,
+     "precheck_retry": 0.0,
+     "send_back": 5.02
+    }
+   },
+   "2026-10-14": {
+    "churn_merged": 49,
+    "ci_busy_hours": 7.07,
+    "holds": {
+     "pace": 0,
+     "paused": 5,
+     "prs-need-work": 17
+    },
+    "idle_ticks": 14,
+    "loop_runs": 47,
+    "loops_per_merged_pr": 0.96,
+    "max_workers": 2,
+    "new_work_share": 0.701,
+    "paused_hours": 0.6,
+    "pr_open_to_merge_h_median": 1.77,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.735,
+    "usd": 253.45,
+    "usd_per_merged_churn_pr": 5.17,
+    "worker_hours": {
+     "new_work": 24.75,
+     "pr_fix": 3.27,
+     "precheck_retry": 0.0,
+     "send_back": 7.27
+    }
+   },
+   "2026-10-15": {
+    "churn_merged": 36,
+    "ci_busy_hours": 2.05,
+    "holds": {
+     "pace": 0,
+     "paused": 6,
+     "prs-need-work": 0
+    },
+    "idle_ticks": 39,
+    "loop_runs": 58,
+    "loops_per_merged_pr": 1.61,
+    "max_workers": 2,
+    "new_work_share": 0.596,
+    "paused_hours": 0.75,
+    "pr_open_to_merge_h_median": 1.12,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 0,
+     "sent_back": 0
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.52,
+    "usd": 217.29,
+    "usd_per_merged_churn_pr": 6.04,
+    "worker_hours": {
+     "new_work": 14.87,
+     "pr_fix": 6.98,
+     "precheck_retry": 0.0,
+     "send_back": 3.1
+    }
+   },
+   "2026-10-16": {
+    "churn_merged": 44,
+    "ci_busy_hours": 0.9,
+    "holds": {
+     "pace": 6,
+     "paused": 27,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "backfill-calm": 5,
+     "empty": 1,
+     "owner": 2,
+     "plan-overlap": 3,
+     "wait": 7
+    },
+    "idle_hours": 6.9,
+    "idle_ticks": 52,
+    "loop_runs": 40,
+    "loops_per_merged_pr": 0.91,
+    "max_workers": 2,
+    "new_work_share": 0.785,
+    "paused_hours": 3.77,
+    "pr_open_to_merge_h_median": 0.54,
+    "precheck": {
+     "failed_again": 3,
+     "passed": 30,
+     "sent_back": 10
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.443,
+    "usd": 264.55,
+    "usd_per_merged_churn_pr": 6.01,
+    "worker_hours": {
+     "new_work": 16.68,
+     "pr_fix": 2.48,
+     "precheck_retry": 0.35,
+     "send_back": 1.73
+    }
+   },
+   "2026-10-17": {
+    "churn_merged": 77,
+    "ci_busy_hours": 2.23,
+    "holds": {
+     "pace": 4,
+     "paused": 0,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "backfill-calm": 4,
+     "ci-busy": 12,
+     "frontier": 28,
+     "other": 3,
+     "owner": 31,
+     "plan-overlap": 5
+    },
+    "idle_hours": 3.33,
+    "idle_ticks": 31,
+    "loop_runs": 52,
+    "loops_per_merged_pr": 0.68,
+    "max_workers": 2,
+    "new_work_share": 0.819,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": 0.45,
+    "precheck": {
+     "failed_again": 1,
+     "passed": 115,
+     "sent_back": 11
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.767,
+    "usd": 189.99,
+    "usd_per_merged_churn_pr": 2.47,
+    "worker_hours": {
+     "new_work": 30.18,
+     "pr_fix": 5.5,
+     "precheck_retry": 0.68,
+     "send_back": 0.47
+    }
+   }
+  }
+ },
  "repo": "squid-protocol/gitgalaxy",
  "updated": "2026-10-18T00:01Z"
 }
