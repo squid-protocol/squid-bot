@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1065" width="920" height="1065" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, speed, cost and CI waste per day, before and with promoter-bot; 1,418 merged PRs in the selected period">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1065" width="920" height="1065" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, speed, cost and CI waste per day, before and with promoter-bot; 1,460 merged PRs in the selected period">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
@@ -37,8 +37,8 @@
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="919" height="1064" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet</text>
-  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-18 04:48 UTC</text>
-  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 269 of the 365 PRs merged since then were its own (74%). Today so far: 12 merged.</text>
+  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-18 11:26 UTC</text>
+  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 305 of the 407 PRs merged since then were its own (75%). Today so far: 54 merged.</text>
   <g>
   <rect class="tile" x="24.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="88">MERGED PRs / DAY</text>
@@ -55,14 +55,14 @@
   <g>
   <rect class="tile" x="466.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="480.0" y="88">RUNNER HOURS / MERGED PR</text>
-  <text class="v" x="480.0" y="114">6.8 h</text>
-  <text class="sub" x="480.0" y="131">before promoter-bot: 4.0 h · +69%</text>
+  <text class="v" x="480.0" y="114">6.6 h</text>
+  <text class="sub" x="480.0" y="131">before promoter-bot: 4.0 h · +66%</text>
   </g>
   <g>
   <rect class="tile" x="687.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="701.0" y="88">QUEUE WAIT P90</text>
   <text class="v" x="701.0" y="114">9.8 min</text>
-  <text class="sub" x="701.0" y="131">before promoter-bot: 4.2 min · +135%</text>
+  <text class="sub" x="701.0" y="131">before promoter-bot: 4.2 min · +136%</text>
   </g>
   <text class="meta" x="24" y="160">Cards: with promoter-bot (Oct 11–Oct 17, finished days) vs before promoter-bot (Sep 27–Oct 10).</text>
   <rect class="band" x="674.7" y="222" width="221.3" height="195"/>
@@ -115,7 +115,7 @@
   <g><title>Oct 15 · 43 merged PRs · promoter-bot 36, other agents 5, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="786.3" y="360.8" width="25.7" height="56.2"/><rect class="agent seg" x="786.3" y="353.0" width="25.7" height="7.8"/><path class="other seg" d="M786.3,353.0 V353.0 Q786.3,349.9 789.5,349.9 H808.9 Q812.0,349.9 812.0,353.0 V353.0 Z"/></g>
   <g><title>Oct 16 · 57 merged PRs · promoter-bot 44, other agents 4, other 5, automation 4, unclassified 0</title><rect class="bot seg" x="814.0" y="348.4" width="25.7" height="68.6"/><rect class="agent seg" x="814.0" y="342.1" width="25.7" height="6.2"/><rect class="other seg" x="814.0" y="334.3" width="25.7" height="7.8"/><path class="automation seg" d="M814.0,334.3 V332.1 Q814.0,328.1 818.0,328.1 H835.7 Q839.7,328.1 839.7,332.1 V334.3 Z"/></g>
   <g><title>Oct 17 · 85 merged PRs · promoter-bot 77, other agents 6, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="841.7" y="296.9" width="25.7" height="120.1"/><rect class="agent seg" x="841.7" y="287.5" width="25.7" height="9.4"/><path class="other seg" d="M841.7,287.5 V287.5 Q841.7,284.4 844.8,284.4 H864.2 Q867.3,284.4 867.3,287.5 V287.5 Z"/></g>
-  <g class="partial"><title>Oct 18 · 12 merged PRs (today so far) · promoter-bot 12, other agents 0, other 0, automation 0, unclassified 0</title><path class="bot seg" d="M869.3,417.0 V402.3 Q869.3,398.3 873.3,398.3 H891.0 Q895.0,398.3 895.0,402.3 V417.0 Z"/></g>
+  <g class="partial"><title>Oct 18 · 54 merged PRs (today so far) · promoter-bot 48, other agents 4, other 2, automation 0, unclassified 0</title><rect class="bot seg" x="869.3" y="342.1" width="25.7" height="74.9"/><rect class="agent seg" x="869.3" y="335.9" width="25.7" height="6.2"/><path class="other seg" d="M869.3,335.9 V335.9 Q869.3,332.8 872.5,332.8 H891.9 Q895.0,332.8 895.0,335.9 V335.9 Z"/></g>
   <text class="startl" x="679.7" y="214" text-anchor="start">promoter-bot live · Oct 11</text>
   <text class="evl" x="642.0" y="214" text-anchor="end">Oct 10 · integrase-bot (CI shepherd) on</text>
   <rect class="automation" x="812.0" y="184" width="9" height="9" rx="2"/>
@@ -170,7 +170,7 @@
   <g><title>Oct 16: CI change(s) merged #5223, #5225, #5228, #5242, #5243, #5244</title><path class="markd" d="M826.8,478 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Oct 17: CI change(s) merged #5264, #5358, #5371</title><path class="markd" d="M854.5,478 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Oct 18: CI change(s) merged #5397</title><path class="markd" d="M882.2,478 l3,3 l-3,3 l-3,-3 Z"/></g>
-  <polyline class="line " points="79.8,605.1 107.5,604.5 135.2,605.2 162.8,601.9 190.5,597.0 218.2,604.2 245.8,595.2 273.5,603.6 301.2,564.4 328.8,598.2 356.5,599.8 384.2,605.1 411.8,601.9 439.5,597.9 467.2,597.1 494.8,602.3 522.5,578.9 550.2,581.2 577.8,592.3 605.5,600.7 633.2,568.3 660.8,576.3 688.5,502.8 716.2,540.9 743.8,589.9 771.5,544.9 799.2,587.3 826.8,606.8 854.5,601.7 882.2,606.8"/>
+  <polyline class="line " points="79.8,605.1 107.5,604.5 135.2,605.2 162.8,601.9 190.5,597.0 218.2,604.2 245.8,595.2 273.5,603.6 301.2,564.4 328.8,598.2 356.5,599.8 384.2,605.1 411.8,601.9 439.5,597.9 467.2,597.1 494.8,602.3 522.5,578.9 550.2,581.2 577.8,592.3 605.5,600.7 633.2,568.3 660.8,576.3 688.5,502.8 716.2,540.9 743.8,589.9 771.5,544.9 799.2,587.3 826.8,606.8 854.5,601.3 882.2,571.5"/>
   <circle class="dot " cx="79.8" cy="605.1" r="4"><title>Sep 19: 0.5 minutes · about 24 runs sampled per day</title></circle>
   <circle class="dot " cx="107.5" cy="604.5" r="4"><title>Sep 20: 0.6 minutes · about 24 runs sampled per day</title></circle>
   <circle class="dot " cx="135.2" cy="605.2" r="4"><title>Sep 21: 0.5 minutes · about 24 runs sampled per day</title></circle>
@@ -199,8 +199,8 @@
   <circle class="dot " cx="771.5" cy="544.9" r="4"><title>Oct 14: 15.5 minutes · about 24 runs sampled per day</title></circle>
   <circle class="dot " cx="799.2" cy="587.3" r="4"><title>Oct 15: 4.9 minutes · about 24 runs sampled per day</title></circle>
   <circle class="dot " cx="826.8" cy="606.8" r="4"><title>Oct 16: 0.1 minutes · about 24 runs sampled per day</title></circle>
-  <circle class="dot " cx="854.5" cy="601.7" r="4"><title>Oct 17: 1.3 minutes · about 24 runs sampled per day</title></circle>
-  <circle class="dot  partial" cx="882.2" cy="606.8" r="4"><title>Oct 18: 0.1 minutes · about 24 runs sampled per day (today so far)</title></circle>
+  <circle class="dot " cx="854.5" cy="601.3" r="4"><title>Oct 17: 1.4 minutes · about 24 runs sampled per day</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="571.5" r="4"><title>Oct 18: 8.9 minutes · about 24 runs sampled per day (today so far)</title></circle>
   <rect class="markd" x="774.8" y="449" width="9" height="9" rx="2"/>
   <text class="lbl" x="787.8" y="457">CI change merged</text>
   <rect class="band" x="674.7" y="677" width="221.3" height="120"/>
@@ -220,7 +220,7 @@
   <text class="tick" x="882.2" y="813" text-anchor="middle">Oct 18</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="647.0" x2="647.0" y1="673" y2="797"/></g>
   <line class="start" x1="674.7" x2="674.7" y1="673" y2="797"/>
-  <polyline class="line " points="79.8,790.2 107.5,794.7 135.2,791.3 162.8,794.9 190.5,794.0 218.2,794.6 245.8,792.7 273.5,792.8 301.2,791.2 328.8,779.5 356.5,784.0 384.2,790.4 411.8,792.2 439.5,790.9 467.2,792.8 494.8,791.1 522.5,790.7 550.2,764.7 577.8,787.4 605.5,777.3 633.2,773.3 660.8,692.5 688.5,762.9 716.2,765.1 743.8,767.5 771.5,720.9 799.2,788.4 826.8,787.2 854.5,786.8 882.2,786.5"/>
+  <polyline class="line " points="79.8,790.2 107.5,794.7 135.2,791.3 162.8,794.9 190.5,794.0 218.2,794.6 245.8,792.7 273.5,792.8 301.2,791.2 328.8,779.5 356.5,784.0 384.2,790.4 411.8,792.2 439.5,790.9 467.2,792.8 494.8,791.1 522.5,790.7 550.2,764.7 577.8,787.4 605.5,777.3 633.2,773.3 660.8,692.5 688.5,762.9 716.2,765.1 743.8,767.5 771.5,720.9 799.2,788.4 826.8,787.2 854.5,788.8 882.2,793.4"/>
   <circle class="dot " cx="79.8" cy="790.2" r="4"><title>Sep 19: 1.69 runner hours / merged PR</title></circle>
   <circle class="dot " cx="107.5" cy="794.7" r="4"><title>Sep 20: 0.56 runner hours / merged PR</title></circle>
   <circle class="dot " cx="135.2" cy="791.3" r="4"><title>Sep 21: 1.42 runner hours / merged PR</title></circle>
@@ -249,8 +249,8 @@
   <circle class="dot " cx="771.5" cy="720.9" r="4"><title>Oct 14: 19.02 runner hours / merged PR</title></circle>
   <circle class="dot " cx="799.2" cy="788.4" r="4"><title>Oct 15: 2.15 runner hours / merged PR</title></circle>
   <circle class="dot " cx="826.8" cy="787.2" r="4"><title>Oct 16: 2.44 runner hours / merged PR</title></circle>
-  <circle class="dot " cx="854.5" cy="786.8" r="4"><title>Oct 17: 2.54 runner hours / merged PR</title></circle>
-  <circle class="dot  partial" cx="882.2" cy="786.5" r="4"><title>Oct 18: 2.62 runner hours / merged PR (today so far)</title></circle>
+  <circle class="dot " cx="854.5" cy="788.8" r="4"><title>Oct 17: 2.05 runner hours / merged PR</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="793.4" r="4"><title>Oct 18: 0.89 runner hours / merged PR (today so far)</title></circle>
   <rect class="band" x="674.7" y="867" width="221.3" height="120"/>
   <g><title>CI workflow-run outcomes; not a per-PR quality score. Reruns that passed: 65.5% (38 passed, 20 failed again; 69 total). Mainframe Ground Truth: 25 reruns, 19 passed, 0 failed again. Det Sweep: 23 reruns, 14 passed, 6 failed again. GitGalaxy Smoke Tests: 11 reruns, 3 passed, 8 failed again. Muninn Security Scan: 6 reruns, 0 passed, 4 failed again. Full Suite Gate (All OS x Python): 2 reruns, 1 passed, 1 failed again. Generated Docs: 1 reruns, 1 passed, 0 failed again. GitGalaxy Zero-Trust Pipeline: 1 reruns, 0 passed, 1 failed again</title><text class="h2" x="24" y="837">4 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed</text></g>
   <line class="base" x1="66" x2="896" y1="987.0" y2="987.0"/>
@@ -272,7 +272,11 @@
   <text class="tick" x="882.2" y="1003" text-anchor="middle">Oct 18</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="647.0" x2="647.0" y1="863" y2="987"/></g>
   <line class="start" x1="674.7" x2="674.7" y1="863" y2="987"/>
-  <polyline class="line saved" points="467.2,891.4 494.8,914.8 522.5,933.8 550.2,929.9 577.8,917.9 605.5,919.9 633.2,926.4 660.8,938.6 688.5,922.6 716.2,941.3 743.8,932.5 771.5,893.4 799.2,955.6 826.8,891.6 854.5,937.0 882.2,965.9"/>
+  <polyline class="line saved" points="356.5,952.1 384.2,930.0 411.8,942.4 439.5,944.8 467.2,891.4 494.8,914.8 522.5,933.8 550.2,929.9 577.8,917.9 605.5,919.9 633.2,926.4 660.8,938.6 688.5,922.6 716.2,941.3 743.8,932.5 771.5,893.4 799.2,955.6 826.8,891.6 854.5,937.0 882.2,897.3"/>
+  <circle class="dot saved" cx="356.5" cy="952.1" r="4"><title>Sep 29: 2.9% of run minutes saved by early cancellation (est. 98 of 3,369 min; 51 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="384.2" cy="930.0" r="4"><title>Sep 30: 4.7% of run minutes saved by early cancellation (est. 82 of 1,727 min; 34 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="411.8" cy="942.4" r="4"><title>Oct 1: 3.7% of run minutes saved by early cancellation (est. 98 of 2,638 min; 26 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="439.5" cy="944.8" r="4"><title>Oct 2: 3.5% of run minutes saved by early cancellation (est. 432 of 12,275 min; 130 runs cancelled)</title></circle>
   <circle class="dot saved" cx="467.2" cy="891.4" r="4"><title>Oct 3: 8.0% of run minutes saved by early cancellation (est. 568 of 7,127 min; 146 runs cancelled)</title></circle>
   <circle class="dot saved" cx="494.8" cy="914.8" r="4"><title>Oct 4: 6.0% of run minutes saved by early cancellation (est. 411 of 6,829 min; 105 runs cancelled)</title></circle>
   <circle class="dot saved" cx="522.5" cy="933.8" r="4"><title>Oct 5: 4.4% of run minutes saved by early cancellation (est. 806 of 18,171 min; 246 runs cancelled, 19 not priced)</title></circle>
@@ -288,8 +292,8 @@
   <circle class="dot saved" cx="799.2" cy="955.6" r="4"><title>Oct 15: 2.6% of run minutes saved by early cancellation (est. 407 of 15,534 min; 68 runs cancelled)</title></circle>
   <circle class="dot saved" cx="826.8" cy="891.6" r="4"><title>Oct 16: 8.0% of run minutes saved by early cancellation (est. 847 of 10,653 min; 177 runs cancelled)</title></circle>
   <circle class="dot saved" cx="854.5" cy="937.0" r="4"><title>Oct 17: 4.2% of run minutes saved by early cancellation (est. 672 of 16,114 min; 175 runs cancelled)</title></circle>
-  <circle class="dot saved partial" cx="882.2" cy="965.9" r="4"><title>Oct 18: 1.8% of run minutes saved by early cancellation (est. 22 of 1,251 min; 5 runs cancelled) (today so far)</title></circle>
-  <polyline class="line failedl" points="79.8,894.7 107.5,931.6 135.2,889.4 162.8,940.6 190.5,978.8 218.2,977.6 245.8,965.3 273.5,976.1 301.2,971.3 328.8,950.5 356.5,969.4 384.2,955.7 411.8,964.7 439.5,960.8 467.2,958.7 494.8,959.4 522.5,955.1 550.2,947.6 577.8,924.5 605.5,956.1 633.2,944.3 660.8,949.9 688.5,964.9 716.2,948.3 743.8,959.7 771.5,963.6 799.2,950.8 826.8,966.0 854.5,959.3 882.2,970.5"/>
+  <circle class="dot saved partial" cx="882.2" cy="897.3" r="4"><title>Oct 18: 7.5% of run minutes saved by early cancellation (est. 889 of 11,890 min; 152 runs cancelled) (today so far)</title></circle>
+  <polyline class="line failedl" points="79.8,894.7 107.5,931.6 135.2,889.4 162.8,940.6 190.5,978.8 218.2,977.6 245.8,965.3 273.5,976.1 301.2,971.3 328.8,950.5 356.5,969.4 384.2,955.7 411.8,964.7 439.5,960.8 467.2,958.7 494.8,959.4 522.5,955.1 550.2,947.6 577.8,924.5 605.5,956.1 633.2,944.3 660.8,949.9 688.5,964.9 716.2,948.3 743.8,959.7 771.5,963.6 799.2,950.8 826.8,966.0 854.5,959.3 882.2,974.0"/>
   <circle class="dot failedl" cx="79.8" cy="894.7" r="4"><title>Sep 19: 7.7% of runs failed (30 of 390 CI runs that passed or failed)</title></circle>
   <circle class="dot failedl" cx="107.5" cy="931.6" r="4"><title>Sep 20: 4.6% of runs failed (15 of 325 CI runs that passed or failed)</title></circle>
   <circle class="dot failedl" cx="135.2" cy="889.4" r="4"><title>Sep 21: 8.1% of runs failed (17 of 209 CI runs that passed or failed)</title></circle>
@@ -319,7 +323,7 @@
   <circle class="dot failedl" cx="799.2" cy="950.8" r="4"><title>Oct 15: 3.0% of runs failed (77 of 2,549 CI runs that passed or failed)</title></circle>
   <circle class="dot failedl" cx="826.8" cy="966.0" r="4"><title>Oct 16: 1.7% of runs failed (38 of 2,176 CI runs that passed or failed)</title></circle>
   <circle class="dot failedl" cx="854.5" cy="959.3" r="4"><title>Oct 17: 2.3% of runs failed (59 of 2,559 CI runs that passed or failed)</title></circle>
-  <circle class="dot failedl partial" cx="882.2" cy="970.5" r="4"><title>Oct 18: 1.4% of runs failed (5 of 364 CI runs that passed or failed) (today so far)</title></circle>
+  <circle class="dot failedl partial" cx="882.2" cy="974.0" r="4"><title>Oct 18: 1.1% of runs failed (17 of 1,567 CI runs that passed or failed) (today so far)</title></circle>
   <rect class="failed" x="805.8" y="829" width="9" height="9" rx="2"/>
   <text class="lbl" x="818.8" y="837">runs failed</text>
   <rect class="saved" x="659.8" y="829" width="9" height="9" rx="2"/>
