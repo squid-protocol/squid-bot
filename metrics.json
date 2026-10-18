@@ -480,6 +480,12 @@
   "2026-09-25": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 170,
+     "saved_min_est": 353,
+     "unpriced": 0,
+     "wall_min": 6868
+    },
     "ci_changes": [
      {
       "pr": 3547,
@@ -561,6 +567,12 @@
   "2026-09-26": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 170,
+     "saved_min_est": 430,
+     "unpriced": 0,
+     "wall_min": 5180
+    },
     "ci_changes": [
      {
       "pr": 3761,
@@ -635,6 +647,12 @@
   "2026-09-27": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 136,
+     "saved_min_est": 468,
+     "unpriced": 0,
+     "wall_min": 7743
+    },
     "ci_changes": [
      {
       "pr": 3864,
@@ -695,6 +713,12 @@
   "2026-09-28": {
    "detail": {
     "bot_runs": 0,
+    "cancel_savings": {
+     "cancelled": 29,
+     "saved_min_est": 69,
+     "unpriced": 0,
+     "wall_min": 1568
+    },
     "ci_changes": [
      {
       "pr": 3961,
@@ -2499,17 +2523,37 @@
   },
   "2026-10-18": {
    "detail": {
-    "bot_runs": 957,
+    "bot_runs": 1446,
     "cancel_savings": {
-     "cancelled": 152,
-     "saved_min_est": 889,
+     "cancelled": 225,
+     "saved_min_est": 1506,
      "unpriced": 0,
-     "wall_min": 11001
+     "wall_min": 17769
     },
     "ci_changes": [
      {
       "pr": 5397,
       "title": "Estate evidence roll-up published on the generated branch (Part of #4054) (#5397)"
+     },
+     {
+      "pr": 5425,
+      "title": "ci: workflows install the editable package with --no-build-isolation (Part of #4918) (#5425)"
+     },
+     {
+      "pr": 5433,
+      "title": "CI: retry hash-pinned pip installs in three workflows (Part of #5048) (#5433)"
+     },
+     {
+      "pr": 5434,
+      "title": "ci: seed the Generated Java same-base cache from its own uncancellable workflow (Part of #5142) (#5434)"
+     },
+     {
+      "pr": 5456,
+      "title": "Shepherd workflows keep and use the learned-flake cache (Fixes #5398) (#5456)"
+     },
+     {
+      "pr": 5469,
+      "title": "architecture brief: publish to the generated branch instead of an auto-merged PR (Part of #4963) (#5469)"
      }
     ],
     "reruns": {
@@ -2525,44 +2569,43 @@
      "passed": 0,
      "runs": 1
     },
-    "runner_min_est": 2879,
+    "runner_min_est": 2608,
     "sampled_min_by_origin": {
-     "agent": 2.5,
-     "bot": 12.8,
-     "main": 0.9
+     "bot": 14.0,
+     "main": 0.2
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.3,
+     "CI shepherd (label events)": 0.5,
      "CI shepherd (reconcile)": 0.0,
      "CodeQL Security Scan": 3.7,
-     "Det Sweep": 0.9,
-     "Evidence Pages": 0.6,
-     "GitGalaxy Zero-Trust Pipeline": 5.5,
-     "Mypy Audit": 0.6,
-     "post-merge": 0.3,
+     "Estate Crucible": 0.5,
+     "Generated Docs": 0.6,
+     "GitGalaxy Zero-Trust Pipeline": 3.5,
+     "Main Watch": 0.2,
+     "Ruff Audit": 0.8,
      "unicode-gauntlet": 4.5
     },
-    "sampled_runs": 12,
-    "wait_median": 1.43,
-    "wait_p90": 8.88
+    "sampled_runs": 18,
+    "wait_median": 4.88,
+    "wait_p90": 12.47
    },
-   "merged": 54,
+   "merged": 78,
    "merged_by_class": {
-    "agent": 4,
+    "agent": 5,
     "automation": 0,
-    "bot": 48,
+    "bot": 71,
     "other": 2
    },
    "runs": {
-    "cancelled": 521,
-    "failure": 17,
-    "skipped": 665,
-    "success": 1550,
-    "total": 2787
+    "cancelled": 853,
+    "failure": 36,
+    "skipped": 971,
+    "success": 2388,
+    "total": 4273
    }
   }
  },
- "open_prs": 10,
+ "open_prs": 12,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-18T11:26Z"
+ "updated": "2026-10-18T16:11Z"
 }
