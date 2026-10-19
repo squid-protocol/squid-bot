@@ -304,14 +304,18 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
     }
 
 
-def fetch_day(repo: str, day: str, cfg: Config) -> dict:
+def count_runs(repo: str, day: str, query: str = "") -> int:
     # total_count tops out at 2,500 per query, a busy day passes that: count it in 6-hour windows
-    runs = {"total": sum(
-        gh_count(f"repos/{repo}/actions/runs?created={day}T{h:02d}:00:00Z..{day}T{h + 5:02d}:59:59Z&per_page=1")
+    return sum(
+        gh_count(f"repos/{repo}/actions/runs?created={day}T{h:02d}:00:00Z..{day}T{h + 5:02d}:59:59Z{query}&per_page=1")
         for h in (0, 6, 12, 18)
-    )}
+    )
+
+
+def fetch_day(repo: str, day: str, cfg: Config) -> dict:
+    runs = {"total": count_runs(repo, day)}
     for outcome in OUTCOMES:
-        runs[outcome] = gh_count(f"repos/{repo}/actions/runs?created={day}&status={outcome}&per_page=1")
+        runs[outcome] = count_runs(repo, day, f"&status={outcome}")
     return {**merged_counts(repo, day, cfg), "runs": runs}
 
 
