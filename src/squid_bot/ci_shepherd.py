@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""The CI shepherd (#4790): takes a queue of pull requests to merge, and does the waiting and the sorting itself.
+"""RETIRED as the live shepherd (#5398): the GitHub workflows (shepherd-reconcile.yml / shepherd-event.yml, via
+tests/tools/shepherd_gh.py) are the live one; no unit or process runs this on the box. Kept as the fallback docs/ci.md
+names for when the workflows are down. Its learned-flake handling (below) now exists in shepherd_gh too.
+
+The CI shepherd (#4790): takes a queue of pull requests to merge, and does the waiting and the sorting itself.
 
     python tests/tools/box/ci_shepherd.py add 4811 4819 [--after 4811]   # queue PRs (--after: wait for that one first)
     python tests/tools/box/ci_shepherd.py run [--once] [--every 600] [--hours 6]
@@ -44,6 +48,7 @@ try:
 except ImportError:
     TOOLS = Path(__file__).resolve().parents[1]
     sys.path.insert(0, str(TOOLS))
+    sys.path.insert(0, str(Path(__file__).resolve().parent))  # box_status
     import ci_digest  # noqa: E402
     import flake_history  # noqa: E402
     import pr_check  # noqa: E402
@@ -130,7 +135,8 @@ def box_verdict() -> str:
         try:
             from squid_bot import box_status
         except ImportError:
-            import box_status  # type: ignore[no-redef]
+            import box_status
+
         if not Path("/proc/meminfo").exists():
             return "GREEN"
         return str(box_status.snapshot(sample=0.1).get("verdict") or "GREEN")
@@ -159,7 +165,9 @@ def fixer_priority(state: dict[str, Any], cand: tuple[int, str, dict[str, Any]])
     return (-waiting, len(real["failed"]), n)
 
 
-def start_fixers(state: dict[str, Any], cands: list[tuple[int, str, dict[str, Any]]], fixer: str, did: list[str]) -> None:
+def start_fixers(
+    state: dict[str, Any], cands: list[tuple[int, str, dict[str, Any]]], fixer: str, did: list[str]
+) -> None:
     """Start at most MAX_FIXERS of the pass's fixer candidates, most useful first, when the box reads GREEN. The box
     is read once: a fixer just started has not loaded it yet, so a second reading in the same pass would lie."""
     cands = sorted(cands, key=lambda c: fixer_priority(state, c))

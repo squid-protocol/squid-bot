@@ -228,7 +228,10 @@ def main(argv: list[str] | None = None, api: Api = gh_api) -> int:
     res = check(args.number, api)
     print(json.dumps(res, indent=1) if args.json else report(res))
     if args.digest and res["checks"]["failed"]:
-        import ci_digest  # noqa: PLC0415 -- fetches job logs; only when asked
+        try:
+            from squid_bot import ci_digest
+        except ImportError:
+            import ci_digest  # noqa: PLC0415 -- fetches job logs; only when asked
 
         print("\n" + ci_digest.render(ci_digest.digest(args.number, api)))
     if not args.merge:

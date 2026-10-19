@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -164,12 +165,9 @@ def file_issues(rows: list[dict[str, Any]], run: Any = subprocess.run) -> list[s
 
 
 def default_cache() -> Path:
-    try:
-        from squid_bot.config import get_state_path
-
-        return get_state_path().parent / "flake_history.json"
-    except Exception:  # noqa: BLE001 (GitGalaxy has no squid_bot.config)
-        return Path("/tmp/squid-bot/state/flake_history.json")  # noqa: S108
+    state = os.environ.get("CI_SHEPHERD_STATE")  # beside ci_shepherd's state file, where learned_flakes reads it
+    base = Path(state).parent if state else Path.home() / ".cache" / "gitgalaxy"
+    return base / "flake_history.json"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -178,7 +176,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--refresh-only", action="store_true")
     ap.add_argument("--no-refresh", action="store_true", help="report from the cache without calling GitHub")
-    ap.add_argument("--file-issues", action="store_true", help="open one issue per learned-flaky job (writes to GitHub)")
+    ap.add_argument(
+        "--file-issues", action="store_true", help="open one issue per learned-flaky job (writes to GitHub)"
+    )
     a = ap.parse_args(argv)
     cache = load(a.cache) if a.no_refresh else refresh(pr_check.gh_api, a.cache)
     if a.refresh_only:
@@ -192,8 +192,10 @@ def main(argv: list[str] | None = None) -> int:
         for r in rows:
             mark = "FLAKY " if r["learned_flaky"] else "      "
             why = ", ".join(f"{k} {v}" for k, v in r["causes"].items())
-            print(f"  {mark}{r['job']}: passed on rerun {r['passed_on_rerun']}, failed again {r['failed_again']}"
-                  + (f" ({why})" if why else ""))
+            print(
+                f"  {mark}{r['job']}: passed on rerun {r['passed_on_rerun']}, failed again {r['failed_again']}"
+                + (f" ({why})" if why else "")
+            )
         if not rows:
             print("  no reruns")
     if a.file_issues:

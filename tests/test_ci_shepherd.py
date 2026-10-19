@@ -303,6 +303,7 @@ def test_main_failures_keeps_the_last_known_verdict_while_main_tip_is_still_runn
         "p": {"sha": "p", "parents": []},
         "p/check-runs": {"check_runs": [run("lint", "failure"), run("full-suite", "failure")]},
     }
+
     def api(path):
         return docs[path.split("/commits/", 1)[1].split("?")[0]]
 
@@ -319,8 +320,17 @@ def test_a_learned_flake_gets_one_rerun_on_its_first_attempt_only():
         if "/commits/m/check-runs" in path:
             return {"check_runs": []}
         if "/check-runs" in path:
-            return {"check_runs": [{"id": 1, "name": "smoke", "status": "completed", "conclusion": "failure",
-                                    "details_url": "https://github.com/o/r/actions/runs/7/job/8"}]}
+            return {
+                "check_runs": [
+                    {
+                        "id": 1,
+                        "name": "smoke",
+                        "status": "completed",
+                        "conclusion": "failure",
+                        "details_url": "https://github.com/o/r/actions/runs/7/job/8",
+                    }
+                ]
+            }
         if "/actions/jobs/8" in path:
             return {"run_attempt": attempt[0]}
         return {"head": {"sha": "h"}, "mergeable_state": "clean"}
@@ -362,3 +372,15 @@ def test_a_stale_flake_cache_is_refreshed_in_the_background_at_most_hourly(monke
     assert len(spawned) == 1 and "--refresh-only" in spawned[0]
     (tmp_path / "flake_history.json").write_text('{"updated": 100700, "days": {"d": {"smoke": [2, 0]}}}')
     assert cs.learned_flakes(state, t=110_000.0) == {"smoke"} and len(spawned) == 1
+
+
+def test_box_verdict_reads_gitgalaxy_box_status(monkeypatch):
+    try:
+        from squid_bot import box_status
+    except ImportError:
+        import box_status
+
+    if not Path("/proc/meminfo").exists():
+        pytest.skip("no /proc/meminfo")
+    monkeypatch.setattr(box_status, "snapshot", lambda sample=0.1: {"verdict": "RED"})
+    assert cs.box_verdict() == "RED"
