@@ -272,3 +272,14 @@ def test_the_efficiency_chart_plots_minutes_saved_and_failed_runs_as_percentages
     assert "minutes saved (est.)" in svg and "runs failed" in svg
     md = dashboard.summary_md(data, CFG, 30, TODAY, [])
     assert "| Proof · failed runs |" in md
+
+
+def test_fetch_day_counts_each_outcome_in_windows_so_a_busy_day_passes_the_2500_cap(monkeypatch):
+    def fake(path):  # 1,000 successes and 10 failures per 6-hour window; GitHub stops counting at 2,500
+        n = 1000 if "status=success" in path else 10
+        return min(2500, n if ".." in path else 4 * n)
+    monkeypatch.setattr(dashboard, "gh_count", fake)
+    monkeypatch.setattr(dashboard, "merged_counts", lambda repo, day, cfg: {"merged": 0})
+    runs = dashboard.fetch_day("owner/repo", "2026-10-18", CFG)["runs"]
+    assert runs["success"] == 4000
+    assert runs["failure"] == 40
