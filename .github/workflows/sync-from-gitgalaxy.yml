@@ -1,0 +1,81 @@
+name: Sync from GitGalaxy
+
+# The shepherd and box tools live and change in GitGalaxy's tests/tools; this repo carries their generalized copies
+# (scripts/sync.py MAPPINGS). Daily, pull GitGalaxy's main through sync.py's transforms, test the result, and keep
+# ONE pull request (branch sync/from-gitgalaxy) open with the drift. Nothing reaches main without review; with no
+# drift the PR is closed and its branch deleted.
+#
+# Token: secrets.AUTOMATION_PAT when set (its PR also runs the Tests workflow); otherwise github.token, which needs
+# Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests" and runs no Tests on
+# its PR, so this job runs the suite itself and puts the result in the PR title and body.
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-from-gitgalaxy
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out GitGalaxy main (public, read-only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: squid-protocol/gitgalaxy
+          path: .gitgalaxy
+          persist-credentials: false
+          sparse-checkout: |
+            tests/tools
+            .github/workflows
+            .claude/skills
+      - name: Pull through the transforms
+        id: pull
+        run: |
+          echo "sha=$(git -C .gitgalaxy rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+          GITGALAXY_ROOT="$PWD/.gitgalaxy" python3 scripts/sync.py pull
+          rm -rf .gitgalaxy
+          git status --short
+      - name: Test the synced tree
+        id: tests
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -q -e '.[dev]'
+          if .venv/bin/pytest -q > "$RUNNER_TEMP/pytest.txt" 2>&1; then result=passed; else result=FAILING; fi
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+          tail -n 25 "$RUNNER_TEMP/pytest.txt"
+          { echo 'tail<<PYTEST_EOF'; tail -n 25 "$RUNNER_TEMP/pytest.txt"; echo PYTEST_EOF; } >> "$GITHUB_OUTPUT"
+      - name: Open or update the sync pull request
+        uses: squid-protocol/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # forked from peter-evans/create-pull-request v8.1.1
+        with:
+          token: ${{ secrets.AUTOMATION_PAT || github.token }}
+          branch: sync/from-gitgalaxy
+          delete-branch: true
+          add-paths: |
+            src/squid_bot
+            tests
+            scripts
+            templates
+          commit-message: "sync: GitGalaxy main ${{ steps.pull.outputs.sha }} through scripts/sync.py"
+          title: "sync: GitGalaxy main ${{ steps.pull.outputs.sha }} (tests ${{ steps.tests.outputs.result }})"
+          body: |
+            Automated daily pull of GitGalaxy's tools (`scripts/sync.py pull`) at squid-protocol/gitgalaxy@${{ steps.pull.outputs.sha }}.
+            Review the diff like any change: the transforms generalize imports, paths and repo names, and anything they
+            miss shows up here. A squid-bot-only edit that this reverts belongs in a sync.py transform (or upstream in
+            GitGalaxy), not in this branch, which is rewritten on every run.
+
+            Tests on the synced tree: **${{ steps.tests.outputs.result }}**
+            ```
+            ${{ steps.tests.outputs.tail }}
+            ```
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
