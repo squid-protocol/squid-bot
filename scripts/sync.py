@@ -76,33 +76,58 @@ MAPPINGS: list[tuple[str, str]] = [
 ]
 
 
+# Modules that are siblings in GitGalaxy's tests/tools and members of the squid_bot package here.
+LOCAL_MODULES = ("box_status", "ci_digest", "ci_shepherd", "flake_history", "pr_check", "shepherd_gh")
+_LOCAL = "|".join(LOCAL_MODULES)
+# A top-level run of sibling imports, with the TOOLS / sys.path lines that set it up.
+_TOP_IMPORTS = re.compile(
+    rf"^(?:TOOLS = [^\n]*\n)?(?:sys\.path\.insert\(0, [^\n]*\n)*(?:import (?:{_LOCAL})\b[^\n]*\n)+", re.MULTILINE)
+_IMPORT = re.compile(rf"^\s*import ({_LOCAL})(?: as (\w+))?\b")
+
+
+def _wrap(block: str, indent: str = "") -> str:
+    names = [f"{m.group(1)} as {m.group(2)}" if m.group(2) else m.group(1)
+             for line in block.splitlines() if (m := _IMPORT.match(line))]
+    body = "".join(f"{indent}    {line.strip()}\n" if line.strip() else "\n" for line in block.splitlines())
+    return f"{indent}try:\n{indent}    from squid_bot import {', '.join(names)}\n{indent}except ImportError:\n{body}"
+
+
+def package_imports(content: str) -> str:
+    """Wrap each sibling import in `try: from squid_bot import ... except ImportError: <GitGalaxy's original>`.
+    Function-local imports first (one line each), then top-level runs; an import already inside a try/except,
+    or grouped under one, is left as it is."""
+    lines, out = content.split("\n"), []
+
+    def depth(x: str) -> int:
+        return len(x) - len(x.lstrip())
+
+    def guarded(i: int) -> bool:
+        """The import's block is `except ImportError:`, or a `try:` whose handler is one."""
+        k = depth(lines[i])
+        head = next((j for j in range(i - 1, -1, -1) if lines[j].strip() and depth(lines[j]) < k), None)
+        if head is None:
+            return False
+        if lines[head].strip().startswith("except ImportError"):
+            return True
+        if lines[head].strip() != "try:":
+            return False
+        nxt = next((x for x in lines[i + 1:] if x.strip() and depth(x) <= depth(lines[head])), "")
+        return nxt.strip().startswith("except ImportError")
+
+    for i, line in enumerate(lines):
+        m = _IMPORT.match(line)
+        indent = line[: len(line) - len(line.lstrip())]
+        if m and indent and not guarded(i):
+            out.append(_wrap(line + "\n", indent).rstrip("\n"))
+        else:
+            out.append(line)
+    return _TOP_IMPORTS.sub(lambda m: _wrap(m.group(0)), "\n".join(out))
+
+
 def transform_for_squid_bot(content: str, rel_dest: str) -> str:
     """Transform GitGalaxy-specific code into generalized squid_bot code."""
-    # 1. Adapt Python imports in src/squid_bot
+    # 1. Adapt src/squid_bot (the sibling imports are handled last, by package_imports)
     if rel_dest.startswith("src/squid_bot/"):
-        # Handle sys.path hacking in shepherd_gh.py
-        content = re.sub(
-            r'sys\.path\.insert\(0,\s*str\(Path\(__file__\)\.resolve\(\)\.parent\)\)\nimport ci_digest\s+# noqa: E402\nimport pr_check\s+# noqa: E402',
-            'try:\n    from squid_bot import ci_digest, pr_check\nexcept ImportError:\n    import ci_digest  # noqa: E402\n    import pr_check  # noqa: E402',
-            content,
-        )
-        # Handle sys.path hacking in ci_digest.py
-        content = re.sub(
-            r'sys\.path\.insert\(0,\s*str\(Path\(__file__\)\.resolve\(\)\.parent\)\)\nimport pr_check\s+# noqa: E402',
-            'try:\n    from squid_bot import pr_check\nexcept ImportError:\n    import pr_check  # noqa: E402',
-            content,
-        )
-        # Handle sys.path hacking in ci_shepherd.py
-        content = re.sub(
-            r'TOOLS = Path\(__file__\)\.resolve\(\)\.parents\[1\]\nsys\.path\.insert\(0,\s*str\(TOOLS\)\)\nimport ci_digest\s+# noqa: E402\n(import flake_history\s+# noqa: E402\n)?import pr_check\s+# noqa: E402',
-            lambda m: (
-                f"try:\n    from squid_bot import ci_digest, {'flake_history, ' if m.group(1) else ''}pr_check\nexcept ImportError:\n"
-                "    TOOLS = Path(__file__).resolve().parents[1]\n    sys.path.insert(0, str(TOOLS))\n    import ci_digest  # noqa: E402\n"
-                + ("    import flake_history  # noqa: E402\n" if m.group(1) else "")
-                + "    import pr_check  # noqa: E402"
-            ),
-            content,
-        )
 
         # Handle hardcoded repo slug definitions
         content = re.sub(
@@ -206,6 +231,14 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
             content = content.replace('REPO / ".github" / "workflows" / "shepherd-reconcile.yml"',
                                       'REPO / "templates" / "workflows" / "shepherd-reconcile.yml"')
 
+        # GitGalaxy guards its tools against naming this package; here they are this package
+        if "test_flake_history.py" in rel_dest:
+            content = content.replace(
+                "def test_no_squid_bot_reference_in_the_shepherd_tools():\n",
+                "def test_no_squid_bot_reference_in_the_shepherd_tools():\n    import pytest\n\n"
+                '    pytest.skip("GitGalaxy-only: in squid-bot the tools are the squid_bot package")\n',
+            )
+
     # 3. Adapt scripts
     if rel_dest.endswith("heavy-run.sh"):
         content = re.sub(
@@ -225,6 +258,11 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
             'dir="${SQUID_BOT_LOCK_DIR:-${GG_LOCK_DIR:-/tmp/squid-bot/locks}}"',
         ).replace("${GG_LOCK_DIR:-/tmp/gitgalaxy-scratch/locks}/golden.lock", "${SQUID_BOT_LOCK_DIR:-/tmp/squid-bot/locks}/golden.lock")
 
+    # 4. Sibling imports come from the squid_bot package, GitGalaxy's sys.path way as the fallback. Last, so the
+    #    file-specific rewrites above still see GitGalaxy's original lines. Generic on purpose: the per-file
+    #    regexes this replaced stopped matching once GitGalaxy added flake_history to the import runs.
+    if rel_dest.startswith(("src/squid_bot/", "tests/")) and rel_dest.endswith(".py"):
+        content = package_imports(content)
     return content
 
 

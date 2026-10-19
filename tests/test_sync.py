@@ -43,3 +43,31 @@ def test_transform_for_squid_bot_keeps_ci_shepherd_imports_with_and_without_flak
         res = sync.transform_for_squid_bot(head + extra + "import pr_check  # noqa: E402\n", "src/squid_bot/ci_shepherd.py")
         assert res.startswith("try:\n    " + want + "\nexcept ImportError:\n")
         assert ("    import flake_history  # noqa: E402" in res) == bool(extra)
+
+
+def test_package_imports_covers_any_sibling_run_and_aliases():
+    src = ("import sys\n\nsys.path.insert(0, str(Path(__file__).resolve().parent))\nimport ci_digest  # noqa: E402\n"
+           "import flake_history  # noqa: E402\nimport pr_check  # noqa: E402\n\nX = 1\n")
+    res = sync.package_imports(src)
+    assert "try:\n    from squid_bot import ci_digest, flake_history, pr_check\nexcept ImportError:\n" in res
+    assert "    sys.path.insert(0, str(Path(__file__).resolve().parent))\n    import ci_digest  # noqa: E402\n" in res
+    assert res.startswith("import sys\n") and res.endswith("\nX = 1\n")  # other imports and code untouched
+    assert sync.package_imports("import flake_history as fh\n") == (
+        "try:\n    from squid_bot import flake_history as fh\nexcept ImportError:\n    import flake_history as fh\n")
+    assert sync.package_imports("import ci_rerun_stats\nimport json\n") == "import ci_rerun_stats\nimport json\n"
+
+
+def test_package_imports_wraps_function_local_imports_unless_import_guarded():
+    loose = "def f():\n    try:\n        import box_status\n        return 1\n    except Exception:\n        return 0\n"
+    res = sync.package_imports(loose)
+    assert "        try:\n            from squid_bot import box_status\n        except ImportError:\n            import box_status\n" in res
+    guarded = "def f():\n    try:\n        import box_status\n    except ImportError:\n        box_status = None\n"
+    assert sync.package_imports(guarded) == guarded
+    once = sync.package_imports("TOOLS = x\nsys.path.insert(0, str(TOOLS))\nimport ci_digest  # noqa: E402\n" + loose)
+    assert sync.package_imports(once) == once  # idempotent
+
+
+def test_gitgalaxy_only_guard_test_is_skipped_here():
+    src = "def test_no_squid_bot_reference_in_the_shepherd_tools():\n    from pathlib import Path\n"
+    res = sync.transform_for_squid_bot(src, "tests/test_flake_history.py")
+    assert 'pytest.skip("GitGalaxy-only' in res
