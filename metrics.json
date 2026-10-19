@@ -2659,12 +2659,12 @@
   },
   "2026-10-19": {
    "detail": {
-    "bot_runs": 1561,
+    "bot_runs": 1638,
     "cancel_savings": {
-     "cancelled": 157,
-     "saved_min_est": 882,
+     "cancelled": 160,
+     "saved_min_est": 884,
      "unpriced": 0,
-     "wall_min": 22529
+     "wall_min": 23426
     },
     "ci_changes": [
      {
@@ -2685,7 +2685,7 @@
      }
     ],
     "reruns": {
-     "attempts": 2,
+     "attempts": 3,
      "by_workflow": {
       "Det Sweep": [
        1,
@@ -2693,56 +2693,57 @@
        0
       ],
       "GitGalaxy Smoke Tests": [
-       0,
+       1,
        0,
        1
       ]
      },
      "failed_again": 0,
-     "passed": 1,
-     "runs": 2
+     "passed": 2,
+     "runs": 3
     },
-    "runner_min_est": 8470,
+    "runner_min_est": 10287,
     "sampled_min_by_origin": {
-     "bot": 47.4,
-     "main": 6.1
+     "bot": 55.0,
+     "main": 6.4
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.4,
      "CI shepherd (reconcile)": 0.0,
+     "Crucible Path Independence": 4.0,
      "Deploy Museum of Code Docs": 2.6,
      "Generated Docs": 1.5,
      "GitGalaxy Smoke Tests": 17.8,
+     "GitGalaxy Zero-Trust Pipeline": 4.3,
      "Main Watch": 0.4,
-     "Mainframe Ground Truth": 21.7,
-     "Mypy Audit": 0.4,
+     "Mainframe Ground Truth": 22.9,
+     "Mypy Audit": 0.8,
      "Small Audits": 1.2,
-     "Tri-Comparison Audit": 1.1,
-     "pages build and deployment": 1.4,
-     "post-merge": 0.8,
+     "pages build and deployment": 0.8,
+     "post-merge": 0.5,
      "unicode-gauntlet": 4.3
     },
     "sampled_runs": 24,
-    "wait_median": 1.15,
-    "wait_p90": 5.95
+    "wait_median": 0.55,
+    "wait_p90": 4.03
    },
-   "merged": 92,
+   "merged": 97,
    "merged_by_class": {
     "agent": 3,
     "automation": 0,
-    "bot": 88,
+    "bot": 93,
     "other": 1
    },
    "runs": {
-    "cancelled": 1001,
-    "failure": 52,
-    "skipped": 1083,
-    "success": 2737,
-    "total": 4884
+    "cancelled": 1031,
+    "failure": 55,
+    "skipped": 1157,
+    "success": 2925,
+    "total": 5179
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-19T20:28Z"
+ "updated": "2026-10-19T22:33Z"
 }
