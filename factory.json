@@ -313,42 +313,43 @@
    }
   },
   "2026-10-19": {
-   "churn_merged": 36,
-   "ci_busy_hours": 6.23,
+   "churn_merged": 94,
+   "ci_busy_hours": 11.22,
    "holds": {
-    "pace": 0,
-    "paused": 9,
+    "pace": 48,
+    "paused": 34,
     "prs-need-work": 0
    },
+   "hosts": 2,
    "idle_blockers": {},
    "idle_causes": {
+    "ci-busy": 3,
     "empty": 3,
+    "frontier": 3,
     "owner": 7,
     "wait": 4
    },
-   "idle_hours": 1.95,
-   "idle_ticks": 14,
-   "items_done": 0,
-   "loop_runs": 26,
-   "loops_per_merged_pr": 0.72,
-   "max_workers": 1,
-   "new_work_share": 0.787,
-   "paused_hours": 1.27,
-   "pr_open_to_merge_h_median": 0.62,
+   "idle_hours": 2.15,
+   "idle_ticks": 17,
+   "loop_runs": 61,
+   "loops_per_merged_pr": 0.65,
+   "max_workers": 2,
+   "new_work_share": 0.825,
+   "paused_hours": 5.4,
+   "pr_open_to_merge_h_median": 0.6,
    "precheck": {
-    "failed_again": 5,
-    "passed": 46,
-    "sent_back": 7
+    "failed_again": 6,
+    "passed": 126,
+    "sent_back": 17
    },
    "review_wait_min_median": 1.0,
-   "slices_merged": 1,
-   "slot_use": 0.772,
-   "usd": 59.34,
-   "usd_per_merged_churn_pr": 1.65,
+   "slot_use": 0.788,
+   "usd": 131.31,
+   "usd_per_merged_churn_pr": 1.4,
    "worker_hours": {
-    "new_work": 14.57,
-    "pr_fix": 2.15,
-    "precheck_retry": 0.58,
+    "new_work": 31.19,
+    "pr_fix": 4.52,
+    "precheck_retry": 0.86,
     "send_back": 1.22
    }
   }
@@ -664,6 +665,43 @@
      "precheck_retry": 0.63,
      "send_back": 0.03
     }
+   },
+   "2026-10-19": {
+    "churn_merged": 58,
+    "ci_busy_hours": 11.22,
+    "holds": {
+     "pace": 48,
+     "paused": 25,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "ci-busy": 3,
+     "frontier": 3
+    },
+    "idle_hours": 0.2,
+    "idle_ticks": 3,
+    "loop_runs": 35,
+    "loops_per_merged_pr": 0.6,
+    "max_workers": 1,
+    "new_work_share": 0.862,
+    "paused_hours": 4.13,
+    "pr_open_to_merge_h_median": 0.59,
+    "precheck": {
+     "failed_again": 1,
+     "passed": 80,
+     "sent_back": 10
+    },
+    "review_wait_min_median": 1.0,
+    "slot_use": 0.803,
+    "usd": 71.97,
+    "usd_per_merged_churn_pr": 1.24,
+    "worker_hours": {
+     "new_work": 16.62,
+     "pr_fix": 2.37,
+     "precheck_retry": 0.28,
+     "send_back": 0.0
+    }
    }
   },
   "nyx": {
@@ -748,5 +786,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T00:01Z"
+ "updated": "2026-10-20T07:11Z"
 }
