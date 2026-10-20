@@ -2742,9 +2742,56 @@
     "success": 2985,
     "total": 5237
    }
+  },
+  "2026-10-20": {
+   "detail": {
+    "bot_runs": 15,
+    "cancel_savings": {
+     "cancelled": 0,
+     "saved_min_est": 0,
+     "unpriced": 0,
+     "wall_min": 110
+    },
+    "ci_changes": [],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 83,
+    "sampled_min_by_origin": {
+     "bot": 7.8,
+     "main": 3.2
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (reconcile)": 0.0,
+     "Main Watch": 0.1,
+     "Ports Compile": 5.3,
+     "unicode-gauntlet": 5.6
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.03,
+    "wait_p90": 2.92
+   },
+   "merged": 0,
+   "merged_by_class": {
+    "agent": 0,
+    "automation": 0,
+    "bot": 0,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 4,
+    "failure": 0,
+    "skipped": 20,
+    "success": 27,
+    "total": 65
+   }
   }
  },
- "open_prs": 3,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T00:08Z"
+ "updated": "2026-10-20T00:26Z"
 }
