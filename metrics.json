@@ -2745,12 +2745,12 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 1408,
+    "bot_runs": 1516,
     "cancel_savings": {
-     "cancelled": 167,
-     "saved_min_est": 720,
+     "cancelled": 171,
+     "saved_min_est": 733,
      "unpriced": 0,
-     "wall_min": 20982
+     "wall_min": 22418
     },
     "ci_changes": [
      {
@@ -2779,12 +2779,12 @@
      }
     ],
     "reruns": {
-     "attempts": 6,
+     "attempts": 7,
      "by_workflow": {
       "Det Sweep": [
        2,
        0,
-       1
+       2
       ],
       "GitGalaxy Smoke Tests": [
        0,
@@ -2804,19 +2804,17 @@
      },
      "failed_again": 2,
      "passed": 3,
-     "runs": 6
+     "runs": 7
     },
-    "runner_min_est": 13259,
+    "runner_min_est": 11085,
     "sampled_min_by_origin": {
      "agent": 4.5,
-     "bot": 17.7,
-     "main": 71.4
+     "bot": 10.2,
+     "main": 58.4
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.6,
-     "CI shepherd (reconcile)": 37.9,
-     "Fact Cross-check": 4.5,
-     "GitGalaxy Zero-Trust Pipeline": 3.0,
+     "CI shepherd (reconcile)": 25.3,
      "Main Watch": 0.2,
      "Mainframe Ground Truth": 21.1,
      "Muninn Security Scan": 1.9,
@@ -2825,29 +2823,29 @@
      "Ports Compile": 12.6,
      "Ruff Audit": 0.5,
      "Small Audits": 3.3,
-     "pages build and deployment": 1.0
+     "pages build and deployment": 0.5
     },
     "sampled_runs": 24,
-    "wait_median": 0.12,
-    "wait_p90": 25.02
+    "wait_median": 3.48,
+    "wait_p90": 25.28
    },
-   "merged": 82,
+   "merged": 83,
    "merged_by_class": {
     "agent": 3,
     "automation": 0,
-    "bot": 78,
+    "bot": 79,
     "other": 1
    },
    "runs": {
-    "cancelled": 927,
-    "failure": 31,
-    "skipped": 1038,
-    "success": 2440,
-    "total": 4439
+    "cancelled": 990,
+    "failure": 35,
+    "skipped": 1127,
+    "success": 2578,
+    "total": 4769
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 11,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T20:06Z"
+ "updated": "2026-10-20T21:53Z"
 }
