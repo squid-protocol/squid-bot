@@ -2745,54 +2745,61 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 32,
+    "bot_runs": 127,
     "cancel_savings": {
      "cancelled": 0,
      "saved_min_est": 0,
      "unpriced": 0,
-     "wall_min": 235
+     "wall_min": 1028
     },
     "ci_changes": [],
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
-     "failed_again": 0,
+     "attempts": 1,
+     "by_workflow": {
+      "GitGalaxy Smoke Tests": [
+       0,
+       1,
+       0
+      ]
+     },
+     "failed_again": 1,
      "passed": 0,
-     "runs": 0
+     "runs": 1
     },
-    "runner_min_est": 314,
+    "runner_min_est": 3807,
     "sampled_min_by_origin": {
-     "bot": 7.2,
-     "main": 13.4
+     "bot": 35.6,
+     "main": 27.3
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (reconcile)": 12.6,
-     "Det Sweep": 1.5,
-     "Estate Crucible": 0.4,
-     "Mainframe Ground Truth": 0.8,
-     "Ports Compile": 5.3
+     "CI shepherd (label events)": 0.3,
+     "CI shepherd (reconcile)": 0.0,
+     "CICS Crucible": 26.9,
+     "GitGalaxy Smoke Tests": 27.3,
+     "Golden Crucible Resilience Test": 6.3,
+     "Muninn Security Scan": 2.1
     },
     "sampled_runs": 6,
     "wait_median": 0.03,
-    "wait_p90": 0.62
+    "wait_p90": 2.12
    },
-   "merged": 1,
+   "merged": 6,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 1,
     "automation": 0,
-    "bot": 1,
+    "bot": 5,
     "other": 0
    },
    "runs": {
-    "cancelled": 12,
-    "failure": 1,
-    "skipped": 36,
-    "success": 78,
-    "total": 127
+    "cancelled": 46,
+    "failure": 3,
+    "skipped": 123,
+    "success": 300,
+    "total": 486
    }
   }
  },
  "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T01:37Z"
+ "updated": "2026-10-20T05:05Z"
 }
