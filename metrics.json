@@ -2745,67 +2745,98 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 667,
+    "bot_runs": 1200,
     "cancel_savings": {
-     "cancelled": 64,
-     "saved_min_est": 286,
+     "cancelled": 148,
+     "saved_min_est": 792,
      "unpriced": 0,
-     "wall_min": 8109
+     "wall_min": 19538
     },
     "ci_changes": [
      {
       "pr": 5722,
       "title": "ci: apply the owner workflow patch (publish --no-isolation, drop dead requirements.txt installs) (Part of #4918) (#5722)"
+     },
+     {
+      "pr": 5749,
+      "title": "OS Smoke Grid: per-step timeouts so a hung setup step fails by name (Part of #5747) (#5749)"
+     },
+     {
+      "pr": 5751,
+      "title": "OS Smoke Grid: retry the setup installs, time-box every brew step (Part of #5747) (#5751)"
+     },
+     {
+      "pr": 5757,
+      "title": "full-suite-gate: retry the macOS brew install like the smoke grid (Part of #5747) (#5757)"
      }
     ],
     "reruns": {
-     "attempts": 1,
+     "attempts": 5,
      "by_workflow": {
+      "Det Sweep": [
+       2,
+       0,
+       0
+      ],
       "GitGalaxy Smoke Tests": [
        0,
        1,
        0
+      ],
+      "Mainframe Ground Truth": [
+       0,
+       1,
+       0
+      ],
+      "OS Smoke Grid": [
+       1,
+       0,
+       0
       ]
      },
-     "failed_again": 1,
-     "passed": 0,
-     "runs": 1
+     "failed_again": 2,
+     "passed": 3,
+     "runs": 5
     },
-    "runner_min_est": 3103,
+    "runner_min_est": 9409,
     "sampled_min_by_origin": {
-     "bot": 7.8,
-     "main": 13.3
+     "agent": 4.5,
+     "bot": 9.7,
+     "main": 43.7
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.3,
+     "Archetype Validation": 2.9,
+     "CI shepherd (label events)": 2.3,
      "CI shepherd (reconcile)": 12.6,
-     "Call Graph Accuracy Audit": 2.4,
      "Main Watch": 0.2,
+     "Mainframe Ground Truth": 21.1,
      "Muninn Security Scan": 1.9,
-     "Ports Compile": 3.3,
-     "pages build and deployment": 0.5
+     "Ports Compile": 12.6,
+     "Ruff Audit": 0.5,
+     "Small Audits": 1.7,
+     "pages build and deployment": 2.2
     },
-    "sampled_runs": 12,
-    "wait_median": 0.03,
-    "wait_p90": 1.18
+    "sampled_runs": 18,
+    "wait_median": 3.48,
+    "wait_p90": 25.28
    },
-   "merged": 38,
+   "merged": 66,
    "merged_by_class": {
-    "agent": 1,
+    "agent": 3,
     "automation": 0,
-    "bot": 37,
-    "other": 0
+    "bot": 62,
+    "other": 1
    },
    "runs": {
-    "cancelled": 429,
-    "failure": 8,
-    "skipped": 659,
-    "success": 1228,
-    "total": 2421
+    "cancelled": 783,
+    "failure": 24,
+    "skipped": 932,
+    "success": 2103,
+    "total": 3857
    }
   }
  },
- "open_prs": 13,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T11:57Z"
+ "updated": "2026-10-20T17:23Z"
 }
