@@ -2745,12 +2745,12 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 1200,
+    "bot_runs": 1408,
     "cancel_savings": {
-     "cancelled": 148,
-     "saved_min_est": 792,
+     "cancelled": 167,
+     "saved_min_est": 720,
      "unpriced": 0,
-     "wall_min": 19538
+     "wall_min": 20982
     },
     "ci_changes": [
      {
@@ -2768,15 +2768,23 @@
      {
       "pr": 5757,
       "title": "full-suite-gate: retry the macOS brew install like the smoke grid (Part of #5747) (#5757)"
+     },
+     {
+      "pr": 5766,
+      "title": "full-suite-gate: windows 3.11 cap 25 -> 33 min, pytest step times out before its job (Part of #5764) (#5766)"
+     },
+     {
+      "pr": 5768,
+      "title": "full-suite-gate: step timeout from matrix.step_timeout, expressions have no arithmetic (Part of #5764) (#5768)"
      }
     ],
     "reruns": {
-     "attempts": 5,
+     "attempts": 6,
      "by_workflow": {
       "Det Sweep": [
        2,
        0,
-       0
+       1
       ],
       "GitGalaxy Smoke Tests": [
        0,
@@ -2796,47 +2804,50 @@
      },
      "failed_again": 2,
      "passed": 3,
-     "runs": 5
+     "runs": 6
     },
-    "runner_min_est": 9409,
+    "runner_min_est": 13259,
     "sampled_min_by_origin": {
      "agent": 4.5,
-     "bot": 9.7,
-     "main": 43.7
+     "bot": 17.7,
+     "main": 71.4
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 2.9,
-     "CI shepherd (label events)": 2.3,
-     "CI shepherd (reconcile)": 12.6,
+     "CI shepherd (label events)": 0.6,
+     "CI shepherd (reconcile)": 37.9,
+     "Fact Cross-check": 4.5,
+     "GitGalaxy Zero-Trust Pipeline": 3.0,
      "Main Watch": 0.2,
      "Mainframe Ground Truth": 21.1,
      "Muninn Security Scan": 1.9,
+     "Mypy Audit": 0.7,
+     "OS Smoke Grid": 6.5,
      "Ports Compile": 12.6,
      "Ruff Audit": 0.5,
-     "Small Audits": 1.7,
-     "pages build and deployment": 2.2
+     "Small Audits": 3.3,
+     "pages build and deployment": 1.0
     },
-    "sampled_runs": 18,
-    "wait_median": 3.48,
-    "wait_p90": 25.28
+    "sampled_runs": 24,
+    "wait_median": 0.12,
+    "wait_p90": 25.02
    },
-   "merged": 66,
+   "merged": 82,
    "merged_by_class": {
     "agent": 3,
     "automation": 0,
-    "bot": 62,
+    "bot": 78,
     "other": 1
    },
    "runs": {
-    "cancelled": 783,
-    "failure": 24,
-    "skipped": 932,
-    "success": 2103,
-    "total": 3857
+    "cancelled": 927,
+    "failure": 31,
+    "skipped": 1038,
+    "success": 2440,
+    "total": 4439
    }
   }
  },
- "open_prs": 4,
+ "open_prs": 5,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T17:23Z"
+ "updated": "2026-10-20T20:06Z"
 }
