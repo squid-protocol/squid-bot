@@ -24,11 +24,11 @@ squid-bot keeps the swarm inside its habitat's carrying capacity. What it actual
 
 ## 📊 Live Fleet Dashboard
 
-![GitGalaxy promoter-bot fleet over time: delivery, cumulative bot PRs, speed, cost, spend and efficiency](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
+![GitGalaxy promoter-bot fleet over time: delivery, cumulative repo clones, speed, CI load, dollar spend, cost per PR and efficiency](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
 Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The dashboard lines up six panels over time, with solid lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live: merged PRs per day by origin; promoter-bot's merged PRs, cumulative since it started; job queue wait; runner hours per merged PR, with the before and with-bot averages; runner hours spent per day; and the share of run minutes saved by early cancellation against the share of runs that failed. The weekly report also includes reruns by workflow and, when the orchestrator publishes its own data, agent factory time and slot use. It does not yet include historical host pressure or post-merge rework.
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The dashboard lines up seven panels over time, with solid lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live: merged PRs per day by origin; clones of the repos the fleet works in, added up since promoter-bot started (GitHub's counts, via [squid-telemetry](https://github.com/squid-protocol/squid-telemetry)); job queue wait; CI runner hours per merged PR, with the before and with-bot averages; promoter-bot's total spend in dollars since it started; its dollars per merged PR each day, with the average; and the share of run minutes saved by early cancellation against the share of runs that failed. The weekly report also includes reruns by workflow and, when the orchestrator publishes its own data, agent factory time and slot use. It does not yet include historical host pressure or post-merge rework.
 
 ---
 

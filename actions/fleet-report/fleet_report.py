@@ -497,6 +497,28 @@ def factory_stats(rows: list[tuple[str, dict]]) -> dict:
     }
 
 
+def clone_days(db: Path, repos: list[str]) -> dict[str, dict[str, int]]:
+    """{day: {repo: clones}} from a squid-telemetry traffic_metrics.db (GitHub's own clone counts per repo and day).
+    Repos default to every repo the fleet's CI fetches (its own_ci_checkouts table), else every repo in the database."""
+    import sqlite3
+
+    con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        if not repos:
+            try:
+                repos = [r for (r,) in con.execute("SELECT DISTINCT target_repo FROM own_ci_checkouts")]
+            except sqlite3.OperationalError:  # an older database without the own-CI estimate
+                repos = [r for (r,) in con.execute("SELECT DISTINCT repo_name FROM traffic_clones")]
+        out: dict[str, dict[str, int]] = {}
+        rows = con.execute(f"SELECT date, repo_name, total_clones FROM traffic_clones WHERE repo_name IN "
+                           f"({','.join('?' * len(repos))})", repos)
+        for day, repo, n in rows:
+            out.setdefault(day, {})[repo] = int(n or 0)
+        return out
+    finally:
+        con.close()
+
+
 def runner_split(rows: list[dict], key: str) -> list[tuple[str, float]]:
     """Share of sampled runner minutes by workflow or by origin, largest first."""
     c: Counter[str] = Counter()
@@ -869,32 +891,50 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     y = top + chart_h + 70
     panel = 2
 
-    # 2 · The bot's merged PRs, cumulative since it started
-    if start_i is not None:
-        made = sorted((d, (r.get("merged_by_class") or {}).get("bot", 0)) for d, r in data["days"].items() if d >= start)
-        cum_values, cum_tips, total = [], [], 0
+    def running_total(top: int, per_day: dict[str, float], title: str, axis_fmt, end_fmt, tip_fmt, note: str = "") -> int:
+        """A running total of per_day from the bot's start, as a filled line ending in its total; days past the last one
+        with data are left off. Returns the y of the next panel."""
+        last = max(per_day, default="")
+        values, tips, total = [], [], 0.0
         for day, _ in rows:
-            if day < start:
-                cum_values.append(None)
-                cum_tips.append("")
+            if day < start or day > last:
+                values.append(None)
+                tips.append("")
                 continue
-            total = sum(n for d, n in made if d <= day)
-            that_day = next((n for d, n in made if d == day), 0)
-            cum_values.append(float(total))
-            cum_tips.append(f"{total:,} {cfg.bot_name} PRs merged since {_fmt_day(start)} (+{that_day} this day)")
-        top, chart_h = y, 150
-        cum_axis = _nice_axis(max(1.0, total))
-        frame(top, chart_h, cum_axis, f"{panel} · {cfg.bot_name} PRs merged, cumulative since {_fmt_day(start)}",
-              lambda v: f"{v:,.0f}")
-        pts = [(x_mid(i), top + chart_h - chart_h * v / cum_axis[0]) for i, v in enumerate(cum_values) if v is not None]
+            total += per_day.get(day, 0)
+            values.append(total)
+            tips.append(tip_fmt(day, per_day.get(day, 0), total))
+        chart_h = 150
+        axis = _nice_axis(max(1.0, total))
+        frame(top, chart_h, axis, title, axis_fmt, note)
+        pts = [(x_mid(i), top + chart_h - chart_h * v / axis[0]) for i, v in enumerate(values) if v is not None]
         if len(pts) > 1:
             edge = " ".join(f"L{x:.1f},{py:.1f}" for x, py in pts)
             out.append(f'<path class="area" d="M{pts[0][0]:.1f},{top + chart_h} {edge} L{pts[-1][0]:.1f},{top + chart_h} Z"/>')
-        line_series(top, chart_h, cum_values, cum_axis[0], tips=cum_tips, cls="cum")
+        line_series(top, chart_h, values, axis[0], tips=tips, cls="cum")
         if pts:
             out.append(f'<text class="endl" x="{pts[-1][0] - 8:.1f}" y="{pts[-1][1] - 9:.1f}" text-anchor="end">'
-                       f'{total:,} PRs</text>')
-        y = top + chart_h + 70
+                       f'{escape(end_fmt(total))}</text>')
+        if note:
+            out.append(f'<text class="avgl" x="{right}" y="{top - 30}" text-anchor="end">{escape(note)}</text>')
+        return top + chart_h + 70
+
+    # 2 · Clones of the repos the fleet works in, added up since the bot started (squid-telemetry's GitHub traffic)
+    clones = data.get("clones") or {}
+    if start_i is not None and clones:
+        per_day = {d: float(sum(by_repo.values())) for d, by_repo in clones.items() if d >= start}
+        by_repo = Counter()
+        for d, counts in clones.items():
+            if d >= start:
+                by_repo.update(counts)
+        top_repos = " · ".join(f"{r.split('/')[-1]} {n:,}" for r, n in by_repo.most_common(4))
+        y = running_total(
+            y, per_day, f"{panel} · Repo clones by the fleet, cumulative since {_fmt_day(start)} "
+                        f"(GitHub's counts, through {_fmt_day(max(per_day))})" if per_day else f"{panel} · Repo clones",
+            lambda v: f"{v / 1000:g}k" if v >= 1000 else f"{v:g}", lambda t: f"{t:,.0f} clones",
+            lambda d, n, t: f"{n:,.0f} clones this day · {t:,.0f} since {_fmt_day(start)} · "
+                            + ", ".join(f"{r.split('/')[-1]} {c:,}" for r, c in sorted(clones[d].items(), key=lambda x: -x[1]) if c),
+            top_repos)
         panel += 1
 
     # Queue wait, CI cost per merged PR and runner spend per day (sampled)
@@ -922,7 +962,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         runner_axis = (_nice_axis(cfg.cost_max) if cfg.cost_max
                        else _nice_axis(max((v for v in runner_values if v is not None), default=1.0)))
         runner_max = runner_axis[0]
-        frame(top, chart_h, runner_axis, f"{panel} · Cost — runner hours per merged PR (est., sampled)", lambda v: f"{v:g}")
+        frame(top, chart_h, runner_axis, f"{panel} · CI load — runner hours per merged PR (est., sampled)", lambda v: f"{v:g}")
         panel += 1
         cost_tips = [f"{v:.2f} runner hours / merged PR" + (f" (above the {runner_max:g} h axis)" if v > runner_max else "")
                      if v is not None else "" for v in runner_values]
@@ -944,38 +984,44 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             if v is not None and v > runner_max:
                 out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:.0f} h</text>')
         y = top + chart_h + 70
-
-        # Spend: estimated runner hours each day, the bot's days in its colour and labelled
-        spend = [detail["runner_min_est"] / 60 if detail.get("runner_min_est") is not None else None for detail in details]
-        top = y
-        spend_axis = _nice_axis(max((v for v in spend if v is not None), default=1.0))
-        with_bot = [v for (day, _), v in zip(rows, spend) if v is not None and start and start <= day < today_s]
-        spend_note = (f"with {cfg.bot_name} (finished days): {sum(with_bot):,.0f} h, avg {sum(with_bot) / len(with_bot):,.0f} h a day"
-                      if with_bot else "")
-        frame(top, chart_h, spend_axis, f"{panel} · Spend — runner hours per day (est., sampled)", lambda v: f"{v:,.0f}")
-        panel += 1
-        for i, ((day, row), v) in enumerate(zip(rows, spend)):
-            if v is None:
-                continue
-            h = chart_h * v / spend_axis[0]
-            x = x_left(i) + (slot - bar_w) / 2
-            kind = "bot" if start and day >= start else "automation"
-            partial = day == today_s
-            per_pr = f" · {v / row['merged']:.1f} h per merged PR" if row["merged"] else ""
-            tip = escape(f"{_fmt_day(day)}: {v:,.0f} runner hours (est.){per_pr}{' (today so far)' if partial else ''}")
-            fade = ' class="partial"' if partial else ""
-            out.append(f'<g{fade}><title>{tip}</title>'
-                       f'<path class="{kind} seg" d="{_bar_path(x, top + chart_h - h, bar_w, h, 4)}"/></g>')
-            if kind == "bot":
-                out.append(f'<text class="vl" x="{x_mid(i):.1f}" y="{top + chart_h - h - 4:.1f}" text-anchor="middle">{v:,.0f}</text>')
-        if spend_note:
-            out.append(f'<text class="avgl" x="{right}" y="{top - 30}" text-anchor="end">{escape(spend_note)}</text>')
-        y = top + chart_h + 70
     else:
         out.append(f'<text class="h2" x="{pad}" y="{y - 30}">{panel} · Speed and cost</text>')
         panel += 1
         out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
         y += 20
+
+    # The bot's own spend in dollars (factory.json: what its agent sessions cost, all hosts) and per merged bot PR
+    fdays = {d: r for d, r in ((data.get("factory") or {}).get("days") or {}).items()
+             if start and d >= start and r.get("usd") is not None}
+    if start_i is not None and fdays:
+        usd = {d: float(r["usd"]) for d, r in fdays.items()}
+        prs = {d: r.get("churn_merged") or 0 for d, r in fdays.items()}
+        spent, made = sum(usd.values()), sum(prs.values())
+        y = running_total(
+            y, usd, f"{panel} · Spend — {cfg.bot_name} cost in dollars, cumulative since {_fmt_day(start)}",
+            lambda v: f"${v:,.0f}", lambda t: f"${t:,.0f} total",
+            lambda d, n, t: f"${n:,.2f} this day ({prs[d]} merged PRs) · ${t:,.2f} since {_fmt_day(start)}"
+                            + (" (today so far)" if d == today_s else ""),
+            f"{made:,} merged {cfg.bot_name} PRs for ${spent:,.0f}")
+        panel += 1
+        per_pr = [usd[d] / prs[d] if prs.get(d) else None for d, _ in rows]
+        top, chart_h = y, 120
+        pr_axis = _nice_axis(max((v for v in per_pr if v is not None), default=1.0))
+        frame(top, chart_h, pr_axis, f"{panel} · Cost per PR — {cfg.bot_name} dollars per merged PR, each day",
+              lambda v: f"${v:g}")
+        panel += 1
+        line_series(top, chart_h, per_pr, pr_axis[0],
+                    tips=[f"${v:.2f} per merged PR (${usd[d]:,.2f} for {prs[d]})" if v is not None else ""
+                          for (d, _), v in zip(rows, per_pr)], cls="cum")
+        if made:
+            avg = spent / made
+            spots = [index[d] for d in sorted(fdays) if d in index]
+            ya = top + chart_h - chart_h * avg / pr_axis[0]
+            out.append(f'<line class="avg" x1="{x_left(spots[0]):.1f}" x2="{x_left(spots[-1]) + slot:.1f}" '
+                       f'y1="{ya:.1f}" y2="{ya:.1f}"/>')
+            out.append(f'<text class="avgl" x="{x_left(spots[-1]) + slot:.1f}" y="{ya - 6:.1f}" text-anchor="end">'
+                       f'{escape(f"avg ${avg:.2f} per PR since {_fmt_day(start)}")}</text>')
+        y = top + chart_h + 70
 
     # 4 · Efficiency: share of run minutes early cancellation saved (est.) and share of runs that failed
     proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
@@ -1055,6 +1101,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-wait-p90", default="", help="alert when the 7-day p90 job queue wait (min) exceeds this")
     p.add_argument("--max-runner-hours-per-pr", default="", help="alert when 7-day runner hours per merged PR exceed this")
     p.add_argument("--cost-max", default="", help="top of the cost-per-PR chart axis, hours (default: fit the data)")
+    p.add_argument("--clones-db", type=Path, help="a squid-telemetry traffic_metrics.db: adds the fleet's cumulative repo clones")
+    p.add_argument("--clones-repos", default="", help="comma-separated owner/repo to count (default: the fleet's CI targets)")
     p.add_argument("--fail-on-alert", action="store_true")
     p.add_argument("--render-only", action="store_true", help="redraw from metrics.json without fetching")
     a = p.parse_args(argv)
@@ -1080,6 +1128,11 @@ def main(argv: list[str] | None = None) -> int:
             data = {**data, "factory": json.loads(factory_file.read_text())}
         except ValueError as e:
             print(f"::warning title=Fleet CI report::factory.json unreadable: {e}", file=sys.stderr)
+    if a.clones_db:
+        try:
+            data = {**data, "clones": clone_days(a.clones_db, _csv(a.clones_repos))}
+        except Exception as e:  # noqa: BLE001 - a missing or odd database drops the panel, not the report
+            print(f"::warning title=Fleet CI report::clones database unreadable: {e}", file=sys.stderr)
     (a.out / "dashboard.svg").write_text(render(data, a.days, today, cfg), encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr))
     for msg in alerts:

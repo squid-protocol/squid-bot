@@ -64,6 +64,14 @@ inputs:
   cost-max:
     description: Top of the cost-per-merged-PR chart axis, in runner hours; days above it are drawn at the top and marked. Empty = fit the data.
     default: ""
+  clones-db:
+    description: >-
+      Path or https URL of a squid-telemetry traffic_metrics.db. Adds a panel of the fleet's repo clones (GitHub's counts),
+      added up since the bot started. Empty = no clones panel.
+    default: ""
+  clones-repos:
+    description: Comma-separated owner/repo to count in the clones panel. Empty = every repo the fleet's CI fetches.
+    default: ""
   fail-on-alert:
     description: Fail the step when an alert fires.
     default: "false"
@@ -111,6 +119,8 @@ runs:
         I_MAX_H: ${{ inputs.max-runner-hours-per-pr }}
         I_FAIL: ${{ inputs.fail-on-alert }}
         I_COST_MAX: ${{ inputs.cost-max }}
+        I_CLONES_DB: ${{ inputs.clones-db }}
+        I_CLONES_REPOS: ${{ inputs.clones-repos }}
       run: |
         args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
               --agent-branch-prefixes "$I_PREFIXES" --sample-runs "$I_SAMPLE" --detail-backfill "$I_BACKFILL"
@@ -119,6 +129,14 @@ runs:
               --cost-max "$I_COST_MAX")
         [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
         [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)
+        if [ -n "$I_CLONES_DB" ]; then
+          db="$I_CLONES_DB"
+          if [[ "$db" == https://* ]]; then
+            db="$RUNNER_TEMP/clones.db"
+            curl -sfL --retry 3 -o "$db" "$I_CLONES_DB" || { echo "::warning title=Fleet CI report::could not download clones-db"; db=""; }
+          fi
+          [ -n "$db" ] && args+=(--clones-db "$db" --clones-repos "$I_CLONES_REPOS")
+        fi
         python3 "$GITHUB_ACTION_PATH/fleet_report.py" "${args[@]}"
 
     - name: Publish
