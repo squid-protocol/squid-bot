@@ -2618,29 +2618,29 @@
      "passed": 0,
      "runs": 2
     },
-    "runner_min_est": 13317,
+    "runner_min_est": 15121,
     "sampled_min_by_origin": {
-     "bot": 61.2,
+     "bot": 69.5,
      "main": 0.2
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 1.1,
      "CI shepherd (reconcile)": 0.0,
      "CodeQL Security Scan": 3.7,
+     "Det Sweep": 1.2,
      "Estate Crucible": 0.5,
      "Fact Cross-check": 4.4,
      "Generated Docs": 0.6,
      "GitGalaxy Zero-Trust Pipeline": 5.0,
      "Main Watch": 0.2,
-     "Mainframe Ground Truth": 23.6,
-     "Muninn Security Scan": 8.3,
+     "Mainframe Ground Truth": 44.1,
      "Mypy Audit": 0.5,
-     "Ports Compile": 9.0,
+     "Ports Compile": 4.0,
      "unicode-gauntlet": 4.5
     },
     "sampled_runs": 24,
-    "wait_median": 1.43,
-    "wait_p90": 11.38
+    "wait_median": 1.33,
+    "wait_p90": 10.47
    },
    "merged": 128,
    "merged_by_class": {
@@ -2702,30 +2702,30 @@
      "passed": 2,
      "runs": 3
     },
-    "runner_min_est": 10380,
+    "runner_min_est": 10272,
     "sampled_min_by_origin": {
-     "bot": 54.8,
+     "bot": 54.1,
      "main": 6.4
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.7,
      "CI shepherd (reconcile)": 0.0,
+     "CodeQL Security Scan": 3.2,
      "Deploy Museum of Code Docs": 2.6,
-     "Fact Cross-check": 4.4,
+     "Estate Crucible": 0.5,
      "Generated Docs": 1.5,
      "GitGalaxy Smoke Tests": 17.8,
-     "GitGalaxy Zero-Trust Pipeline": 2.9,
      "Main Watch": 0.4,
      "Mainframe Ground Truth": 22.9,
      "Mypy Audit": 0.4,
      "Small Audits": 1.2,
-     "Tri-Comparison Audit": 1.0,
+     "Tree-sitter Accuracy Audit": 3.9,
      "pages build and deployment": 0.8,
      "post-merge": 0.5,
      "unicode-gauntlet": 4.3
     },
     "sampled_runs": 24,
-    "wait_median": 0.62,
+    "wait_median": 0.55,
     "wait_p90": 4.03
    },
    "merged": 98,
@@ -2745,14 +2745,19 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 127,
+    "bot_runs": 667,
     "cancel_savings": {
-     "cancelled": 0,
-     "saved_min_est": 0,
+     "cancelled": 64,
+     "saved_min_est": 286,
      "unpriced": 0,
-     "wall_min": 1028
+     "wall_min": 8109
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 5722,
+      "title": "ci: apply the owner workflow patch (publish --no-isolation, drop dead requirements.txt installs) (Part of #4918) (#5722)"
+     }
+    ],
     "reruns": {
      "attempts": 1,
      "by_workflow": {
@@ -2766,40 +2771,41 @@
      "passed": 0,
      "runs": 1
     },
-    "runner_min_est": 3807,
+    "runner_min_est": 3103,
     "sampled_min_by_origin": {
-     "bot": 35.6,
-     "main": 27.3
+     "bot": 7.8,
+     "main": 13.3
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.3,
-     "CI shepherd (reconcile)": 0.0,
-     "CICS Crucible": 26.9,
-     "GitGalaxy Smoke Tests": 27.3,
-     "Golden Crucible Resilience Test": 6.3,
-     "Muninn Security Scan": 2.1
+     "CI shepherd (reconcile)": 12.6,
+     "Call Graph Accuracy Audit": 2.4,
+     "Main Watch": 0.2,
+     "Muninn Security Scan": 1.9,
+     "Ports Compile": 3.3,
+     "pages build and deployment": 0.5
     },
-    "sampled_runs": 6,
+    "sampled_runs": 12,
     "wait_median": 0.03,
-    "wait_p90": 2.12
+    "wait_p90": 1.18
    },
-   "merged": 6,
+   "merged": 38,
    "merged_by_class": {
     "agent": 1,
     "automation": 0,
-    "bot": 5,
+    "bot": 37,
     "other": 0
    },
    "runs": {
-    "cancelled": 46,
-    "failure": 3,
-    "skipped": 123,
-    "success": 300,
-    "total": 486
+    "cancelled": 429,
+    "failure": 8,
+    "skipped": 659,
+    "success": 1228,
+    "total": 2421
    }
   }
  },
- "open_prs": 4,
+ "open_prs": 13,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T05:05Z"
+ "updated": "2026-10-20T11:57Z"
 }
