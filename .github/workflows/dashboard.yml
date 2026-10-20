@@ -35,3 +35,4 @@ jobs:
           events: "2026-10-10: integrase-bot (CI shepherd) on"
           max-wait-p90: "15"
           cost-max: "10"
+          clones-db: https://raw.githubusercontent.com/squid-protocol/squid-telemetry/main/traffic_metrics.db
