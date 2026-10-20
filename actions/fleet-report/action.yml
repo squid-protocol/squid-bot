@@ -61,6 +61,9 @@ inputs:
   max-runner-hours-per-pr:
     description: Warn when 7-day runner hours per merged PR exceed this. Empty = off.
     default: ""
+  cost-max:
+    description: Top of the cost-per-merged-PR chart axis, in runner hours; days above it are drawn at the top and marked. Empty = fit the data.
+    default: ""
   fail-on-alert:
     description: Fail the step when an alert fires.
     default: "false"
@@ -107,11 +110,13 @@ runs:
         I_MAX_WAIT: ${{ inputs.max-wait-p90 }}
         I_MAX_H: ${{ inputs.max-runner-hours-per-pr }}
         I_FAIL: ${{ inputs.fail-on-alert }}
+        I_COST_MAX: ${{ inputs.cost-max }}
       run: |
         args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
               --agent-branch-prefixes "$I_PREFIXES" --sample-runs "$I_SAMPLE" --detail-backfill "$I_BACKFILL"
               --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY"
-              --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS")
+              --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS"
+              --cost-max "$I_COST_MAX")
         [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
         [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)
         python3 "$GITHUB_ACTION_PATH/fleet_report.py" "${args[@]}"

@@ -2,7 +2,7 @@
 
 A GitHub Action that shows what an agent bot changed in your repo. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a report to each run's summary page.
 
-Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and the share of run minutes saved by early cancellation and of runs that failed. Name your bot's branch prefixes and its PRs get their own color; a shaded band marks the days it has run, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
+Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR and per day, and the share of run minutes saved by early cancellation and of runs that failed. Name your bot's branch prefixes and its PRs get their own color and a cumulative chart; a line marks the day it started, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -48,6 +48,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `detail-backfill` | `4` | Older days to fill with sampled detail per run |
 | `max-wait-p90` | off | Warn when the 7-day average p90 queue wait (min) exceeds this |
 | `max-runner-hours-per-pr` | off | Warn when 7-day runner hours per merged PR exceed this |
+| `cost-max` | fit the data | Top of the cost-per-merged-PR axis, in hours |
 | `fail-on-alert` | `false` | Fail the step on a warning |
 
 Output: `dashboard-url`, the raw URL of the published SVG.
@@ -65,11 +66,13 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - runner minutes per day (mean per run × the day's non-skipped runs)
 - runner time split by workflow, and by origin: agent PR, other PR, automation PR, or default branch and schedules
 
-### The four charts
+### The charts
 
 - **Delivery:** merged PRs per day, split by recorded origin (bot, other agents, other, automation). Attribution depends on configured branch prefixes or PR-body markers.
+- **Bot PRs, cumulative** (with a bot): the bot's merged PRs added up day by day since it started.
 - **Speed:** each day's sampled p90 job queue wait.
-- **Cost:** each day's estimated runner hours per merged PR.
+- **Cost:** each day's estimated runner hours per merged PR, with dashed lines at the average before and with the bot (the cards' figures). Set `cost-max` to cap the axis; days above it are drawn at the top and marked with their value.
+- **Spend:** each day's estimated runner hours in total, the bot's days in its color and labelled.
 - **Efficiency:** two percentages per day. **Runs failed:** failed ÷ (passed + failed) workflow runs, exact. **Run minutes saved (est.):** a run cancelled early (usually because a newer push replaced it) would have taken about as long as that day's median successful run of the same workflow; what it saved is that minus what it ran. The chart shows saved ÷ (spent + saved), in run wall-clock minutes. Runs of the configured `bot-workflows` are left out of both sides, and cancelled runs of a workflow with no successful run that day aren't priced. It is an estimate, labelled as one.
 
 Today is drawn faded, as incomplete. The "with bot" averages and cards use finished days only.
