@@ -75,6 +75,7 @@ class Config:
     bot_name: str = "bot"
     bot_start: str = ""
     events: list[tuple[str, str]] = field(default_factory=list)
+    cost_max: float | None = None  # top of the cost-per-PR axis; days above it are drawn at the top and marked
 
     @property
     def heading(self) -> str:
@@ -603,11 +604,11 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
 STYLE = """
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
-          --neutral:#c3c2b7; --band:rgba(42,120,214,0.07); --failed:#d03b3b; --good:#0ca30c; }
+          --neutral:#c3c2b7; --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
             --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
-            --neutral:#5c5c58; --band:rgba(57,135,229,0.12); }
+            --neutral:#5c5c58; }
   }
   text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
   .bg { fill: var(--surface); stroke: var(--border); }
@@ -622,10 +623,9 @@ STYLE = """
   .sub { font-size: 10.5px; fill: var(--ink2); }
   .grid { stroke: var(--grid); stroke-width: 1; }
   .base { stroke: var(--axis); stroke-width: 1; }
-  .band { fill: var(--band); }
   .start { stroke: var(--s1); stroke-width: 1.5; }
   .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
-  .mark { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; } .markd { fill: var(--muted); }
+  .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
@@ -633,6 +633,11 @@ STYLE = """
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
   .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
   .partial { opacity: 0.5; }
+  .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
+  .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
+  .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);
+    paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+  .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
   .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
 """
 
@@ -679,8 +684,8 @@ def _origin_parts(row: dict) -> dict[str, float]:
 
 
 def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str:
-    """The dashboard: one UTC day per mark. When a bot is configured (or found), a band marks the days it ran, and the
-    cards compare its averages with the days before it."""
+    """The dashboard: one UTC day per mark. When a bot is configured (or found), a line marks the day it started, a
+    panel counts its merged PRs since then, and the cards compare its averages with the days before it."""
     cfg = cfg or Config(repo=data["repo"])
     rows = window_rows(data, shown_days(data, cfg, days, today), today)
     if not rows:
@@ -765,9 +770,6 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     def frame(top: int, chart_h: int, axis: tuple[float, float], title: str, formatter, title_detail: str = "") -> None:
         maximum, step = axis
         intervals = round(maximum / step)
-        if start_i is not None:
-            out.append(f'<rect class="band" x="{x_left(start_i):.1f}" y="{top}" width="{right - x_left(start_i):.1f}" '
-                       f'height="{chart_h}"/>')
         tip = f"<title>{escape(title_detail)}</title>" if title_detail else ""
         out.append(f'<g>{tip}<text class="h2" x="{pad}" y="{top - 30}">{escape(title)}</text></g>')
         for tick in range(intervals + 1):
@@ -865,8 +867,37 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     annotate(top)
     legend(top - 30, [(label, kind) for kind, label in origins if kind != "unknown" or any(p["unknown"] for p in delivery)])
     y = top + chart_h + 70
+    panel = 2
 
-    # 2 · Queue wait and 3 · CI cost (sampled)
+    # 2 · The bot's merged PRs, cumulative since it started
+    if start_i is not None:
+        made = sorted((d, (r.get("merged_by_class") or {}).get("bot", 0)) for d, r in data["days"].items() if d >= start)
+        cum_values, cum_tips, total = [], [], 0
+        for day, _ in rows:
+            if day < start:
+                cum_values.append(None)
+                cum_tips.append("")
+                continue
+            total = sum(n for d, n in made if d <= day)
+            that_day = next((n for d, n in made if d == day), 0)
+            cum_values.append(float(total))
+            cum_tips.append(f"{total:,} {cfg.bot_name} PRs merged since {_fmt_day(start)} (+{that_day} this day)")
+        top, chart_h = y, 150
+        cum_axis = _nice_axis(max(1.0, total))
+        frame(top, chart_h, cum_axis, f"{panel} · {cfg.bot_name} PRs merged, cumulative since {_fmt_day(start)}",
+              lambda v: f"{v:,.0f}")
+        pts = [(x_mid(i), top + chart_h - chart_h * v / cum_axis[0]) for i, v in enumerate(cum_values) if v is not None]
+        if len(pts) > 1:
+            edge = " ".join(f"L{x:.1f},{py:.1f}" for x, py in pts)
+            out.append(f'<path class="area" d="M{pts[0][0]:.1f},{top + chart_h} {edge} L{pts[-1][0]:.1f},{top + chart_h} Z"/>')
+        line_series(top, chart_h, cum_values, cum_axis[0], tips=cum_tips, cls="cum")
+        if pts:
+            out.append(f'<text class="endl" x="{pts[-1][0] - 8:.1f}" y="{pts[-1][1] - 9:.1f}" text-anchor="end">'
+                       f'{total:,} PRs</text>')
+        y = top + chart_h + 70
+        panel += 1
+
+    # Queue wait, CI cost per merged PR and runner spend per day (sampled)
     details = [row.get("detail", {}) for _, row in rows]
     wait_values = [detail.get("wait_p90") for detail in details]
     runner_values = [detail["runner_min_est"] / row["merged"] / 60 if detail.get("runner_min_est") is not None
@@ -875,7 +906,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         top, chart_h = y, 120
         wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
         wait_max = wait_axis[0]
-        frame(top, chart_h, wait_axis, "2 · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
+        frame(top, chart_h, wait_axis, f"{panel} · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
+        panel += 1
         for i, (day, row) in enumerate(rows):
             changes = row.get("detail", {}).get("ci_changes")
             if changes:
@@ -887,13 +919,61 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         legend(top - 30, [("CI change merged", "markd")])
         y = top + chart_h + 70
         top = y
-        runner_axis = _nice_axis(max((v for v in runner_values if v is not None), default=1.0))
+        runner_axis = (_nice_axis(cfg.cost_max) if cfg.cost_max
+                       else _nice_axis(max((v for v in runner_values if v is not None), default=1.0)))
         runner_max = runner_axis[0]
-        frame(top, chart_h, runner_axis, "3 · Cost — runner time per merged PR, estimated hours (sampled)", lambda v: f"{v:g}")
-        line_series(top, chart_h, runner_values, runner_max, lambda v: f"{v:.2f}", "runner hours / merged PR")
+        frame(top, chart_h, runner_axis, f"{panel} · Cost — runner hours per merged PR (est., sampled)", lambda v: f"{v:g}")
+        panel += 1
+        cost_tips = [f"{v:.2f} runner hours / merged PR" + (f" (above the {runner_max:g} h axis)" if v > runner_max else "")
+                     if v is not None else "" for v in runner_values]
+        line_series(top, chart_h, [None if v is None else min(v, runner_max) for v in runner_values], runner_max,
+                    tips=cost_tips)
+        # the average per merged PR before and with the bot (the cards' figures), dashed over their own days, on top
+        for key in ("prev", "cur"):
+            avg = cmp[key].get("runner_h_per_pr")
+            spots = [index[d] for d in cmp[f"{key}_days"] if d in index]
+            if avg is None or not spots:
+                continue
+            ya = top + chart_h - chart_h * min(avg, runner_max) / runner_max
+            x0, x1 = x_left(spots[0]), x_left(spots[-1]) + slot
+            out.append(f'<line class="avg" x1="{x0:.1f}" x2="{x1:.1f}" y1="{ya:.1f}" y2="{ya:.1f}"/>')
+            label = escape(f"avg {avg:.1f} h / PR {cmp[f'{key}_label']}")
+            anchor = f'x="{x1:.1f}" text-anchor="end"' if key == "cur" else f'x="{x0 + 2:.1f}"'
+            out.append(f'<text class="avgl" {anchor} y="{ya - 6:.1f}">{label}</text>')
+        for i, v in enumerate(runner_values):
+            if v is not None and v > runner_max:
+                out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:.0f} h</text>')
+        y = top + chart_h + 70
+
+        # Spend: estimated runner hours each day, the bot's days in its colour and labelled
+        spend = [detail["runner_min_est"] / 60 if detail.get("runner_min_est") is not None else None for detail in details]
+        top = y
+        spend_axis = _nice_axis(max((v for v in spend if v is not None), default=1.0))
+        with_bot = [v for (day, _), v in zip(rows, spend) if v is not None and start and start <= day < today_s]
+        spend_note = (f"with {cfg.bot_name} (finished days): {sum(with_bot):,.0f} h, avg {sum(with_bot) / len(with_bot):,.0f} h a day"
+                      if with_bot else "")
+        frame(top, chart_h, spend_axis, f"{panel} · Spend — runner hours per day (est., sampled)", lambda v: f"{v:,.0f}")
+        panel += 1
+        for i, ((day, row), v) in enumerate(zip(rows, spend)):
+            if v is None:
+                continue
+            h = chart_h * v / spend_axis[0]
+            x = x_left(i) + (slot - bar_w) / 2
+            kind = "bot" if start and day >= start else "automation"
+            partial = day == today_s
+            per_pr = f" · {v / row['merged']:.1f} h per merged PR" if row["merged"] else ""
+            tip = escape(f"{_fmt_day(day)}: {v:,.0f} runner hours (est.){per_pr}{' (today so far)' if partial else ''}")
+            fade = ' class="partial"' if partial else ""
+            out.append(f'<g{fade}><title>{tip}</title>'
+                       f'<path class="{kind} seg" d="{_bar_path(x, top + chart_h - h, bar_w, h, 4)}"/></g>')
+            if kind == "bot":
+                out.append(f'<text class="vl" x="{x_mid(i):.1f}" y="{top + chart_h - h - 4:.1f}" text-anchor="middle">{v:,.0f}</text>')
+        if spend_note:
+            out.append(f'<text class="avgl" x="{right}" y="{top - 30}" text-anchor="end">{escape(spend_note)}</text>')
         y = top + chart_h + 70
     else:
-        out.append(f'<text class="h2" x="{pad}" y="{y - 30}">2 · Speed and 3 · Cost</text>')
+        out.append(f'<text class="h2" x="{pad}" y="{y - 30}">{panel} · Speed and cost</text>')
+        panel += 1
         out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
         y += 20
 
@@ -923,7 +1003,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                            f'passed or failed)' if judged else "")
     top, chart_h = y, 120
     pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
-    frame(top, chart_h, pct_axis, "4 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
+    frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
           lambda v: f"{v:g}%", ". ".join(proof_detail))
     line_series(top, chart_h, saved_values, pct_axis[0], tips=saved_tips, cls="saved")
     line_series(top, chart_h, failed_values, pct_axis[0], tips=failed_tips, cls="failedl")
@@ -974,6 +1054,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--summary", type=Path, help="append the Markdown report here (the Action passes $GITHUB_STEP_SUMMARY)")
     p.add_argument("--max-wait-p90", default="", help="alert when the 7-day p90 job queue wait (min) exceeds this")
     p.add_argument("--max-runner-hours-per-pr", default="", help="alert when 7-day runner hours per merged PR exceed this")
+    p.add_argument("--cost-max", default="", help="top of the cost-per-PR chart axis, hours (default: fit the data)")
     p.add_argument("--fail-on-alert", action="store_true")
     p.add_argument("--render-only", action="store_true", help="redraw from metrics.json without fetching")
     a = p.parse_args(argv)
@@ -982,7 +1063,7 @@ def main(argv: list[str] | None = None) -> int:
     cfg = Config(repo=a.repo, title=a.title, bot_workflows=_csv(a.bot_workflows),
                  agent_prefixes=_csv(a.agent_branch_prefixes), agent_markers=a.agent_markers, sample_runs=a.sample_runs,
                  bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
-                 events=_events(a.events))
+                 events=_events(a.events), cost_max=_opt_float(a.cost_max))
     a.out.mkdir(parents=True, exist_ok=True)
     data_file = a.out / "metrics.json"
     data = json.loads(data_file.read_text()) if data_file.exists() else {}
@@ -990,6 +1071,9 @@ def main(argv: list[str] | None = None) -> int:
     if not a.render_only:
         data = collect(cfg, a.days, data, today, a.detail_backfill)
         data_file.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
+        # a run that starts before midnight UTC finishes after it: draw "today" as of the finish (the "updated" stamp),
+        # so the day that just ended isn't labelled "today so far"
+        today = datetime.now(timezone.utc).date()
     factory_file = a.out / "factory.json"  # an orchestrator's own numbers, published to the same branch (optional)
     if factory_file.exists():
         try:

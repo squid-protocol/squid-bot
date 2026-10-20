@@ -57,10 +57,23 @@ def test_render_adds_the_ci_cost_row_and_wait_chart_when_detail_exists():
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
     assert "job queue wait (p90)" in svg and "4.0 min" in svg
-    assert "runner time per merged PR" in svg
+    assert "runner hours per merged PR" in svg and "runner hours per day" in svg
     assert svg.count("CI change(s) merged") == 3
     # without detail the extra row and chart stay out
     assert "job queue wait" not in dashboard.render(_data(), 30, TODAY)
+
+
+def test_a_cost_axis_cap_draws_bigger_days_at_the_top_and_marks_them():
+    data = _data()
+    for i, d in enumerate(sorted(data["days"])):
+        data["days"][d]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                     "runner_min_est": 60 * 30 * 25 if i == 5 else 600, "sampled_runs": 24}
+        if i == 5:
+            data["days"][d]["merged"] = 30
+    capped = dashboard.render(data, 30, TODAY, dashboard.Config(repo="owner/repo", cost_max=10))
+    ET.fromstring(capped)
+    assert "▲ 25 h" in capped and "(above the 10 h axis)" in capped  # 750 h over the day's 30 merges, drawn at 10
+    assert "▲" not in dashboard.render(data, 30, TODAY)  # no cap: the axis fits the data
 
 
 CFG = dashboard.Config(repo="owner/repo", agent_prefixes=["churn/", "claude/"])
@@ -227,11 +240,18 @@ def test_render_tells_the_before_and_with_bot_story():
     svg = dashboard.render(_with_bot(), 30, TODAY, BOT)
     ET.fromstring(svg)
     assert "promoter-bot live · Oct 8" in svg and "Oct 6 · shepherd on" in svg
-    assert 'class="band"' in svg and svg.count('class="start"') == 4  # the band and start line run through every panel
+    # no shaded band: a start line (and the event lines) through every panel, now six of them
+    assert 'class="band"' not in svg and svg.count('class="start"') == 6 and svg.count('class="mark"') == 6
     assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg  # 25 of 40 merges a day since it started
     assert "before promoter-bot: 15.0 · +167%" in svg  # merged / day: 40 with vs 15 before
-    assert "avg " not in svg and 'class="avg"' not in svg  # averages live in the cards, not on the charts
     assert "175 of the 280 PRs merged since then were its own" in svg
+    # 2 · cumulative bot PRs: 25 a day from Oct 8 through today (Oct 14) = 175
+    assert "2 · promoter-bot PRs merged, cumulative since Oct 8" in svg and ">175 PRs</text>" in svg
+    assert "175 promoter-bot PRs merged since Oct 8 (+25 this day)" in svg
+    # cost per PR with its before/with averages (600 min over 40 vs 15 merges); spend per day as bars
+    assert "4 · Cost" in svg and "avg 0.2 h / PR with promoter-bot" in svg and "avg 0.7 h / PR before promoter-bot" in svg
+    assert "5 · Spend" in svg and "with promoter-bot (finished days): 60 h, avg 10 h a day" in svg
+    assert "6 · Efficiency" in svg
     md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
     assert "| Measure | With promoter-bot | Before promoter-bot |" in md
     assert "| Delivery · promoter-bot-made share | 62.5% | 0.0% |" in md
