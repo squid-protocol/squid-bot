@@ -2745,12 +2745,12 @@
   },
   "2026-10-20": {
    "detail": {
-    "bot_runs": 1516,
+    "bot_runs": 1702,
     "cancel_savings": {
-     "cancelled": 171,
-     "saved_min_est": 733,
+     "cancelled": 224,
+     "saved_min_est": 1142,
      "unpriced": 0,
-     "wall_min": 22418
+     "wall_min": 27188
     },
     "ci_changes": [
      {
@@ -2776,6 +2776,14 @@
      {
       "pr": 5768,
       "title": "full-suite-gate: step timeout from matrix.step_timeout, expressions have no arithmetic (Part of #5764) (#5768)"
+     },
+     {
+      "pr": 5776,
+      "title": "CI: OS-leg headroom, no false-red cancelled main runs, actionlint gate, bg-job helper (#5776)"
+     },
+     {
+      "pr": 5793,
+      "title": "shepherd reconcile: the flake-history refresh saves day by day under a time budget (#5793)"
      }
     ],
     "reruns": {
@@ -2806,46 +2814,99 @@
      "passed": 3,
      "runs": 7
     },
-    "runner_min_est": 11085,
+    "runner_min_est": 18946,
     "sampled_min_by_origin": {
-     "agent": 4.5,
-     "bot": 10.2,
-     "main": 58.4
+     "agent": 5.5,
+     "bot": 33.2,
+     "main": 70.1
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.6,
-     "CI shepherd (reconcile)": 25.3,
+     "CI shepherd (reconcile)": 32.2,
      "Main Watch": 0.2,
-     "Mainframe Ground Truth": 21.1,
+     "Mainframe Ground Truth": 43.5,
      "Muninn Security Scan": 1.9,
      "Mypy Audit": 0.7,
      "OS Smoke Grid": 6.5,
-     "Ports Compile": 12.6,
+     "Ports Compile": 17.4,
      "Ruff Audit": 0.5,
-     "Small Audits": 3.3,
+     "Small Audits": 4.9,
      "pages build and deployment": 0.5
     },
     "sampled_runs": 24,
-    "wait_median": 3.48,
-    "wait_p90": 25.28
+    "wait_median": 2.83,
+    "wait_p90": 25.02
    },
-   "merged": 83,
+   "merged": 99,
    "merged_by_class": {
-    "agent": 3,
+    "agent": 5,
     "automation": 0,
-    "bot": 79,
+    "bot": 93,
     "other": 1
    },
    "runs": {
-    "cancelled": 990,
-    "failure": 35,
-    "skipped": 1127,
-    "success": 2578,
-    "total": 4769
+    "cancelled": 1166,
+    "failure": 44,
+    "skipped": 1276,
+    "success": 2970,
+    "total": 5456
+   }
+  },
+  "2026-10-21": {
+   "detail": {
+    "bot_runs": 30,
+    "cancel_savings": {
+     "cancelled": 2,
+     "saved_min_est": 5,
+     "unpriced": 1,
+     "wall_min": 73
+    },
+    "ci_changes": [
+     {
+      "pr": 5798,
+      "title": "flake history: its own scheduled workflow is the cache's only writer; reconcile only restores (#5798)"
+     }
+    ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 40,
+    "sampled_min_by_origin": {
+     "bot": 2.0,
+     "main": 1.8
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (reconcile)": 0.0,
+     "Deploy Museum of Code Docs": 1.4,
+     "Main Watch": 0.2,
+     "Muninn Security Scan": 2.0,
+     "post-merge": 0.2
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.03,
+    "wait_p90": 0.03
+   },
+   "merged": 2,
+   "merged_by_class": {
+    "agent": 1,
+    "automation": 0,
+    "bot": 1,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 12,
+    "failure": 0,
+    "skipped": 13,
+    "success": 27,
+    "total": 76
    }
   }
  },
- "open_prs": 11,
+ "open_prs": 6,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-20T21:53Z"
+ "updated": "2026-10-21T00:21Z"
 }
