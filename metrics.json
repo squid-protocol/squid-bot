@@ -2856,12 +2856,12 @@
   },
   "2026-10-21": {
    "detail": {
-    "bot_runs": 1659,
+    "bot_runs": 1914,
     "cancel_savings": {
-     "cancelled": 265,
-     "saved_min_est": 1759,
+     "cancelled": 330,
+     "saved_min_est": 2620,
      "unpriced": 0,
-     "wall_min": 22739
+     "wall_min": 28396
     },
     "ci_changes": [
      {
@@ -2875,15 +2875,19 @@
      {
       "pr": 5869,
       "title": "CI: Det Sweep db2 shards time out at 30 min, not 18 (#5869)"
+     },
+     {
+      "pr": 5894,
+      "title": "det sweep: Db2 shard telemetry and the first speed-ups (Part of #5882) (#5894)"
      }
     ],
     "reruns": {
-     "attempts": 16,
+     "attempts": 20,
      "by_workflow": {
       "Det Sweep": [
+       3,
        2,
-       2,
-       6
+       8
       ],
       "Mainframe Ground Truth": [
        1,
@@ -2892,47 +2896,52 @@
       ]
      },
      "failed_again": 4,
-     "passed": 3,
-     "runs": 13
+     "passed": 4,
+     "runs": 16
     },
-    "runner_min_est": 3660,
+    "runner_min_est": 7724,
     "sampled_min_by_origin": {
-     "bot": 7.4,
-     "main": 10.0,
+     "agent": 2.5,
+     "bot": 30.8,
+     "main": 9.8,
      "other": 0.6
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.3,
      "CI shepherd (reconcile)": 2.3,
-     "Generated Docs": 0.9,
-     "Main Watch": 0.2,
+     "CodeQL Security Scan": 4.2,
+     "DOOM-rosetta": 14.6,
+     "Generated Docs": 1.7,
+     "GitGalaxy Zero-Trust Pipeline": 2.5,
+     "Mainframe Ground Truth": 0.0,
      "Muninn Security Scan": 1.9,
      "Mypy Audit": 0.6,
      "Ports Compile": 4.2,
-     "Ruff Audit": 1.0,
-     "Tri-Comparison History": 6.7
+     "Ruff Audit": 0.5,
+     "Tri-Comparison History": 6.7,
+     "unicode-gauntlet": 4.3
     },
-    "sampled_runs": 18,
-    "wait_median": 2.48,
-    "wait_p90": 8.78
+    "sampled_runs": 24,
+    "wait_median": 3.52,
+    "wait_p90": 29.35
    },
-   "merged": 75,
+   "merged": 94,
    "merged_by_class": {
-    "agent": 6,
-    "automation": 3,
-    "bot": 65,
+    "agent": 9,
+    "automation": 4,
+    "bot": 80,
     "other": 1
    },
    "runs": {
-    "cancelled": 920,
-    "failure": 37,
-    "skipped": 832,
-    "success": 2622,
-    "total": 4495
+    "cancelled": 1096,
+    "failure": 41,
+    "skipped": 989,
+    "success": 3038,
+    "total": 5226
    }
   }
  },
- "open_prs": 11,
+ "open_prs": 8,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-21T17:30Z"
+ "updated": "2026-10-21T20:30Z"
 }
