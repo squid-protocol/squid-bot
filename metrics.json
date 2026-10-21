@@ -2814,17 +2814,19 @@
      "passed": 3,
      "runs": 7
     },
-    "runner_min_est": 18946,
+    "runner_min_est": 15904,
     "sampled_min_by_origin": {
-     "agent": 5.5,
-     "bot": 33.2,
+     "agent": 6.1,
+     "bot": 15.2,
      "main": 70.1
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.6,
      "CI shepherd (reconcile)": 32.2,
+     "Det Sweep": 1.6,
+     "Fact Cross-check": 3.4,
      "Main Watch": 0.2,
-     "Mainframe Ground Truth": 43.5,
+     "Mainframe Ground Truth": 21.1,
      "Muninn Security Scan": 1.9,
      "Mypy Audit": 0.7,
      "OS Smoke Grid": 6.5,
@@ -2834,7 +2836,7 @@
      "pages build and deployment": 0.5
     },
     "sampled_runs": 24,
-    "wait_median": 2.83,
+    "wait_median": 1.57,
     "wait_p90": 25.02
    },
    "merged": 99,
@@ -2854,59 +2856,74 @@
   },
   "2026-10-21": {
    "detail": {
-    "bot_runs": 30,
+    "bot_runs": 521,
     "cancel_savings": {
-     "cancelled": 2,
-     "saved_min_est": 5,
-     "unpriced": 1,
-     "wall_min": 73
+     "cancelled": 57,
+     "saved_min_est": 318,
+     "unpriced": 0,
+     "wall_min": 4882
     },
     "ci_changes": [
      {
       "pr": 5798,
       "title": "flake history: its own scheduled workflow is the cache's only writer; reconcile only restores (#5798)"
+     },
+     {
+      "pr": 5813,
+      "title": "doom-rosetta.yml: LOC-sharded zero-drift check, Universal Ctags, cached clones (Part of #5619) (#5813)"
      }
     ],
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
-     "failed_again": 0,
-     "passed": 0,
-     "runs": 0
+     "attempts": 8,
+     "by_workflow": {
+      "Det Sweep": [
+       0,
+       1,
+       3
+      ],
+      "Mainframe Ground Truth": [
+       1,
+       2,
+       0
+      ]
+     },
+     "failed_again": 3,
+     "passed": 1,
+     "runs": 7
     },
-    "runner_min_est": 40,
+    "runner_min_est": 1405,
     "sampled_min_by_origin": {
-     "bot": 2.0,
-     "main": 1.8
+     "bot": 3.9,
+     "main": 3.7
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (reconcile)": 0.0,
-     "Deploy Museum of Code Docs": 1.4,
+     "CI shepherd (reconcile)": 0.4,
+     "Flake history (refresh)": 3.1,
      "Main Watch": 0.2,
-     "Muninn Security Scan": 2.0,
-     "post-merge": 0.2
+     "Mypy Audit": 0.6,
+     "rosetta-audit": 3.2
     },
     "sampled_runs": 6,
-    "wait_median": 0.03,
-    "wait_p90": 0.03
+    "wait_median": 0.77,
+    "wait_p90": 2.83
    },
-   "merged": 2,
+   "merged": 25,
    "merged_by_class": {
     "agent": 1,
-    "automation": 0,
-    "bot": 1,
+    "automation": 3,
+    "bot": 21,
     "other": 0
    },
    "runs": {
-    "cancelled": 12,
-    "failure": 0,
-    "skipped": 13,
-    "success": 27,
-    "total": 76
+    "cancelled": 249,
+    "failure": 11,
+    "skipped": 250,
+    "success": 835,
+    "total": 1364
    }
   }
  },
- "open_prs": 6,
+ "open_prs": 8,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-21T00:21Z"
+ "updated": "2026-10-21T05:02Z"
 }
