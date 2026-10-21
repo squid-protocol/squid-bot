@@ -2856,12 +2856,12 @@
   },
   "2026-10-21": {
    "detail": {
-    "bot_runs": 521,
+    "bot_runs": 1168,
     "cancel_savings": {
-     "cancelled": 57,
-     "saved_min_est": 318,
+     "cancelled": 132,
+     "saved_min_est": 764,
      "unpriced": 0,
-     "wall_min": 4882
+     "wall_min": 13318
     },
     "ci_changes": [
      {
@@ -2874,12 +2874,12 @@
      }
     ],
     "reruns": {
-     "attempts": 8,
+     "attempts": 11,
      "by_workflow": {
       "Det Sweep": [
-       0,
        1,
-       3
+       1,
+       5
       ],
       "Mainframe Ground Truth": [
        1,
@@ -2888,42 +2888,47 @@
       ]
      },
      "failed_again": 3,
-     "passed": 1,
-     "runs": 7
+     "passed": 2,
+     "runs": 10
     },
-    "runner_min_est": 1405,
+    "runner_min_est": 8242,
     "sampled_min_by_origin": {
-     "bot": 3.9,
-     "main": 3.7
+     "bot": 27.9,
+     "main": 7.6,
+     "other": 20.0
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (reconcile)": 0.4,
-     "Flake history (refresh)": 3.1,
+     "CI shepherd (label events)": 0.7,
+     "CI shepherd (reconcile)": 2.4,
+     "Call Resolution History": 4.2,
+     "Det Sweep": 3.8,
+     "Generated Docs": 0.9,
+     "GitGalaxy Smoke Tests": 20.0,
      "Main Watch": 0.2,
-     "Mypy Audit": 0.6,
-     "rosetta-audit": 3.2
+     "Mainframe Ground Truth": 23.0,
+     "Ruff Audit": 0.5
     },
-    "sampled_runs": 6,
-    "wait_median": 0.77,
-    "wait_p90": 2.83
+    "sampled_runs": 17,
+    "wait_median": 2.03,
+    "wait_p90": 7.13
    },
-   "merged": 25,
+   "merged": 54,
    "merged_by_class": {
-    "agent": 1,
+    "agent": 3,
     "automation": 3,
-    "bot": 21,
+    "bot": 48,
     "other": 0
    },
    "runs": {
-    "cancelled": 249,
-    "failure": 11,
-    "skipped": 250,
-    "success": 835,
-    "total": 1364
+    "cancelled": 554,
+    "failure": 28,
+    "skipped": 566,
+    "success": 1925,
+    "total": 3089
    }
   }
  },
- "open_prs": 8,
+ "open_prs": 7,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-21T05:02Z"
+ "updated": "2026-10-21T12:05Z"
 }
