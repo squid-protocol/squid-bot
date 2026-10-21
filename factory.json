@@ -356,45 +356,48 @@
    }
   },
   "2026-10-20": {
-   "churn_merged": 63,
+   "churn_merged": 93,
    "ci_busy_hours": 16.15,
    "holds": {
-    "pace": 33,
-    "paused": 43,
+    "pace": 36,
+    "paused": 48,
     "prs-need-work": 0
    },
+   "hosts": 2,
    "idle_blockers": {},
    "idle_causes": {
-    "ci-busy": 50,
-    "frontier": 3,
+    "backfill-calm": 1,
+    "ci-busy": 51,
+    "frontier": 6,
+    "other": 1,
     "owner": 3,
     "plan-overlap": 20,
-    "wait": 6
+    "wait": 7
    },
-   "idle_hours": 5.23,
-   "idle_ticks": 70,
-   "items_done": 11,
-   "loop_runs": 31,
-   "loops_per_merged_pr": 0.49,
-   "max_workers": 2,
-   "new_work_share": 0.919,
-   "paused_hours": 7.07,
-   "pr_open_to_merge_h_median": 0.6,
+   "idle_hours": 5.45,
+   "idle_ticks": 73,
+   "items_done": 14,
+   "loop_runs": 44,
+   "loops_per_merged_pr": 0.47,
+   "max_workers": 3,
+   "new_work_share": 0.913,
+   "paused_hours": 7.67,
+   "pr_open_to_merge_h_median": 0.63,
    "precheck": {
     "failed_again": 1,
-    "passed": 82,
-    "sent_back": 9
+    "passed": 119,
+    "sent_back": 11
    },
    "review_wait_min_median": 1.0,
-   "slices_merged": 43,
-   "slot_use": 0.486,
-   "usd": 83.36,
-   "usd_per_merged_churn_pr": 1.32,
+   "slices_merged": 47,
+   "slot_use": 0.522,
+   "usd": 134.18,
+   "usd_per_merged_churn_pr": 1.44,
    "worker_hours": {
-    "new_work": 21.43,
-    "pr_fix": 0.85,
-    "precheck_retry": 0.27,
-    "send_back": 0.77
+    "new_work": 34.35,
+    "pr_fix": 1.12,
+    "precheck_retry": 0.69,
+    "send_back": 1.45
    }
   }
  },
@@ -869,6 +872,48 @@
      "pr_fix": 2.15,
      "precheck_retry": 0.58,
      "send_back": 1.22
+    }
+   },
+   "2026-10-20": {
+    "churn_merged": 30,
+    "ci_busy_hours": 9.08,
+    "holds": {
+     "pace": 3,
+     "paused": 5,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "backfill-calm": 1,
+     "ci-busy": 1,
+     "frontier": 3,
+     "other": 1,
+     "wait": 1
+    },
+    "idle_hours": 0.22,
+    "idle_ticks": 3,
+    "items_done": 3,
+    "loop_runs": 13,
+    "loops_per_merged_pr": 0.43,
+    "max_workers": 1,
+    "new_work_share": 0.904,
+    "paused_hours": 0.6,
+    "pr_open_to_merge_h_median": 0.68,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 37,
+     "sent_back": 2
+    },
+    "review_wait_min_median": 1.0,
+    "slices_merged": 4,
+    "slot_use": 0.595,
+    "usd": 50.82,
+    "usd_per_merged_churn_pr": 1.69,
+    "worker_hours": {
+     "new_work": 12.92,
+     "pr_fix": 0.27,
+     "precheck_retry": 0.42,
+     "send_back": 0.68
     }
    }
   }
