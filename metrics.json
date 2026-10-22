@@ -2856,12 +2856,12 @@
   },
   "2026-10-21": {
    "detail": {
-    "bot_runs": 2071,
+    "bot_runs": 2353,
     "cancel_savings": {
-     "cancelled": 376,
-     "saved_min_est": 3115,
+     "cancelled": 425,
+     "saved_min_est": 3629,
      "unpriced": 0,
-     "wall_min": 31805
+     "wall_min": 35742
     },
     "ci_changes": [
      {
@@ -2879,13 +2879,21 @@
      {
       "pr": 5894,
       "title": "det sweep: Db2 shard telemetry and the first speed-ups (Part of #5882) (#5894)"
+     },
+     {
+      "pr": 5916,
+      "title": "evidence-refresh: nightly lane renews stale det_mutation ledgers (Part of #5862) (#5916)"
+     },
+     {
+      "pr": 5926,
+      "title": "CICS Crucible: four cases at once per shard (--jobs 4), two shards (Part of #5882) (#5926)"
      }
     ],
     "reruns": {
-     "attempts": 20,
+     "attempts": 21,
      "by_workflow": {
       "Det Sweep": [
-       3,
+       4,
        2,
        8
       ],
@@ -2896,51 +2904,101 @@
       ]
      },
      "failed_again": 4,
-     "passed": 4,
-     "runs": 16
+     "passed": 5,
+     "runs": 17
     },
-    "runner_min_est": 7147,
+    "runner_min_est": 36900,
     "sampled_min_by_origin": {
-     "agent": 2.5,
-     "bot": 22.7,
-     "main": 11.3,
+     "agent": 102.4,
+     "bot": 36.5,
+     "main": 29.7,
      "other": 0.6
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.3,
-     "CI shepherd (reconcile)": 2.3,
+     "CI shepherd (reconcile)": 2.6,
      "DOOM-rosetta": 14.6,
-     "Deploy Museum of Code Docs": 0.9,
-     "Evidence Pages": 0.6,
+     "Det Sweep": 99.9,
      "Generated Docs": 1.7,
+     "Generated Java Compiles": 14.2,
+     "GitGalaxy Smoke Tests": 19.0,
      "GitGalaxy Zero-Trust Pipeline": 2.5,
+     "Main Watch": 0.5,
      "Muninn Security Scan": 1.9,
      "Mypy Audit": 0.6,
      "Ports Compile": 4.2,
-     "Ruff Audit": 0.9,
+     "Ruff Audit": 0.5,
      "Tri-Comparison History": 6.7
     },
     "sampled_runs": 24,
-    "wait_median": 3.52,
-    "wait_p90": 18.32
+    "wait_median": 2.6,
+    "wait_p90": 14.33
    },
-   "merged": 103,
+   "merged": 119,
    "merged_by_class": {
-    "agent": 12,
+    "agent": 16,
     "automation": 4,
-    "bot": 86,
+    "bot": 98,
     "other": 1
    },
    "runs": {
-    "cancelled": 1227,
-    "failure": 43,
-    "skipped": 1094,
-    "success": 3287,
-    "total": 5711
+    "cancelled": 1401,
+    "failure": 52,
+    "skipped": 1203,
+    "success": 3775,
+    "total": 6436
+   }
+  },
+  "2026-10-22": {
+   "detail": {
+    "bot_runs": 34,
+    "cancel_savings": {
+     "cancelled": 0,
+     "saved_min_est": 0,
+     "unpriced": 0,
+     "wall_min": 75
+    },
+    "ci_changes": [],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 32,
+    "sampled_min_by_origin": {
+     "agent": 2.4,
+     "bot": 0.6,
+     "main": 0.0
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (reconcile)": 0.0,
+     "Det Sweep": 1.4,
+     "Mypy Audit": 0.6,
+     "Small Audits": 1.0
+    },
+    "sampled_runs": 6,
+    "wait_median": 2.88,
+    "wait_p90": 3.45
+   },
+   "merged": 0,
+   "merged_by_class": {
+    "agent": 0,
+    "automation": 0,
+    "bot": 0,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 21,
+    "failure": 0,
+    "skipped": 21,
+    "success": 22,
+    "total": 84
    }
   }
  },
- "open_prs": 9,
+ "open_prs": 10,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-21T21:56Z"
+ "updated": "2026-10-22T00:15Z"
 }
