@@ -2859,9 +2859,9 @@
     "bot_runs": 2353,
     "cancel_savings": {
      "cancelled": 425,
-     "saved_min_est": 3629,
+     "saved_min_est": 3643,
      "unpriced": 0,
-     "wall_min": 35742
+     "wall_min": 35783
     },
     "ci_changes": [
      {
@@ -2907,32 +2907,29 @@
      "passed": 5,
      "runs": 17
     },
-    "runner_min_est": 36900,
+    "runner_min_est": 8424,
     "sampled_min_by_origin": {
-     "agent": 102.4,
-     "bot": 36.5,
-     "main": 29.7,
+     "agent": 0.6,
+     "bot": 26.7,
+     "main": 10.8,
      "other": 0.6
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.3,
-     "CI shepherd (reconcile)": 2.6,
-     "DOOM-rosetta": 14.6,
-     "Det Sweep": 99.9,
-     "Generated Docs": 1.7,
-     "Generated Java Compiles": 14.2,
-     "GitGalaxy Smoke Tests": 19.0,
-     "GitGalaxy Zero-Trust Pipeline": 2.5,
+     "CI shepherd (label events)": 0.6,
+     "CI shepherd (reconcile)": 2.7,
+     "CodeQL Security Scan": 5.1,
+     "Det Sweep": 11.8,
+     "Generated Docs": 0.9,
      "Main Watch": 0.5,
-     "Muninn Security Scan": 1.9,
-     "Mypy Audit": 0.6,
+     "Muninn Security Scan": 3.9,
+     "Mypy Audit": 1.2,
      "Ports Compile": 4.2,
-     "Ruff Audit": 0.5,
+     "Ruff Audit": 1.0,
      "Tri-Comparison History": 6.7
     },
     "sampled_runs": 24,
-    "wait_median": 2.6,
-    "wait_p90": 14.33
+    "wait_median": 1.8,
+    "wait_p90": 8.25
    },
    "merged": 119,
    "merged_by_class": {
@@ -2943,62 +2940,77 @@
    },
    "runs": {
     "cancelled": 1401,
-    "failure": 52,
+    "failure": 53,
     "skipped": 1203,
-    "success": 3775,
+    "success": 3779,
     "total": 6436
    }
   },
   "2026-10-22": {
    "detail": {
-    "bot_runs": 34,
+    "bot_runs": 493,
     "cancel_savings": {
-     "cancelled": 0,
-     "saved_min_est": 0,
+     "cancelled": 50,
+     "saved_min_est": 84,
      "unpriced": 0,
-     "wall_min": 75
+     "wall_min": 3921
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 5932,
+      "title": "CI plans fixed + blobless checkouts; Smoke collection and slowest tests faster (Part of #5882) (#5932)"
+     },
+     {
+      "pr": 5937,
+      "title": "DOOM-rosetta: nightly call-graph accuracy job (Part of #5630) (#5937)"
+     }
+    ],
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
+     "attempts": 1,
+     "by_workflow": {
+      "Det Sweep": [
+       1,
+       0,
+       0
+      ]
+     },
      "failed_again": 0,
-     "passed": 0,
-     "runs": 0
+     "passed": 1,
+     "runs": 1
     },
-    "runner_min_est": 32,
+    "runner_min_est": 2386,
     "sampled_min_by_origin": {
-     "agent": 2.4,
-     "bot": 0.6,
-     "main": 0.0
+     "bot": 13.1,
+     "main": 1.2
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (reconcile)": 0.0,
-     "Det Sweep": 1.4,
-     "Mypy Audit": 0.6,
-     "Small Audits": 1.0
+     "CI shepherd (label events)": 0.2,
+     "CI shepherd (reconcile)": 0.6,
+     "GitGalaxy Smoke Tests": 12.9,
+     "Main Watch": 0.2,
+     "Mainframe Ground Truth": 0.5
     },
     "sampled_runs": 6,
-    "wait_median": 2.88,
-    "wait_p90": 3.45
+    "wait_median": 0.03,
+    "wait_p90": 0.28
    },
-   "merged": 0,
+   "merged": 22,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 3,
     "automation": 0,
-    "bot": 0,
+    "bot": 19,
     "other": 0
    },
    "runs": {
-    "cancelled": 21,
-    "failure": 0,
-    "skipped": 21,
-    "success": 22,
-    "total": 84
+    "cancelled": 216,
+    "failure": 15,
+    "skipped": 182,
+    "success": 766,
+    "total": 1182
    }
   }
  },
- "open_prs": 10,
+ "open_prs": 8,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-22T00:15Z"
+ "updated": "2026-10-22T05:03Z"
 }
