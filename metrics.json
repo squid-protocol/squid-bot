@@ -3057,12 +3057,12 @@
   },
   "2026-10-23": {
    "detail": {
-    "bot_runs": 2951,
+    "bot_runs": 3493,
     "cancel_savings": {
-     "cancelled": 592,
-     "saved_min_est": 4614,
+     "cancelled": 629,
+     "saved_min_est": 4605,
      "unpriced": 0,
-     "wall_min": 31941
+     "wall_min": 35915
     },
     "ci_changes": [
      {
@@ -3124,46 +3124,47 @@
      "passed": 2,
      "runs": 2
     },
-    "runner_min_est": 4993,
+    "runner_min_est": 32095,
     "sampled_min_by_origin": {
-     "agent": 0.7,
-     "bot": 13.8,
-     "main": 2.7
+     "bot": 111.4,
+     "main": 10.0
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.3,
+     "CI shepherd (label events)": 1.3,
      "CI shepherd (reconcile)": 0.0,
-     "Crucible Path Independence": 5.2,
-     "Det Sweep": 0.7,
-     "Fact Cross-check": 4.2,
-     "Generated Docs": 2.7,
+     "CICS Crucible": 11.1,
+     "Deploy Museum of Code Docs": 1.4,
+     "Det Sweep": 90.2,
+     "Fact Cross-check": 4.4,
+     "Generated Docs": 2.0,
      "GitGalaxy Zero-Trust Pipeline": 2.0,
      "Golden Crucible Resilience Test": 0.8,
-     "Main Watch": 0.2,
-     "Mypy Audit": 0.7,
-     "pages build and deployment": 0.5
+     "Main Watch": 0.5,
+     "Mainframe Ground Truth": 0.0,
+     "Tri-Comparison Audit": 1.6,
+     "pages build and deployment": 6.2
     },
-    "sampled_runs": 18,
-    "wait_median": 1.77,
-    "wait_p90": 7.63
+    "sampled_runs": 24,
+    "wait_median": 4.2,
+    "wait_p90": 14.93
    },
-   "merged": 168,
+   "merged": 191,
    "merged_by_class": {
-    "agent": 3,
+    "agent": 5,
     "automation": 4,
-    "bot": 160,
+    "bot": 181,
     "other": 1
    },
    "runs": {
-    "cancelled": 1971,
-    "failure": 60,
-    "skipped": 1760,
-    "success": 4151,
-    "total": 7006
+    "cancelled": 2202,
+    "failure": 69,
+    "skipped": 2014,
+    "success": 5010,
+    "total": 8359
    }
   }
  },
- "open_prs": 14,
+ "open_prs": 12,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-23T17:27Z"
+ "updated": "2026-10-23T21:44Z"
 }
