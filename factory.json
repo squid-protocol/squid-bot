@@ -446,6 +446,47 @@
     "precheck_retry": 0.85,
     "send_back": 5.33
    }
+  },
+  "2026-10-22": {
+   "churn_merged": 29,
+   "ci_busy_hours": 1.12,
+   "holds": {
+    "pace": 3,
+    "paused": 0,
+    "prs-need-work": 0
+   },
+   "idle_blockers": {},
+   "idle_causes": {
+    "ci-busy": 6,
+    "frontier": 47,
+    "owner": 10,
+    "wait": 1
+   },
+   "idle_hours": 6.88,
+   "idle_ticks": 62,
+   "items_done": 5,
+   "loop_runs": 11,
+   "loops_per_merged_pr": 0.38,
+   "max_workers": 2,
+   "new_work_share": 0.896,
+   "paused_hours": 0.0,
+   "pr_open_to_merge_h_median": 0.23,
+   "precheck": {
+    "failed_again": 0,
+    "passed": 39,
+    "sent_back": 2
+   },
+   "review_wait_min_median": 1.0,
+   "slices_merged": 4,
+   "slot_use": 0.305,
+   "usd": 37.91,
+   "usd_per_merged_churn_pr": 1.31,
+   "worker_hours": {
+    "new_work": 13.1,
+    "pr_fix": 0.02,
+    "precheck_retry": 0.07,
+    "send_back": 1.43
+   }
   }
  },
  "hosts": {
@@ -1047,9 +1088,50 @@
      "precheck_retry": 0.18,
      "send_back": 2.5
     }
+   },
+   "2026-10-22": {
+    "churn_merged": 29,
+    "ci_busy_hours": 1.12,
+    "holds": {
+     "pace": 3,
+     "paused": 0,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "ci-busy": 6,
+     "frontier": 47,
+     "owner": 10,
+     "wait": 1
+    },
+    "idle_hours": 6.88,
+    "idle_ticks": 62,
+    "items_done": 5,
+    "loop_runs": 11,
+    "loops_per_merged_pr": 0.38,
+    "max_workers": 2,
+    "new_work_share": 0.896,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": 0.23,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 39,
+     "sent_back": 2
+    },
+    "review_wait_min_median": 1.0,
+    "slices_merged": 4,
+    "slot_use": 0.305,
+    "usd": 37.91,
+    "usd_per_merged_churn_pr": 1.31,
+    "worker_hours": {
+     "new_work": 13.1,
+     "pr_fix": 0.02,
+     "precheck_retry": 0.07,
+     "send_back": 1.43
+    }
    }
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-22T00:03Z"
+ "updated": "2026-10-23T00:00Z"
 }
