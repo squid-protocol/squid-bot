@@ -73,7 +73,22 @@ def test_a_cost_axis_cap_draws_bigger_days_at_the_top_and_marks_them():
     capped = dashboard.render(data, 30, TODAY, dashboard.Config(repo="owner/repo", cost_max=10))
     ET.fromstring(capped)
     assert "▲ 25 h" in capped and "(above the 10 h axis)" in capped  # 750 h over the day's 30 merges, drawn at 10
-    assert "▲" not in dashboard.render(data, 30, TODAY)  # no cap: the axis fits the data
+    uncapped = dashboard.render(data, 30, TODAY)
+    assert "▲ 25 h" not in uncapped and "above the" not in uncapped  # no cap: the per-PR axis fits the data
+    # CI hours: the 750 h day is over 3x the 10 h median, so its bar is drawn at the top and marked
+    assert "2 · CI hours — runner hours per day (est., sampled)" in uncapped and "▲ 750 h" in uncapped
+
+
+def test_ci_hours_bars_split_by_origin_in_the_tip():
+    data = _data()
+    for d in sorted(data["days"]):
+        data["days"][d]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
+                                     "runner_min_est": 1200, "sampled_runs": 24,
+                                     "sampled_min_by_origin": {"bot": 30.0, "main": 10.0}}
+    svg = dashboard.render(data, 30, TODAY)
+    ET.fromstring(svg)
+    assert "Oct 13 · 20 runner hours (est.) · 1,840 runs · bot 75%, main 25%" in svg
+    assert "▲" not in svg and "runner hours (est.) (today so far)" in svg  # today drawn faded, like every chart
 
 
 CFG = dashboard.Config(repo="owner/repo", agent_prefixes=["churn/", "claude/"])
@@ -240,52 +255,40 @@ def test_render_tells_the_before_and_with_bot_story():
     svg = dashboard.render(_with_bot(), 30, TODAY, BOT)
     ET.fromstring(svg)
     assert "promoter-bot live · Oct 8" in svg and "Oct 6 · shepherd on" in svg
-    # no shaded band: a start line (and the event lines) through every panel, four without clones or factory.json
-    assert 'class="band"' not in svg and svg.count('class="start"') == 4 and svg.count('class="mark"') == 4
-    assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg  # 25 of 40 merges a day since it started
-    assert "before promoter-bot: 15.0 · +167%" in svg  # merged / day: 40 with vs 15 before
+    # no shaded band: a start line (and the event lines) through every panel, five without factory.json
+    assert 'class="band"' not in svg and svg.count('class="start"') == 5 and svg.count('class="mark"') == 5
     assert "175 of the 280 PRs merged since then were its own" in svg
-    # runner hours per PR with its before/with averages (600 min over 40 vs 15 merges)
-    assert "3 · CI load" in svg and "avg 0.2 h / PR with promoter-bot" in svg and "avg 0.7 h / PR before promoter-bot" in svg
-    assert "4 · Efficiency" in svg  # no clones database or factory.json: no clones or dollar panels
-    assert "Repo clones" not in svg and "Spend" not in svg
+    # the cards: the last finished day (Oct 13) against the day before, not period averages
+    assert "Cards: Oct 13, the last finished UTC day, vs Oct 12." in svg
+    assert "PROMOTER-BOT-MADE SHARE" in svg and "62.5%" in svg and "25 PRs · all agents 75.0%" in svg
+    assert ">MERGED PRs</text>" in svg and ">40</text>" in svg and "Oct 12: 40 · +0%" in svg
+    assert "before promoter-bot:" not in svg and "with promoter-bot (" not in svg  # no period-average cards
+    # runner hours per PR without the before/with average lines
+    assert "4 · CI load" in svg and 'class="avg"' not in svg and "h / PR with" not in svg
+    assert "5 · Efficiency" in svg and "Spend" not in svg  # no factory.json: no dollar panels
 
 
-def test_clones_and_dollar_panels_add_up_from_the_bots_start():
+def test_the_cards_follow_the_last_finished_day():
     data = _with_bot()
-    data["clones"] = {"2026-10-07": {"o/a": 999}, "2026-10-08": {"o/a": 100, "o/b": 20}, "2026-10-09": {"o/a": 80}}
+    data["days"]["2026-10-13"]["merged"] = 80  # yesterday doubled: the card says so, not a period average
+    svg = dashboard.render(data, 30, TODAY, BOT)
+    assert ">80</text>" in svg and "Oct 12: 40 · +100%" in svg
+    data["days"]["2026-10-14"] = dict(data["days"]["2026-10-13"], merged=5)  # today so far is not a finished day
+    assert "Cards: Oct 13, the last finished UTC day" in dashboard.render(data, 30, TODAY, BOT)
+
+
+def test_dollar_panels_add_up_from_the_bots_start():
+    data = _with_bot()
     data["factory"] = {"days": {"2026-10-07": {"usd": 50.0, "churn_merged": 1},
                                 "2026-10-08": {"usd": 30.0, "churn_merged": 10}, "2026-10-09": {"usd": 20.0, "churn_merged": 15}}}
     svg = dashboard.render(data, 30, TODAY, BOT)
     ET.fromstring(svg)
-    # 2 · clones from the start (Oct 8) on, the day before left out, the line ending on the last day with data
-    assert "2 · Repo clones by the fleet, cumulative since Oct 8 (GitHub&#x27;s counts, through Oct 9)" in svg \
-        or "2 · Repo clones by the fleet, cumulative since Oct 8 (GitHub's counts, through Oct 9)" in svg
-    assert ">200 clones</text>" in svg and "a 180 · b 20" in svg
+    assert "2 · CI hours" in svg and "Repo clones" not in svg
     # 5 · dollars spent since the start, and 6 · per merged PR with the overall average ($50 / 25 PRs)
     assert "5 · Spend — promoter-bot cost in dollars, cumulative since Oct 8" in svg and ">$50 total</text>" in svg
     assert "25 merged promoter-bot PRs for $50" in svg
     assert "6 · Cost per PR" in svg and "$3.00 per merged PR ($30.00 for 10)" in svg and "avg $2.00 per PR since Oct 8" in svg
     assert "7 · Efficiency" in svg
-
-
-def test_clone_days_reads_the_fleets_ci_targets_from_a_telemetry_db(tmp_path):
-    import sqlite3
-    db = tmp_path / "t.db"
-    con = sqlite3.connect(db)
-    con.execute("CREATE TABLE traffic_clones (repo_name TEXT, date TEXT, total_clones INTEGER, unique_cloners INTEGER)")
-    con.execute("CREATE TABLE own_ci_checkouts (date TEXT, ci_repo TEXT, workflow TEXT, target_repo TEXT, runs INTEGER, "
-                "checkouts_per_run INTEGER, est_clones INTEGER)")
-    con.executemany("INSERT INTO traffic_clones VALUES (?, ?, ?, 0)",
-                    [("o/a", "2026-10-08", 5), ("o/b", "2026-10-08", 7), ("o/other", "2026-10-08", 99)])
-    con.executemany("INSERT INTO own_ci_checkouts VALUES ('2026-10-08', 'o/ci', 'ci.yml', ?, 1, 1, 1)", [("o/a",), ("o/b",)])
-    con.commit()
-    con.close()
-    assert dashboard.clone_days(db, []) == {"2026-10-08": {"o/a": 5, "o/b": 7}}  # repos the fleet's CI fetches
-    assert dashboard.clone_days(db, ["o/other"]) == {"2026-10-08": {"o/other": 99}}
-    md = dashboard.summary_md(_with_bot(), BOT, 30, TODAY, [])
-    assert "| Measure | With promoter-bot | Before promoter-bot |" in md
-    assert "| Delivery · promoter-bot-made share | 62.5% | 0.0% |" in md
 
 
 def test_axes_use_the_tightest_round_step():
