@@ -3015,30 +3015,30 @@
      "passed": 11,
      "runs": 18
     },
-    "runner_min_est": 17189,
+    "runner_min_est": 18717,
     "sampled_min_by_origin": {
      "agent": 0.3,
-     "bot": 27.8,
+     "bot": 34.2,
      "main": 43.1
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 1.3,
      "CI shepherd (reconcile)": 1.4,
+     "CICS Crucible": 11.9,
      "Deploy Museum of Code Docs": 1.3,
      "Fact Cross-check": 3.7,
      "Flake history (refresh)": 5.9,
      "Generated Java Compiles": 19.7,
      "GitGalaxy Smoke Tests": 14.7,
      "GitGalaxy Zero-Trust Pipeline": 2.0,
-     "Graph Accuracy Audit": 9.4,
+     "Golden Crucible Resilience Test": 7.3,
      "Mypy Audit": 0.5,
      "Ports Compile": 4.8,
-     "rosetta-audit": 2.9,
-     "unicode-gauntlet": 3.4
+     "rosetta-audit": 2.9
     },
     "sampled_runs": 24,
     "wait_median": 1.6,
-    "wait_p90": 11.6
+    "wait_p90": 10.07
    },
    "merged": 131,
    "merged_by_class": {
@@ -3057,12 +3057,12 @@
   },
   "2026-10-23": {
    "detail": {
-    "bot_runs": 1032,
+    "bot_runs": 2027,
     "cancel_savings": {
-     "cancelled": 260,
-     "saved_min_est": 2345,
+     "cancelled": 433,
+     "saved_min_est": 3660,
      "unpriced": 0,
-     "wall_min": 11433
+     "wall_min": 22095
     },
     "ci_changes": [
      {
@@ -3076,48 +3076,68 @@
      {
       "pr": 6140,
       "title": "ci: run the assess clean-install check in ports-compile, translator wheelhouse and burned estates (Part of #4726) (#6140)"
+     },
+     {
+      "pr": 6170,
+      "title": "CI: nightly full-suite durations scaled to each part's pytest wall (Part of #5133) (#6170)"
+     },
+     {
+      "pr": 6212,
+      "title": "build(deps): bump the codeql-action group with 3 updates (#6212)"
+     },
+     {
+      "pr": 6213,
+      "title": "build(deps): bump skaldlab/muninn from 0.3.13 to 0.3.14 (#6213)"
      }
     ],
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
+     "attempts": 1,
+     "by_workflow": {
+      "Det Sweep": [
+       1,
+       0,
+       0
+      ]
+     },
      "failed_again": 0,
-     "passed": 0,
-     "runs": 0
+     "passed": 1,
+     "runs": 1
     },
-    "runner_min_est": 4945,
+    "runner_min_est": 2325,
     "sampled_min_by_origin": {
-     "bot": 14.4,
-     "main": 1.5
+     "agent": 1.9,
+     "bot": 4.3,
+     "main": 2.0
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.3,
-     "CI shepherd (reconcile)": 0.7,
-     "Deploy Museum of Code Docs": 0.8,
-     "GitGalaxy Smoke Tests": 12.6,
-     "Small Audits": 1.5
+     "CI shepherd (reconcile)": 0.0,
+     "Fact Cross-check": 3.4,
+     "Generated Docs": 2.0,
+     "Muninn Security Scan": 1.9,
+     "Mypy Audit": 0.6
     },
-    "sampled_runs": 6,
-    "wait_median": 0.03,
-    "wait_p90": 0.03
+    "sampled_runs": 12,
+    "wait_median": 2.15,
+    "wait_p90": 9.7
    },
-   "merged": 66,
+   "merged": 120,
    "merged_by_class": {
     "agent": 0,
-    "automation": 0,
-    "bot": 66,
-    "other": 0
+    "automation": 3,
+    "bot": 116,
+    "other": 1
    },
    "runs": {
-    "cancelled": 813,
-    "failure": 14,
-    "skipped": 634,
-    "success": 1345,
-    "total": 2500
+    "cancelled": 1452,
+    "failure": 34,
+    "skipped": 1210,
+    "success": 2747,
+    "total": 4648
    }
   }
  },
- "open_prs": 7,
+ "open_prs": 13,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-23T05:05Z"
+ "updated": "2026-10-23T11:09Z"
 }
