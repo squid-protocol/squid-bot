@@ -2,7 +2,7 @@
 
 A GitHub Action that shows what an agent bot changed in your repo. It publishes a live dashboard (SVG, light and dark) you can embed in a README, and writes a report to each run's summary page.
 
-Every chart shows one mark per UTC day: merged PRs by origin, job queue wait, runner time per merged PR, and the share of run minutes saved by early cancellation and of runs that failed. Name your bot's branch prefixes and its PRs get their own color, and its dollar spend and repo clones are added up from the day it started; a line marks the day it started, through every chart, and the cards compare each measure's average with the bot against the 14 days before it. Without a bot, they compare the last 7 days with the 7 before. It also publishes its source data and explains which measures are exact or sampled.
+Every chart shows one mark per UTC day: merged PRs by origin, CI runner hours, job queue wait, runner time per merged PR, and the share of run minutes saved by early cancellation and of runs that failed. Name your bot's branch prefixes and its PRs get their own color, and its dollar spend is added up from the day it started; a line marks the day it started, through every chart. The cards show the last finished UTC day against the day before it: a fleet that changes week to week is described by its latest day, not a period average. It also publishes its source data and explains which measures are exact or sampled.
 
 ![Example: GitGalaxy's agent fleet](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
@@ -49,8 +49,6 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `max-wait-p90` | off | Warn when the 7-day average p90 queue wait (min) exceeds this |
 | `max-runner-hours-per-pr` | off | Warn when 7-day runner hours per merged PR exceed this |
 | `cost-max` | fit the data | Top of the runner-hours-per-merged-PR axis |
-| `clones-db` | none | Path or https URL of a squid-telemetry `traffic_metrics.db`; adds the cumulative repo clones chart |
-| `clones-repos` | the fleet's CI targets | Comma-separated `owner/repo` to count in the clones chart |
 | `fail-on-alert` | `false` | Fail the step on a warning |
 
 Output: `dashboard-url`, the raw URL of the published SVG.
@@ -71,13 +69,13 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 ### The charts
 
 - **Delivery:** merged PRs per day, split by recorded origin (bot, other agents, other, automation). Attribution depends on configured branch prefixes or PR-body markers.
-- **Repo clones, cumulative** (with `clones-db`): GitHub's clone counts for the repos the fleet works in, added up since the bot started, from a [squid-telemetry](https://github.com/squid-protocol/squid-telemetry) database. GitHub publishes clone traffic about two days late, so the line ends on its last reported day.
+- **CI hours:** each day's estimated runner hours (sampled runner minutes per run × the day's runs); the tooltip splits them by origin. The axis fits three times the median day; a day above it (a sampling overshoot, or a real storm) is drawn at the top and marked with its value.
 - **Speed:** each day's sampled p90 job queue wait.
-- **CI load:** each day's estimated runner hours per merged PR, with dashed lines at the average before and with the bot (the cards' figures). Set `cost-max` to cap the axis; days above it are drawn at the top and marked with their value.
+- **CI load:** each day's estimated runner hours per merged PR. Set `cost-max` to cap the axis; days above it are drawn at the top and marked with their value.
 - **Spend** and **Cost per PR** (when the orchestrator publishes `factory.json` with `usd`): the bot's dollar cost added up since it started, and each day's dollars per merged bot PR with the overall average.
 - **Efficiency:** two percentages per day. **Runs failed:** failed ÷ (passed + failed) workflow runs, exact. **Run minutes saved (est.):** a run cancelled early (usually because a newer push replaced it) would have taken about as long as that day's median successful run of the same workflow; what it saved is that minus what it ran. The chart shows saved ÷ (spent + saved), in run wall-clock minutes. Runs of the configured `bot-workflows` are left out of both sides, and cancelled runs of a workflow with no successful run that day aren't priced. It is an estimate, labelled as one.
 
-Today is drawn faded, as incomplete. The "with bot" averages and cards use finished days only.
+Today is drawn faded, as incomplete. The cards use finished days only.
 
 The current GitHub API feed does not contain historical local-host PSI, agent review effort, or post-merge rework. The dashboard leaves those out rather than treating CI activity as a substitute for them.
 
