@@ -2949,12 +2949,12 @@
   },
   "2026-10-22": {
    "detail": {
-    "bot_runs": 2529,
+    "bot_runs": 2891,
     "cancel_savings": {
-     "cancelled": 198,
-     "saved_min_est": 372,
+     "cancelled": 234,
+     "saved_min_est": 491,
      "unpriced": 0,
-     "wall_min": 13871
+     "wall_min": 16967
     },
     "ci_changes": [
      {
@@ -2976,6 +2976,10 @@
      {
       "pr": 6045,
       "title": "ci: CICS Crucible runner-tests runs only the e2e-marked tests (Part of #5952) (#6045)"
+     },
+     {
+      "pr": 6068,
+      "title": "CI planner slice 2 workflows: CICS Crucible and DOOM-rosetta read shard count and timeout from the plan job (Part of #5919) (#6068)"
      }
     ],
     "reruns": {
@@ -3011,48 +3015,91 @@
      "passed": 11,
      "runs": 18
     },
-    "runner_min_est": 16769,
+    "runner_min_est": 19509,
     "sampled_min_by_origin": {
      "agent": 0.3,
-     "bot": 18.3,
-     "main": 61.7
+     "bot": 37.4,
+     "main": 43.1
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 1.3,
-     "CI shepherd (reconcile)": 2.2,
+     "CI shepherd (reconcile)": 1.4,
+     "DOOM-rosetta": 15.7,
      "Deploy Museum of Code Docs": 1.3,
      "Fact Cross-check": 3.7,
      "Flake history (refresh)": 5.9,
      "Generated Java Compiles": 19.7,
-     "GitGalaxy Smoke Tests": 31.8,
-     "GitGalaxy Zero-Trust Pipeline": 5.2,
-     "Main Watch": 0.2,
-     "Mypy Audit": 0.7,
+     "GitGalaxy Smoke Tests": 14.7,
+     "GitGalaxy Zero-Trust Pipeline": 2.0,
+     "Golden Crucible Resilience Test": 7.3,
      "Ports Compile": 4.8,
-     "pages build and deployment": 0.5,
      "rosetta-audit": 2.9
     },
     "sampled_runs": 24,
-    "wait_median": 0.37,
-    "wait_p90": 4.68
+    "wait_median": 1.6,
+    "wait_p90": 13.73
    },
-   "merged": 115,
+   "merged": 131,
    "merged_by_class": {
     "agent": 8,
     "automation": 0,
-    "bot": 106,
+    "bot": 122,
     "other": 1
    },
    "runs": {
-    "cancelled": 888,
-    "failure": 438,
-    "skipped": 981,
-    "success": 3684,
-    "total": 5992
+    "cancelled": 1098,
+    "failure": 443,
+    "skipped": 1242,
+    "success": 4243,
+    "total": 7032
+   }
+  },
+  "2026-10-23": {
+   "detail": {
+    "bot_runs": 136,
+    "cancel_savings": {
+     "cancelled": 18,
+     "saved_min_est": 166,
+     "unpriced": 3,
+     "wall_min": 1471
+    },
+    "ci_changes": [],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 0,
+    "sampled_min_by_origin": {
+     "main": 0.0
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (reconcile)": 0.0,
+     "Mainframe Ground Truth": 0.0
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.0,
+    "wait_p90": 0.0
+   },
+   "merged": 3,
+   "merged_by_class": {
+    "agent": 0,
+    "automation": 0,
+    "bot": 3,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 75,
+    "failure": 1,
+    "skipped": 84,
+    "success": 87,
+    "total": 348
    }
   }
  },
- "open_prs": 7,
+ "open_prs": 19,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-22T21:49Z"
+ "updated": "2026-10-23T00:42Z"
 }
