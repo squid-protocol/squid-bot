@@ -2952,9 +2952,9 @@
     "bot_runs": 2891,
     "cancel_savings": {
      "cancelled": 234,
-     "saved_min_est": 491,
+     "saved_min_est": 492,
      "unpriced": 0,
-     "wall_min": 16967
+     "wall_min": 17123
     },
     "ci_changes": [
      {
@@ -3015,29 +3015,30 @@
      "passed": 11,
      "runs": 18
     },
-    "runner_min_est": 19509,
+    "runner_min_est": 17189,
     "sampled_min_by_origin": {
      "agent": 0.3,
-     "bot": 37.4,
+     "bot": 27.8,
      "main": 43.1
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 1.3,
      "CI shepherd (reconcile)": 1.4,
-     "DOOM-rosetta": 15.7,
      "Deploy Museum of Code Docs": 1.3,
      "Fact Cross-check": 3.7,
      "Flake history (refresh)": 5.9,
      "Generated Java Compiles": 19.7,
      "GitGalaxy Smoke Tests": 14.7,
      "GitGalaxy Zero-Trust Pipeline": 2.0,
-     "Golden Crucible Resilience Test": 7.3,
+     "Graph Accuracy Audit": 9.4,
+     "Mypy Audit": 0.5,
      "Ports Compile": 4.8,
-     "rosetta-audit": 2.9
+     "rosetta-audit": 2.9,
+     "unicode-gauntlet": 3.4
     },
     "sampled_runs": 24,
     "wait_median": 1.6,
-    "wait_p90": 13.73
+    "wait_p90": 11.6
    },
    "merged": 131,
    "merged_by_class": {
@@ -3050,20 +3051,33 @@
     "cancelled": 1098,
     "failure": 443,
     "skipped": 1242,
-    "success": 4243,
+    "success": 4249,
     "total": 7032
    }
   },
   "2026-10-23": {
    "detail": {
-    "bot_runs": 136,
+    "bot_runs": 1032,
     "cancel_savings": {
-     "cancelled": 18,
-     "saved_min_est": 166,
-     "unpriced": 3,
-     "wall_min": 1471
+     "cancelled": 260,
+     "saved_min_est": 2345,
+     "unpriced": 0,
+     "wall_min": 11433
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 6100,
+      "title": "Graph Accuracy Audit: one job, three parallel gate lanes (Part of #5501) (#6100)"
+     },
+     {
+      "pr": 6102,
+      "title": "Det Sweep: read the PR queue depth in the workflow and pass it as --waiting (Part of #5919) (#6102)"
+     },
+     {
+      "pr": 6140,
+      "title": "ci: run the assess clean-install check in ports-compile, translator wheelhouse and burned estates (Part of #4726) (#6140)"
+     }
+    ],
     "reruns": {
      "attempts": 0,
      "by_workflow": {},
@@ -3071,35 +3085,39 @@
      "passed": 0,
      "runs": 0
     },
-    "runner_min_est": 0,
+    "runner_min_est": 4945,
     "sampled_min_by_origin": {
-     "main": 0.0
+     "bot": 14.4,
+     "main": 1.5
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (reconcile)": 0.0,
-     "Mainframe Ground Truth": 0.0
+     "CI shepherd (label events)": 0.3,
+     "CI shepherd (reconcile)": 0.7,
+     "Deploy Museum of Code Docs": 0.8,
+     "GitGalaxy Smoke Tests": 12.6,
+     "Small Audits": 1.5
     },
     "sampled_runs": 6,
-    "wait_median": 0.0,
-    "wait_p90": 0.0
+    "wait_median": 0.03,
+    "wait_p90": 0.03
    },
-   "merged": 3,
+   "merged": 66,
    "merged_by_class": {
     "agent": 0,
     "automation": 0,
-    "bot": 3,
+    "bot": 66,
     "other": 0
    },
    "runs": {
-    "cancelled": 75,
-    "failure": 1,
-    "skipped": 84,
-    "success": 87,
-    "total": 348
+    "cancelled": 813,
+    "failure": 14,
+    "skipped": 634,
+    "success": 1345,
+    "total": 2500
    }
   }
  },
- "open_prs": 19,
+ "open_prs": 7,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-23T00:42Z"
+ "updated": "2026-10-23T05:05Z"
 }
