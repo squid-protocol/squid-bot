@@ -3057,12 +3057,12 @@
   },
   "2026-10-23": {
    "detail": {
-    "bot_runs": 2155,
+    "bot_runs": 2951,
     "cancel_savings": {
-     "cancelled": 459,
-     "saved_min_est": 3782,
+     "cancelled": 592,
+     "saved_min_est": 4614,
      "unpriced": 0,
-     "wall_min": 23401
+     "wall_min": 31941
     },
     "ci_changes": [
      {
@@ -3088,55 +3088,82 @@
      {
       "pr": 6213,
       "title": "build(deps): bump skaldlab/muninn from 0.3.13 to 0.3.14 (#6213)"
+     },
+     {
+      "pr": 6214,
+      "title": "build(deps): bump actions/setup-java from 6.0.1 to 6.1.0 (#6214)"
+     },
+     {
+      "pr": 6231,
+      "title": "ci(doom-rosetta): skip PRs that change only docs or DOOM study scripts; drop the clone cache that never saved (#6231)"
+     },
+     {
+      "pr": 6238,
+      "title": "ci(cics-crucible): runner-tests clones the pinned checkout and sets CICS_CRUCIBLE_PATH (Part of #5954) (#6238)"
+     },
+     {
+      "pr": 6246,
+      "title": "ci: nightly referee-panel workflow (schedule + dispatch only, contents: read, cached installs, 3-day artifact) (Part of #4438) (#6246)"
      }
     ],
     "reruns": {
-     "attempts": 1,
+     "attempts": 2,
      "by_workflow": {
       "Det Sweep": [
+       1,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
        1,
        0,
        0
       ]
      },
      "failed_again": 0,
-     "passed": 1,
-     "runs": 1
+     "passed": 2,
+     "runs": 2
     },
-    "runner_min_est": 1281,
+    "runner_min_est": 4993,
     "sampled_min_by_origin": {
-     "bot": 2.2,
-     "main": 2.0
+     "agent": 0.7,
+     "bot": 13.8,
+     "main": 2.7
     },
     "sampled_min_by_workflow": {
      "CI shepherd (label events)": 0.3,
      "CI shepherd (reconcile)": 0.0,
-     "Generated Docs": 2.4,
+     "Crucible Path Independence": 5.2,
+     "Det Sweep": 0.7,
+     "Fact Cross-check": 4.2,
+     "Generated Docs": 2.7,
+     "GitGalaxy Zero-Trust Pipeline": 2.0,
      "Golden Crucible Resilience Test": 0.8,
-     "Ports Compile": 0.4,
-     "Tree-sitter Accuracy Audit": 0.4
+     "Main Watch": 0.2,
+     "Mypy Audit": 0.7,
+     "pages build and deployment": 0.5
     },
-    "sampled_runs": 12,
-    "wait_median": 0.43,
+    "sampled_runs": 18,
+    "wait_median": 1.77,
     "wait_p90": 7.63
    },
-   "merged": 128,
+   "merged": 168,
    "merged_by_class": {
-    "agent": 1,
-    "automation": 3,
-    "bot": 123,
+    "agent": 3,
+    "automation": 4,
+    "bot": 160,
     "other": 1
    },
    "runs": {
-    "cancelled": 1530,
-    "failure": 35,
-    "skipped": 1314,
-    "success": 2917,
-    "total": 4988
+    "cancelled": 1971,
+    "failure": 60,
+    "skipped": 1760,
+    "success": 4151,
+    "total": 7006
    }
   }
  },
  "open_prs": 14,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-23T11:56Z"
+ "updated": "2026-10-23T17:27Z"
 }
