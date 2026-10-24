@@ -3172,17 +3172,21 @@
   },
   "2026-10-24": {
    "detail": {
-    "bot_runs": 99,
+    "bot_runs": 952,
     "cancel_savings": {
-     "cancelled": 1,
-     "saved_min_est": 0,
+     "cancelled": 121,
+     "saved_min_est": 889,
      "unpriced": 0,
-     "wall_min": 430
+     "wall_min": 6468
     },
     "ci_changes": [
      {
       "pr": 6296,
       "title": "det-sweep: PR-time det_mutation stale-check job (Part of #5862) (#6296)"
+     },
+     {
+      "pr": 6319,
+      "title": "assess: post-publish PyPI install check, runs only after publish.yml (Part of #4726) (#6319)"
      }
     ],
     "reruns": {
@@ -3192,38 +3196,36 @@
      "passed": 0,
      "runs": 0
     },
-    "runner_min_est": 953,
+    "runner_min_est": 551,
     "sampled_min_by_origin": {
-     "bot": 12.8,
-     "main": 19.1
+     "bot": 1.8,
+     "main": 0.0
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 0.6,
      "CI shepherd (reconcile)": 0.0,
-     "GitGalaxy Smoke Tests": 31.2,
-     "Main Watch": 0.2
+     "Muninn Security Scan": 1.8
     },
     "sampled_runs": 6,
-    "wait_median": 0.97,
-    "wait_p90": 1.9
+    "wait_median": 1.97,
+    "wait_p90": 1.97
    },
-   "merged": 3,
+   "merged": 47,
    "merged_by_class": {
     "agent": 0,
     "automation": 0,
-    "bot": 3,
+    "bot": 47,
     "other": 0
    },
    "runs": {
-    "cancelled": 28,
-    "failure": 2,
-    "skipped": 38,
-    "success": 136,
-    "total": 217
+    "cancelled": 575,
+    "failure": 31,
+    "skipped": 482,
+    "success": 1211,
+    "total": 2353
    }
   }
  },
- "open_prs": 13,
+ "open_prs": 24,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-24T00:55Z"
+ "updated": "2026-10-24T04:54Z"
 }
