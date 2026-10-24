@@ -497,3 +497,103 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
     assert dashboard.occupancy_day(readings, day)["runner_min"] == 3 * 1440  # the pool's load
     assert dashboard.occupancy_day(readings, day, repo="o/gitgalaxy")["runner_min"] == 2 * 1440  # this repo's share
     assert dashboard.occupancy_day(readings, day, repo="o/none")["runner_min"] == 0
+
+
+def _factory_data():
+    data = _data(10)
+    days = sorted(data["days"])
+    data["scorecard"] = {"open_now": 100, "days": {
+        d: {"opened": 6, "closed": 4, "resolved": 4, "resolved_by_bot": 4, "not_planned": 0, "reverts": 1 if d == days[-3] else 0,
+            "regression_fixes": 0, "opened_by_origin": {"owner": 2, "agent": 3, "automation": 1}} for d in days}}
+    data["factory"] = {"days": {d: {"usd": 40.0, "first_pass": {"merged": 20, "first_pass": 15},
+                                    "worker_hours": {"new_work": 1.0}} for d in days}}
+    return data
+
+
+def test_dashboard_draws_issue_arrows_first_pass_change_failure_and_cost_per_issue():
+    """Owner 2026-10-24: issues opened as arrows up stacked by who opened them (people purple, agents blue), closed as a
+    green arrow down, a pair per day; then first-pass, change failure and cost per resolved issue over time."""
+    svg = dashboard.render(_factory_data(), 10, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    for needle in ("Issues — opened ▲ (by who) and closed ▼", 'class="people"', 'class="agents"', 'class="closed"',
+                   "First-pass rate", 'class="band"', "Change failure", "Cost per resolved issue"):
+        assert needle in svg, needle
+    assert "opened 6 (people 2, agents 3, bots 1); closed 4 as completed" in svg
+    assert "75% first pass (15 of 20" in svg  # exact from the factory's records, with its 95% band
+    assert "$10.00 per issue, average of the last 7 day(s)" in svg  # $40 / 4 issues, paired day by day
+
+
+def test_goals_sheet_renders_any_goal_in_the_generic_shape():
+    data = _data(3)
+    data["factory"] = {"goals": [{
+        "id": "x", "title": "Services migrated", "unit": "services", "levels": ["S0", "S1", "S2"], "target": "S2",
+        "group_label": "team", "measured": "2026-10-14T10:00Z",
+        "history": {"2026-10-12": {"S0": 5, "S1": 3, "S2": 2}, "2026-10-14": {"S0": 2, "S1": 3, "S2": 5}},
+        "groups": {"payments": {"S2": 3}, "search": {"S0": 2, "S1": 3, "S2": 2}},
+        "blockers": [{"name": "svc/ledger.py", "group": "payments", "holes": 2, "note": "needs a schema", "issues": []}]}]}
+    svg = dashboard.render_goals(data, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "Services migrated" in svg and "5 of 10" in svg and "+3" in svg  # at target now, change since the first day
+    assert "1 of 2" in svg and "3/3" in svg and "2/7" in svg  # teams done; per-team counts
+    assert 'class="noissue"' in svg and "ledger.py" in svg  # a blocker nobody is on
+    assert dashboard.render_goals(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
+
+
+def test_cost_per_issue_starts_at_the_first_bot_resolved_day_and_averages_only_days_it_has():
+    """Owner 2026-10-24: no zero-filled days and no false trend: the bot's spend over the issues it did the work on,
+    from the first day it resolved one; day 1 is one day's figure, day 2 the average of two."""
+    data = _factory_data()
+    days = sorted(data["days"])
+    data["scorecard"]["days"][days[0]]["resolved_by_bot"] = 0  # the bot's first part-day: people resolved them
+    data["factory"]["days"][days[1]]["usd"] = 20.0  # day 2: $20 / 4 = $5
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "$5.00 per issue, average of the last 1 day(s)" in svg  # the line starts on day 2, alone
+    assert "$7.50 per issue, average of the last 2 day(s)" in svg  # ($20 + $40) / 8
+    first_day = dashboard._fmt_day(days[0])
+    assert f"{first_day}: $40 / 0 issues" not in svg and f"{first_day}: $" not in svg  # no dot for day 1 at all
+
+
+def test_an_issue_counts_as_bot_resolved_only_if_bot_work_merged_before_it_closed():
+    cfg = dashboard.Config(repo="o/r", bot_prefixes=["churn/"])
+    ev = lambda branch, merged_at: {"source": {"merged": True, "headRefName": branch, "mergedAt": merged_at}}  # noqa: E731
+    node = lambda *evs: {"closedAt": "2026-10-12T10:00:00Z", "timelineItems": {"nodes": list(evs)}}  # noqa: E731
+    assert dashboard.bot_worked(node(ev("churn/1-x", "2026-10-12T09:00:00Z")), cfg)
+    assert dashboard.bot_worked(node(ev("churn/1-x", "2026-10-12T10:30:00Z")), cfg)  # merge, then the close follows
+    assert not dashboard.bot_worked(node(ev("churn/9-later", "2026-10-15T09:00:00Z")), cfg)  # a later slice only mentions it
+    assert not dashboard.bot_worked(node(ev("feat/human", "2026-10-12T09:00:00Z")), cfg)
+    assert dashboard.bot_worked(node({"closer": {"headRefName": "churn/2-y"}}), cfg)  # closed by a bot PR
+
+
+def test_api_panel_shows_the_busiest_hour_against_the_limit_and_exhausted_days():
+    data = _factory_data()
+    days = sorted(data["days"])
+    data["factory"]["days"][days[-2]]["api"] = {"peak_hour": 5000, "readings_at_zero": 3, "churn_calls": 900,
+                                                "churn_by_caller": {"pr_snapshot": 400, "inflight_files": 300}}
+    data["factory"]["days"][days[-3]]["api"] = {"peak_hour": 3100, "readings_at_zero": 0, "churn_calls": 500}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "GitHub API — calls in the busiest hour" in svg and "limit 5,000/h" in svg
+    assert "3×0" in svg and "busiest hour 5,000 calls; 3 readings at 0; churn made 900 calls" in svg
+
+
+def test_writes_are_counted_per_account_and_hour_and_drawn_against_the_guidance(monkeypatch):
+    """Owner 2026-10-24: secondary limits count content-creating writes per account (~500/h): watch them."""
+    day = "2026-10-13"
+    comments = [{"user": {"login": "me"}, "created_at": f"{day}T03:0{i}:00Z"} for i in range(5)] + \
+               [{"user": {"login": "shep[bot]"}, "created_at": f"{day}T04:00:00Z"}]
+    events = [{"event": "labeled", "actor": {"login": "me"}, "created_at": f"{day}T03:30:00Z"},
+              {"event": "subscribed", "actor": {"login": "me"}, "created_at": f"{day}T03:31:00Z"},  # not a write
+              {"event": "merged", "actor": {"login": "shep[bot]"}, "created_at": f"{day}T04:10:00Z"},
+              {"event": "labeled", "actor": {"login": "me"}, "created_at": "2026-10-12T23:00:00Z"}]  # the day before
+    monkeypatch.setattr(dashboard, "gh_json", lambda path: comments if "comments" in path else events)
+    monkeypatch.setattr(dashboard, "gh_graphql", lambda query, **v: {"search": {
+        "nodes": [{"createdAt": f"{day}T03:45:00Z", "author": {"login": "me"}}] if "is:pr" in v["q"] else [],
+        "pageInfo": {"hasNextPage": False}}})
+    w = dashboard.fetch_writes_day("o/r", day)
+    assert w["me"] == {"total": 7, "busiest_hour": 7, "hours": {"03": 7}}  # 5 comments, 1 label, 1 PR
+    assert w["shep[bot]"]["total"] == 2
+    data = _factory_data()
+    for d in data["scorecard"]["days"]:
+        data["scorecard"]["days"][d]["writes"] = w
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "GitHub writes — busiest hour per account" in svg and "me: busiest hour 7 writes, 7 that day" in svg

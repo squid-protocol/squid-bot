@@ -471,6 +471,10 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
     for d, row in data["days"].items():  # old days keep their estimates, not the per-run detail
         if d < keep:
             row.get("detail", {}).pop("sample", None)
+    try:
+        data["scorecard"] = collect_scorecard(cfg, data, today, days)
+    except RuntimeError as e:  # keep the previous issue counts; the next run tries again
+        print(f"::warning::issue counts not refreshed: {e}", file=sys.stderr)
     data["open_prs"] = gh_count(f"search/issues?q=repo:{repo}+is:pr+is:open&per_page=1")
     data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     return data
@@ -850,8 +854,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
 
 def sampling_note(cfg: Config) -> str:
     return (f"queue wait is sampled from {cfg.sample_fraction:.0%} of each day's runs (at least {cfg.sample_min}); runner "
-            "time is time-sampled runner occupancy where its readings cover the day, else that sample's estimate (± its "
-            "95% interval)")
+            "time is runner occupancy where its readings cover the day, else that sample's estimate (± 95%)")
 
 
 def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None, max_h_per_pr: float | None,
@@ -912,6 +915,10 @@ STYLE = """
     paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
   .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
   .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
+  .people { fill: #8b5cf6; } .agents { fill: var(--s1); } .bots { fill: var(--neutral); } .closed { fill: var(--good); }
+  .dayband { fill: var(--tile); } .band { fill: var(--s1); opacity: 0.13; }
+  .daily { fill: var(--surface); stroke: var(--ink2); stroke-width: 1.5; }
+  .noissue { font-size: 10.5px; font-weight: 650; fill: var(--failed); }
 """
 
 
@@ -1305,9 +1312,212 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     legend(top - 30, [("minutes saved (est.)", "saved"), ("runs failed", "failed")])
     y = top + chart_h + 44
 
+    # Issues: opened (arrows up, stacked by who opened them) and closed as completed (arrows down), one pair a day
+    panel += 1  # after Efficiency
+    y += 26  # Efficiency left room for the footer only
+    sc_days = (data.get("scorecard") or {}).get("days") or {}
+    fac_days = (data.get("factory") or {}).get("days") or {}
+    if any(d in sc_days for d, _ in rows):
+        top, half_h = y, 85
+        up_max = max([1] + [sc_days[d].get("opened", 0) for d, _ in rows if d in sc_days])
+        down_max = max([1] + [sc_days[d].get("resolved", 0) for d, _ in rows if d in sc_days])
+        scale = half_h / max(up_max, down_max)  # one scale both ways: an arrow's length is its count
+        base = top + half_h
+        out.append(f'<text class="h2" x="{pad}" y="{top - 30}">{panel} · Issues — opened ▲ (by who) and closed ▼ each day</text>')
+        legend(top - 30, [("opened by people", "people"), ("by agents", "agents"), ("by bots", "bots"),
+                          ("closed as completed", "closed")])
+        step = _nice_axis(max(up_max, down_max))[1]
+        v = step
+        while v <= max(up_max, down_max):  # grid both ways from the baseline: up = opened, down = closed
+            for yy in (base - v * scale, base + v * scale):
+                out.append(f'<line class="grid" x1="{left}" x2="{right}" y1="{yy:.1f}" y2="{yy:.1f}"/>'
+                           f'<text class="tick" x="{left - 8}" y="{yy + 3.5:.1f}" text-anchor="end">{v:g}</text>')
+            v += step
+        aw = max(3.0, slot * 0.3)
+        for i, (day, _) in enumerate(rows):
+            if i % 2 == 0:  # alternate day bands: each day's pair of arrows reads as one
+                out.append(f'<rect class="dayband" x="{x_left(i):.1f}" y="{top - 4}" width="{slot:.1f}" '
+                           f'height="{2 * half_h + 8}"/>')
+            r = sc_days.get(day)
+            if not r:
+                continue
+            fade = ' class="partial"' if day == today_s else ""
+            by = r.get("opened_by_origin") or {}
+            people, agents, bots = by.get("owner", 0) + by.get("other", 0), by.get("agent", 0), by.get("automation", 0)
+            xu, xd = x_left(i) + slot * 0.13, x_left(i) + slot * 0.57
+            parts, yy = [], base
+            stack = [(people, "people"), (agents, "agents"), (bots, "bots")]
+            shown = [(v, c) for v, c in stack if v]
+            for n, (v, c) in enumerate(shown):
+                h = v * scale
+                head = min(aw * 0.9, h) if n == len(shown) - 1 else 0  # the arrowhead tops the last segment
+                parts.append(f'<rect class="{c}" x="{xu:.1f}" y="{yy - h + head:.1f}" width="{aw:.1f}" height="{h - head:.1f}"/>')
+                if head:
+                    parts.append(f'<path class="{c}" d="M{xu - aw * 0.35:.1f},{yy - h + head:.1f} L{xu + aw / 2:.1f},{yy - h:.1f} '
+                                 f'L{xu + aw * 1.35:.1f},{yy - h + head:.1f} Z"/>')
+                yy -= h
+            closed = r.get("resolved", 0)
+            if closed:
+                h = closed * scale
+                head = min(aw * 0.9, h)
+                parts.append(f'<rect class="closed" x="{xd:.1f}" y="{base:.1f}" width="{aw:.1f}" height="{h - head:.1f}"/>'
+                             f'<path class="closed" d="M{xd - aw * 0.35:.1f},{base + h - head:.1f} L{xd + aw / 2:.1f},'
+                             f'{base + h:.1f} L{xd + aw * 1.35:.1f},{base + h - head:.1f} Z"/>')
+            tip = (f"{_fmt_day(day)}: opened {people + agents + bots} (people {people}, agents {agents}, bots {bots}); "
+                   f"closed {closed} as completed, {r.get('not_planned', 0)} as not planned"
+                   + (" (today so far)" if day == today_s else ""))
+            out.append(f'<g{fade}><title>{escape(tip)}</title>{"".join(parts)}</g>')
+        for idx, (day, _) in enumerate(rows):
+            if (len(rows) - 1 - idx) % 7 == 0:
+                out.append(f'<text class="tick" x="{x_mid(idx):.1f}" y="{base + half_h + 18}" text-anchor="middle">'
+                           f'{_fmt_day(day)}</text>')
+        out.append(f'<line class="base" x1="{left}" x2="{right}" y1="{base:.1f}" y2="{base:.1f}"/>')
+        y = base + half_h + 70
+        panel += 1
+
+    def daily_and_rolling(top: int, chart_h: int, daily: list[float | None], rolling: list[float | None], maximum: float,
+                          daily_tips: list[str], rolling_tips: list[str], cls: str) -> None:
+        """Each day's value as a hollow dot, and the 7-day rolling value as the line (days with few events are noisy)."""
+        y_at = lambda v: top + chart_h - chart_h * min(v, maximum) / maximum  # noqa: E731
+        for i, v in enumerate(daily):
+            if v is not None:
+                out.append(f'<circle class="daily" cx="{x_mid(i):.1f}" cy="{y_at(v):.1f}" r="2.6"><title>'
+                           f'{_fmt_day(rows[i][0])}: {escape(daily_tips[i])}</title></circle>')
+        line_series(top, chart_h, rolling, maximum, tips=rolling_tips, cls=cls)
+
+    def rolling(num: list[float | None], den: list[float | None], n: int = 7) -> list[float | None]:
+        out_v = []
+        for i in range(len(num)):  # days count only where both sides are known
+            pairs = [(a, b) for a, b in zip(num[max(0, i - n + 1): i + 1], den[max(0, i - n + 1): i + 1])
+                     if a is not None and b is not None]
+            b_sum = sum(b for _, b in pairs)
+            out_v.append(sum(a for a, _ in pairs) / b_sum if b_sum and num[i] is not None else None)
+        return out_v
+
+    # First-pass rate: exact (every merged bot PR is known), with a 95% band for the day's sample size
+    fp = [(fac_days.get(d) or {}).get("first_pass") for d, _ in rows]
+    if any(x and x.get("merged") for x in fp):
+        top, chart_h = y, 120
+        vals, lo_b, hi_b, tips = [], [], [], []
+        for x in fp:
+            n, k = (x or {}).get("merged", 0), (x or {}).get("first_pass", 0)
+            if not n:
+                vals.append(None), lo_b.append(None), hi_b.append(None), tips.append("")
+                continue
+            z, ph = 1.96, k / n  # Wilson interval
+            c = (ph + z * z / (2 * n)) / (1 + z * z / n)
+            w = z * math.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+            vals.append(100 * ph), lo_b.append(100 * max(0, c - w)), hi_b.append(100 * min(1, c + w))
+            tips.append(f"{100 * ph:.0f}% first pass ({k} of {n} {cfg.bot_name} PRs merged with no send-back or fix; "
+                        f"95% band {100 * max(0, c - w):.0f}-{100 * min(1, c + w):.0f}%)")
+        frame(top, chart_h, (100.0, 25.0), f"{panel} · First-pass rate — {cfg.bot_name} PRs merged with no send-back "
+              "or fix, each day (band: 95% for the day's count)", lambda v: f"{v:g}%")
+        pts = [(i, a, b) for i, (a, b) in enumerate(zip(lo_b, hi_b)) if a is not None]
+        if len(pts) > 1:
+            y_at = lambda v: top + chart_h - chart_h * v / 100  # noqa: E731
+            poly = [f"{x_mid(i):.1f},{y_at(b):.1f}" for i, _, b in pts] + [f"{x_mid(i):.1f},{y_at(a):.1f}" for i, a, _ in reversed(pts)]
+            out.append(f'<polygon class="band" points="{" ".join(poly)}"/>')
+        line_series(top, chart_h, vals, 100.0, tips=tips, cls="cum")
+        y = top + chart_h + 70
+        panel += 1
+
+    # Change failure: merged PRs that were reverts or regression fixes, over merged PRs, each day (owner 2026-10-24: a
+    # plain day-by-day line, no averaging, from the bot's start)
+    if any(d in sc_days for d, _ in rows):
+        live = lambda d: d in sc_days and (not start or d >= start)  # noqa: E731
+        fails = [sc_days[d].get("reverts", 0) + sc_days[d].get("regression_fixes", 0) if live(d) else None for d, _ in rows]
+        merged = [row["merged"] if live(d) else None for d, row in rows]
+        daily = [100 * f / m if f is not None and m else None for f, m in zip(fails, merged)]
+        top, chart_h = y, 110
+        axis = _nice_axis(max([1.0] + [v for v in daily if v is not None]))
+        frame(top, chart_h, axis, f"{panel} · Change failure — % of merged PRs that were reverts or regression fixes, "
+              "each day", lambda v: f"{v:g}%")
+        line_series(top, chart_h, daily, axis[0], cls="failedl",
+                    tips=[f"{v:.2f}% ({f} of {m} merged PRs were reverts or regression fixes)" if v is not None else ""
+                          for f, m, v in zip(fails, merged, daily)])
+        y = top + chart_h + 70
+        panel += 1
+
+    # Cost per resolved issue: the bot's dollars over the issues it did the work on (merged bot PRs), each day as a dot
+    # and the average of the days so far (up to 7) as the line, from the first day with a bot-resolved issue: day 1 is
+    # one day's figure, day 2 the average of two, and so on (owner 2026-10-24: no zero-filled days, no false trend).
+    usd = [(fac_days.get(d) or {}).get("usd") if not start or d >= start else None for d, _ in rows]
+    by_bot = [sc_days[d].get("resolved_by_bot") if d in sc_days else None for d, _ in rows]
+    first = next((i for i, (u, r) in enumerate(zip(usd, by_bot)) if u is not None and r), None)
+    if first is not None:
+        usd = [u if i >= first else None for i, u in enumerate(usd)]
+        by_bot = [r if i >= first and usd[i] is not None else None for i, r in enumerate(by_bot)]
+        daily = [u / r if u is not None and r else None for u, r in zip(usd, by_bot)]
+        roll = rolling(usd, by_bot)
+        top, chart_h = y, 110
+        axis = _nice_axis(max([1.0] + [v for v in roll if v is not None]) * 1.4)
+        frame(top, chart_h, axis, f"{panel} · Cost per resolved issue — {cfg.bot_name} dollars per issue it resolved "
+              "(dots: each day; line: average of the days so far, up to 7)", lambda v: f"${v:g}")
+        daily_and_rolling(top, chart_h, daily, roll, axis[0],
+                          [f"${u:,.0f} / {r} issues resolved with {cfg.bot_name} work = ${v:.2f}" if v is not None else ""
+                           for u, r, v in zip(usd, by_bot, daily)],
+                          [f"${v:.2f} per issue, average of the last {min(7, i - first + 1)} day(s)" if v is not None else ""
+                           for i, v in enumerate(roll)], "cum")
+        y = top + chart_h + 70
+        panel += 1
+
+    # GitHub API: the shared token's busiest hour each day, against its limit (owner 2026-10-24: the quota ran out and
+    # the merge bot, which shares it, stopped merging). From the orchestrator's own quota readings (factory.json "api").
+    api = [(fac_days.get(d) or {}).get("api") or {} for d, _ in rows]
+    if any(x.get("peak_hour") for x in api):
+        top, chart_h = y, 110
+        limit = 5000
+        axis = _nice_axis(max([limit] + [x.get("peak_hour") or 0 for x in api]))
+        frame(top, chart_h, axis, f"{panel} · GitHub API — calls in the busiest hour each day on the shared token "
+              f"(limit {limit:,}/h; red: readings that found it exhausted)", lambda v: f"{v:,.0f}")
+        yl = top + chart_h - chart_h * limit / axis[0]
+        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
+                   f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">limit {limit:,}/h</text>')
+        for i, ((day, _), x) in enumerate(zip(rows, api)):
+            v = x.get("peak_hour")
+            if not v:
+                continue
+            h = chart_h * v / axis[0]
+            bx = x_left(i) + (slot - bar_w) / 2
+            cls = "failed" if x.get("readings_at_zero") else "hours"
+            callers = ", ".join(f"{k} {n}" for k, n in list((x.get("churn_by_caller") or {}).items())[:4])
+            tip = (f"{_fmt_day(day)}: busiest hour {v:,} calls; {x.get('readings_at_zero', 0)} readings at 0; churn made "
+                   f"{x.get('churn_calls', 0):,} calls that day ({callers})")
+            out.append(f'<g><title>{escape(tip)}</title><rect class="{cls}" x="{bx:.1f}" y="{top + chart_h - h:.1f}" '
+                       f'width="{bar_w:.1f}" height="{h:.1f}" rx="2"/>'
+                       + (f'<text class="vl" x="{bx + bar_w / 2:.1f}" y="{top + chart_h - h - 4:.1f}" text-anchor="middle">'
+                          f'{x["readings_at_zero"]}×0</text>' if x.get("readings_at_zero") else "") + "</g>")
+        y = top + chart_h + 70
+        panel += 1
+
+    # GitHub writes: each account's busiest hour of content-creating writes, against the ~500/h secondary-limit guidance
+    writes = [(sc_days.get(d) or {}).get("writes") or {} for d, _ in rows]
+    if any(writes):
+        totals: Counter = Counter()
+        for w in writes:
+            for a, v in w.items():
+                totals[a] += v.get("total", 0)
+        actors = [a for a, _ in totals.most_common(3)]
+        top, chart_h = y, 110
+        axis = _nice_axis(max([WRITE_GUIDE_H] + [w.get(a, {}).get("busiest_hour", 0) for w in writes for a in actors]))
+        frame(top, chart_h, axis, f"{panel} · GitHub writes — busiest hour per account", lambda v: f"{v:g}",
+              "comments, label and state changes, merges, new PRs and issues; GitHub's secondary-limit guidance "
+              f"is about {WRITE_GUIDE_H} content-creating requests an hour per account")
+        yl = top + chart_h - chart_h * WRITE_GUIDE_H / axis[0]
+        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
+                   f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">~{WRITE_GUIDE_H}/h</text>')
+        for a, cls in zip(actors, ("cum", "failedl", "saved")):
+            line_series(top, chart_h, [w[a]["busiest_hour"] if a in w else None for w in writes], axis[0], cls=cls,
+                        tips=[f"{a}: busiest hour {w[a]['busiest_hour']} writes, {w[a]['total']} that day" if a in w
+                              else "" for w in writes])
+        legend(top - 30, [(a, c) for a, c in zip(actors, ("bot", "failed", "saved"))])
+        y = top + chart_h + 70
+        panel += 1
+
     prefixes = ", ".join(cfg.bot_prefixes)
-    out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far. '
-               f'{escape(sampling_note(cfg)).capitalize()}.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far.</text>')
+    y += 15
+    out.append(f'<text class="meta" x="{pad}" y="{y}">{escape(sampling_note(cfg)).capitalize()}.</text>')
     out.append(f'<text class="meta" x="{pad}" y="{y + 15}">'
                + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
                         + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
@@ -1321,6 +1531,307 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             f'{merged_total:,} merged PRs in the selected period">\n'
             f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" '
             f'height="{height - 1}" rx="10"/>\n  {body}\n</g>\n</svg>\n')
+
+
+# ---------------------------------------------------------------- factory scorecard
+# Owner 2026-10-24: merged PRs are motion, not results, and most people don't know what a PR count means. The
+# dashboard adds what people ask of a code factory: issues opened (by whom) and closed, first-pass rate, change
+# failure rate and cost per resolved issue; a separate goals sheet (goals.svg) shows the progress of whatever the
+# factory is pointed at. GitHub-side figures are exact search counts; first-pass, spend and goals come from the
+# orchestrator's factory.json (churn).
+SCORE_DAYS = 21
+ISSUE_SEARCH = """query($q: String!, $after: String) {
+  search(query: $q, type: ISSUE, first: 50, after: $after) {
+    issueCount pageInfo { hasNextPage endCursor }
+    nodes { ... on Issue { number createdAt closedAt author { login __typename } bodyText
+      timelineItems(itemTypes: [CROSS_REFERENCED_EVENT, CLOSED_EVENT], last: 60) { nodes { __typename
+        ... on CrossReferencedEvent { source { ... on PullRequest { merged mergedAt headRefName } } }
+        ... on ClosedEvent { closer { ... on PullRequest { headRefName } } } } } } }
+  }
+}"""
+COUNT_SEARCH = """query($q: String!) { search(query: $q, type: ISSUE, first: 1) { issueCount } }"""
+AGENT_ISSUE_MARKERS = r"Sibling gap|Found by (?:churn|an agent)|churn run|agy-authored"
+
+
+def search_count(q: str) -> int:
+    return int(gh_graphql(COUNT_SEARCH, q=q)["search"]["issueCount"])
+
+
+def search_issues(q: str) -> list[dict]:
+    out, after = [], None
+    for _ in range(10):
+        vars_ = {"q": q, **({"after": after} if after else {})}
+        sr = gh_graphql(ISSUE_SEARCH, **vars_)["search"]
+        out += [n for n in sr["nodes"] if n]
+        if not sr["pageInfo"]["hasNextPage"]:
+            break
+        after = sr["pageInfo"]["endCursor"]
+    return out
+
+
+def issue_origin(node: dict, cfg: Config) -> str:
+    """automation (a bot account), agent (an agent marker in the body: agents file the sibling gaps they find), or
+    owner (everyone else: the people who decide what the factory works on)."""
+    author = node.get("author") or {}
+    login = str(author.get("login", ""))
+    if author.get("__typename") == "Bot" or login.endswith("[bot]") or login == "github-actions":
+        return "automation"
+    body = node.get("bodyText") or ""
+    if (cfg.agent_markers and re.search(cfg.agent_markers, body, re.I)) or re.search(AGENT_ISSUE_MARKERS, body, re.I):
+        return "agent"
+    return "owner"
+
+
+def bot_worked(node: dict, cfg: Config) -> bool:
+    """The issue had the bot's work merged: a merged PR from a bot branch referenced it, or a bot PR closed it. Owner
+    2026-10-24: cost per resolved issue divides the bot's spend by THESE, not by every issue people resolved too (on
+    the bot's first part-day, $12 over 18 mostly human-resolved issues read as $0.66 and drew a false trend)."""
+    if not cfg.bot_prefixes:
+        return False
+    bot = lambda b: any(str(b or "").startswith(p) for p in cfg.bot_prefixes)  # noqa: E731
+    closed = _iso(node["closedAt"]) if node.get("closedAt") else None
+    for e in ((node.get("timelineItems") or {}).get("nodes") or []):
+        src = e.get("source") or {}
+        if bot((e.get("closer") or {}).get("headRefName")):
+            return True
+        # a bot PR merged by the time the issue closed (an hour's slack for the close that follows a merge); a later
+        # slice that only mentions the closed issue ("Part of #n") did not resolve it
+        if src.get("merged") and bot(src.get("headRefName")) and src.get("mergedAt") and \
+                (closed is None or _iso(src["mergedAt"]) <= closed + timedelta(hours=1)):
+            return True
+    return False
+
+
+def fetch_scorecard_day(repo: str, day: str, cfg: Config) -> dict:
+    """One day's issue flow and change failures (about 6 GraphQL searches)."""
+    base = f"repo:{repo} is:issue"
+    resolved = search_issues(f"{base} closed:{day} reason:completed")
+    hours = sorted((_iso(n["closedAt"]) - _iso(n["createdAt"])).total_seconds() / 3600 for n in resolved
+                   if n.get("closedAt") and n.get("createdAt"))
+    opened = Counter(issue_origin(n, cfg) for n in search_issues(f"{base} created:{day}"))
+    return {
+        "resolved": len(resolved),
+        "resolved_by_bot": sum(bot_worked(n, cfg) for n in resolved),
+        "resolved_by_origin": dict(Counter(issue_origin(n, cfg) for n in resolved)),
+        "resolve_h_median": round(_pct(hours, 0.5), 1) if hours else None,
+        "not_planned": search_count(f'{base} closed:{day} reason:"not planned"'),
+        "closed": search_count(f"{base} closed:{day}"),
+        "opened": sum(opened.values()), "opened_by_origin": dict(opened),
+        "reverts": search_count(f"repo:{repo} is:pr is:merged merged:{day} Revert in:title"),
+        "regression_fixes": search_count(f"repo:{repo} is:pr is:merged merged:{day} regression in:title"),
+    }
+
+
+# GitHub's secondary limits count content-creating writes per account (~80/min, ~500/h by its published guidance), apart
+# from the hourly quota. Owner 2026-10-24: watch them. A day's writes by actor and hour, from the repo's own records:
+# comments, write-type issue/PR events (labels, closes, ready, merges) and the PRs and issues opened.
+WRITE_EVENTS = ("labeled", "unlabeled", "closed", "reopened", "ready_for_review", "convert_to_draft", "renamed",
+                "assigned", "unassigned", "review_requested", "merged", "head_ref_force_pushed")
+WRITE_GUIDE_H = 500
+CREATED_SEARCH = """query($q: String!, $after: String) { search(query: $q, type: ISSUE, first: 100, after: $after) {
+  pageInfo { hasNextPage endCursor }
+  nodes { ... on PullRequest { createdAt author { login } } ... on Issue { createdAt author { login } } } } }"""
+
+
+def fetch_writes_day(repo: str, day: str, max_pages: int = 60) -> dict:
+    """{actor: {"total", "busiest_hour", "hours": {HH: n}}} for one UTC day. Issue events have no date filter, so they
+    are read newest first down to the day (recent days only: about 30 pages for a busy day)."""
+    hours: dict[str, Counter] = {}
+
+    def add(actor: str | None, stamp: str) -> None:
+        if actor and stamp.startswith(day):
+            hours.setdefault(actor, Counter())[stamp[11:13]] += 1
+
+    for page in range(1, max_pages + 1):
+        got = gh_json(f"repos/{repo}/issues/comments?since={day}T00:00:00Z&sort=created&direction=asc&per_page=100"
+                      f"&page={page}")
+        for c in got:
+            add((c.get("user") or {}).get("login"), c["created_at"])
+        if len(got) < 100 or (got and got[-1]["created_at"][:10] > day):
+            break
+    for page in range(1, max_pages + 1):
+        got = gh_json(f"repos/{repo}/issues/events?per_page=100&page={page}")
+        for e in got:
+            if e.get("event") in WRITE_EVENTS:
+                add((e.get("actor") or {}).get("login"), e["created_at"])
+        if len(got) < 100 or (got and got[-1]["created_at"][:10] < day):
+            break
+    for kind in ("pr", "issue"):
+        after = None
+        for _ in range(10):
+            sr = gh_graphql(CREATED_SEARCH, q=f"repo:{repo} is:{kind} created:{day}",
+                            **({"after": after} if after else {}))["search"]
+            for n in sr["nodes"]:
+                if n:
+                    add((n.get("author") or {}).get("login"), n["createdAt"])
+            if not sr["pageInfo"]["hasNextPage"]:
+                break
+            after = sr["pageInfo"]["endCursor"]
+    return {a: {"total": sum(c.values()), "busiest_hour": max(c.values()), "hours": dict(sorted(c.items()))}
+            for a, c in sorted(hours.items(), key=lambda kv: -sum(kv[1].values()))}
+
+
+def collect_scorecard(cfg: Config, data: dict, today: date, days: int = SCORE_DAYS) -> dict:
+    sc = data.get("scorecard") or {"days": {}}
+    window = [(today - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    for d in window:  # finished days once, the recent ones on every run
+        if d not in sc["days"] or d >= (today - timedelta(days=REFRESH_DAYS - 1)).isoformat():
+            try:
+                sc["days"][d] = fetch_scorecard_day(cfg.repo, d, cfg)
+            except RuntimeError as e:
+                print(f"::warning::scorecard for {d} not refreshed: {e}", file=sys.stderr)
+    for d in window[-REFRESH_DAYS:]:  # writes: the recent days only (issue events are read newest first)
+        try:
+            sc["days"].setdefault(d, {})["writes"] = fetch_writes_day(cfg.repo, d)
+        except RuntimeError as e:
+            print(f"::warning::writes for {d} not counted: {e}", file=sys.stderr)
+    sc["open_now"] = search_count(f"repo:{cfg.repo} is:issue is:open")
+    sc["open_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    return sc
+
+
+# ---------------------------------------------------------------- goals sheet
+# Owner 2026-10-24: the dashboard shows the factory's project-independent numbers; goals.svg shows the progress of
+# whatever the factory is pointed at. The orchestrator publishes each goal in factory.json["goals"] in one generic shape:
+# {id, title, unit, levels (low -> high), target, group_label, measured, history {day: {level: n}},
+#  groups {group: {level: n}}, blockers [{name, group, holes, note, issues}]}.
+LEVEL_CLASSES = ("failed", "bots", "agent", "other", "agents", "people")  # lowest level red ... highest blue/purple
+
+
+def render_goals(data: dict, today: date, cfg: Config) -> str | None:
+    goals = (data.get("factory") or {}).get("goals") or []
+    if not goals:
+        return None
+    width, pad = 920, 24
+    out, y = [], 34
+    out.append(f'<text class="h1" x="{pad}" y="{y}">{escape(cfg.repo)}: goal progress</text>')
+    out.append(f'<text class="lead" x="{pad}" y="{y + 20}">What the factory is pointed at, and how far it has got. '
+               'The main dashboard has the numbers that hold for any project.</text>')
+    y += 52
+    for g in goals:
+        levels, target = list(g.get("levels") or []), g.get("target")
+        cls = {lv: ("agents" if lv == target else LEVEL_CLASSES[min(i, 3)]) for i, lv in enumerate(levels)}
+        for lv in levels[levels.index(target) + 1:] if target in levels else []:
+            cls[lv] = "people"  # above the target
+        hist = {d: v for d, v in sorted((g.get("history") or {}).items())}
+        now_lv = (list(hist.values())[-1] if hist else {}) or {}
+        total = sum(now_lv.values())
+        days = list(hist)
+        first = hist[days[0]] if days else {}
+        week = next((hist[d] for d in days if d >= (today - timedelta(days=7)).isoformat()), first)
+        at = sum(now_lv.get(lv, 0) for lv in levels[levels.index(target):]) if target in levels else 0
+        at_first = sum(first.get(lv, 0) for lv in levels[levels.index(target):]) if target in levels else 0
+        at_week = sum(week.get(lv, 0) for lv in levels[levels.index(target):]) if target in levels else 0
+        blockers = g.get("blockers") or []
+        groups = g.get("groups") or {}
+        done_groups = sum(1 for c in groups.values() if sum(c.values()) and
+                          sum(c.get(lv, 0) for lv in levels[levels.index(target):]) == sum(c.values()))
+        out.append(f'<text class="h2" x="{pad}" y="{y + 12}">{escape(g.get("title", g.get("id", "goal")))}</text>')
+        out.append(f'<text class="meta" x="{width - pad}" y="{y + 12}" text-anchor="end">target {escape(str(target))} · '
+                   f'measured {escape(str(g.get("measured") or "?").replace("T", " "))}</text>')
+        y += 24
+        unit = g.get("unit", "items")
+        below = [f"{lv} {now_lv.get(lv, 0)}" for lv in levels if lv in now_lv and (target not in levels or
+                                                                                   levels.index(lv) < levels.index(target))]
+        tiles = [
+            (f"AT {target} OR ABOVE", f"{at} of {total}", f"{100 * at / total:.0f}% of {unit}" if total else ""),
+            ("CHANGE", f"{at - at_first:+d}", f"since {_fmt_day(days[0])}; {at - at_week:+d} in 7 days" if days else ""),
+            (f"BELOW {target}", f"{total - at}", " · ".join(below)),
+            ("BLOCKED", f"{len(blockers)}", f"{sum(1 for b in blockers if not b.get('issues'))} with no open issue · "
+             f"{sum(int(b.get('holes') or 0) for b in blockers)} holes"),
+            (f"{str(g.get('group_label', 'group')).upper()}S DONE", f"{done_groups} of {len(groups)}",
+             f"every {unit[:-1] if unit.endswith('s') else unit} at {target}+"),
+        ]
+        tw = (width - 2 * pad - 4 * 10) / 5
+        for i, (k, v, sub) in enumerate(tiles):
+            x = pad + i * (tw + 10)
+            out.append(f'<rect class="tile" x="{x:.1f}" y="{y}" width="{tw:.1f}" height="70" rx="8"/>'
+                       f'<text class="k" x="{x + 12:.1f}" y="{y + 18}">{escape(k)}</text>'
+                       f'<text class="v" x="{x + 12:.1f}" y="{y + 43}">{escape(v)}</text>'
+                       f'<text class="sub" x="{x + 12:.1f}" y="{y + 60}">{escape(sub)}</text>')
+        y += 96
+
+        # level mix over time
+        if days:
+            top, chart_h, left, right = y + 18, 150, pad + 36, width - pad
+            out.append(f'<text class="h2" x="{pad}" y="{y + 4}">{escape(unit.capitalize())} by level, each measured day</text>')
+            mx, step = _nice_axis(max(sum(v.values()) for v in hist.values()) * 1.12 or 1)  # headroom for the labels
+            for t in range(round(mx / step) + 1):
+                yy = top + chart_h - chart_h * t * step / mx
+                out.append(f'<line class="{"base" if t == 0 else "grid"}" x1="{left}" x2="{right}" y1="{yy:.1f}" y2="{yy:.1f}"/>'
+                           f'<text class="tick" x="{left - 6}" y="{yy + 3:.1f}" text-anchor="end">{t * step:g}</text>')
+            slot = (right - left) / max(len(days), 1)
+            bw = min(48.0, slot * 0.7)
+            for i, d in enumerate(days):
+                x, yy = left + i * slot + (slot - bw) / 2, top + chart_h
+                for lv in levels:
+                    v = hist[d].get(lv, 0)
+                    if v:
+                        h = chart_h * v / mx
+                        out.append(f'<rect class="{cls[lv]} seg" x="{x:.1f}" y="{yy - h:.1f}" width="{bw:.1f}" height="{h:.1f}">'
+                                   f'<title>{_fmt_day(d)}: {v} {unit} at {lv}</title></rect>')
+                        yy -= h
+                n_at = sum(hist[d].get(lv, 0) for lv in levels[levels.index(target):]) if target in levels else 0
+                out.append(f'<text class="vl" x="{x + bw / 2:.1f}" y="{yy - 4:.1f}" text-anchor="middle">{target} {n_at}</text>'
+                           f'<text class="tick" x="{x + bw / 2:.1f}" y="{top + chart_h + 14}" text-anchor="middle">'
+                           f'{_fmt_day(d)}</text>')
+            lx = right
+            for lv in reversed(levels):
+                lx -= 46
+                out.append(f'<rect class="{cls[lv]}" x="{lx:.1f}" y="{y - 4}" width="10" height="10" rx="2"/>'
+                           f'<text class="lbl" x="{lx + 14:.1f}" y="{y + 5}">{escape(lv)}</text>')
+            y = top + chart_h + 40
+
+        # by group: one 100% bar each, best first
+        if groups:
+            label = str(g.get("group_label", "group"))
+            out.append(f'<text class="h2" x="{pad}" y="{y}">By {escape(label)}: share at each level (count at {target}+ / total)</text>')
+            y += 12
+            name_w, bar_l, bar_r = 190, pad + 196, width - pad - 70
+            order = sorted(groups.items(), key=lambda kv: (-(sum(kv[1].get(lv, 0) for lv in levels[levels.index(target):])
+                                                            / max(1, sum(kv[1].values()))), kv[0]))
+            for name, c in order:
+                n = sum(c.values())
+                x = bar_l
+                out.append(f'<text class="lbl" x="{pad + name_w:.1f}" y="{y + 11}" text-anchor="end">{escape(_short(name, 30))}</text>')
+                for lv in levels:
+                    v = c.get(lv, 0)
+                    if v:
+                        w = (bar_r - bar_l) * v / n
+                        out.append(f'<rect class="{cls[lv]} seg" x="{x:.1f}" y="{y + 2}" width="{w:.1f}" height="12">'
+                                   f'<title>{escape(name)}: {v} of {n} at {lv}</title></rect>')
+                        x += w
+                k = sum(c.get(lv, 0) for lv in levels[levels.index(target):])
+                out.append(f'<text class="vl" x="{bar_r + 8:.1f}" y="{y + 12}">{k}/{n}</text>')
+                y += 18
+            y += 22
+
+        # blockers
+        if blockers:
+            out.append(f'<text class="h2" x="{pad}" y="{y}">Blocked: not translated whole ({len(blockers)})</text>')
+            y += 18
+            cols = [(pad, "program"), (pad + 170, label if groups else "group"), (pad + 380, "holes"), (pad + 430, "issues"),
+                    (pad + 540, "why")]
+            for x, h in cols:
+                out.append(f'<text class="k" x="{x}" y="{y}">{escape(h.upper())}</text>')
+            y += 6
+            for b in sorted(blockers, key=lambda b: (bool(b.get("issues")), -int(b.get("holes") or 0)))[:12]:
+                y += 16
+                iss = ", ".join(f"#{n}" for n in (b.get("issues") or [])[:3]) or "none"
+                vals = [_short(Path(str(b.get("name"))).name, 24), _short(str(b.get("group")), 30), str(b.get("holes") or 0),
+                        iss, _short(str(b.get("note") or ""), 52)]
+                for n_col, ((x, _), v) in enumerate(zip(cols, vals)):
+                    klass = "noissue" if n_col == 3 and v == "none" else "lbl"  # nobody is on it: the one to act on
+                    out.append(f'<text class="{klass}" x="{x}" y="{y}">{escape(v)}</text>')
+            y += 28
+        y += 10
+    out.append(f'<text class="meta" x="{pad}" y="{y}">Source: the factory&apos;s own goal measurements (factory.json '
+               '"goals", published by the orchestrator). A goal is any ordered set of levels with a target.</text>')
+    height = y + 20
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
+            f'role="img" aria-label="{escape(cfg.repo)} goal progress">\n<style>{STYLE}</style>\n<g class="root">\n'
+            f'  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="10"/>\n  '
+            + "\n  ".join(out) + "\n</g>\n</svg>\n")
 
 
 # ---------------------------------------------------------------- CLI
@@ -1402,6 +1913,9 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError as e:
             print(f"::warning title=Fleet CI report::factory.json unreadable: {e}", file=sys.stderr)
     (a.out / "dashboard.svg").write_text(render(data, a.days, today, cfg), encoding="utf-8")
+    goals_svg = render_goals(data, today, cfg)
+    if goals_svg:
+        (a.out / "goals.svg").write_text(goals_svg, encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
                           cfg.runner_pool)
     for msg in alerts:
