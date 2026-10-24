@@ -3,9 +3,16 @@ name: Dashboard
 # The live GitGalaxy fleet dashboard, made with this repo's own Fleet CI report action
 # (actions/fleet-report). It publishes dashboard.svg + metrics.json to the `dashboard` branch and writes
 # the weekly report to the run's summary page.
+#
+# Refreshes at 06:00, 15:00 and 20:05 US Eastern (owner 2026-10-24). GitHub cron is UTC only, so each time is listed
+# at both its EDT and its EST offset, and the first step runs only the one that falls in the right Eastern hour: the
+# schedule stays right across daylight-saving changes. GitHub may start a scheduled run late; the hour check leaves
+# room for that.
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "0 10,11 * * *"   # 06:00 Eastern (10:00Z EDT, 11:00Z EST)
+    - cron: "0 19,20 * * *"   # 15:00 Eastern
+    - cron: "5 0,1 * * *"     # 20:05 Eastern (00:05Z / 01:05Z the next UTC day)
   workflow_dispatch:
 
 permissions:
@@ -20,10 +27,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Is this the Eastern-time slot? (the other UTC offset's run skips)
+        id: when
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          hour=$(TZ=America/New_York date +%-H)
+          if [ "$EVENT" != "schedule" ] || [ "$hour" = 6 ] || [ "$hour" = 15 ] || [ "$hour" = 20 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"; echo "Eastern hour $hour is not a refresh slot: skipping"
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.when.outputs.run == 'true'
         with:
           persist-credentials: false
       - uses: ./actions/fleet-report
+        if: steps.when.outputs.run == 'true'
         with:
           repo: squid-protocol/gitgalaxy
           title: "squid-protocol/gitgalaxy: promoter-bot fleet"
