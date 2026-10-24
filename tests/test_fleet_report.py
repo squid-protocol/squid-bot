@@ -499,16 +499,41 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
     assert dashboard.occupancy_day(readings, day, repo="o/none")["runner_min"] == 0
 
 
-def test_backlog_walks_back_from_the_open_count_and_candles_colour_by_direction():
-    sc = {"open_now": 100, "days": {"2026-10-12": {"opened": 5, "closed": 2}, "2026-10-13": {"opened": 1, "closed": 6},
-                                    "2026-10-14": {"opened": 3, "closed": 3}}}
-    days = ["2026-10-12", "2026-10-13"]
-    assert dashboard.backlog_series(sc, days) == {"2026-10-13": 100, "2026-10-12": 105}  # 10-14 is flat; 10-13 -5
+def _factory_data():
     data = _data(10)
+    days = sorted(data["days"])
     data["scorecard"] = {"open_now": 100, "days": {
-        d: {"opened": 3, "closed": 1, "resolved": 1, "not_planned": 0, "opened_by_origin": {"owner": 1, "agent": 2},
-            "reverts": 0, "regression_fixes": 0} for d in data["days"]}}
-    svg = dashboard.render_scorecard(data, TODAY, dashboard.Config(repo="owner/repo"))
-    ET.fromstring(svg)  # well-formed
-    assert 'class="wick failed"' in svg and "one candle a day" in svg  # backlog grew every day: red candles
-    assert "ISSUES RESOLVED" in svg and "PROGRAMS PROVEN (L4)" in svg
+        d: {"opened": 6, "closed": 4, "resolved": 4, "not_planned": 0, "reverts": 1 if d == days[-3] else 0,
+            "regression_fixes": 0, "opened_by_origin": {"owner": 2, "agent": 3, "automation": 1}} for d in days}}
+    data["factory"] = {"days": {d: {"usd": 40.0, "first_pass": {"merged": 20, "first_pass": 15},
+                                    "worker_hours": {"new_work": 1.0}} for d in days}}
+    return data
+
+
+def test_dashboard_draws_issue_arrows_first_pass_change_failure_and_cost_per_issue():
+    """Owner 2026-10-24: issues opened as arrows up stacked by who opened them (people purple, agents blue), closed as a
+    green arrow down, a pair per day; then first-pass, change failure and cost per resolved issue over time."""
+    svg = dashboard.render(_factory_data(), 10, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    for needle in ("Issues — opened ▲ (by who) and closed ▼", 'class="people"', 'class="agents"', 'class="closed"',
+                   "First-pass rate", 'class="band"', "Change failure", "Cost per resolved issue"):
+        assert needle in svg, needle
+    assert "opened 6 (people 2, agents 3, bots 1); closed 4 as completed" in svg
+    assert "75% first pass (15 of 20" in svg  # exact from the factory's records, with its 95% band
+    assert "$10.00 per issue over the last 7 days" in svg  # $40 / 4 issues, paired day by day
+
+
+def test_goals_sheet_renders_any_goal_in_the_generic_shape():
+    data = _data(3)
+    data["factory"] = {"goals": [{
+        "id": "x", "title": "Services migrated", "unit": "services", "levels": ["S0", "S1", "S2"], "target": "S2",
+        "group_label": "team", "measured": "2026-10-14T10:00Z",
+        "history": {"2026-10-12": {"S0": 5, "S1": 3, "S2": 2}, "2026-10-14": {"S0": 2, "S1": 3, "S2": 5}},
+        "groups": {"payments": {"S2": 3}, "search": {"S0": 2, "S1": 3, "S2": 2}},
+        "blockers": [{"name": "svc/ledger.py", "group": "payments", "holes": 2, "note": "needs a schema", "issues": []}]}]}
+    svg = dashboard.render_goals(data, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "Services migrated" in svg and "5 of 10" in svg and "+3" in svg  # at target now, change since the first day
+    assert "1 of 2" in svg and "3/3" in svg and "2/7" in svg  # teams done; per-team counts
+    assert 'class="noissue"' in svg and "ledger.py" in svg  # a blocker nobody is on
+    assert dashboard.render_goals(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
