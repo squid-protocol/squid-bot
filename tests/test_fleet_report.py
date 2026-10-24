@@ -337,3 +337,163 @@ def test_fetch_day_counts_each_outcome_in_windows_so_a_busy_day_passes_the_2500_
     runs = dashboard.fetch_day("owner/repo", "2026-10-18", CFG)["runs"]
     assert runs["success"] == 4000
     assert runs["failure"] == 40
+
+
+# ---------------------------------------------------------------- sampling (2026-10-24 rework)
+
+import json
+import math
+import random
+
+FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "gitgalaxy_runs_2026-10-23.json").read_text())
+
+
+def _population(seed: int = 0) -> tuple[list[dict], dict[str, float]]:
+    """A day the size of gitgalaxy's 2026-10-23 (7,628 completed runs) drawn from that day's 297 measured runs: the
+    real heavy tail and workflow mix, with a known true total."""
+    rng = random.Random(seed)
+    pop, truth = [], {}
+    for i in range(FIXTURE["population"]):
+        r = rng.choice(FIXTURE["runs"])
+        pop.append({"id": 10_000 + i, "name": r["name"], "wall": r["wall"]})
+        truth[str(10_000 + i)] = r["minutes"]
+    return pop, truth
+
+
+def _measure(pop, truth, cfg, seed):
+    plan = dashboard.sample_plan(pop, set(), cfg, seed=seed)
+    measured = {str(r["id"]): {"m": truth[str(r["id"])]} for r in plan}
+    return dashboard.ratio_estimate(pop, measured), len(measured)
+
+
+def test_old_fixed_24_run_estimate_was_mostly_noise_on_a_real_day():
+    """The case the owner caught (564 h on 2026-10-23, pool ceiling 480 h): 24 runs of a heavy-tailed day."""
+    pop, truth = _population()
+    total = sum(truth.values())
+    rng = random.Random(1)
+    ids = [str(r["id"]) for r in pop]
+    errs = []
+    for _ in range(400):
+        pick = rng.sample(ids, 24)
+        errs.append(abs(sum(truth[i] for i in pick) / 24 * len(pop) - total) / total)
+    assert sum(e > 0.25 for e in errs) / len(errs) > 0.5  # most days off by more than 25%
+
+
+def test_stratified_ratio_sample_is_accurate_and_its_interval_covers_the_truth():
+    pop, truth = _population()
+    total = sum(truth.values())
+    cfg = dashboard.Config(repo="o/r", sample_fraction=0.05, sample_min=30)
+    covered, errs = 0, []
+    for seed in range(40):
+        est, n = _measure(pop, truth, cfg, seed=f"day-{seed}")
+        assert n >= math.ceil(0.05 * len(pop))
+        errs.append(abs(est["total"] - total) / total)
+        covered += abs(est["total"] - total) <= est["half_width"]
+    assert sorted(errs)[len(errs) // 2] < 0.12  # median error at 5%
+    assert covered >= 32  # the 95% interval covers the truth in >= 80% of 40 days
+    est, _ = _measure(pop, truth, cfg, seed="x")
+    measured = {k for k in est["weights"]}
+    assert abs(sum(truth[k] * w for k, w in est["weights"].items()) - est["total"]) < 1e-6 * est["total"]
+    assert abs(sum(est["by_workflow"].values()) - est["total"]) < 1e-6 * est["total"]  # splits add up
+    assert measured
+
+
+def test_sample_plan_scales_with_volume_covers_every_workflow_and_is_stable():
+    pop, _ = _population()
+    cfg = dashboard.Config(repo="o/r", sample_fraction=0.05, sample_min=30)
+    plan = dashboard.sample_plan(pop, set(), cfg, seed="2026-10-23")
+    assert len(plan) >= 0.05 * len(pop)
+    assert {r["name"] for r in plan} == {r["name"] for r in pop}  # at least one per workflow
+    assert {r["name"] for r in plan[:len({r['name'] for r in pop})]} == {r["name"] for r in pop}  # round-robin first
+    assert [r["id"] for r in plan] == [r["id"] for r in dashboard.sample_plan(pop, set(), cfg, seed="2026-10-23")]
+    half = {str(r["id"]) for r in plan[: len(plan) // 2]}
+    rest = dashboard.sample_plan(pop, half, cfg, seed="2026-10-23")
+    assert not half & {str(r["id"]) for r in rest} and len(rest) == len(plan) - len(half)  # a re-run tops up only
+    small = dashboard.sample_plan(pop[:200], set(), cfg, seed="s")
+    assert len(small) >= 30  # the floor on a quiet day
+
+
+def test_fetch_detail_measures_each_run_once_within_the_budget(monkeypatch):
+    runs = [{"id": i, "name": "wf" + str(i % 3), "status": "completed", "conclusion": "success",
+             "run_started_at": "2026-10-23T10:00:00Z", "updated_at": "2026-10-23T10:05:00Z", "event": "push",
+             "head_branch": "main"} for i in range(1, 401)]
+    looked = []
+    monkeypatch.setattr(dashboard, "day_runs", lambda repo, day: runs)
+    monkeypatch.setattr(dashboard, "gh_count", lambda path: 0)
+
+    def gh(path):
+        if "/jobs" in path:
+            looked.append(path)
+            return {"jobs": [{"started_at": "2026-10-23T10:01:00Z", "completed_at": "2026-10-23T10:04:00Z",
+                              "created_at": "2026-10-23T10:00:00Z", "conclusion": "success"}]}
+        return []
+
+    monkeypatch.setattr(dashboard, "gh_json", gh)
+    cfg = dashboard.Config(repo="o/r", sample_fraction=0.1, sample_min=5)
+    budget = [25]
+    d1 = dashboard.fetch_detail("o/r", "2026-10-23", {}, lambda r: "main", cfg, None, budget)
+    assert budget == [0] and d1["sampled_runs"] == 25 and d1["sample_target"] == 40
+    d2 = dashboard.fetch_detail("o/r", "2026-10-23", {}, lambda r: "main", cfg, d1, [100])
+    assert d2["sampled_runs"] == 40 and len(looked) == 40  # topped up, nothing measured twice
+    assert d2["runner_min_est"] == 3 * 400 and d2["runner_min_ci"] == 0  # every run 3 runner-min: exact
+    assert d2["est_method"] == dashboard.EST_METHOD and d2["wait_median"] == 1.0
+
+
+def test_occupancy_day_is_time_weighted_bounded_and_reports_coverage():
+    day = "2026-10-23"
+    full = [{"t": f"{day}T{h:02d}:{m:02d}:00Z", "running": 20} for h in range(24) for m in (0, 15, 30, 45)]
+    occ = dashboard.occupancy_day(full, day)
+    assert occ["coverage"] == 1.0 and occ["runner_min"] == 20 * 1440  # a full pool all day is exactly the ceiling
+    gappy = [r for r in full if not r["t"][11:13] in ("03", "04", "05", "06")]  # four hours missing
+    occ2 = dashboard.occupancy_day(gappy, day)
+    assert 0.8 < occ2["coverage"] < 0.9 and occ2["runner_min"] <= 20 * 1440
+    sparse = full[::12]  # every 3 h: mostly uncovered
+    assert dashboard.occupancy_day(sparse, day)["coverage"] < dashboard.OCC_MIN_COVERAGE
+    detail = {"runner_min_est": 33_840, "runner_min_ci": 9_000, "sampled_runs": 24, "population": 6667,
+              "occupancy": dashboard.occupancy_day(sparse, day)}
+    assert dashboard.runner_minutes(detail) == 33_840  # occupancy too thin: the sample's figure
+    detail["occupancy"] = occ
+    assert dashboard.runner_minutes(detail) == 28_800 and dashboard.runner_source(detail).startswith("occupancy")
+
+
+def test_alert_flags_a_day_over_the_pools_ceiling():
+    data = _data(10)
+    base = {"wait_median": 1.0, "wait_p90": 3.0, "bot_runs": 0, "ci_changes": []}
+    for d in data["days"].values():
+        d["detail"] = {**base, "runner_min_est": 400 * 60}
+    over = (TODAY - timedelta(days=2)).isoformat()
+    data["days"][over]["detail"] = {**base, "runner_min_est": 564 * 60, "runner_min_ci": 300 * 60, "sampled_runs": 24,
+                                    "population": 6667}
+    alerts = dashboard.check_alerts(data, 10, TODAY, None, None, pool=20)
+    assert len(alerts) == 1 and alerts[0].startswith(f"{over}: runner time 564 h is over the pool's 480 h")
+    assert dashboard.check_alerts(data, 10, TODAY, None, None, pool=None) == []
+
+
+def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
+    """Owner policy 2026-10-24: the runner pool is the owner's, shared by all its repos, so all of them are counted."""
+    runs = {"o/gitgalaxy": [{"id": 1, "status": "in_progress"}, {"id": 2, "status": "queued"}],
+            "o/crucible": [{"id": 3, "status": "in_progress"}], "o/quiet": [{"id": 4, "status": "completed"}]}
+    jobs = {1: ["in_progress", "in_progress", "queued"], 3: ["in_progress"]}
+
+    def gh(path):
+        if path.startswith("orgs/o/repos"):
+            return [{"full_name": n} for n in runs] + [{"full_name": "o/old", "archived": True}]
+        if "/jobs" in path:
+            return {"jobs": [{"status": s} for s in jobs[int(path.split("/runs/")[1].split("/")[0])]]}
+        rs = runs[path.split("/actions")[0].removeprefix("repos/")]
+        want = "in_progress" if "status=in_progress" in path else "queued"
+        got = [x for x in rs if x["status"] == want]
+        return {"workflow_runs": got, "total_count": len(got)}
+
+    monkeypatch.setattr(dashboard, "gh_json", gh)
+    r = dashboard.occupancy_reading("o/gitgalaxy", "org")
+    assert (r["running"], r["queued"], r["queued_runs"], r["repos_read"]) == (3, 1, 1, 3)
+    assert r["by_repo"] == {"o/gitgalaxy": {"running": 2, "queued": 1, "queued_runs": 1},
+                            "o/crucible": {"running": 1, "queued": 0, "queued_runs": 0}}
+    only = dashboard.occupancy_reading("o/gitgalaxy", "repo")
+    assert only["running"] == 2 and list(only["by_repo"]) == ["o/gitgalaxy"]
+    day = "2026-10-23"
+    readings = [{**r, "t": f"{day}T{h:02d}:{m:02d}:00Z"} for h in range(24) for m in (0, 15, 30, 45)]
+    assert dashboard.occupancy_day(readings, day)["runner_min"] == 3 * 1440  # the pool's load
+    assert dashboard.occupancy_day(readings, day, repo="o/gitgalaxy")["runner_min"] == 2 * 1440  # this repo's share
+    assert dashboard.occupancy_day(readings, day, repo="o/none")["runner_min"] == 0

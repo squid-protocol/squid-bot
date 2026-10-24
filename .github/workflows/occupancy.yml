@@ -1,0 +1,33 @@
+name: Runner occupancy
+
+# One runner-occupancy reading of every squid-protocol repo every ~15 min (jobs holding a runner right now), appended
+# to occupancy.jsonl on the `dashboard` branch. The Dashboard workflow turns the readings into each day's runner hours
+# (time-weighted, so a day can never exceed the pool). About 15 API calls a reading. GitHub may delay or drop scheduled
+# runs under load: the report only uses a day whose readings cover 75% of it, else the sampled estimate.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dashboard-occupancy
+  cancel-in-progress: false
+
+jobs:
+  reading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./actions/fleet-report
+        with:
+          repo: squid-protocol/gitgalaxy
+          occupancy-sample: "true"
+          occupancy-scope: org  # owner policy 2026-10-24: every squid-protocol repo shares the 20 runners
+          # FLEET_REPORT_TOKEN (actions:read on the org's private repos) when set; GITHUB_TOKEN sees the public ones
+          token: ${{ secrets.FLEET_REPORT_TOKEN || github.token }}

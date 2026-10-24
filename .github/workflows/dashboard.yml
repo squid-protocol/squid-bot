@@ -35,3 +35,4 @@ jobs:
           events: "2026-10-10: integrase-bot (CI shepherd) on"
           max-wait-p90: "15"
           cost-max: "10"
+          runner-pool: "20"
