@@ -912,6 +912,8 @@ STYLE = """
     paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
   .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
   .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
+  .wick { stroke-width: 1.5; } .wick.saved { stroke: var(--good); } .wick.failed { stroke: var(--failed); }
+  .wick.automation { stroke: var(--neutral); } .amber { fill: #e3a008; }
 """
 
 
@@ -1323,6 +1325,311 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             f'height="{height - 1}" rx="10"/>\n  {body}\n</g>\n</svg>\n')
 
 
+# ---------------------------------------------------------------- factory scorecard
+# Owner 2026-10-24: merged PRs are motion, not results, and most people don't know what a PR count means. The scorecard
+# answers the questions people ask of a code factory: is it delivering (issues resolved vs opened, backlog), is the
+# work good (first-pass rate, change failure rate), how fast (time to resolve), what does it cost (per resolved issue),
+# how autonomous (owner decisions per resolved issue), and is the product moving (programs per evidence level).
+# GitHub-side figures are exact search counts; first-pass, owner decisions, spend and the ladder come from the
+# orchestrator's factory.json (churn), when it publishes them.
+SCORE_DAYS = 21
+ISSUE_SEARCH = """query($q: String!, $after: String) {
+  search(query: $q, type: ISSUE, first: 100, after: $after) {
+    issueCount pageInfo { hasNextPage endCursor }
+    nodes { ... on Issue { number createdAt closedAt author { login __typename } bodyText } }
+  }
+}"""
+COUNT_SEARCH = """query($q: String!) { search(query: $q, type: ISSUE, first: 1) { issueCount } }"""
+AGENT_ISSUE_MARKERS = r"Sibling gap|Found by (?:churn|an agent)|churn run|agy-authored"
+
+
+def search_count(q: str) -> int:
+    return int(gh_graphql(COUNT_SEARCH, q=q)["search"]["issueCount"])
+
+
+def search_issues(q: str) -> list[dict]:
+    out, after = [], None
+    for _ in range(10):
+        vars_ = {"q": q, **({"after": after} if after else {})}
+        sr = gh_graphql(ISSUE_SEARCH, **vars_)["search"]
+        out += [n for n in sr["nodes"] if n]
+        if not sr["pageInfo"]["hasNextPage"]:
+            break
+        after = sr["pageInfo"]["endCursor"]
+    return out
+
+
+def issue_origin(node: dict, cfg: Config) -> str:
+    """automation (a bot account), agent (an agent marker in the body: agents file the sibling gaps they find), or
+    owner (everyone else: the people who decide what the factory works on)."""
+    author = node.get("author") or {}
+    login = str(author.get("login", ""))
+    if author.get("__typename") == "Bot" or login.endswith("[bot]") or login == "github-actions":
+        return "automation"
+    body = node.get("bodyText") or ""
+    if (cfg.agent_markers and re.search(cfg.agent_markers, body, re.I)) or re.search(AGENT_ISSUE_MARKERS, body, re.I):
+        return "agent"
+    return "owner"
+
+
+def fetch_scorecard_day(repo: str, day: str, cfg: Config) -> dict:
+    """One day's issue flow and change failures (about 6 GraphQL searches)."""
+    base = f"repo:{repo} is:issue"
+    resolved = search_issues(f"{base} closed:{day} reason:completed")
+    hours = sorted((_iso(n["closedAt"]) - _iso(n["createdAt"])).total_seconds() / 3600 for n in resolved
+                   if n.get("closedAt") and n.get("createdAt"))
+    opened = Counter(issue_origin(n, cfg) for n in search_issues(f"{base} created:{day}"))
+    return {
+        "resolved": len(resolved),
+        "resolved_by_origin": dict(Counter(issue_origin(n, cfg) for n in resolved)),
+        "resolve_h_median": round(_pct(hours, 0.5), 1) if hours else None,
+        "not_planned": search_count(f'{base} closed:{day} reason:"not planned"'),
+        "closed": search_count(f"{base} closed:{day}"),
+        "opened": sum(opened.values()), "opened_by_origin": dict(opened),
+        "reverts": search_count(f"repo:{repo} is:pr is:merged merged:{day} Revert in:title"),
+        "regression_fixes": search_count(f"repo:{repo} is:pr is:merged merged:{day} regression in:title"),
+    }
+
+
+def collect_scorecard(cfg: Config, data: dict, today: date, days: int = SCORE_DAYS) -> dict:
+    sc = data.get("scorecard") or {"days": {}}
+    window = [(today - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    for d in window:
+        if d not in sc["days"] or d >= (today - timedelta(days=REFRESH_DAYS - 1)).isoformat():
+            try:
+                sc["days"][d] = fetch_scorecard_day(cfg.repo, d, cfg)
+            except RuntimeError as e:
+                print(f"::warning::scorecard for {d} not refreshed: {e}", file=sys.stderr)
+    sc["open_now"] = search_count(f"repo:{cfg.repo} is:issue is:open")
+    sc["open_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    return sc
+
+
+def backlog_series(sc: dict, days: list[str]) -> dict[str, int]:
+    """Open issues at the end of each day, walked back from the count now: open(d - 1) = open(d) - opened(d) + closed(d)."""
+    out, open_end = {}, sc.get("open_now")
+    if open_end is None:
+        return {}
+    for d in sorted(sc["days"], reverse=True):
+        if d in days:
+            out[d] = open_end
+        row = sc["days"][d]
+        open_end = open_end - row.get("opened", 0) + row.get("closed", 0)
+    return out
+
+
+def scorecard_stats(data: dict, days: list[str]) -> dict:
+    """Seven-day totals for the tiles, from scorecard + factory rows over `days`."""
+    sc = (data.get("scorecard") or {}).get("days") or {}
+    fac = (data.get("factory") or {}).get("days") or {}
+    rows = [sc[d] for d in days if d in sc]
+    frows = [fac[d] for d in days if d in fac]
+    merged = sum((data["days"].get(d) or {}).get("merged", 0) for d in days)
+    resolved = sum(r["resolved"] for r in rows)
+    fp = [r.get("first_pass") for r in frows if r.get("first_pass")]
+    fp_merged, fp_ok = sum(x["merged"] for x in fp), sum(x["first_pass"] for x in fp)
+    owner = sum((r.get("owner_decisions") or {}).get("owner", 0) for r in frows)
+    usd = sum(r.get("usd") or 0 for r in frows)
+    runner = sum(runner_minutes((data["days"].get(d) or {}).get("detail", {})) or 0 for d in days) / 60
+    hrs = sorted(r["resolve_h_median"] for r in rows if r.get("resolve_h_median") is not None)
+    return {"resolved": resolved, "opened": sum(r["opened"] for r in rows),
+            "opened_by_origin": dict(sum((Counter(r.get("opened_by_origin") or {}) for r in rows), Counter())),
+            "not_planned": sum(r.get("not_planned", 0) for r in rows),
+            "first_pass": fp_ok / fp_merged if fp_merged else None, "first_pass_n": fp_merged,
+            "change_failure": (sum(r.get("reverts", 0) + r.get("regression_fixes", 0) for r in rows) / merged)
+            if merged else None,
+            "failures": sum(r.get("reverts", 0) + r.get("regression_fixes", 0) for r in rows), "merged": merged,
+            "usd_per_issue": usd / resolved if resolved and frows else None,
+            "runner_h_per_issue": runner / resolved if resolved else None,
+            "owner_per_issue": owner / resolved if resolved and frows else None, "owner_decisions": owner,
+            "resolve_h": hrs[len(hrs) // 2] if hrs else None}
+
+
+def render_scorecard(data: dict, today: date, cfg: Config) -> str:
+    """The factory scorecard: six tiles (last 7 finished days vs the 7 before) and three panels."""
+    days = [(today - timedelta(days=i)).isoformat() for i in range(SCORE_DAYS - 1, 0, -1)]  # finished days
+    sc = (data.get("scorecard") or {}).get("days") or {}
+    days = [d for d in days if d in sc]
+    cur, prev = scorecard_stats(data, days[-7:]), scorecard_stats(data, days[-14:-7])
+    backlog = backlog_series(data.get("scorecard") or {}, days)
+    fac = (data.get("factory") or {}).get("days") or {}
+    ladder_days = [d for d in days if (fac.get(d) or {}).get("ladder")]
+    width, pad = 920, 24
+    out = []
+    out.append(f'<text class="h1" x="{pad}" y="34">{escape(cfg.repo)}: factory scorecard</text>')
+    out.append(f'<text class="meta" x="{width - pad}" y="34" text-anchor="end">last 7 finished days vs the 7 before · '
+               f'updated {escape((data.get("updated") or "").replace("T", " ").replace("Z", " UTC"))}</text>')
+    lead = (f"{cur['resolved']} issues resolved and {cur['opened']} opened in 7 days; "
+            f"{data['scorecard'].get('open_now', '?')} open now.")
+    out.append(f'<text class="lead" x="{pad}" y="54">{escape(lead)}</text>')
+
+    def pct(v):
+        return "–" if v is None else f"{100 * v:.0f}%"
+
+    def pct1(v):
+        return "–" if v is None else f"{100 * v:.1f}%"
+
+    def vs(a, b, fmt, lower_better=False):
+        if a is None or b is None:
+            return "prior week: –"
+        arrow = "" if a == b else ("▲" if a > b else "▼")
+        good = (a < b) if lower_better else (a > b)
+        return f"prior week {fmt(b)} {arrow}" + ("" if a == b else (" better" if good else " worse"))
+
+    lv = (fac.get(ladder_days[-1]) or {}).get("ladder", {}) if ladder_days else {}
+    lv0 = (fac.get(ladder_days[0]) or {}).get("ladder", {}) if ladder_days else {}
+    total_p = sum(lv.values()) if lv else 0
+    ob = cur["opened_by_origin"]
+    tiles = [
+        ("ISSUES RESOLVED", f"{cur['resolved']}", vs(cur["resolved"], prev["resolved"], str),
+         f"opened {cur['opened']}: you {ob.get('owner', 0)} · agents {ob.get('agent', 0)} · bots {ob.get('automation', 0)}"),
+        ("OPEN ISSUES NOW", f"{data['scorecard'].get('open_now', '–')}",
+         f"end of {_fmt_day(days[-1])}: {backlog.get(days[-1], '–')} · a week before: "
+         f"{backlog.get(days[-8], '–') if len(days) >= 8 else '–'}",
+         f"median time to resolve {cur['resolve_h']:.0f} h" if cur["resolve_h"] is not None else ""),
+        ("FIRST-PASS RATE", pct(cur["first_pass"]), vs(cur["first_pass"], prev["first_pass"], pct),
+         f"of {cur['first_pass_n']} {cfg.bot_name} PRs merged, none sent back or fixed"),
+        ("CHANGE FAILURE", pct1(cur["change_failure"]), vs(cur["change_failure"], prev["change_failure"], pct1, True),
+         f"{cur['failures']} reverts + regression fixes / {cur['merged']} merged"),
+        ("COST / RESOLVED ISSUE", "–" if cur["usd_per_issue"] is None else f"${cur['usd_per_issue']:.0f}",
+         vs(cur["usd_per_issue"], prev["usd_per_issue"], lambda v: f"${v:.0f}", True),
+         ("" if cur["runner_h_per_issue"] is None else f"+ {cur['runner_h_per_issue']:.1f} runner-h; ")
+         + ("" if cur["owner_per_issue"] is None else f"{cur['owner_per_issue']:.2f} owner calls")),
+        ("PROGRAMS PROVEN (L4)", f"{lv.get('L4', '–')}" + (f" of {total_p}" if total_p else ""),
+         (f"{_fmt_day(ladder_days[0])}: {lv0.get('L4', 0)}" if ladder_days else "no ladder data"),
+         " · ".join(f"{k} {lv[k]}" for k in sorted(lv) if k != "L4")),
+    ]
+    card_y, card_h, gap = 68, 86, 12
+    card_w = (width - 2 * pad - 2 * gap) / 3
+    for i, (label, value, sub, sub2) in enumerate(tiles):
+        x, y = pad + (i % 3) * (card_w + gap), card_y + (i // 3) * (card_h + gap)
+        out.append(f'<rect class="tile" x="{x:.1f}" y="{y}" width="{card_w:.1f}" height="{card_h}" rx="8"/>')
+        out.append(f'<text class="k" x="{x + 14:.1f}" y="{y + 20}">{escape(label)}</text>')
+        out.append(f'<text class="v" x="{x + 14:.1f}" y="{y + 47}">{escape(value)}</text>')
+        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{y + 64}">{escape(sub)}</text>')
+        out.append(f'<text class="sub" x="{x + 14:.1f}" y="{y + 78}">{escape(sub2)}</text>')
+    top = card_y + 2 * (card_h + gap) + 26
+
+    # Panel 1: the backlog as daily candles (owner 2026-10-24: "like a stock trader's candle graph"). Open = open issues
+    # at the start of the day, close = at its end; the wick spans what the day could have reached (start + opened at
+    # most, start - closed at least: the order inside the day isn't known). Green = the backlog shrank (good), red = it
+    # grew, grey = flat; an amber dot marks a day with a revert or a regression fix merged.
+    left, right, chart_h = pad + 42, width - pad, 150
+    slot = (right - left) / max(1, len(days))
+    candles = []
+    for d in days:
+        if d not in backlog:
+            continue
+        r = sc[d]
+        close = backlog[d]
+        open_ = close - r.get("opened", 0) + r.get("closed", 0)
+        candles.append((d, open_, close, open_ + r.get("opened", 0), open_ - r.get("closed", 0), r))
+    out.append(f'<text class="h2" x="{pad}" y="{top - 8}">Open issues, one candle a day</text>')
+    out.append(f'<text class="meta" x="{right}" y="{top - 8}" text-anchor="end">green = backlog shrank · red = grew · '
+               'grey = flat · wick = how far the day could swing · amber dot = a revert or regression fix merged</text>')
+    if candles:
+        lo_v, hi_v = min(c[4] for c in candles), max(c[3] for c in candles)
+        pad_v = max(2, (hi_v - lo_v) * 0.1)
+        lo_ax, hi_ax = max(0, lo_v - pad_v), hi_v + pad_v
+        y_of = lambda v: top + chart_h - (v - lo_ax) / max(1e-9, hi_ax - lo_ax) * chart_h  # noqa: E731
+        step = max(1, round((hi_ax - lo_ax) / 4 / 5) * 5) if hi_ax - lo_ax > 20 else max(1, round((hi_ax - lo_ax) / 4))
+        v = math.ceil(lo_ax / step) * step
+        while v <= hi_ax:
+            out.append(f'<line class="grid" x1="{left}" x2="{right}" y1="{y_of(v):.1f}" y2="{y_of(v):.1f}"/>'
+                       f'<text class="tick" x="{left - 6}" y="{y_of(v) + 3:.1f}" text-anchor="end">{v:g}</text>')
+            v += step
+        body_w = max(3.0, min(18.0, slot * 0.55))
+        for d, open_, close, high, low, r in candles:
+            i = days.index(d)
+            cx = left + i * slot + slot / 2
+            cls = "saved" if close < open_ else "failed" if close > open_ else "automation"
+            tip = (f"{_fmt_day(d)}: {open_} → {close} open ({close - open_:+d}); opened {r.get('opened', 0)}, "
+                   f"resolved {r.get('resolved', 0)}, not planned {r.get('not_planned', 0)}"
+                   + (f"; {r.get('reverts', 0)} revert(s), {r.get('regression_fixes', 0)} regression fix(es)"
+                      if r.get("reverts") or r.get("regression_fixes") else ""))
+            y1, y2 = y_of(max(open_, close)), y_of(min(open_, close))
+            out.append(f'<g><title>{escape(tip)}</title>'
+                       f'<line class="wick {cls}" x1="{cx:.1f}" x2="{cx:.1f}" y1="{y_of(high):.1f}" y2="{y_of(low):.1f}"/>'
+                       f'<rect class="{cls}" x="{cx - body_w / 2:.1f}" y="{y1:.1f}" width="{body_w:.1f}" '
+                       f'height="{max(1.5, y2 - y1):.1f}" rx="1.5"/>'
+                       + (f'<circle class="amber" cx="{cx:.1f}" cy="{y_of(high) - 7:.1f}" r="3"/>'
+                          if r.get("reverts") or r.get("regression_fixes") else "") + "</g>")
+            if i % 3 == 0:
+                out.append(f'<text class="tick" x="{cx:.1f}" y="{top + chart_h + 14}" text-anchor="middle">{_fmt_day(d)}</text>')
+        last = candles[-1]
+        out.append(f'<text class="endl" x="{left + days.index(last[0]) * slot + slot / 2:.1f}" y="{y_of(last[3]) - 8:.1f}" '
+                   f'text-anchor="end">{last[2]} open  </text>')
+    top += chart_h + 56
+
+    # Panel 2: issues opened (by who) vs resolved per day, and the evidence ladder, side by side
+    half = (width - 2 * pad - 24) / 2
+    chart_h = 110
+    out.append(f'<text class="h2" x="{pad}" y="{top - 8}">Issues per day: opened (by who) and resolved</text>')
+    out.append(f'<text class="h2" x="{pad + half + 24:.1f}" y="{top - 8}">Programs by evidence level (L0 → L4)</text>')
+    l2, r2 = pad + 30, pad + half
+    slot = (r2 - l2) / max(1, len(days))
+    peak = max([1] + [max(sc[d]["opened"], sc[d]["resolved"]) for d in days])
+    ax_max, step = _nice_axis(peak)
+    for k in range(int(ax_max // step) + 1):
+        yv = top + chart_h - k * step / ax_max * chart_h
+        out.append(f'<line class="grid" x1="{l2}" x2="{r2:.1f}" y1="{yv:.1f}" y2="{yv:.1f}"/>'
+                   f'<text class="tick" x="{l2 - 6}" y="{yv + 3:.1f}" text-anchor="end">{k * step:g}</text>')
+    bw = max(1.5, slot / 2 - 1.5)
+    for i, d in enumerate(days):
+        x0, base_y, yy = l2 + i * slot + 0.5, top + chart_h, top + chart_h
+        for origin, cls in (("owner", "other"), ("agent", "agent"), ("automation", "automation")):
+            v = (sc[d].get("opened_by_origin") or {}).get(origin, 0)
+            if v:
+                h = v / ax_max * chart_h
+                out.append(f'<rect class="{cls} seg" x="{x0:.1f}" y="{yy - h:.1f}" width="{bw:.1f}" height="{h:.1f}">'
+                           f'<title>{_fmt_day(d)}: {v} opened by {origin}</title></rect>')
+                yy -= h
+        h = sc[d]["resolved"] / ax_max * chart_h
+        out.append(f'<rect class="bot" x="{x0 + bw + 0.5:.1f}" y="{base_y - h:.1f}" width="{bw:.1f}" height="{h:.1f}">'
+                   f'<title>{_fmt_day(d)}: {sc[d]["resolved"]} resolved</title></rect>')
+    lx = l2
+    for label, cls in (("opened: you", "other"), ("agents", "agent"), ("bots", "automation"), ("resolved", "bot")):
+        out.append(f'<rect class="{cls}" x="{lx:.1f}" y="{top + chart_h + 12}" width="10" height="10" rx="2"/>'
+                   f'<text class="lbl" x="{lx + 14:.1f}" y="{top + chart_h + 21}">{label}</text>')
+        lx += 22 + 6.2 * len(label)
+    if ladder_days:
+        x0, levels = pad + half + 24, ["L0", "L1", "L2", "L3", "L4"]
+        cls = {"L0": "failed", "L1": "automation", "L2": "agent", "L3": "other", "L4": "bot"}
+        bw = min(40.0, (half - 20) / len(ladder_days) - 6)
+        tot = max(sum(fac[d]["ladder"].values()) for d in ladder_days)
+        for i, d in enumerate(ladder_days):
+            yy, xb = top + chart_h, x0 + 10 + i * (bw + 6)
+            for lvl in levels:
+                v = fac[d]["ladder"].get(lvl, 0)
+                if v:
+                    h = v / tot * (chart_h - 26)
+                    out.append(f'<rect class="{cls[lvl]} seg" x="{xb:.1f}" y="{yy - h:.1f}" width="{bw:.1f}" '
+                               f'height="{h:.1f}"><title>{_fmt_day(d)}: {v} programs at {lvl}</title></rect>')
+                    yy -= h
+            out.append(f'<text class="tick" x="{xb + bw / 2:.1f}" y="{top + chart_h + 13}" text-anchor="middle">'
+                       f'{_fmt_day(d)}</text>')
+            out.append(f'<text class="vl" x="{xb + bw / 2:.1f}" y="{yy - 4:.1f}" text-anchor="middle">'
+                       f'L4 {fac[d]["ladder"].get("L4", 0)}</text>')
+        lx = x0 + 10
+        for lvl in levels:
+            out.append(f'<rect class="{cls[lvl]}" x="{lx:.1f}" y="{top + chart_h + 22}" width="10" height="10" rx="2"/>'
+                       f'<text class="lbl" x="{lx + 14:.1f}" y="{top + chart_h + 31}">{lvl}</text>')
+            lx += 46
+    top += chart_h + 56
+    out.append(f'<text class="meta" x="{pad}" y="{top}">Resolved = issues closed as completed (not "not planned"); '
+               'opened "by agents" = an agent marker in the issue body.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{top + 15}">Change failure = merged PRs titled Revert or regression, '
+               'over all merged PRs (a title heuristic).</text>')
+    top += 15
+    out.append(f'<text class="meta" x="{pad}" y="{top + 15}">First-pass rate, cost (Claude spend + runner hours), owner '
+               'calls and the evidence ladder come from the factory&apos;s own numbers (factory.json, published by churn).</text>')
+    height = top + 30
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
+            f'role="img" aria-label="{escape(cfg.repo)} factory scorecard">\n<style>{STYLE}</style>\n<g class="root">\n'
+            f'  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="10"/>\n  '
+            + "\n  ".join(out) + "\n</g>\n</svg>\n")
+
+
 # ---------------------------------------------------------------- CLI
 
 def _opt_float(s: str | None) -> float | None:
@@ -1360,6 +1667,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--cost-max", default="", help="top of the cost-per-PR chart axis, hours (default: fit the data)")
     p.add_argument("--fail-on-alert", action="store_true")
     p.add_argument("--render-only", action="store_true", help="redraw from metrics.json without fetching")
+    p.add_argument("--scorecard", action="store_true", help="also collect and render scorecard.svg (factory scorecard)")
     a = p.parse_args(argv)
     if not a.repo:
         p.error("--repo is required (or GITHUB_REPOSITORY)")
@@ -1402,6 +1710,12 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError as e:
             print(f"::warning title=Fleet CI report::factory.json unreadable: {e}", file=sys.stderr)
     (a.out / "dashboard.svg").write_text(render(data, a.days, today, cfg), encoding="utf-8")
+    if a.scorecard:
+        if not a.render_only:
+            data["scorecard"] = collect_scorecard(cfg, data, today)
+            data_file.write_text(json.dumps({k: v for k, v in data.items() if k != "factory"}, indent=1, sort_keys=True) + "\n")
+        if data.get("scorecard"):
+            (a.out / "scorecard.svg").write_text(render_scorecard(data, today, cfg), encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
                           cfg.runner_pool)
     for msg in alerts:

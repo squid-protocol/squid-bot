@@ -497,3 +497,18 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
     assert dashboard.occupancy_day(readings, day)["runner_min"] == 3 * 1440  # the pool's load
     assert dashboard.occupancy_day(readings, day, repo="o/gitgalaxy")["runner_min"] == 2 * 1440  # this repo's share
     assert dashboard.occupancy_day(readings, day, repo="o/none")["runner_min"] == 0
+
+
+def test_backlog_walks_back_from_the_open_count_and_candles_colour_by_direction():
+    sc = {"open_now": 100, "days": {"2026-10-12": {"opened": 5, "closed": 2}, "2026-10-13": {"opened": 1, "closed": 6},
+                                    "2026-10-14": {"opened": 3, "closed": 3}}}
+    days = ["2026-10-12", "2026-10-13"]
+    assert dashboard.backlog_series(sc, days) == {"2026-10-13": 100, "2026-10-12": 105}  # 10-14 is flat; 10-13 -5
+    data = _data(10)
+    data["scorecard"] = {"open_now": 100, "days": {
+        d: {"opened": 3, "closed": 1, "resolved": 1, "not_planned": 0, "opened_by_origin": {"owner": 1, "agent": 2},
+            "reverts": 0, "regression_fixes": 0} for d in data["days"]}}
+    svg = dashboard.render_scorecard(data, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)  # well-formed
+    assert 'class="wick failed"' in svg and "one candle a day" in svg  # backlog grew every day: red candles
+    assert "ISSUES RESOLVED" in svg and "PROGRAMS PROVEN (L4)" in svg
