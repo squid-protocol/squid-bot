@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 734" width="920" height="734" role="img" aria-label="squid-protocol/gitgalaxy goal progress">
+<style>
+  .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
+          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --neutral:#c3c2b7; --failed:#d03b3b; --good:#0ca30c; }
+  @media (prefers-color-scheme: dark) {
+    .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
+            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --neutral:#5c5c58; }
+  }
+  text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
+  .bg { fill: var(--surface); stroke: var(--border); }
+  .tile { fill: var(--tile); }
+  .h1 { font-size: 16px; font-weight: 650; }
+  .lead { font-size: 12.5px; fill: var(--ink2); }
+  .h2 { font-size: 12.5px; font-weight: 600; }
+  .meta, .tick, .lbl { font-size: 10.5px; fill: var(--muted); }
+  .tick { font-variant-numeric: tabular-nums; }
+  .k { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; fill: var(--ink2); }
+  .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .sub { font-size: 10.5px; fill: var(--ink2); }
+  .grid { stroke: var(--grid); stroke-width: 1; }
+  .base { stroke: var(--axis); stroke-width: 1; }
+  .start { stroke: var(--s1); stroke-width: 1.5; }
+  .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
+  .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
+  .evl { font-size: 10.5px; fill: var(--ink2); }
+  .seg { stroke: var(--surface); stroke-width: 1; }
+  .hours { fill: var(--ink2); opacity: 0.55; }
+  .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
+  .failed { fill: var(--failed); } .saved { fill: var(--good); }
+  .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
+  .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
+  .partial { opacity: 0.5; }
+  .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
+  .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
+  .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);
+    paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+  .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
+  .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
+  .people { fill: #8b5cf6; } .agents { fill: var(--s1); } .bots { fill: var(--neutral); } .closed { fill: var(--good); }
+  .dayband { fill: var(--tile); } .band { fill: var(--s1); opacity: 0.13; }
+  .daily { fill: var(--surface); stroke: var(--ink2); stroke-width: 1.5; }
+  .noissue { font-size: 10.5px; font-weight: 650; fill: var(--failed); }
+</style>
+<g class="root">
+  <rect class="bg" x="0.5" y="0.5" width="919" height="733" rx="10"/>
+  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: goal progress</text>
+  <text class="lead" x="24" y="54">What the factory is pointed at, and how far it has got. The main dashboard has the numbers that hold for any project.</text>
+  <text class="h2" x="24" y="98">Mainframe programs by evidence level</text>
+  <text class="meta" x="896" y="98" text-anchor="end">target L4 · measured 2026-10-24 18:12Z</text>
+  <rect class="tile" x="24.0" y="110" width="166.4" height="70" rx="8"/><text class="k" x="36.0" y="128">AT L4 OR ABOVE</text><text class="v" x="36.0" y="153">74 of 129</text><text class="sub" x="36.0" y="170">57% of programs</text>
+  <rect class="tile" x="200.4" y="110" width="166.4" height="70" rx="8"/><text class="k" x="212.4" y="128">CHANGE</text><text class="v" x="212.4" y="153">+34</text><text class="sub" x="212.4" y="170">since Oct 21; +34 in 7 days</text>
+  <rect class="tile" x="376.8" y="110" width="166.4" height="70" rx="8"/><text class="k" x="388.8" y="128">BELOW L4</text><text class="v" x="388.8" y="153">55</text><text class="sub" x="388.8" y="170">L0 6 · L1 2 · L2 17 · L3 30</text>
+  <rect class="tile" x="553.2" y="110" width="166.4" height="70" rx="8"/><text class="k" x="565.2" y="128">BLOCKED</text><text class="v" x="565.2" y="153">6</text><text class="sub" x="565.2" y="170">0 with no open issue · 20 holes</text>
+  <rect class="tile" x="729.6" y="110" width="166.4" height="70" rx="8"/><text class="k" x="741.6" y="128">ESTATES DONE</text><text class="v" x="741.6" y="153">1 of 6</text><text class="sub" x="741.6" y="170">every program at L4+</text>
+  <text class="h2" x="24" y="210">Programs by level, each measured day</text>
+  <line class="base" x1="60" x2="896" y1="374.0" y2="374.0"/><text class="tick" x="54" y="377.0" text-anchor="end">0</text>
+  <line class="grid" x1="60" x2="896" y1="324.0" y2="324.0"/><text class="tick" x="54" y="327.0" text-anchor="end">50</text>
+  <line class="grid" x1="60" x2="896" y1="274.0" y2="274.0"/><text class="tick" x="54" y="277.0" text-anchor="end">100</text>
+  <line class="grid" x1="60" x2="896" y1="224.0" y2="224.0"/><text class="tick" x="54" y="227.0" text-anchor="end">150</text>
+  <rect class="failed seg" x="140.5" y="364.0" width="48.0" height="10.0"><title>Oct 21: 10 programs at L0</title></rect>
+  <rect class="bots seg" x="140.5" y="357.0" width="48.0" height="7.0"><title>Oct 21: 7 programs at L1</title></rect>
+  <rect class="agent seg" x="140.5" y="329.0" width="48.0" height="28.0"><title>Oct 21: 28 programs at L2</title></rect>
+  <rect class="other seg" x="140.5" y="285.0" width="48.0" height="44.0"><title>Oct 21: 44 programs at L3</title></rect>
+  <rect class="agents seg" x="140.5" y="245.0" width="48.0" height="40.0"><title>Oct 21: 40 programs at L4</title></rect>
+  <text class="vl" x="164.5" y="241.0" text-anchor="middle">L4 40</text><text class="tick" x="164.5" y="388" text-anchor="middle">Oct 21</text>
+  <rect class="failed seg" x="349.5" y="368.0" width="48.0" height="6.0"><title>Oct 22: 6 programs at L0</title></rect>
+  <rect class="bots seg" x="349.5" y="363.0" width="48.0" height="5.0"><title>Oct 22: 5 programs at L1</title></rect>
+  <rect class="agent seg" x="349.5" y="332.0" width="48.0" height="31.0"><title>Oct 22: 31 programs at L2</title></rect>
+  <rect class="other seg" x="349.5" y="294.0" width="48.0" height="38.0"><title>Oct 22: 38 programs at L3</title></rect>
+  <rect class="agents seg" x="349.5" y="245.0" width="48.0" height="49.0"><title>Oct 22: 49 programs at L4</title></rect>
+  <text class="vl" x="373.5" y="241.0" text-anchor="middle">L4 49</text><text class="tick" x="373.5" y="388" text-anchor="middle">Oct 22</text>
+  <rect class="failed seg" x="558.5" y="368.0" width="48.0" height="6.0"><title>Oct 23: 6 programs at L0</title></rect>
+  <rect class="bots seg" x="558.5" y="366.0" width="48.0" height="2.0"><title>Oct 23: 2 programs at L1</title></rect>
+  <rect class="agent seg" x="558.5" y="341.0" width="48.0" height="25.0"><title>Oct 23: 25 programs at L2</title></rect>
+  <rect class="other seg" x="558.5" y="310.0" width="48.0" height="31.0"><title>Oct 23: 31 programs at L3</title></rect>
+  <rect class="agents seg" x="558.5" y="245.0" width="48.0" height="65.0"><title>Oct 23: 65 programs at L4</title></rect>
+  <text class="vl" x="582.5" y="241.0" text-anchor="middle">L4 65</text><text class="tick" x="582.5" y="388" text-anchor="middle">Oct 23</text>
+  <rect class="failed seg" x="767.5" y="368.0" width="48.0" height="6.0"><title>Oct 24: 6 programs at L0</title></rect>
+  <rect class="bots seg" x="767.5" y="366.0" width="48.0" height="2.0"><title>Oct 24: 2 programs at L1</title></rect>
+  <rect class="agent seg" x="767.5" y="349.0" width="48.0" height="17.0"><title>Oct 24: 17 programs at L2</title></rect>
+  <rect class="other seg" x="767.5" y="319.0" width="48.0" height="30.0"><title>Oct 24: 30 programs at L3</title></rect>
+  <rect class="agents seg" x="767.5" y="245.0" width="48.0" height="74.0"><title>Oct 24: 74 programs at L4</title></rect>
+  <text class="vl" x="791.5" y="241.0" text-anchor="middle">L4 74</text><text class="tick" x="791.5" y="388" text-anchor="middle">Oct 24</text>
+  <rect class="agents" x="850.0" y="202" width="10" height="10" rx="2"/><text class="lbl" x="864.0" y="211">L4</text>
+  <rect class="other" x="804.0" y="202" width="10" height="10" rx="2"/><text class="lbl" x="818.0" y="211">L3</text>
+  <rect class="agent" x="758.0" y="202" width="10" height="10" rx="2"/><text class="lbl" x="772.0" y="211">L2</text>
+  <rect class="bots" x="712.0" y="202" width="10" height="10" rx="2"/><text class="lbl" x="726.0" y="211">L1</text>
+  <rect class="failed" x="666.0" y="202" width="10" height="10" rx="2"/><text class="lbl" x="680.0" y="211">L0</text>
+  <text class="h2" x="24" y="414">By estate: share at each level (count at L4+ / total)</text>
+  <text class="lbl" x="214.0" y="437" text-anchor="end">cics-async-api-credit-card-ap…</text>
+  <rect class="agents seg" x="220.0" y="428" width="606.0" height="12"><title>cics-async-api-credit-card-application-example: 10 of 10 at L4</title></rect>
+  <text class="vl" x="834.0" y="438">10/10</text>
+  <text class="lbl" x="214.0" y="455" text-anchor="end">aws-mainframe-modernization-c…</text>
+  <rect class="failed seg" x="220.0" y="446" width="27.5" height="12"><title>aws-mainframe-modernization-carddemo: 2 of 44 at L0</title></rect>
+  <rect class="agent seg" x="247.5" y="446" width="27.5" height="12"><title>aws-mainframe-modernization-carddemo: 2 of 44 at L2</title></rect>
+  <rect class="other seg" x="275.1" y="446" width="110.2" height="12"><title>aws-mainframe-modernization-carddemo: 8 of 44 at L3</title></rect>
+  <rect class="agents seg" x="385.3" y="446" width="440.7" height="12"><title>aws-mainframe-modernization-carddemo: 32 of 44 at L4</title></rect>
+  <text class="vl" x="834.0" y="456">32/44</text>
+  <text class="lbl" x="214.0" y="473" text-anchor="end">cics-banking-sample-applicati…</text>
+  <rect class="agent seg" x="220.0" y="464" width="136.8" height="12"><title>cics-banking-sample-application-cbsa: 7 of 31 at L2</title></rect>
+  <rect class="other seg" x="356.8" y="464" width="175.9" height="12"><title>cics-banking-sample-application-cbsa: 9 of 31 at L3</title></rect>
+  <rect class="agents seg" x="532.8" y="464" width="293.2" height="12"><title>cics-banking-sample-application-cbsa: 15 of 31 at L4</title></rect>
+  <text class="vl" x="834.0" y="474">15/31</text>
+  <text class="lbl" x="214.0" y="491" text-anchor="end">zecs</text>
+  <rect class="failed seg" x="220.0" y="482" width="173.1" height="12"><title>zecs: 2 of 7 at L0</title></rect>
+  <rect class="agent seg" x="393.1" y="482" width="173.1" height="12"><title>zecs: 2 of 7 at L2</title></rect>
+  <rect class="agents seg" x="566.3" y="482" width="259.7" height="12"><title>zecs: 3 of 7 at L4</title></rect>
+  <text class="vl" x="834.0" y="492">3/7</text>
+  <text class="lbl" x="214.0" y="509" text-anchor="end">cics-genapp</text>
+  <rect class="agent seg" x="220.0" y="500" width="97.7" height="12"><title>cics-genapp: 5 of 31 at L2</title></rect>
+  <rect class="other seg" x="317.7" y="500" width="254.1" height="12"><title>cics-genapp: 13 of 31 at L3</title></rect>
+  <rect class="agents seg" x="571.9" y="500" width="254.1" height="12"><title>cics-genapp: 13 of 31 at L4</title></rect>
+  <text class="vl" x="834.0" y="510">13/31</text>
+  <text class="lbl" x="214.0" y="527" text-anchor="end">dbb-mortgage-application</text>
+  <rect class="failed seg" x="220.0" y="518" width="202.0" height="12"><title>dbb-mortgage-application: 2 of 6 at L0</title></rect>
+  <rect class="bots seg" x="422.0" y="518" width="202.0" height="12"><title>dbb-mortgage-application: 2 of 6 at L1</title></rect>
+  <rect class="agent seg" x="624.0" y="518" width="101.0" height="12"><title>dbb-mortgage-application: 1 of 6 at L2</title></rect>
+  <rect class="agents seg" x="725.0" y="518" width="101.0" height="12"><title>dbb-mortgage-application: 1 of 6 at L4</title></rect>
+  <text class="vl" x="834.0" y="528">1/6</text>
+  <text class="h2" x="24" y="556">Blocked: not translated whole (6)</text>
+  <text class="k" x="24" y="574">PROGRAM</text>
+  <text class="k" x="194" y="574">ESTATE</text>
+  <text class="k" x="404" y="574">HOLES</text>
+  <text class="k" x="454" y="574">ISSUES</text>
+  <text class="k" x="564" y="574">WHY</text>
+  <text class="lbl" x="24" y="596">epscsmrd.cbl</text>
+  <text class="lbl" x="194" y="596">dbb-mortgage-application</text>
+  <text class="lbl" x="404" y="596">9</text>
+  <text class="lbl" x="454" y="596">#5106, #5565</text>
+  <text class="lbl" x="564" y="596">&lt;name&gt; ADDRESS OF &lt;name&gt;: not an item of &lt;name&gt; or …</text>
+  <text class="lbl" x="24" y="612">CBEXPORT.cbl</text>
+  <text class="lbl" x="194" y="612">aws-mainframe-modernization-c…</text>
+  <text class="lbl" x="404" y="612">7</text>
+  <text class="lbl" x="454" y="612">#5866</text>
+  <text class="lbl" x="564" y="612">&lt;name&gt;: &lt;name&gt; is not defined in a record of file &lt;…</text>
+  <text class="lbl" x="24" y="628">CBIMPORT.cbl</text>
+  <text class="lbl" x="194" y="628">aws-mainframe-modernization-c…</text>
+  <text class="lbl" x="404" y="628">3</text>
+  <text class="lbl" x="454" y="628">#5866</text>
+  <text class="lbl" x="564" y="628">&lt;name&gt;: &lt;name&gt; is not defined in a record of file &lt;…</text>
+  <text class="lbl" x="24" y="644">epsmpmt.cbl</text>
+  <text class="lbl" x="194" y="644">dbb-mortgage-application</text>
+  <text class="lbl" x="404" y="644">1</text>
+  <text class="lbl" x="454" y="644">#5867, #6492</text>
+  <text class="lbl" x="564" y="644">COMPUTE FUNCTION ANNUITY (IBM defines arg-N / (…) b…</text>
+  <text class="lbl" x="24" y="660">ZECS002.asm</text>
+  <text class="lbl" x="194" y="660">zecs</text>
+  <text class="lbl" x="404" y="660">0</text>
+  <text class="lbl" x="454" y="660">#5859</text>
+  <text class="lbl" x="564" y="660">refused: CICS Assembler</text>
+  <text class="lbl" x="24" y="676">ZECSNC.asm</text>
+  <text class="lbl" x="194" y="676">zecs</text>
+  <text class="lbl" x="404" y="676">0</text>
+  <text class="lbl" x="454" y="676">#5859</text>
+  <text class="lbl" x="564" y="676">refused: CICS Assembler</text>
+  <text class="meta" x="24" y="714">Source: the factory&apos;s own goal measurements (factory.json "goals", published by the orchestrator). A goal is any ordered set of levels with a target.</text>
+</g>
+</svg>
