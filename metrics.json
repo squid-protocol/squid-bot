@@ -3172,12 +3172,12 @@
   },
   "2026-10-24": {
    "detail": {
-    "bot_runs": 2213,
+    "bot_runs": 3021,
     "cancel_savings": {
-     "cancelled": 331,
-     "saved_min_est": 2659,
+     "cancelled": 445,
+     "saved_min_est": 3526,
      "unpriced": 0,
-     "wall_min": 18213
+     "wall_min": 27032
     },
     "ci_changes": [
      {
@@ -3187,51 +3187,89 @@
      {
       "pr": 6319,
       "title": "assess: post-publish PyPI install check, runs only after publish.yml (Part of #4726) (#6319)"
+     },
+     {
+      "pr": 6452,
+      "title": "gitgalaxy pre-gate asks the change plan instead of ignoring docs/** (Part of #6278, slice 3) (#6452)"
+     },
+     {
+      "pr": 6462,
+      "title": "smoke-test.yml: the nightly gets its own concurrency group and is never cancelled (Part of #5133) (#6462)"
+     },
+     {
+      "pr": 6463,
+      "title": "CI: gate the C call-graph reference (libclang) in graph-accuracy-audit (Part of #3784) (#6463)"
+     },
+     {
+      "pr": 6467,
+      "title": "Call-graph reference: Rust CI gate and session-hook toolchain install (Part of #3785) (#6467)"
+     },
+     {
+      "pr": 6468,
+      "title": "CI: gate the JavaScript call-resolution baseline in graph-accuracy-audit (Part of #3781) (#6468)"
+     },
+     {
+      "pr": 6474,
+      "title": "C++ call-graph reference: libclang on fmt, gated in graph-accuracy-audit (Part of #3784) (#6474)"
+     },
+     {
+      "pr": 6478,
+      "title": "CI: gate the Go call-resolution baseline (Part of #3781) (#6478)"
      }
     ],
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
-     "failed_again": 0,
+     "attempts": 1,
+     "by_workflow": {
+      "Det Sweep": [
+       0,
+       1,
+       0
+      ]
+     },
+     "failed_again": 1,
      "passed": 0,
-     "runs": 0
+     "runs": 1
     },
-    "runner_min_est": 13452,
+    "runner_min_est": 7519,
     "sampled_min_by_origin": {
-     "bot": 17.7,
-     "main": 26.4
+     "bot": 25.4,
+     "main": 1.2
     },
     "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.2,
      "CI shepherd (reconcile)": 0.0,
+     "Crucible Path Independence": 5.3,
      "Deploy Museum of Code Docs": 0.0,
+     "Det Sweep": 1.2,
      "Evidence Pages": 0.6,
      "Generated Docs": 0.0,
-     "GitGalaxy Smoke Tests": 12.8,
-     "GitGalaxy Zero-Trust Pipeline": 2.1,
+     "GitGalaxy Zero-Trust Pipeline": 2.0,
+     "Main Watch": 0.4,
      "Mainframe Ground Truth": 15.7,
-     "pages build and deployment": 13.1
+     "Ruff Audit": 1.0,
+     "pages build and deployment": 0.2
     },
-    "sampled_runs": 12,
-    "wait_median": 1.28,
-    "wait_p90": 3.07
+    "sampled_runs": 18,
+    "wait_median": 2.2,
+    "wait_p90": 6.73
    },
-   "merged": 120,
+   "merged": 161,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 1,
     "automation": 0,
-    "bot": 120,
+    "bot": 160,
     "other": 0
    },
    "runs": {
-    "cancelled": 1433,
-    "failure": 46,
-    "skipped": 1345,
-    "success": 3003,
-    "total": 5000
+    "cancelled": 1924,
+    "failure": 56,
+    "skipped": 1821,
+    "success": 4265,
+    "total": 6922
    }
   }
  },
- "open_prs": 28,
+ "open_prs": 26,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-24T11:23Z"
+ "updated": "2026-10-24T15:55Z"
 }
