@@ -1461,6 +1461,35 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
+    # GitHub API: the shared token's busiest hour each day, against its limit (owner 2026-10-24: the quota ran out and
+    # the merge bot, which shares it, stopped merging). From the orchestrator's own quota readings (factory.json "api").
+    api = [(fac_days.get(d) or {}).get("api") or {} for d, _ in rows]
+    if any(x.get("peak_hour") for x in api):
+        top, chart_h = y, 110
+        limit = 5000
+        axis = _nice_axis(max([limit] + [x.get("peak_hour") or 0 for x in api]))
+        frame(top, chart_h, axis, f"{panel} · GitHub API — calls in the busiest hour each day on the shared token "
+              f"(limit {limit:,}/h; red: readings that found it exhausted)", lambda v: f"{v:,.0f}")
+        yl = top + chart_h - chart_h * limit / axis[0]
+        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
+                   f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">limit {limit:,}/h</text>')
+        for i, ((day, _), x) in enumerate(zip(rows, api)):
+            v = x.get("peak_hour")
+            if not v:
+                continue
+            h = chart_h * v / axis[0]
+            bx = x_left(i) + (slot - bar_w) / 2
+            cls = "failed" if x.get("readings_at_zero") else "hours"
+            callers = ", ".join(f"{k} {n}" for k, n in list((x.get("churn_by_caller") or {}).items())[:4])
+            tip = (f"{_fmt_day(day)}: busiest hour {v:,} calls; {x.get('readings_at_zero', 0)} readings at 0; churn made "
+                   f"{x.get('churn_calls', 0):,} calls that day ({callers})")
+            out.append(f'<g><title>{escape(tip)}</title><rect class="{cls}" x="{bx:.1f}" y="{top + chart_h - h:.1f}" '
+                       f'width="{bar_w:.1f}" height="{h:.1f}" rx="2"/>'
+                       + (f'<text class="vl" x="{bx + bar_w / 2:.1f}" y="{top + chart_h - h - 4:.1f}" text-anchor="middle">'
+                          f'{x["readings_at_zero"]}×0</text>' if x.get("readings_at_zero") else "") + "</g>")
+        y = top + chart_h + 70
+        panel += 1
+
     prefixes = ", ".join(cfg.bot_prefixes)
     out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far.</text>')
     y += 15

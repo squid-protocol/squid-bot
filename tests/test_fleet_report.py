@@ -562,3 +562,15 @@ def test_an_issue_counts_as_bot_resolved_only_if_bot_work_merged_before_it_close
     assert not dashboard.bot_worked(node(ev("churn/9-later", "2026-10-15T09:00:00Z")), cfg)  # a later slice only mentions it
     assert not dashboard.bot_worked(node(ev("feat/human", "2026-10-12T09:00:00Z")), cfg)
     assert dashboard.bot_worked(node({"closer": {"headRefName": "churn/2-y"}}), cfg)  # closed by a bot PR
+
+
+def test_api_panel_shows_the_busiest_hour_against_the_limit_and_exhausted_days():
+    data = _factory_data()
+    days = sorted(data["days"])
+    data["factory"]["days"][days[-2]]["api"] = {"peak_hour": 5000, "readings_at_zero": 3, "churn_calls": 900,
+                                                "churn_by_caller": {"pr_snapshot": 400, "inflight_files": 300}}
+    data["factory"]["days"][days[-3]]["api"] = {"peak_hour": 3100, "readings_at_zero": 0, "churn_calls": 500}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "GitHub API — calls in the busiest hour" in svg and "limit 5,000/h" in svg
+    assert "3×0" in svg and "busiest hour 5,000 calls; 3 readings at 0; churn made 900 calls" in svg
