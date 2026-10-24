@@ -25,9 +25,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import math
 import os
+import random
 import re
 import subprocess
 import sys
@@ -41,6 +43,18 @@ from xml.sax.saxutils import escape
 REFRESH_DAYS = 3  # today, yesterday and the day before can still change
 OUTCOMES = ("success", "failure", "cancelled", "skipped")
 DETAIL_BACKFILL = 4  # older days missing the sampled detail, filled a few per run (API budget)
+# Runner time, 2026-10-24 rework. A fixed 24 runs a day, from page 1 of four 6-hour windows, was mostly noise: run cost
+# is heavy-tailed (gitgalaxy 2026-10-23: median 0.5 runner-min, the top 5% of runs carry 58% of the minutes, CV 3.5), so
+# 24 runs put the day anywhere in 124-1,088 h (the pool's ceiling was 480), and page 1 only covers the last minutes of
+# each window. Now: a FRACTION of the day's runs, stratified by workflow across the whole day, priced with a ratio
+# estimator on each run's wall time (known for every run from the listing), with a 95% interval; and, when an
+# occupancy sampler runs, runner hours from time-sampled running jobs, which cannot exceed the pool.
+EST_METHOD = "ratio-v2"
+OCC_FILE = "occupancy.jsonl"  # one reading per line, appended by --occupancy-sample (the occupancy workflow)
+OCC_MAX_GAP_MIN = 45  # readings further apart than this leave the gap uncovered
+OCC_MIN_COVERAGE = 0.75  # a day's occupancy figure is used when its readings cover this share of the day
+OCC_KEEP_DAYS = 35
+SAMPLE_KEEP_DAYS = 14  # per-run sample detail kept this long (later days keep only their estimates)
 DEFAULT_AGENT_PREFIXES = "claude/,codex/,copilot/,cursor/,devin/"
 DEFAULT_AGENT_MARKERS = (r"Generated with \[?Claude Code|Co-Authored-By: Claude|Co-authored-by: Copilot|"
                          r"agy-authored|Devin AI|Cursor Agent|OpenAI Codex|Gemini CLI")
@@ -70,7 +84,10 @@ class Config:
     bot_workflows: list[str] = field(default_factory=list)
     agent_prefixes: list[str] = field(default_factory=lambda: _csv(DEFAULT_AGENT_PREFIXES))
     agent_markers: str = DEFAULT_AGENT_MARKERS
-    sample_runs: int = 24
+    sample_fraction: float = 0.05  # share of the day's completed runs measured (so precision holds as volume grows)
+    sample_min: int = 30  # ...but never fewer runs than this
+    sample_budget: int = 400  # new run lookups per invocation, across all days (API budget); the rest come next run
+    runner_pool: int | None = None  # concurrent runners available; a day's estimate above pool x 24 h is flagged
     bot_prefixes: list[str] = field(default_factory=list)
     bot_name: str = "bot"
     bot_start: str = ""
@@ -255,10 +272,109 @@ def minutes_saved(runs: list[dict], skip: set[str]) -> dict:
             "cancelled": cancelled, "unpriced": unpriced}
 
 
-def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], origin, cfg: Config) -> dict:
-    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (sampled); minutes saved by early
-    cancellation (estimated from every run of the day)."""
+def run_wall(r: dict) -> float | None:
+    """A run's wall minutes, start to last update (from the listing, no extra call)."""
+    if not (r.get("run_started_at") and r.get("updated_at")):
+        return None
+    return max(0.0, (_iso(r["updated_at"]) - _iso(r["run_started_at"])).total_seconds() / 60)
+
+
+def sample_population(runs: list[dict]) -> list[dict]:
+    """The runs runner time is estimated over: completed, not skipped, with a wall time."""
+    return [{"id": r["id"], "name": r.get("name") or "?", "wall": w} for r in runs
+            if r.get("status") == "completed" and r.get("conclusion") != "skipped" and (w := run_wall(r)) is not None]
+
+
+def sample_plan(pop: list[dict], have, cfg: Config, seed: str) -> list[dict]:
+    """The runs still to measure: target max(sample_min, sample_fraction x N), allocated to workflows in proportion to
+    their run counts with at least one per workflow, drawn by a per-day seeded shuffle (a re-run keeps its picks), and
+    ordered round-robin across workflows so a partial budget still covers every workflow."""
+    n_target = min(len(pop), max(cfg.sample_min, math.ceil(cfg.sample_fraction * len(pop))))
+    by: dict[str, list[dict]] = {}
+    for r in pop:
+        by.setdefault(r["name"], []).append(r)
+    # largest remainder, so the shares add up to the target; then at least one per workflow
+    quota = {wf: n_target * len(rs) / max(1, len(pop)) for wf, rs in by.items()}
+    alloc = {wf: math.floor(q) for wf, q in quota.items()}
+    for wf in sorted(quota, key=lambda w: (alloc[w] - quota[w], w))[: n_target - sum(alloc.values())]:
+        alloc[wf] += 1
+    queues = []
+    for wf in sorted(by):
+        rs = sorted(by[wf], key=lambda r: r["id"])
+        random.Random(f"{seed}:{wf}").shuffle(rs)
+        n_w = min(len(rs), max(1, alloc[wf]))
+        queues.append([r for r in rs[:n_w] if str(r["id"]) not in have])
+    out = []
+    while any(queues):
+        for q in queues:
+            if q:
+                out.append(q.pop(0))
+    return out
+
+
+def ratio_estimate(pop: list[dict], measured: dict) -> dict:
+    """Runner minutes for the whole population from the measured runs ({id: {"m": minutes, ...}}): per workflow, the
+    measured runner-min per wall-min times the workflow's total wall time (a separate ratio where >= 3 runs are
+    measured, one combined ratio over the rest, including workflows with none measured). Returns the total, the 95%
+    half-width, per-workflow totals and a weight per measured run (so any split of the runs sums to the total)."""
+    by: dict[str, list[dict]] = {}
+    for r in pop:
+        by.setdefault(r["name"], []).append(r)
+    sep, small = {}, []
+    for wf, rs in by.items():
+        got = [(r, float(measured[str(r["id"])]["m"])) for r in rs if str(r["id"]) in measured]
+        (sep.__setitem__(wf, got) if len(got) >= 3 else small.append(wf))
+    total, var, by_wf, weights = 0.0, 0.0, {}, {}
+
+    def group(wfs: list[str], got: list[tuple[dict, float]]) -> None:
+        nonlocal total, var
+        n_pop = sum(len(by[w]) for w in wfs)
+        x_pop = sum(r["wall"] for w in wfs for r in by[w])
+        n, xs, ys = len(got), sum(r["wall"] for r, _ in got), sum(y for _, y in got)
+        if not n:
+            return
+        if xs > 0:
+            ratio, wt = ys / xs, x_pop / xs
+            resid = [y - ratio * r["wall"] for r, y in got]
+        else:  # no wall time to scale by: the mean per run
+            ratio, wt = None, n_pop / n
+            resid = [y - ys / n for _, y in got]
+        for w in wfs:
+            by_wf[w] = (ratio * sum(r["wall"] for r in by[w])) if ratio is not None else ys / n * len(by[w])
+        total += ys * wt
+        for r, _ in got:
+            weights[str(r["id"])] = wt
+        if n > 1:
+            mean_r = sum(resid) / n
+            s2 = sum((d - mean_r) ** 2 for d in resid) / (n - 1)
+            var += n_pop ** 2 * (1 - n / n_pop) * s2 / n
+
+    for wf, got in sep.items():
+        group([wf], got)
+    group(small, [(r, float(measured[str(r["id"])]["m"])) for w in small for r in by[w] if str(r["id"]) in measured])
+    return {"total": total, "half_width": 1.96 * math.sqrt(var), "by_workflow": by_wf, "weights": weights}
+
+
+def measure_run(repo: str, run_id: int) -> dict:
+    """One run's runner minutes and its jobs' queue waits (one API call)."""
+    minutes, waits = 0.0, []
+    for j in gh_json(f"repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")["jobs"]:
+        if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
+            m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
+            if m > 0.05:  # a job that never really ran held no runner
+                minutes += m
+                waits.append(round(max(0.0, (_iso(j["started_at"]) - _iso(j["created_at"])).total_seconds() / 60), 2))
+    return {"m": round(minutes, 2), "w": waits}
+
+
+def fetch_detail(repo: str, day: str, bots: dict[str, int], origin, cfg: Config, prev: dict | None = None,
+                 budget: list[int] | None = None) -> dict:
+    """Bot-run count and CI-change PRs (exact); job queue wait and runner minutes (a stratified sample of
+    sample_fraction of the day's runs, kept in `sample` and topped up while the day is refreshed, so each run is
+    measured once; `budget` is the lookups left this invocation); minutes saved by early cancellation (estimated from
+    every run of the day)."""
     everything = day_runs(repo, day)
+    by_id = {x["id"]: x for x in everything}
     bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
     changes: dict[int, str] = {}
     for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
@@ -266,40 +382,40 @@ def fetch_detail(repo: str, day: str, total_runs: int, bots: dict[str, int], ori
         m = re.search(r"\(#(\d+)\)\s*$", title)
         if m:  # squash merges of PRs; direct bot commits carry no PR number
             changes[int(m.group(1))] = title
-    waits: list[float] = []
-    run_min: list[float] = []
-    by_wf: Counter[str] = Counter()
+    pop = sample_population(everything)
+    prev = prev or {}
+    measured = dict(prev.get("sample") or {}) if prev.get("est_method") == EST_METHOD else {}
+    budget = budget if budget is not None else [cfg.sample_budget]
+    for r in sample_plan(pop, measured, cfg, seed=day):
+        if budget[0] <= 0:
+            break
+        try:
+            measured[str(r["id"])] = {**measure_run(repo, r["id"]), "o": origin(by_id[r["id"]])}
+        except RuntimeError as e:  # one unreadable run shrinks the sample, it doesn't stop the report
+            print(f"::notice::skipped run {r['id']} in the sample: {e}", file=sys.stderr)
+        budget[0] -= 1
+    alive = {str(r["id"]) for r in pop}
+    measured = {k: v for k, v in measured.items() if k in alive}
+    est = ratio_estimate(pop, measured)
+    waits = [w for v in measured.values() for w in v.get("w", [])]
     by_origin: Counter[str] = Counter()
-    per_window = max(1, cfg.sample_runs // 4)
-    for h in (0, 6, 12, 18):
-        page = gh_json(f"repos/{repo}/actions/runs?created={day}T{h:02d}:00:00Z..{day}T{h + 5:02d}:59:59Z&per_page=100")
-        runs = [r for r in page["workflow_runs"] if r.get("conclusion") != "skipped" and r.get("status") == "completed"]
-        step = max(1, len(runs) // per_window)
-        for r in runs[::step][:per_window]:
-            try:
-                jobs = gh_json(f"repos/{repo}/actions/runs/{r['id']}/jobs?per_page=100")["jobs"]
-            except RuntimeError as e:  # one unreadable run shrinks the sample, it doesn't stop the report
-                print(f"::notice::skipped run {r['id']} in the sample: {e}", file=sys.stderr)
-                continue
-            minutes = 0.0
-            for j in jobs:
-                if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
-                    m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
-                    if m > 0.05:  # a job that never really ran held no runner
-                        minutes += m
-                        waits.append(max(0.0, (_iso(j["started_at"]) - _iso(j["created_at"])).total_seconds() / 60))
-            run_min.append(minutes)
-            by_wf[r["name"]] += minutes
-            by_origin[origin(r)] += minutes
+    for k, v in measured.items():
+        by_origin[v.get("o", "?")] += float(v["m"]) * est["weights"].get(k, 0.0)
+    target = min(len(pop), max(cfg.sample_min, math.ceil(cfg.sample_fraction * len(pop))))
     return {
         "bot_runs": bot_runs,
         "ci_changes": [{"pr": n, "title": t} for n, t in sorted(changes.items())],
         "wait_median": round(_pct(waits, 0.5), 2),
         "wait_p90": round(_pct(waits, 0.9), 2),
-        "runner_min_est": round(sum(run_min) / len(run_min) * total_runs) if run_min else None,
-        "sampled_runs": len(run_min),
-        "sampled_min_by_workflow": {k: round(v, 1) for k, v in by_wf.items()},
+        "est_method": EST_METHOD,
+        "runner_min_est": round(est["total"]) if measured else None,
+        "runner_min_ci": round(est["half_width"]) if measured else None,
+        "population": len(pop),
+        "sampled_runs": len(measured),
+        "sample_target": target,
+        "sampled_min_by_workflow": {k: round(v, 1) for k, v in est["by_workflow"].items()},
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
+        "sample": measured,
         "reruns": rerun_counts(repo, day, everything),
         "cancel_savings": minutes_saved(everything, set(bots)),
     }
@@ -341,17 +457,153 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
             data["days"][d].update(merged_counts(repo, d, cfg))
     bots = bot_workflow_ids(repo, cfg)
     origin = RunOrigin(repo, cfg)
-    missing = [d for d in window if d not in fresh and d in data["days"]
-               and not {"sampled_min_by_origin", "reruns", "cancel_savings"} <= data["days"][d].get("detail", {}).keys()]
+    def incomplete(det: dict) -> bool:  # missing, from the old 24-run estimator, or short of its sample target
+        return (not {"sampled_min_by_origin", "reruns", "cancel_savings"} <= det.keys()
+                or det.get("est_method") != EST_METHOD or det.get("sampled_runs", 0) < det.get("sample_target", 0))
+    missing = [d for d in window if d not in fresh and d in data["days"] and incomplete(data["days"][d].get("detail", {}))]
+    budget = [cfg.sample_budget]
     for d in fresh + missing[:backfill]:
-        r = data["days"][d]["runs"]
         try:
-            data["days"][d]["detail"] = fetch_detail(repo, d, r["total"] - r["skipped"], bots, origin, cfg)
+            data["days"][d]["detail"] = fetch_detail(repo, d, bots, origin, cfg, data["days"][d].get("detail"), budget)
         except RuntimeError as e:  # keep the day's previous detail (if any); the next run tries again
             print(f"::warning::sampled detail for {d} not refreshed: {e}", file=sys.stderr)
+    keep = (today - timedelta(days=SAMPLE_KEEP_DAYS)).isoformat()
+    for d, row in data["days"].items():  # old days keep their estimates, not the per-run detail
+        if d < keep:
+            row.get("detail", {}).pop("sample", None)
     data["open_prs"] = gh_count(f"search/issues?q=repo:{repo}+is:pr+is:open&per_page=1")
     data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     return data
+
+
+# ---------------------------------------------------------------- occupancy (time-sampled runner use)
+
+def org_repos(owner: str) -> list[str]:
+    """The owner's repositories the token can see (archived and disabled ones left out): an org, else a user."""
+    out: list[str] = []
+    for base in (f"orgs/{owner}/repos", f"users/{owner}/repos"):
+        try:
+            for page in range(1, 11):
+                got = gh_json(f"{base}?per_page=100&page={page}&type=all")
+                out += [r["full_name"] for r in got if not r.get("archived") and not r.get("disabled")]
+                if len(got) < 100:
+                    break
+            return out
+        except RuntimeError:
+            out = []
+    return out
+
+
+def occupancy_reading(repo: str, scope: str = "org") -> dict:
+    """Jobs holding a runner right now, and jobs waiting for one. Owner policy 2026-10-24: the hosted-runner pool is
+    shared by every repository of the owner, so scope "org" counts them all (two calls per repo: its in-progress runs
+    and its queued count; one per in-progress run for its jobs); "repo" counts `repo` only. by_repo keeps each
+    repository's share."""
+    repos = org_repos(repo.split("/")[0]) if scope == "org" else [repo]
+    if repo not in repos:
+        repos.append(repo)
+    by_repo: dict[str, dict] = {}
+    unread = 0
+    for name in repos:
+        try:  # by status, not the newest N: on a busy repo the newest runs are all freshly queued (2026-10-24 reading)
+            live = []
+            for page in range(1, 4):
+                got = gh_json(f"repos/{name}/actions/runs?status=in_progress&per_page=100&page={page}")["workflow_runs"]
+                live += got
+                if len(got) < 100:
+                    break
+            queued_runs = int(gh_json(f"repos/{name}/actions/runs?status=queued&per_page=1").get("total_count", 0))
+        except RuntimeError:
+            unread += 1
+            continue
+        running = queued = 0
+        for r in live:
+            try:
+                jobs = gh_json(f"repos/{name}/actions/runs/{r['id']}/jobs?per_page=100&filter=latest")["jobs"]
+            except RuntimeError:
+                continue
+            running += sum(j.get("status") == "in_progress" for j in jobs)
+            queued += sum(j.get("status") in ("queued", "waiting", "pending") for j in jobs)
+        if running or queued or queued_runs:
+            by_repo[name] = {"running": running, "queued": queued, "queued_runs": queued_runs}
+    return {"t": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "scope": scope,
+            "running": sum(v["running"] for v in by_repo.values()), "queued": sum(v["queued"] for v in by_repo.values()),
+            "queued_runs": sum(v["queued_runs"] for v in by_repo.values()), "repos_read": len(repos) - unread,
+            **({"repos_unread": unread} if unread else {}), "by_repo": by_repo}
+
+
+def read_occupancy(path: Path) -> list[dict]:
+    out = []
+    for line in path.read_text().splitlines() if path.exists() else []:
+        try:
+            out.append(json.loads(line))
+        except ValueError:
+            continue
+    return out
+
+
+def occupancy_day(readings: list[dict], day: str, now: datetime | None = None, repo: str | None = None) -> dict | None:
+    """Runner minutes for one UTC day from occupancy readings: the running-jobs count integrated over time (trapezoid
+    between readings at most OCC_MAX_GAP_MIN apart; each reading also holds half a gap on its open sides), the share of
+    the day (so far, for today) those readings cover, and the minutes scaled up from the covered part. None without
+    readings. Bounded by construction: a reading can't show more jobs than there are runners."""
+    t0 = _iso(f"{day}T00:00:00Z")
+    t1 = min(t0 + timedelta(days=1), now or datetime.now(timezone.utc))
+    def value(r: dict) -> float | None:  # the whole pool, or one repository's share (a repo-scope reading is that repo)
+        if repo is None or "by_repo" not in r:
+            return r.get("running")
+        return float((r["by_repo"].get(repo) or {}).get("running", 0))
+    pts = sorted((_iso(r["t"]), float(v)) for r in readings
+                 if r.get("t") and t0 <= _iso(r["t"]) < t1 and (v := value(r)) is not None)
+    if not pts or t1 <= t0:
+        return None
+    covered = integral = 0.0
+    half = OCC_MAX_GAP_MIN / 2
+    for (ta, a), (tb, b) in itertools.pairwise(pts):
+        gap = (tb - ta).total_seconds() / 60
+        if gap <= OCC_MAX_GAP_MIN:
+            covered += gap
+            integral += gap * (a + b) / 2
+        else:  # a long gap: each side keeps half a max gap
+            covered += 2 * half
+            integral += half * (a + b)
+    for t, v, edge in ((pts[0][0], pts[0][1], t0), (pts[-1][0], pts[-1][1], t1)):
+        m = min(half, abs((t - edge).total_seconds()) / 60)
+        covered += m
+        integral += m * v
+    span = (t1 - t0).total_seconds() / 60
+    coverage = min(1.0, covered / span)
+    return {"runner_min": round(integral / covered * span) if covered else None, "coverage": round(coverage, 3),
+            "readings": len(pts), "running_mean": round(integral / covered, 1) if covered else None}
+
+
+def runner_minutes(detail: dict) -> float | None:
+    """The day's best runner-minute figure: time-sampled occupancy when its readings cover enough of the day, else the
+    stratified sample's estimate."""
+    occ = detail.get("occupancy") or {}
+    if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
+        return occ["runner_min"]
+    return detail.get("runner_min_est")
+
+
+def runner_source(detail: dict) -> str:
+    occ = detail.get("occupancy") or {}
+    if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
+        return f"occupancy ({occ['coverage']:.0%} of the day)"
+    if detail.get("runner_min_est") is None:
+        return "no data"
+    if detail.get("est_method") != EST_METHOD:
+        return f"old fixed sample of {detail.get('sampled_runs', '?')} runs, no interval (re-sampled on a later run)"
+    ci = detail.get("runner_min_ci")
+    pct = f" ±{ci / detail['runner_min_est']:.0%}" if ci and detail["runner_min_est"] else ""
+    return f"sample of {detail.get('sampled_runs', 0)}/{detail.get('population', '?')} runs{pct}"
+
+
+def over_ceiling(detail: dict, pool: int | None, minutes_in_day: float = 1440) -> bool:
+    """Above what `pool` runners can do in a day: this repo's figure, or the whole owner's when it was measured."""
+    m = runner_minutes(detail)
+    org = (detail.get("occupancy_org") or {}).get("runner_min")
+    return bool(pool) and any(x is not None and x > pool * minutes_in_day for x in (m, org))
 
 
 # ---------------------------------------------------------------- aggregation
@@ -420,7 +672,7 @@ def week_stats(rows: list[dict]) -> dict:
     ok = sum(r["runs"]["success"] for r in rows)
     bad = sum(r["runs"]["failure"] for r in rows)
     det = [r["detail"] for r in rows if "detail" in r]
-    est = [(r["detail"]["runner_min_est"], r["merged"]) for r in rows if r.get("detail", {}).get("runner_min_est") is not None]
+    est = [(runner_minutes(r["detail"]), r["merged"]) for r in rows if runner_minutes(r.get("detail", {})) is not None]
     return {
         "days": n,
         "merged_per_day": merged / n,
@@ -536,7 +788,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
               f"{cmp['prev_label']} ({span(cmp['prev_days'])})." if cmp["start"] else "Last 7 finished days vs the 7 before.")
     out = [f"## {cfg.heading}", "",
            f"Updated {data['updated'].replace('T', ' ').replace('Z', ' UTC')}. {period} "
-           f"Days are UTC; queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.", ""]
+           f"Days are UTC; {sampling_note(cfg)}.", ""]
     if alerts:
         out += ["> [!WARNING]", *[f"> {a}" for a in alerts], ""]
     out += [f"| Measure | {cmp['cur_label'].capitalize()} | {cmp['prev_label'].capitalize()} |", "|---|---|---|"]
@@ -596,9 +848,22 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
     return "\n".join(out)
 
 
-def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None, max_h_per_pr: float | None) -> list[str]:
-    cur = week_stats(finished(window_rows(data, days, today), today)[-7:])
+def sampling_note(cfg: Config) -> str:
+    return (f"queue wait is sampled from {cfg.sample_fraction:.0%} of each day's runs (at least {cfg.sample_min}); runner "
+            "time is time-sampled runner occupancy where its readings cover the day, else that sample's estimate (± its "
+            "95% interval)")
+
+
+def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None, max_h_per_pr: float | None,
+                 pool: int | None = None) -> list[str]:
+    dated = [(d, r) for d, r in window_rows(data, days, today) if d != today.isoformat()][-7:]
+    cur = week_stats([r for _, r in dated])
     out = []
+    for day, r in dated:  # an estimate the runners could not have produced is an estimator fault, not a busy day
+        det = r.get("detail", {})
+        if over_ceiling(det, pool):
+            out.append(f"{day}: runner time {runner_minutes(det) / 60:.0f} h is over the pool's {pool * 24} h "
+                       f"({runner_source(det)}): treat it as an estimate fault.")
     if max_wait_p90 is not None and cur.get("wait_p90") is not None and cur["wait_p90"] > max_wait_p90:
         out.append(f"Job queue wait p90 averaged {cur['wait_p90']:.1f} min over the last 7 days (limit {max_wait_p90:g}).")
     if max_h_per_pr is not None and cur.get("runner_h_per_pr") is not None and cur["runner_h_per_pr"] > max_h_per_pr:
@@ -910,7 +1175,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # 2 · CI hours: runner hours each day (est. from the sampled runs); the tip splits them by origin
     details = [row.get("detail", {}) for _, row in rows]
-    hours = [detail["runner_min_est"] / 60 if detail.get("runner_min_est") is not None else None for detail in details]
+    hours = [runner_minutes(detail) / 60 if runner_minutes(detail) is not None else None for detail in details]
     known = sorted(v for v in hours if v)
     if known:
         top, chart_h = y, 150
@@ -936,7 +1201,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # Queue wait and CI cost per merged PR (sampled)
     wait_values = [detail.get("wait_p90") for detail in details]
-    runner_values = [detail["runner_min_est"] / row["merged"] / 60 if detail.get("runner_min_est") is not None
+    runner_values = [runner_minutes(detail) / row["merged"] / 60 if runner_minutes(detail) is not None
                      and row["merged"] else None for (_, row), detail in zip(rows, details)]
     if any(v is not None for v in wait_values + runner_values):
         top, chart_h = y, 120
@@ -951,7 +1216,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                 out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
                            f'<path class="markd" d="M{x_mid(i):.1f},{top - 9} l3,3 l-3,3 l-3,-3 Z"/></g>')
         line_series(top, chart_h, wait_values, wait_max, lambda v: f"{v:.1f}",
-                    f"minutes · about {cfg.sample_runs} runs sampled per day")
+                    f"minutes · {cfg.sample_fraction:.0%} of each day's runs sampled")
         legend(top - 30, [("CI change merged", "markd")])
         y = top + chart_h + 70
         top = y
@@ -1042,7 +1307,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     prefixes = ", ".join(cfg.bot_prefixes)
     out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far. '
-               f'Queue wait and runner time are sampled from about {cfg.sample_runs} runs a day.</text>')
+               f'{escape(sampling_note(cfg)).capitalize()}.</text>')
     out.append(f'<text class="meta" x="{pad}" y="{y + 15}">'
                + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
                         + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
@@ -1078,7 +1343,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--bot-name", default="bot")
     p.add_argument("--bot-start", default="", help="YYYY-MM-DD the bot went live (default: its first merged PR)")
     p.add_argument("--events", default="", help="'YYYY-MM-DD: label; ...' marked on the charts")
-    p.add_argument("--sample-runs", type=int, default=24)
+    p.add_argument("--sample-fraction", type=float, default=0.05, help="share of each day's runs measured")
+    p.add_argument("--sample-min", type=int, default=30, help="never fewer runs than this a day")
+    p.add_argument("--sample-runs", type=int, help="deprecated: the old fixed per-day sample; read as --sample-min")
+    p.add_argument("--sample-budget", type=int, default=400, help="new run lookups per invocation (API budget)")
+    p.add_argument("--runner-pool", default="", help="concurrent runners; estimates above pool x 24 h are flagged")
+    p.add_argument("--occupancy-scope", choices=["org", "repo"], default="org",
+                   help="count every repository of the owner (they share the runner pool; default) or --repo only")
+    p.add_argument("--occupancy-sample", action="store_true",
+                   help=f"append one runner-occupancy reading to <out>/{OCC_FILE} and exit (run every ~15 min)")
     p.add_argument("--detail-backfill", type=int, default=DETAIL_BACKFILL,
                    help="older days to fill with the sampled detail this run (each costs ~30 API calls)")
     p.add_argument("--summary", type=Path, help="append the Markdown report here (the Action passes $GITHUB_STEP_SUMMARY)")
@@ -1091,10 +1364,22 @@ def main(argv: list[str] | None = None) -> int:
     if not a.repo:
         p.error("--repo is required (or GITHUB_REPOSITORY)")
     cfg = Config(repo=a.repo, title=a.title, bot_workflows=_csv(a.bot_workflows),
-                 agent_prefixes=_csv(a.agent_branch_prefixes), agent_markers=a.agent_markers, sample_runs=a.sample_runs,
+                 agent_prefixes=_csv(a.agent_branch_prefixes), agent_markers=a.agent_markers,
+                 sample_fraction=a.sample_fraction, sample_min=a.sample_runs or a.sample_min,
+                 sample_budget=a.sample_budget, runner_pool=int(a.runner_pool) if str(a.runner_pool).strip() else None,
                  bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
                  events=_events(a.events), cost_max=_opt_float(a.cost_max))
     a.out.mkdir(parents=True, exist_ok=True)
+    occ_file = a.out / OCC_FILE
+    if a.occupancy_sample:
+        reading = occupancy_reading(cfg.repo, a.occupancy_scope)
+        cut = (datetime.now(timezone.utc) - timedelta(days=OCC_KEEP_DAYS)).strftime("%Y-%m-%d")
+        kept = [r for r in read_occupancy(occ_file) if str(r.get("t", "")) >= cut]
+        occ_file.write_text("".join(json.dumps(r, sort_keys=True) + "\n" for r in [*kept, reading]))
+        print(f"occupancy ({reading['scope']}): {reading['running']} jobs running, {reading['queued']} queued in running "
+              f"runs, {reading['queued_runs']} runs waiting; {reading['repos_read']} repos read: "
+              + ", ".join(f"{k} {v['running']}" for k, v in sorted(reading["by_repo"].items())), file=sys.stderr)
+        return 0
     data_file = a.out / "metrics.json"
     data = json.loads(data_file.read_text()) if data_file.exists() else {}
     today = datetime.now(timezone.utc).date()
@@ -1104,6 +1389,12 @@ def main(argv: list[str] | None = None) -> int:
         # a run that starts before midnight UTC finishes after it: draw "today" as of the finish (the "updated" stamp),
         # so the day that just ended isn't labelled "today so far"
         today = datetime.now(timezone.utc).date()
+    readings = read_occupancy(occ_file)
+    for d, row in data.get("days", {}).items():  # occupancy is attached at render time: no API, always current
+        if readings and "detail" in row and (occ := occupancy_day(readings, d, repo=cfg.repo)):
+            row["detail"]["occupancy"] = occ  # this repository's runner time
+            if any(r.get("scope") == "org" for r in readings) and (pool := occupancy_day(readings, d)):
+                row["detail"]["occupancy_org"] = pool  # every repository's: the pool's real load
     factory_file = a.out / "factory.json"  # an orchestrator's own numbers, published to the same branch (optional)
     if factory_file.exists():
         try:
@@ -1111,7 +1402,8 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError as e:
             print(f"::warning title=Fleet CI report::factory.json unreadable: {e}", file=sys.stderr)
     (a.out / "dashboard.svg").write_text(render(data, a.days, today, cfg), encoding="utf-8")
-    alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr))
+    alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
+                          cfg.runner_pool)
     for msg in alerts:
         print(f"::warning title=Fleet CI report::{msg}")
     if a.summary:

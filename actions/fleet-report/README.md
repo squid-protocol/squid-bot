@@ -26,6 +26,25 @@ jobs:
 
 Then embed it: `![CI](https://raw.githubusercontent.com/<owner>/<repo>/dashboard/dashboard.svg)`.
 
+For runner hours you can trust, add the occupancy sampler. It takes one reading every ~15 minutes of the jobs holding
+a runner, across every repository of the owner, because they all share one hosted-runner pool:
+
+```yaml
+# .github/workflows/occupancy.yml
+on: {schedule: [{cron: "*/15 * * * *"}], workflow_dispatch: {}}
+permissions: {contents: write}
+concurrency: {group: dashboard-occupancy}
+jobs:
+  reading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: squid-protocol/squid-bot/actions/fleet-report@main
+        with:
+          occupancy-sample: "true"
+          token: ${{ secrets.FLEET_REPORT_TOKEN || github.token }}  # private repos need a token that can read their Actions
+```
+
 The first run backfills 30 days of exact counts, plus the sampled detail for the 3 most recent days. Older days get their sampled detail 4 at a time on later runs (`detail-backfill`), to stay within the API budget.
 
 ### Inputs
@@ -44,7 +63,13 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `events` | none | Dates to mark, as `YYYY-MM-DD: label; YYYY-MM-DD: label` |
 | `agent-markers` | built-in list | Regex on PR bodies that marks a PR as agent-made (Claude Code, Copilot, Devin, Cursor, Codex and Gemini CLI trailers by default) |
 | `bot-workflows` | none | Workflow names that are your orchestrator's own bookkeeping, reported as a share of runs |
-| `sample-runs` | `24` | Runs sampled per day for queue wait and runner time |
+| `sample-fraction` | `0.05` | Share of each day's completed runs measured (stratified by workflow, across the whole day) |
+| `sample-min` | `30` | Fewest runs measured a day |
+| `sample-budget` | `400` | New run lookups per invocation; the rest of a day's sample comes on later runs |
+| `runner-pool` | off | Concurrent runners (e.g. `20`): a day above pool x 24 h is reported as an estimate fault |
+| `occupancy-sample` | `false` | `true`: take one occupancy reading and stop (run from its own ~15-min schedule) |
+| `occupancy-scope` | `org` | `org`: every repo of the owner (they share the pool); `repo`: this one |
+| `sample-runs` | — | Deprecated; read as `sample-min` |
 | `detail-backfill` | `4` | Older days to fill with sampled detail per run |
 | `max-wait-p90` | off | Warn when the 7-day average p90 queue wait (min) exceeds this |
 | `max-runner-hours-per-pr` | off | Warn when 7-day runner hours per merged PR exceed this |
@@ -61,15 +86,15 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **Bot workflow runs**, per configured workflow.
 - **CI changes:** PR merges to the default branch that touched `.github/workflows`. They show as markers on the queue-wait chart.
 
-**Sampled** (labelled "sampled" or "est." wherever shown): about `sample-runs` completed runs a day, spread over four 6-hour windows. For each run, every job's queue wait (created → picked up by a runner) and runner time (start → end) are read. Jobs that never really ran are excluded. From that:
+**Sampled** (labelled "sampled" or "est." wherever shown): `sample-fraction` of each day's completed, non-skipped runs (at least `sample-min`), stratified by workflow and drawn across the whole day from the full run listing. Each run is measured once and kept, so a day's sample grows as it is refreshed. For each run, every job's queue wait (created → picked up by a runner) and runner time (start → end) are read. Jobs that never really ran are excluded. From that:
 - queue wait median and p90
-- runner minutes per day (mean per run × the day's non-skipped runs)
+- runner minutes per day: per workflow, measured runner minutes per wall minute × the workflow's total wall time (every run's wall time is in the listing), with a 95% interval
 - runner time split by workflow, and by origin: agent PR, other PR, automation PR, or default branch and schedules
 
 ### The charts
 
 - **Delivery:** merged PRs per day, split by recorded origin (bot, other agents, other, automation). Attribution depends on configured branch prefixes or PR-body markers.
-- **CI hours:** each day's estimated runner hours (sampled runner minutes per run × the day's runs); the tooltip splits them by origin. The axis fits three times the median day; a day above it (a sampling overshoot, or a real storm) is drawn at the top and marked with its value.
+- **CI hours:** each day's runner hours: from the occupancy readings when they cover the day, else the stratified sample's estimate; the tooltip splits them by origin. The axis fits three times the median day; a day above it (a sampling overshoot, or a real storm) is drawn at the top and marked with its value.
 - **Speed:** each day's sampled p90 job queue wait.
 - **CI load:** each day's estimated runner hours per merged PR. Set `cost-max` to cap the axis; days above it are drawn at the top and marked with their value.
 - **Spend** and **Cost per PR** (when the orchestrator publishes `factory.json` with `usd`): the bot's dollar cost added up since it started, and each day's dollars per merged bot PR with the overall average.
@@ -83,6 +108,7 @@ The current GitHub API feed does not contain historical local-host PSI, agent re
 
 ### Known limits
 - **Classification is only as good as the trace agents leave.** An agent that uses ordinary branch names and no trailer counts as "other". Set your fleet's own prefixes and markers.
-- **Per-day sampled figures are noisy:** a few long runs dominate a 24-run sample. Read them as weekly aggregates, which is what the tiles and report do. Raise `sample-runs` for tighter estimates.
+- **Runner time:** run cost is heavy-tailed (on gitgalaxy, 2026-10-23: median run 0.5 runner-min, top 5% of runs = 58% of the minutes). A fixed small sample of runs is noise: the old 24-run sample put that day anywhere from 124 to 1,088 h against a 480 h ceiling. The stratified ratio estimate at 5% is about ±15% (95%). With the occupancy sampler running, runner hours come from the readings instead (time-weighted running jobs, used when they cover 75% of the day). That figure can't exceed the pool and needs no run sampling.
+- **The runner pool is the owner's:** GitHub's concurrency limit for hosted runners is per account or org, so other repos' jobs take runners from this repo. The org-scope occupancy counts all of them (`occupancy_org`) next to this repo's share.
 - **Runner time is job wall time on GitHub's clock.** It isn't billing: public repos on standard runners are free, and larger runners bill at a multiplier.
 - **GitHub-hosted Ubuntu runner only:** it uses the preinstalled `python3` and `gh`.

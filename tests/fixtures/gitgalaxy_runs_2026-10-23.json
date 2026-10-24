@@ -1,0 +1,1491 @@
+{
+"source": "squid-protocol/gitgalaxy Actions, 2026-10-23: a uniform random sample of completed, non-skipped runs (workflow, wall minutes, runner minutes)",
+"population": 7628,
+"runs": [
+{
+"name": "CI shepherd (label events)",
+"wall": 1.7,
+"minutes": 0.35
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 12.9,
+"minutes": 1.32
+},
+{
+"name": "Generated Docs",
+"wall": 0.9,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "CodeQL Security Scan",
+"wall": 3.5,
+"minutes": 3.47
+},
+{
+"name": "Det Sweep",
+"wall": 2.2,
+"minutes": 0.62
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 7.07,
+"minutes": 14.42
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 27.85,
+"minutes": 10.88
+},
+{
+"name": "Main Watch",
+"wall": 0.53,
+"minutes": 0.23
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.52,
+"minutes": 0.33
+},
+{
+"name": "unicode-gauntlet",
+"wall": 2.57,
+"minutes": 1.9
+},
+{
+"name": "pages build and deployment",
+"wall": 4.67,
+"minutes": 0.52
+},
+{
+"name": "Det Sweep",
+"wall": 7.2,
+"minutes": 0.78
+},
+{
+"name": "Generated Docs",
+"wall": 3.27,
+"minutes": 0.98
+},
+{
+"name": "Det Sweep",
+"wall": 37.15,
+"minutes": 83.63
+},
+{
+"name": "Det Sweep",
+"wall": 20.62,
+"minutes": 99.02
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.13,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.57,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 2.03,
+"minutes": 1.98
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 5.97,
+"minutes": 0.45
+},
+{
+"name": "Archetype Validation",
+"wall": 4.92,
+"minutes": 3.83
+},
+{
+"name": "pages build and deployment",
+"wall": 1.05,
+"minutes": 0.57
+},
+{
+"name": "post-merge",
+"wall": 0.32,
+"minutes": 0.27
+},
+{
+"name": "Ruff Audit",
+"wall": 1.38,
+"minutes": 1.38
+},
+{
+"name": "Main Watch",
+"wall": 2.43,
+"minutes": 0.18
+},
+{
+"name": "post-merge",
+"wall": 1.2,
+"minutes": 0.47
+},
+{
+"name": "Small Audits",
+"wall": 18.78,
+"minutes": 1.02
+},
+{
+"name": "Small Audits",
+"wall": 2.27,
+"minutes": 1.72
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.6,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 17.23,
+"minutes": 0.35
+},
+{
+"name": "Fact Cross-check",
+"wall": 5.12,
+"minutes": 4.72
+},
+{
+"name": "post-merge",
+"wall": 6.27,
+"minutes": 0.17
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 24.47,
+"minutes": 0.0
+},
+{
+"name": "Mypy Audit",
+"wall": 1.2,
+"minutes": 0.47
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 25.05,
+"minutes": 14.28
+},
+{
+"name": "Mypy Audit",
+"wall": 1.95,
+"minutes": 1.92
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.33,
+"minutes": 0.28
+},
+{
+"name": "Ruff Audit",
+"wall": 3.5,
+"minutes": 0.53
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.17,
+"minutes": 0.0
+},
+{
+"name": "CICS Crucible",
+"wall": 31.02,
+"minutes": 10.33
+},
+{
+"name": "Tri-Comparison Audit",
+"wall": 3.67,
+"minutes": 1.5
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.72,
+"minutes": 0.0
+},
+{
+"name": "Small Audits",
+"wall": 14.45,
+"minutes": 1.38
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 6.08,
+"minutes": 12.73
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.5,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.33,
+"minutes": 0.3
+},
+{
+"name": "Estate Crucible",
+"wall": 2.97,
+"minutes": 0.47
+},
+{
+"name": "Generated Docs",
+"wall": 5.45,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.5,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.05,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.63,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 3.33,
+"minutes": 6.55
+},
+{
+"name": "Small Audits",
+"wall": 16.67,
+"minutes": 1.6
+},
+{
+"name": "post-merge",
+"wall": 0.32,
+"minutes": 0.3
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "Generated Docs",
+"wall": 1.32,
+"minutes": 0.97
+},
+{
+"name": "rosetta-audit",
+"wall": 2.83,
+"minutes": 2.72
+},
+{
+"name": "post-merge",
+"wall": 1.17,
+"minutes": 0.18
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 2.57,
+"minutes": 0.27
+},
+{
+"name": "Small Audits",
+"wall": 2.6,
+"minutes": 0.98
+},
+{
+"name": "Ruff Audit",
+"wall": 3.17,
+"minutes": 0.48
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.52,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 33.72,
+"minutes": 79.7
+},
+{
+"name": "Main Watch",
+"wall": 0.93,
+"minutes": 0.2
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 19.08,
+"minutes": 10.72
+},
+{
+"name": "CodeQL Security Scan",
+"wall": 9.17,
+"minutes": 5.3
+},
+{
+"name": "Det Sweep",
+"wall": 35.78,
+"minutes": 38.92
+},
+{
+"name": "rosetta-audit",
+"wall": 6.18,
+"minutes": 3.27
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 2.55,
+"minutes": 0.45
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 8.98,
+"minutes": 3.1
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.97,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.15,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 3.63,
+"minutes": 1.97
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.3,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 1.58,
+"minutes": 1.53
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.17,
+"minutes": 0.35
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 4.1,
+"minutes": 0.3
+},
+{
+"name": "Ruff Audit",
+"wall": 1.3,
+"minutes": 0.37
+},
+{
+"name": "Generated Docs",
+"wall": 7.07,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "Graph Comparison History",
+"wall": 7.28,
+"minutes": 3.92
+},
+{
+"name": "Generated Docs",
+"wall": 3.12,
+"minutes": 0.87
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.6,
+"minutes": 1.02
+},
+{
+"name": "Ruff Audit",
+"wall": 3.07,
+"minutes": 0.7
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.53,
+"minutes": 0.5
+},
+{
+"name": "Main Watch",
+"wall": 0.22,
+"minutes": 0.15
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 16.93,
+"minutes": 12.93
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.68,
+"minutes": 0.65
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 28.5,
+"minutes": 12.12
+},
+{
+"name": "unicode-gauntlet",
+"wall": 13.0,
+"minutes": 12.98
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.83,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.38,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "Call Graph Accuracy Audit",
+"wall": 7.98,
+"minutes": 3.25
+},
+{
+"name": "Estate Crucible",
+"wall": 9.98,
+"minutes": 0.53
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 4.33,
+"minutes": 14.38
+},
+{
+"name": "Generated Docs",
+"wall": 2.68,
+"minutes": 0.88
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.9,
+"minutes": 0.3
+},
+{
+"name": "Tri-Comparison Audit",
+"wall": 0.4,
+"minutes": 0.38
+},
+{
+"name": "Archetype Validation",
+"wall": 16.93,
+"minutes": 3.62
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 31.32,
+"minutes": 0.27
+},
+{
+"name": "Small Audits",
+"wall": 15.05,
+"minutes": 1.42
+},
+{
+"name": "Ruff Audit",
+"wall": 3.43,
+"minutes": 0.42
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 0.4,
+"minutes": 0.38
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.05,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.7,
+"minutes": 0.32
+},
+{
+"name": "pages build and deployment",
+"wall": 1.12,
+"minutes": 1.08
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.35,
+"minutes": 0.27
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 0.8,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.0,
+"minutes": 1.18
+},
+{
+"name": "Deploy Museum of Code Docs",
+"wall": 1.1,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.28,
+"minutes": 0.0
+},
+{
+"name": "Deploy Museum of Code Docs",
+"wall": 2.07,
+"minutes": 1.42
+},
+{
+"name": "Mypy Audit",
+"wall": 1.25,
+"minutes": 0.53
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.27,
+"minutes": 0.2
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.17,
+"minutes": 0.25
+},
+{
+"name": "pages build and deployment",
+"wall": 3.07,
+"minutes": 2.85
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.18,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "unicode-gauntlet",
+"wall": 4.97,
+"minutes": 2.82
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.63,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 1.58,
+"minutes": 1.55
+},
+{
+"name": "Deploy Museum of Code Docs",
+"wall": 7.78,
+"minutes": 1.28
+},
+{
+"name": "Ruff Audit",
+"wall": 3.32,
+"minutes": 0.47
+},
+{
+"name": "rosetta-audit",
+"wall": 5.25,
+"minutes": 2.62
+},
+{
+"name": "Fact Cross-check",
+"wall": 17.93,
+"minutes": 3.38
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.62,
+"minutes": 0.52
+},
+{
+"name": "unicode-gauntlet",
+"wall": 9.05,
+"minutes": 3.53
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.83,
+"minutes": 0.0
+},
+{
+"name": "Generated Docs",
+"wall": 3.35,
+"minutes": 0.97
+},
+{
+"name": "Small Audits",
+"wall": 1.5,
+"minutes": 1.43
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 2.88,
+"minutes": 2.03
+},
+{
+"name": "Archetype Validation",
+"wall": 3.47,
+"minutes": 3.4
+},
+{
+"name": "Ruff Audit",
+"wall": 14.68,
+"minutes": 0.38
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 3.08,
+"minutes": 0.33
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.65,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 4.33,
+"minutes": 1.63
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.12,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 5.93,
+"minutes": 12.53
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.22,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 8.48,
+"minutes": 0.65
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.12,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 10.18,
+"minutes": 0.3
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 7.62,
+"minutes": 0.42
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 3.13,
+"minutes": 1.77
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 40.72,
+"minutes": 0.23
+},
+{
+"name": "rosetta-audit",
+"wall": 6.15,
+"minutes": 2.98
+},
+{
+"name": "rosetta-audit",
+"wall": 7.97,
+"minutes": 2.83
+},
+{
+"name": "Ports Compile",
+"wall": 9.18,
+"minutes": 5.12
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 0.32,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.37,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.73,
+"minutes": 0.37
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 29.13,
+"minutes": 11.47
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 37.18,
+"minutes": 0.27
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 27.28,
+"minutes": 14.27
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 2.17,
+"minutes": 0.4
+},
+{
+"name": "Ports Compile",
+"wall": 8.85,
+"minutes": 6.62
+},
+{
+"name": "CICS Crucible",
+"wall": 37.08,
+"minutes": 10.7
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.48,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.23,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 21.82,
+"minutes": 82.22
+},
+{
+"name": "CodeQL Security Scan",
+"wall": 4.62,
+"minutes": 3.63
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 2.23,
+"minutes": 0.32
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.58,
+"minutes": 1.13
+},
+{
+"name": "post-merge",
+"wall": 3.28,
+"minutes": 0.17
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.72,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 4.43,
+"minutes": 1.42
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 20.67,
+"minutes": 15.07
+},
+{
+"name": "Deploy Museum of Code Docs",
+"wall": 4.32,
+"minutes": 1.42
+},
+{
+"name": "pages build and deployment",
+"wall": 2.82,
+"minutes": 1.3
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.22,
+"minutes": 0.0
+},
+{
+"name": "Archetype Validation",
+"wall": 7.7,
+"minutes": 3.42
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 22.07,
+"minutes": 0.25
+},
+{
+"name": "pages build and deployment",
+"wall": 6.72,
+"minutes": 0.57
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "Small Audits",
+"wall": 2.52,
+"minutes": 1.25
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 9.1,
+"minutes": 1.23
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 13.1,
+"minutes": 0.5
+},
+{
+"name": "Archetype Validation",
+"wall": 7.12,
+"minutes": 3.53
+},
+{
+"name": "Det Sweep",
+"wall": 4.03,
+"minutes": 3.07
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 22.3,
+"minutes": 0.32
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 4.43,
+"minutes": 12.53
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 13.2,
+"minutes": 0.25
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.42,
+"minutes": 0.0
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 1.53,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 16.47,
+"minutes": 0.2
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.92,
+"minutes": 0.37
+},
+{
+"name": "post-merge",
+"wall": 5.42,
+"minutes": 0.22
+},
+{
+"name": "pages build and deployment",
+"wall": 2.23,
+"minutes": 0.53
+},
+{
+"name": "post-merge",
+"wall": 0.52,
+"minutes": 0.45
+},
+{
+"name": "Ruff Audit",
+"wall": 2.55,
+"minutes": 0.48
+},
+{
+"name": "Main Watch",
+"wall": 3.35,
+"minutes": 0.27
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 9.08,
+"minutes": 13.18
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.17,
+"minutes": 0.0
+},
+{
+"name": "Main Watch",
+"wall": 9.67,
+"minutes": 0.2
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.12,
+"minutes": 0.0
+},
+{
+"name": "CodeQL Security Scan",
+"wall": 5.33,
+"minutes": 5.28
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.15,
+"minutes": 0.0
+},
+{
+"name": "pages build and deployment",
+"wall": 0.72,
+"minutes": 0.48
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 5.55,
+"minutes": 1.35
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.32,
+"minutes": 0.33
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.87,
+"minutes": 1.15
+},
+{
+"name": "Generated Docs",
+"wall": 9.07,
+"minutes": 0.0
+},
+{
+"name": "Ruff Audit",
+"wall": 3.02,
+"minutes": 0.38
+},
+{
+"name": "Mypy Audit",
+"wall": 0.98,
+"minutes": 0.5
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 34.48,
+"minutes": 0.28
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 3.45,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 1.67,
+"minutes": 1.62
+},
+{
+"name": "Mypy Audit",
+"wall": 8.37,
+"minutes": 0.65
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 29.68,
+"minutes": 0.33
+},
+{
+"name": "Mypy Audit",
+"wall": 0.63,
+"minutes": 0.6
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.27,
+"minutes": 0.0
+},
+{
+"name": "Small Audits",
+"wall": 2.97,
+"minutes": 2.85
+},
+{
+"name": "Small Audits",
+"wall": 2.92,
+"minutes": 1.43
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.07,
+"minutes": 0.0
+},
+{
+"name": "Generated Docs",
+"wall": 1.58,
+"minutes": 0.87
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 14.12,
+"minutes": 2.18
+},
+{
+"name": "Small Audits",
+"wall": 5.38,
+"minutes": 1.45
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 26.33,
+"minutes": 0.48
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "post-merge",
+"wall": 3.5,
+"minutes": 3.47
+},
+{
+"name": "Small Audits",
+"wall": 7.13,
+"minutes": 1.43
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.22,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.37,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 71.87,
+"minutes": 97.68
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 3.27,
+"minutes": 1.25
+},
+{
+"name": "Muninn Security Scan",
+"wall": 7.4,
+"minutes": 2.12
+},
+{
+"name": "Golden Crucible Resilience Test",
+"wall": 19.13,
+"minutes": 5.78
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 9.03,
+"minutes": 0.3
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.13,
+"minutes": 0.0
+},
+{
+"name": "CodeQL Security Scan",
+"wall": 9.12,
+"minutes": 4.47
+},
+{
+"name": "CICS Crucible",
+"wall": 21.75,
+"minutes": 12.43
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 5.38,
+"minutes": 4.02
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 2.93,
+"minutes": 2.07
+},
+{
+"name": "Mypy Audit",
+"wall": 2.05,
+"minutes": 0.78
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.03,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 29.88,
+"minutes": 0.43
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.75,
+"minutes": 0.68
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 6.05,
+"minutes": 0.48
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 8.48,
+"minutes": 2.33
+},
+{
+"name": "Small Audits",
+"wall": 5.28,
+"minutes": 1.48
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 12.23,
+"minutes": 0.3
+},
+{
+"name": "Small Audits",
+"wall": 1.37,
+"minutes": 1.02
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 12.23,
+"minutes": 1.57
+},
+{
+"name": "Crucible Path Independence",
+"wall": 13.02,
+"minutes": 5.08
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.22,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.2,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 2.52,
+"minutes": 0.3
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.4,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 1.33,
+"minutes": 0.75
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.2,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 4.12,
+"minutes": 0.53
+},
+{
+"name": "Generated Docs",
+"wall": 10.08,
+"minutes": 0.78
+},
+{
+"name": "Generated Docs",
+"wall": 1.7,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.75,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 5.67,
+"minutes": 0.38
+},
+{
+"name": "Mypy Audit",
+"wall": 3.18,
+"minutes": 0.62
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.23,
+"minutes": 0.0
+},
+{
+"name": "rosetta-audit",
+"wall": 18.42,
+"minutes": 3.18
+},
+{
+"name": "Mypy Audit",
+"wall": 4.57,
+"minutes": 0.7
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.02,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 1.03,
+"minutes": 0.33
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 2.15,
+"minutes": 1.15
+},
+{
+"name": "Crucible Path Independence",
+"wall": 12.9,
+"minutes": 4.93
+},
+{
+"name": "Main Watch",
+"wall": 17.45,
+"minutes": 0.18
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 23.52,
+"minutes": 15.95
+},
+{
+"name": "GitGalaxy Smoke Tests",
+"wall": 7.52,
+"minutes": 12.85
+},
+{
+"name": "Mainframe Ground Truth",
+"wall": 16.47,
+"minutes": 11.32
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 7.47,
+"minutes": 1.42
+},
+{
+"name": "Ruff Audit",
+"wall": 1.58,
+"minutes": 1.55
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.42,
+"minutes": 0.0
+},
+{
+"name": "GitGalaxy Zero-Trust Pipeline",
+"wall": 2.15,
+"minutes": 2.1
+},
+{
+"name": "Muninn Security Scan",
+"wall": 7.18,
+"minutes": 1.92
+},
+{
+"name": "pages build and deployment",
+"wall": 2.07,
+"minutes": 0.77
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.07,
+"minutes": 0.0
+},
+{
+"name": "Det Sweep",
+"wall": 5.43,
+"minutes": 9.52
+},
+{
+"name": "Ports Compile",
+"wall": 11.25,
+"minutes": 7.62
+},
+{
+"name": "Main Watch",
+"wall": 0.3,
+"minutes": 0.25
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.12,
+"minutes": 0.0
+},
+{
+"name": "Deploy Museum of Code Docs",
+"wall": 1.38,
+"minutes": 1.33
+},
+{
+"name": "Ruff Audit",
+"wall": 0.42,
+"minutes": 0.37
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.15,
+"minutes": 0.0
+},
+{
+"name": "Main Watch",
+"wall": 0.27,
+"minutes": 0.22
+},
+{
+"name": "Crucible Path Independence",
+"wall": 10.97,
+"minutes": 3.17
+},
+{
+"name": "CI shepherd (label events)",
+"wall": 0.65,
+"minutes": 0.48
+},
+{
+"name": "post-merge",
+"wall": 0.5,
+"minutes": 0.2
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.47,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.23,
+"minutes": 0.0
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 1.08,
+"minutes": 0.78
+},
+{
+"name": "pages build and deployment",
+"wall": 1.33,
+"minutes": 0.47
+},
+{
+"name": "CI shepherd (reconcile)",
+"wall": 0.3,
+"minutes": 0.0
+}
+]
+}

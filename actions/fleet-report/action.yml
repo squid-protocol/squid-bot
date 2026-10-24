@@ -49,9 +49,33 @@ inputs:
   events:
     description: "Dates to mark on the charts, as 'YYYY-MM-DD: label; YYYY-MM-DD: label'."
     default: ""
+  sample-fraction:
+    description: >-
+      Share of each day's completed runs measured for queue wait and runner time (one API call each), stratified by
+      workflow across the whole day. A fraction, not a count, so precision holds as volume grows.
+    default: "0.05"
+  sample-min:
+    description: Fewest runs measured a day.
+    default: "30"
+  sample-budget:
+    description: New run lookups per invocation across all days; the rest of a day's sample is taken on later runs.
+    default: "400"
   sample-runs:
-    description: Runs sampled per day for queue wait and runner time (each costs one API call).
-    default: "24"
+    description: Deprecated (the old fixed per-day sample); when set it is read as sample-min.
+    default: ""
+  runner-pool:
+    description: Concurrent runners available (e.g. 20). A day's runner time above pool x 24 h is reported as an estimate fault.
+    default: ""
+  occupancy-scope:
+    description: >-
+      "org" (default) = count every repository of the owner, since they share the hosted-runner pool; "repo" = `repo`
+      only. A token that can read Actions on the owner's private repos is needed to see those (GITHUB_TOKEN sees public ones).
+    default: "org"
+  occupancy-sample:
+    description: >-
+      "true" = take one runner-occupancy reading (jobs running now), append it to occupancy.jsonl on `branch` and stop.
+      Run it from its own schedule every ~15 min; the report then measures runner time from these readings.
+    default: "false"
   detail-backfill:
     description: Older days to fill with the sampled detail per run (about 30 API calls each).
     default: "4"
@@ -102,6 +126,12 @@ runs:
         I_PREFIXES: ${{ inputs.agent-branch-prefixes }}
         I_MARKERS: ${{ inputs.agent-markers }}
         I_SAMPLE: ${{ inputs.sample-runs }}
+        I_FRACTION: ${{ inputs.sample-fraction }}
+        I_SAMPLE_MIN: ${{ inputs.sample-min }}
+        I_SAMPLE_BUDGET: ${{ inputs.sample-budget }}
+        I_POOL: ${{ inputs.runner-pool }}
+        I_OCC: ${{ inputs.occupancy-sample }}
+        I_OCC_SCOPE: ${{ inputs.occupancy-scope }}
         I_BOT_PREFIXES: ${{ inputs.bot-branch-prefixes }}
         I_BOT_NAME: ${{ inputs.bot-name }}
         I_BOT_START: ${{ inputs.bot-start }}
@@ -112,12 +142,17 @@ runs:
         I_FAIL: ${{ inputs.fail-on-alert }}
         I_COST_MAX: ${{ inputs.cost-max }}
       run: |
+        if [ "$I_OCC" = "true" ]; then
+          exec python3 "$GITHUB_ACTION_PATH/fleet_report.py" --repo "$I_REPO" --out "$OUT" --occupancy-sample --occupancy-scope "$I_OCC_SCOPE"
+        fi
         args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
-              --agent-branch-prefixes "$I_PREFIXES" --sample-runs "$I_SAMPLE" --detail-backfill "$I_BACKFILL"
+              --agent-branch-prefixes "$I_PREFIXES" --sample-fraction "$I_FRACTION" --sample-min "$I_SAMPLE_MIN"
+              --sample-budget "$I_SAMPLE_BUDGET" --runner-pool "$I_POOL" --detail-backfill "$I_BACKFILL"
               --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY"
               --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS"
               --cost-max "$I_COST_MAX")
         [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
+        [ -n "$I_SAMPLE" ] && args+=(--sample-runs "$I_SAMPLE")
         [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)
         python3 "$GITHUB_ACTION_PATH/fleet_report.py" "${args[@]}"
 
@@ -128,16 +163,18 @@ runs:
       working-directory: ${{ runner.temp }}/fleet-report
       env:
         BRANCH: ${{ inputs.branch }}
+        # each mode commits only the files it wrote: the occupancy sampler must never put back an older metrics.json
+        FILES: ${{ inputs.occupancy-sample == 'true' && 'occupancy.jsonl' || 'dashboard.svg metrics.json' }}
       run: |
-        [ -f dashboard.svg ] || exit 0
-        git add dashboard.svg metrics.json
+        for f in $FILES; do [ -f "$f" ] || exit 0; done
+        git add $FILES
         if ! git diff --cached --quiet; then
           for try in 1 2 3; do
             git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -q -m "fleet report: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
             git push -q origin "$BRANCH" && break
             # another writer (an orchestrator publishing factory.json) moved the branch: put only OUR two files on its tip
-            git fetch -q --depth=1 origin "$BRANCH" && git reset -q --mixed FETCH_HEAD && git add dashboard.svg metrics.json
+            git fetch -q --depth=1 origin "$BRANCH" && git reset -q --mixed FETCH_HEAD && git add $FILES
             git diff --cached --quiet && break
           done
         fi
