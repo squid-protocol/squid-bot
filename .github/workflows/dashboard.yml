@@ -4,15 +4,16 @@ name: Dashboard
 # (actions/fleet-report). It publishes dashboard.svg + metrics.json to the `dashboard` branch and writes
 # the weekly report to the run's summary page.
 #
-# Refreshes at 06:00, 15:00 and 20:05 US Eastern (owner 2026-10-24). GitHub cron is UTC only, so each time is listed
-# at both its EDT and its EST offset, and the first step runs only the one that falls in the right Eastern hour: the
-# schedule stays right across daylight-saving changes. GitHub may start a scheduled run late; the hour check leaves
-# room for that.
+# Fresh by 06:00, 15:00 and 20:05 US Eastern (owner 2026-10-24). Each run starts ~13 minutes early (a refresh takes
+# 5-15 min) and off the top of the hour: GitHub delays or drops scheduled runs at :00 under load, and on 2026-10-24 the
+# 19:00Z and 20:00Z slots never ran. GitHub cron is UTC only, so each slot is listed at its EDT and its EST offset; the
+# first step runs a slot once (a run late by up to 3 h still runs) and skips the other offset's run, which finds the
+# slot already refreshed. Right across daylight-saving changes.
 on:
   schedule:
-    - cron: "0 10,11 * * *"   # 06:00 Eastern (10:00Z EDT, 11:00Z EST)
-    - cron: "0 19,20 * * *"   # 15:00 Eastern
-    - cron: "5 0,1 * * *"     # 20:05 Eastern (00:05Z / 01:05Z the next UTC day)
+    - cron: "47 9,10 * * *"   # 05:47 Eastern (09:47Z EDT, 10:47Z EST) -> fresh by 06:00
+    - cron: "47 18,19 * * *"  # 14:47 Eastern -> fresh by 15:00
+    - cron: "52 23,0 * * *"   # 19:52 Eastern (23:52Z EDT, 00:52Z EST) -> fresh by 20:05
   workflow_dispatch:
 
 permissions:
@@ -27,17 +28,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Is this the Eastern-time slot? (the other UTC offset's run skips)
+      - name: Is this slot due? (once per slot; the other UTC offset's run skips)
         id: when
         env:
           EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          hour=$(TZ=America/New_York date +%-H)
-          if [ "$EVENT" != "schedule" ] || [ "$hour" = 6 ] || [ "$hour" = 15 ] || [ "$hour" = 20 ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"; echo "Eastern hour $hour is not a refresh slot: skipping"
-          fi
+          updated=$(gh api "repos/${GITHUB_REPOSITORY}/contents/metrics.json?ref=dashboard" --jq .content 2>/dev/null \
+                    | base64 -d 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("updated",""))' || true)
+          run=$(EVENT="$EVENT" UPDATED="$updated" python3 - <<'PY'
+          import os
+          from datetime import datetime, timedelta, timezone
+          from zoneinfo import ZoneInfo
+          if os.environ["EVENT"] != "schedule":
+              print("true"); raise SystemExit
+          ny = ZoneInfo("America/New_York")
+          now = datetime.now(timezone.utc)
+          local = now.astimezone(ny)
+          slots = [local.replace(hour=h, minute=m, second=0, microsecond=0) - timedelta(days=d)
+                   for d in (0, 1) for h, m in ((5, 47), (14, 47), (19, 52))]
+          due = [s for s in slots if timedelta(0) <= local - s <= timedelta(hours=3)]
+          try:
+              last = datetime.fromisoformat(os.environ["UPDATED"].replace("Z", "+00:00"))
+          except ValueError:
+              last = None
+          print("true" if due and (last is None or last < max(due).astimezone(timezone.utc)) else "false")
+          PY
+          )
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          [ "$run" = true ] || echo "no slot due, or already refreshed since it began (last refresh ${updated:-unknown}): skipping"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.when.outputs.run == 'true'
         with:
