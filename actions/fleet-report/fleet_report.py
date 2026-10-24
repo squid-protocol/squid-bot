@@ -1500,8 +1500,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         actors = [a for a, _ in totals.most_common(3)]
         top, chart_h = y, 110
         axis = _nice_axis(max([WRITE_GUIDE_H] + [w.get(a, {}).get("busiest_hour", 0) for w in writes for a in actors]))
-        frame(top, chart_h, axis, f"{panel} · GitHub writes — each account's busiest hour of comments, label/state "
-              f"changes, merges and new PRs/issues (guidance ~{WRITE_GUIDE_H}/h)", lambda v: f"{v:g}")
+        frame(top, chart_h, axis, f"{panel} · GitHub writes — busiest hour per account", lambda v: f"{v:g}",
+              "comments, label and state changes, merges, new PRs and issues; GitHub's secondary-limit guidance "
+              f"is about {WRITE_GUIDE_H} content-creating requests an hour per account")
         yl = top + chart_h - chart_h * WRITE_GUIDE_H / axis[0]
         out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
                    f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">~{WRITE_GUIDE_H}/h</text>')

@@ -596,4 +596,4 @@ def test_writes_are_counted_per_account_and_hour_and_drawn_against_the_guidance(
     for d in data["scorecard"]["days"]:
         data["scorecard"]["days"][d]["writes"] = w
     svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
-    assert "GitHub writes — each account" in svg and "me: busiest hour 7 writes, 7 that day" in svg
+    assert "GitHub writes — busiest hour per account" in svg and "me: busiest hour 7 writes, 7 that day" in svg
