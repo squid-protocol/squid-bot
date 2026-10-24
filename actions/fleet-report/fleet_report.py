@@ -1421,20 +1421,20 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
-    # Change failure: merged PRs that were reverts or regression fixes, over merged PRs (daily dots, 7-day line)
+    # Change failure: merged PRs that were reverts or regression fixes, over merged PRs, each day (owner 2026-10-24: a
+    # plain day-by-day line, no averaging, from the bot's start)
     if any(d in sc_days for d, _ in rows):
-        fails = [(sc_days[d].get("reverts", 0) + sc_days[d].get("regression_fixes", 0)) if d in sc_days else None
-                 for d, _ in rows]
-        merged = [row["merged"] if d in sc_days else None for d, row in rows]
+        live = lambda d: d in sc_days and (not start or d >= start)  # noqa: E731
+        fails = [sc_days[d].get("reverts", 0) + sc_days[d].get("regression_fixes", 0) if live(d) else None for d, _ in rows]
+        merged = [row["merged"] if live(d) else None for d, row in rows]
         daily = [100 * f / m if f is not None and m else None for f, m in zip(fails, merged)]
-        roll = [None if v is None else 100 * v for v in rolling(fails, merged)]
         top, chart_h = y, 110
-        axis = _nice_axis(max([1.0] + [v for v in daily + roll if v is not None]))
-        frame(top, chart_h, axis, f"{panel} · Change failure — % of merged PRs that were reverts or regression fixes "
-              "(dots: each day; line: 7 days)", lambda v: f"{v:g}%")
-        daily_and_rolling(top, chart_h, daily, roll, axis[0],
-                          [f"{f} of {m} merged PRs ({v:.1f}%)" if v is not None else "" for f, m, v in zip(fails, merged, daily)],
-                          [f"{v:.2f}% over the last 7 days" if v is not None else "" for v in roll], "failedl")
+        axis = _nice_axis(max([1.0] + [v for v in daily if v is not None]))
+        frame(top, chart_h, axis, f"{panel} · Change failure — % of merged PRs that were reverts or regression fixes, "
+              "each day", lambda v: f"{v:g}%")
+        line_series(top, chart_h, daily, axis[0], cls="failedl",
+                    tips=[f"{v:.2f}% ({f} of {m} merged PRs were reverts or regression fixes)" if v is not None else ""
+                          for f, m, v in zip(fails, merged, daily)])
         y = top + chart_h + 70
         panel += 1
 
