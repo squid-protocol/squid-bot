@@ -3057,12 +3057,12 @@
   },
   "2026-10-23": {
    "detail": {
-    "bot_runs": 3493,
+    "bot_runs": 3635,
     "cancel_savings": {
-     "cancelled": 629,
-     "saved_min_est": 4605,
+     "cancelled": 630,
+     "saved_min_est": 4361,
      "unpriced": 0,
-     "wall_min": 35915
+     "wall_min": 36511
     },
     "ci_changes": [
      {
@@ -3104,6 +3104,14 @@
      {
       "pr": 6246,
       "title": "ci: nightly referee-panel workflow (schedule + dispatch only, contents: read, cached installs, 3-day artifact) (Part of #4438) (#6246)"
+     },
+     {
+      "pr": 6299,
+      "title": "Smoke full suite follows the suite plan: skip / select / full (Part of #6278, slice 4) (#6299)"
+     },
+     {
+      "pr": 6303,
+      "title": "ruff-audit, mypy-audit, small-audits skip for docs they cannot read (Part of #6278, slice 5) (#6303)"
      }
     ],
     "reruns": {
@@ -3124,23 +3132,22 @@
      "passed": 2,
      "runs": 2
     },
-    "runner_min_est": 32095,
+    "runner_min_est": 33830,
     "sampled_min_by_origin": {
-     "bot": 111.4,
-     "main": 10.0
+     "bot": 112.0,
+     "main": 9.8
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 1.3,
+     "CI shepherd (label events)": 2.6,
      "CI shepherd (reconcile)": 0.0,
      "CICS Crucible": 11.1,
-     "Deploy Museum of Code Docs": 1.4,
-     "Det Sweep": 90.2,
+     "Det Sweep": 87.6,
      "Fact Cross-check": 4.4,
-     "Generated Docs": 2.0,
+     "Generated Docs": 3.3,
      "GitGalaxy Zero-Trust Pipeline": 2.0,
      "Golden Crucible Resilience Test": 0.8,
-     "Main Watch": 0.5,
-     "Mainframe Ground Truth": 0.0,
+     "Main Watch": 0.2,
+     "Muninn Security Scan": 2.0,
      "Tri-Comparison Audit": 1.6,
      "pages build and deployment": 6.2
     },
@@ -3148,23 +3155,75 @@
     "wait_median": 4.2,
     "wait_p90": 14.93
    },
-   "merged": 191,
+   "merged": 199,
    "merged_by_class": {
     "agent": 5,
     "automation": 4,
-    "bot": 181,
+    "bot": 189,
     "other": 1
    },
    "runs": {
-    "cancelled": 2202,
-    "failure": 69,
-    "skipped": 2014,
-    "success": 5010,
-    "total": 8359
+    "cancelled": 2243,
+    "failure": 79,
+    "skipped": 2060,
+    "success": 5306,
+    "total": 8727
+   }
+  },
+  "2026-10-24": {
+   "detail": {
+    "bot_runs": 99,
+    "cancel_savings": {
+     "cancelled": 1,
+     "saved_min_est": 0,
+     "unpriced": 0,
+     "wall_min": 430
+    },
+    "ci_changes": [
+     {
+      "pr": 6296,
+      "title": "det-sweep: PR-time det_mutation stale-check job (Part of #5862) (#6296)"
+     }
+    ],
+    "reruns": {
+     "attempts": 0,
+     "by_workflow": {},
+     "failed_again": 0,
+     "passed": 0,
+     "runs": 0
+    },
+    "runner_min_est": 953,
+    "sampled_min_by_origin": {
+     "bot": 12.8,
+     "main": 19.1
+    },
+    "sampled_min_by_workflow": {
+     "CI shepherd (label events)": 0.6,
+     "CI shepherd (reconcile)": 0.0,
+     "GitGalaxy Smoke Tests": 31.2,
+     "Main Watch": 0.2
+    },
+    "sampled_runs": 6,
+    "wait_median": 0.97,
+    "wait_p90": 1.9
+   },
+   "merged": 3,
+   "merged_by_class": {
+    "agent": 0,
+    "automation": 0,
+    "bot": 3,
+    "other": 0
+   },
+   "runs": {
+    "cancelled": 28,
+    "failure": 2,
+    "skipped": 38,
+    "success": 136,
+    "total": 217
    }
   }
  },
- "open_prs": 12,
+ "open_prs": 13,
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-23T21:44Z"
+ "updated": "2026-10-24T00:55Z"
 }
