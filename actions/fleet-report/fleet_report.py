@@ -1438,19 +1438,26 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
-    # Cost per resolved issue: the bot's dollars over issues closed as completed (daily dots, 7-day line)
-    usd = [(fac_days.get(d) or {}).get("usd") if not start or d >= start else None for d, _ in rows]  # bot days only
-    resolved = [sc_days[d].get("resolved") if d in sc_days else None for d, _ in rows]
-    if any(u for u in usd) and any(r for r in resolved if r):
-        daily = [u / r if u is not None and r else None for u, r in zip(usd, resolved)]
-        roll = rolling([u if r is not None else None for u, r in zip(usd, resolved)], resolved)
+    # Cost per resolved issue: the bot's dollars over the issues it did the work on (merged bot PRs), each day as a dot
+    # and the average of the days so far (up to 7) as the line, from the first day with a bot-resolved issue: day 1 is
+    # one day's figure, day 2 the average of two, and so on (owner 2026-10-24: no zero-filled days, no false trend).
+    usd = [(fac_days.get(d) or {}).get("usd") if not start or d >= start else None for d, _ in rows]
+    by_bot = [sc_days[d].get("resolved_by_bot") if d in sc_days else None for d, _ in rows]
+    first = next((i for i, (u, r) in enumerate(zip(usd, by_bot)) if u is not None and r), None)
+    if first is not None:
+        usd = [u if i >= first else None for i, u in enumerate(usd)]
+        by_bot = [r if i >= first and usd[i] is not None else None for i, r in enumerate(by_bot)]
+        daily = [u / r if u is not None and r else None for u, r in zip(usd, by_bot)]
+        roll = rolling(usd, by_bot)
         top, chart_h = y, 110
         axis = _nice_axis(max([1.0] + [v for v in roll if v is not None]) * 1.4)
-        frame(top, chart_h, axis, f"{panel} · Cost per resolved issue — {cfg.bot_name} dollars per issue closed as "
-              "completed (dots: each day; line: 7 days)", lambda v: f"${v:g}")
+        frame(top, chart_h, axis, f"{panel} · Cost per resolved issue — {cfg.bot_name} dollars per issue it resolved "
+              "(dots: each day; line: average of the days so far, up to 7)", lambda v: f"${v:g}")
         daily_and_rolling(top, chart_h, daily, roll, axis[0],
-                          [f"${u:,.0f} / {r} issues = ${v:.2f}" if v is not None else "" for u, r, v in zip(usd, resolved, daily)],
-                          [f"${v:.2f} per issue over the last 7 days" if v is not None else "" for v in roll], "cum")
+                          [f"${u:,.0f} / {r} issues resolved with {cfg.bot_name} work = ${v:.2f}" if v is not None else ""
+                           for u, r, v in zip(usd, by_bot, daily)],
+                          [f"${v:.2f} per issue, average of the last {min(7, i - first + 1)} day(s)" if v is not None else ""
+                           for i, v in enumerate(roll)], "cum")
         y = top + chart_h + 70
         panel += 1
 
@@ -1481,9 +1488,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 # orchestrator's factory.json (churn).
 SCORE_DAYS = 21
 ISSUE_SEARCH = """query($q: String!, $after: String) {
-  search(query: $q, type: ISSUE, first: 100, after: $after) {
+  search(query: $q, type: ISSUE, first: 50, after: $after) {
     issueCount pageInfo { hasNextPage endCursor }
-    nodes { ... on Issue { number createdAt closedAt author { login __typename } bodyText } }
+    nodes { ... on Issue { number createdAt closedAt author { login __typename } bodyText
+      timelineItems(itemTypes: [CROSS_REFERENCED_EVENT, CLOSED_EVENT], last: 60) { nodes { __typename
+        ... on CrossReferencedEvent { source { ... on PullRequest { merged mergedAt headRefName } } }
+        ... on ClosedEvent { closer { ... on PullRequest { headRefName } } } } } } }
   }
 }"""
 COUNT_SEARCH = """query($q: String!) { search(query: $q, type: ISSUE, first: 1) { issueCount } }"""
@@ -1519,6 +1529,26 @@ def issue_origin(node: dict, cfg: Config) -> str:
     return "owner"
 
 
+def bot_worked(node: dict, cfg: Config) -> bool:
+    """The issue had the bot's work merged: a merged PR from a bot branch referenced it, or a bot PR closed it. Owner
+    2026-10-24: cost per resolved issue divides the bot's spend by THESE, not by every issue people resolved too (on
+    the bot's first part-day, $12 over 18 mostly human-resolved issues read as $0.66 and drew a false trend)."""
+    if not cfg.bot_prefixes:
+        return False
+    bot = lambda b: any(str(b or "").startswith(p) for p in cfg.bot_prefixes)  # noqa: E731
+    closed = _iso(node["closedAt"]) if node.get("closedAt") else None
+    for e in ((node.get("timelineItems") or {}).get("nodes") or []):
+        src = e.get("source") or {}
+        if bot((e.get("closer") or {}).get("headRefName")):
+            return True
+        # a bot PR merged by the time the issue closed (an hour's slack for the close that follows a merge); a later
+        # slice that only mentions the closed issue ("Part of #n") did not resolve it
+        if src.get("merged") and bot(src.get("headRefName")) and src.get("mergedAt") and \
+                (closed is None or _iso(src["mergedAt"]) <= closed + timedelta(hours=1)):
+            return True
+    return False
+
+
 def fetch_scorecard_day(repo: str, day: str, cfg: Config) -> dict:
     """One day's issue flow and change failures (about 6 GraphQL searches)."""
     base = f"repo:{repo} is:issue"
@@ -1528,6 +1558,7 @@ def fetch_scorecard_day(repo: str, day: str, cfg: Config) -> dict:
     opened = Counter(issue_origin(n, cfg) for n in search_issues(f"{base} created:{day}"))
     return {
         "resolved": len(resolved),
+        "resolved_by_bot": sum(bot_worked(n, cfg) for n in resolved),
         "resolved_by_origin": dict(Counter(issue_origin(n, cfg) for n in resolved)),
         "resolve_h_median": round(_pct(hours, 0.5), 1) if hours else None,
         "not_planned": search_count(f'{base} closed:{day} reason:"not planned"'),

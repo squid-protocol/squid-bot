@@ -503,7 +503,7 @@ def _factory_data():
     data = _data(10)
     days = sorted(data["days"])
     data["scorecard"] = {"open_now": 100, "days": {
-        d: {"opened": 6, "closed": 4, "resolved": 4, "not_planned": 0, "reverts": 1 if d == days[-3] else 0,
+        d: {"opened": 6, "closed": 4, "resolved": 4, "resolved_by_bot": 4, "not_planned": 0, "reverts": 1 if d == days[-3] else 0,
             "regression_fixes": 0, "opened_by_origin": {"owner": 2, "agent": 3, "automation": 1}} for d in days}}
     data["factory"] = {"days": {d: {"usd": 40.0, "first_pass": {"merged": 20, "first_pass": 15},
                                     "worker_hours": {"new_work": 1.0}} for d in days}}
@@ -520,7 +520,7 @@ def test_dashboard_draws_issue_arrows_first_pass_change_failure_and_cost_per_iss
         assert needle in svg, needle
     assert "opened 6 (people 2, agents 3, bots 1); closed 4 as completed" in svg
     assert "75% first pass (15 of 20" in svg  # exact from the factory's records, with its 95% band
-    assert "$10.00 per issue over the last 7 days" in svg  # $40 / 4 issues, paired day by day
+    assert "$10.00 per issue, average of the last 7 day(s)" in svg  # $40 / 4 issues, paired day by day
 
 
 def test_goals_sheet_renders_any_goal_in_the_generic_shape():
@@ -537,3 +537,28 @@ def test_goals_sheet_renders_any_goal_in_the_generic_shape():
     assert "1 of 2" in svg and "3/3" in svg and "2/7" in svg  # teams done; per-team counts
     assert 'class="noissue"' in svg and "ledger.py" in svg  # a blocker nobody is on
     assert dashboard.render_goals(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
+
+
+def test_cost_per_issue_starts_at_the_first_bot_resolved_day_and_averages_only_days_it_has():
+    """Owner 2026-10-24: no zero-filled days and no false trend: the bot's spend over the issues it did the work on,
+    from the first day it resolved one; day 1 is one day's figure, day 2 the average of two."""
+    data = _factory_data()
+    days = sorted(data["days"])
+    data["scorecard"]["days"][days[0]]["resolved_by_bot"] = 0  # the bot's first part-day: people resolved them
+    data["factory"]["days"][days[1]]["usd"] = 20.0  # day 2: $20 / 4 = $5
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "$5.00 per issue, average of the last 1 day(s)" in svg  # the line starts on day 2, alone
+    assert "$7.50 per issue, average of the last 2 day(s)" in svg  # ($20 + $40) / 8
+    first_day = dashboard._fmt_day(days[0])
+    assert f"{first_day}: $40 / 0 issues" not in svg and f"{first_day}: $" not in svg  # no dot for day 1 at all
+
+
+def test_an_issue_counts_as_bot_resolved_only_if_bot_work_merged_before_it_closed():
+    cfg = dashboard.Config(repo="o/r", bot_prefixes=["churn/"])
+    ev = lambda branch, merged_at: {"source": {"merged": True, "headRefName": branch, "mergedAt": merged_at}}  # noqa: E731
+    node = lambda *evs: {"closedAt": "2026-10-12T10:00:00Z", "timelineItems": {"nodes": list(evs)}}  # noqa: E731
+    assert dashboard.bot_worked(node(ev("churn/1-x", "2026-10-12T09:00:00Z")), cfg)
+    assert dashboard.bot_worked(node(ev("churn/1-x", "2026-10-12T10:30:00Z")), cfg)  # merge, then the close follows
+    assert not dashboard.bot_worked(node(ev("churn/9-later", "2026-10-15T09:00:00Z")), cfg)  # a later slice only mentions it
+    assert not dashboard.bot_worked(node(ev("feat/human", "2026-10-12T09:00:00Z")), cfg)
+    assert dashboard.bot_worked(node({"closer": {"headRefName": "churn/2-y"}}), cfg)  # closed by a bot PR
