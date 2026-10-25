@@ -55,6 +55,9 @@ OCC_MAX_GAP_MIN = 45  # readings further apart than this leave the gap uncovered
 OCC_MIN_COVERAGE = 0.75  # a day's occupancy figure is used when its readings cover this share of the day
 OCC_KEEP_DAYS = 35
 SAMPLE_KEEP_DAYS = 14  # per-run sample detail kept this long (later days keep only their estimates)
+# a day's detail fields that come from the run sample (the rest are exact counts, re-read on every refresh)
+SAMPLE_KEYS = ("wait_median", "wait_p90", "est_method", "runner_min_est", "runner_min_ci", "sampled_runs",
+               "sampled_min_by_workflow", "sampled_min_by_origin", "sample")
 DEFAULT_AGENT_PREFIXES = "claude/,codex/,copilot/,cursor/,devin/"
 DEFAULT_AGENT_MARKERS = (r"Generated with \[?Claude Code|Co-Authored-By: Claude|Co-authored-by: Copilot|"
                          r"agy-authored|Devin AI|Cursor Agent|OpenAI Codex|Gemini CLI")
@@ -448,8 +451,9 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
         data = {"repo": repo, "days": {}}
     days = shown_days(data, cfg, days, today)
     fresh = days_to_fetch(data["days"], today, days)
-    for d in fresh:
-        data["days"][d] = fetch_day(repo, d, cfg)
+    for d in fresh:  # the exact counts are re-read; the sampled detail is kept, so its sample is topped up, not redone
+        prev = data["days"].get(d, {}).get("detail")
+        data["days"][d] = fetch_day(repo, d, cfg) | ({"detail": prev} if prev else {})
     window = [(today - timedelta(days=i)).isoformat() for i in range(days)]
     for d in window:  # history from before PR classing (or before the bot class): one GraphQL query a day fills it in
         classes = data["days"].get(d, {}).get("merged_by_class")
@@ -463,10 +467,19 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
     missing = [d for d in window if d not in fresh and d in data["days"] and incomplete(data["days"][d].get("detail", {}))]
     budget = [cfg.sample_budget]
     for d in fresh + missing[:backfill]:
+        if d not in fresh and budget[0] <= 0:  # the fresh days took the budget: an older day waits for the next run
+            break
+        old = data["days"][d].get("detail") or {}
         try:
-            data["days"][d]["detail"] = fetch_detail(repo, d, bots, origin, cfg, data["days"][d].get("detail"), budget)
+            new = fetch_detail(repo, d, bots, origin, cfg, old, budget)
         except RuntimeError as e:  # keep the day's previous detail (if any); the next run tries again
             print(f"::warning::sampled detail for {d} not refreshed: {e}", file=sys.stderr)
+            continue
+        if not new["sampled_runs"] and old.get("runner_min_est") is not None:
+            # nothing measured (budget spent, or every lookup failed): keep the estimate the day already had, never
+            # an empty one -- on 2026-10-24 that blanked Oct 14-17's runner time and queue wait
+            new = {k: v for k, v in new.items() if k not in SAMPLE_KEYS} | {k: old[k] for k in SAMPLE_KEYS if k in old}
+        data["days"][d]["detail"] = new
     keep = (today - timedelta(days=SAMPLE_KEEP_DAYS)).isoformat()
     for d, row in data["days"].items():  # old days keep their estimates, not the per-run detail
         if d < keep:
