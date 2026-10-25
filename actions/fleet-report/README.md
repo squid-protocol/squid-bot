@@ -26,24 +26,23 @@ jobs:
 
 Then embed it: `![CI](https://raw.githubusercontent.com/<owner>/<repo>/dashboard/dashboard.svg)`.
 
-For runner hours you can trust, add the occupancy sampler. It takes one reading every ~15 minutes of the jobs holding
-a runner, across every repository of the owner, because they all share one hosted-runner pool:
+For runner hours you can trust, add the occupancy sampler. It takes one reading every 15 minutes of the jobs holding
+a runner, across every repository of the owner, because they all share one hosted-runner pool. Run it from a host, not
+a scheduled workflow: a workflow needs a runner from the pool it is measuring, so its readings skip the saturated
+hours, and GitHub drops many scheduled runs under load (on gitgalaxy, 7 of 88 ran in a day). On a Linux host with `gh`
+logged in:
 
-```yaml
-# .github/workflows/occupancy.yml
-on: {schedule: [{cron: "*/15 * * * *"}], workflow_dispatch: {}}
-permissions: {contents: write}
-concurrency: {group: dashboard-occupancy}
-jobs:
-  reading:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: squid-protocol/squid-bot/actions/fleet-report@main
-        with:
-          occupancy-sample: "true"
-          token: ${{ secrets.FLEET_REPORT_TOKEN || github.token }}  # private repos need a token that can read their Actions
+```sh
+install -m 755 scripts/occupancy-sampler.sh ~/.local/bin/squid-occupancy-sampler
+cp templates/systemd/squid-occupancy.{service,timer} ~/.config/systemd/user/
+systemctl --user daemon-reload && systemctl --user enable --now squid-occupancy.timer
 ```
+
+It keeps its readings in `~/.local/state/squid-occupancy` and pushes `occupancy.jsonl` to the `dashboard` branch at
+most hourly, merged with what is there. Set `SQUID_OCC_REPO` / `SQUID_OCC_DASHBOARD` for another repo (see the script).
+About 15-60 API calls a reading on the host's `gh` token. A day the host was off for more than a quarter of it falls back
+to the sampled estimate. Without a host, `occupancy-sample: "true"` in a workflow still takes one reading (it leaves
+its own job out).
 
 The first run backfills 30 days of exact counts, plus the sampled detail for the 3 most recent days. Older days get their sampled detail 4 at a time on later runs (`detail-backfill`), to stay within the API budget.
 
