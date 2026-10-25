@@ -407,6 +407,7 @@ def fetch_detail(repo: str, day: str, bots: dict[str, int], origin, cfg: Config,
     by_id = {x["id"]: x for x in everything}
     ids = set(bots.values())  # from the day's full listing: a per-workflow total_count stops at 2,500 too
     bot_runs = sum(r.get("workflow_id") in ids for r in everything)
+    bot_outcomes = Counter(r.get("conclusion") for r in everything if r.get("workflow_id") in ids)
     changes: dict[int, str] = {}
     for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
         title = c["commit"]["message"].splitlines()[0]
@@ -448,6 +449,7 @@ def fetch_detail(repo: str, day: str, bots: dict[str, int], origin, cfg: Config,
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
         "sample": measured,
         "reruns": rerun_counts(repo, day, everything),
+        "bot_outcomes": {k: bot_outcomes.get(k, 0) for k in ("success", "failure")},
         "cancel_savings": minutes_saved(everything, set(bots)),
     }
 
@@ -654,6 +656,13 @@ def runner_source(detail: dict) -> str:
     return f"sample of {detail.get('sampled_runs', 0)}/{detail.get('population', '?')} runs{pct}"
 
 
+def judged_runs(row: dict) -> tuple[int, int]:
+    """(passed, failed) workflow runs of the day, leaving out the bot's own bookkeeping workflows (as minutes saved
+    does): on Oct 22, 381 of 443 failed runs were CI shepherd failing for 8 hours, not a check failing on a change."""
+    r, bot = row["runs"], (row.get("detail") or {}).get("bot_outcomes") or {}
+    return max(0, r["success"] - bot.get("success", 0)), max(0, r["failure"] - bot.get("failure", 0))
+
+
 def over_ceiling(detail: dict, pool: int | None, minutes_in_day: float = 1440) -> bool:
     """Above what `pool` runners can do in a day: this repo's figure, or the whole owner's when it was measured."""
     m = runner_minutes(detail)
@@ -726,8 +735,8 @@ def week_stats(rows: list[dict], pool: int | None = None) -> dict:
     agent = sum(r["merged_by_class"].get("agent", 0) + r["merged_by_class"].get("bot", 0) for r in classed)
     bot = sum(r["merged_by_class"].get("bot", 0) for r in classed)
     runs = sum(r["runs"]["total"] for r in rows)
-    ok = sum(r["runs"]["success"] for r in rows)
-    bad = sum(r["runs"]["failure"] for r in rows)
+    ok = sum(judged_runs(r)[0] for r in rows)
+    bad = sum(judged_runs(r)[1] for r in rows)
     det = [r["detail"] for r in rows if "detail" in r]
     est = [(runner_minutes(r["detail"], pool), r["merged"]) for r in rows if runner_minutes(r.get("detail", {})) is not None]
     return {
@@ -1355,11 +1364,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
             saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
                               f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
-        r = row["runs"]
-        judged = r["success"] + r["failure"]
-        failed_values.append(100 * r["failure"] / judged if judged else None)
-        failed_tips.append(f'{100 * r["failure"] / judged:.1f}% of runs failed ({r["failure"]:,} of {judged:,} CI runs that '
-                           f'passed or failed)' if judged else "")
+        ok, bad = judged_runs(row)
+        judged = ok + bad
+        bot_note = " · the bot's own workflows left out" if (row.get("detail") or {}).get("bot_outcomes") else ""
+        failed_values.append(100 * bad / judged if judged else None)
+        failed_tips.append(f'{100 * bad / judged:.1f}% of runs failed ({bad:,} of {judged:,} CI runs that '
+                           f'passed or failed{bot_note})' if judged else "")
     top, chart_h = y, 120
     pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
     frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",

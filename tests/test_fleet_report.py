@@ -523,6 +523,10 @@ def test_bot_runs_come_from_the_full_listing(monkeypatch):
     det = dashboard.fetch_detail("o/r", "2026-10-24", {"CI shepherd": 7}, lambda r: "main",
                                  dashboard.Config(repo="o/r"), None, [0])
     assert det["bot_runs"] == 100  # every 4th run is workflow 7, counted without a capped total_count
+    assert det["bot_outcomes"] == {"success": 100, "failure": 0}
+    row = {"runs": {"success": 900, "failure": 443, "total": 1400}, "detail": {"bot_outcomes": {"success": 400, "failure": 381}}}
+    assert dashboard.judged_runs(row) == (500, 62)  # Oct 22's shape: the bot's own failures don't read as CI failing
+    assert dashboard.judged_runs({"runs": row["runs"]}) == (900, 443)  # a day stored before bot_outcomes: as before
 
 
 def test_charts_and_cards_never_show_more_runner_time_than_the_pool_can_run():
