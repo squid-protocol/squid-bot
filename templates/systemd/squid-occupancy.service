@@ -1,0 +1,9 @@
+[Unit]
+Description=squid-bot: one runner-occupancy reading for the fleet dashboard (scripts/occupancy-sampler.sh)
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/bin/squid-occupancy-sampler
+TimeoutStartSec=300
+Nice=10

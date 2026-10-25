@@ -1,0 +1,10 @@
+[Unit]
+Description=squid-bot: runner-occupancy reading every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+AccuracySec=30s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

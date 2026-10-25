@@ -1,12 +1,13 @@
 name: Runner occupancy
 
-# One runner-occupancy reading of every squid-protocol repo every ~15 min (jobs holding a runner right now), appended
-# to occupancy.jsonl on the `dashboard` branch. The Dashboard workflow turns the readings into each day's runner hours
-# (time-weighted, so a day can never exceed the pool). About 15 API calls a reading. GitHub may delay or drop scheduled
-# runs under load: the report only uses a day whose readings cover 75% of it, else the sampled estimate.
+# One runner-occupancy reading of every squid-protocol repo (jobs holding a runner right now), appended to
+# occupancy.jsonl on the `dashboard` branch. The Dashboard workflow turns the readings into each day's runner hours
+# (time-weighted, so a day can never exceed the pool).
+# Manual only since 2026-10-25: the readings come from a host every 15 min (scripts/occupancy-sampler.sh, systemd
+# timer in templates/systemd/). On its */15 schedule this workflow ran 7 times in 22 h (GitHub drops scheduled runs
+# under load), waited up to 28 min for a runner from the pool it measures, so it missed the saturated hours, and
+# counted its own job. Run it by hand only to take a reading when no host sampler is running.
 on:
-  schedule:
-    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:

@@ -572,6 +572,8 @@ def occupancy_reading(repo: str, scope: str = "org") -> dict:
             continue
         running = queued = 0
         for r in live:
+            if str(r.get("id")) == os.environ.get("GITHUB_RUN_ID"):  # a reading taken from a workflow: not its own job
+                continue
             try:
                 jobs = gh_json(f"repos/{name}/actions/runs/{r['id']}/jobs?per_page=100&filter=latest")["jobs"]
             except RuntimeError:

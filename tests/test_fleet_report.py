@@ -599,6 +599,9 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
                             "o/crucible": {"running": 1, "queued": 0, "queued_runs": 0}}
     only = dashboard.occupancy_reading("o/gitgalaxy", "repo")
     assert only["running"] == 2 and list(only["by_repo"]) == ["o/gitgalaxy"]
+    monkeypatch.setenv("GITHUB_RUN_ID", "3")  # taken from a workflow run: its own job holds a runner, not the fleet's
+    assert dashboard.occupancy_reading("o/gitgalaxy", "org")["running"] == 2
+    monkeypatch.delenv("GITHUB_RUN_ID")
     day = "2026-10-23"
     readings = [{**r, "t": f"{day}T{h:02d}:{m:02d}:00Z"} for h in range(24) for m in (0, 15, 30, 45)]
     assert dashboard.occupancy_day(readings, day)["runner_min"] == 3 * 1440  # the pool's load
