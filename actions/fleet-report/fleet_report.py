@@ -96,6 +96,7 @@ class Config:
     bot_start: str = ""
     events: list[tuple[str, str]] = field(default_factory=list)
     cost_max: float | None = None  # top of the cost-per-PR axis; days above it are drawn at the top and marked
+    red_main_label: str = ""  # the issue label a main-watch workflow opens when a check fails on main (change failure)
 
     @property
     def heading(self) -> str:
@@ -1434,20 +1435,30 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
-    # Change failure: merged PRs that were reverts or regression fixes, over merged PRs, each day (owner 2026-10-24: a
-    # plain day-by-day line, no averaging, from the bot's start)
-    if any(d in sc_days for d, _ in rows):
-        live = lambda d: d in sc_days and (not start or d >= start)  # noqa: E731
-        fails = [sc_days[d].get("reverts", 0) + sc_days[d].get("regression_fixes", 0) if live(d) else None for d, _ in rows]
+    # Change failure: times main went red (a red-main issue opened by the main-watch workflow, one per failing check)
+    # per merged PR, each day (owner 2026-10-24: a plain day-by-day line, no averaging, from the bot's start; owner
+    # 2026-10-25: from the red-main label, not "Revert"/"regression" in PR titles). Drawn only with that data.
+    if any("red_main" in sc_days.get(d, {}) for d, _ in rows):
+        live = lambda d: "red_main" in sc_days.get(d, {}) and (not start or d >= start)  # noqa: E731
+        reds = [sc_days[d]["red_main"] if live(d) else None for d, _ in rows]
         merged = [row["merged"] if live(d) else None for d, row in rows]
-        daily = [100 * f / m if f is not None and m else None for f, m in zip(fails, merged)]
+        daily = [100 * f / m if f is not None and m else None for f, m in zip(reds, merged)]
+        label = cfg.red_main_label if cfg and cfg.red_main_label else "red-main"
         top, chart_h = y, 110
         axis = _nice_axis(max([1.0] + [v for v in daily if v is not None]))
-        frame(top, chart_h, axis, f"{panel} · Change failure — % of merged PRs that were reverts or regression fixes, "
+        frame(top, chart_h, axis, f"{panel} · Change failure — times main went red (a {label} issue) per merged PR, "
               "each day", lambda v: f"{v:g}%")
+
+        def red_tip(d: str, f, m, v) -> str:
+            if v is None:
+                return ""
+            s = sc_days[d]
+            green = f"; median {s['red_main_h_median']:g} h to green" if s.get("red_main_h_median") is not None else ""
+            still = f"; {s['red_main_open']} still red" if s.get("red_main_open") else ""
+            return f"{v:.1f}% ({f} times main went red for {m} merged PRs{green}{still})"
+
         line_series(top, chart_h, daily, axis[0], cls="failedl",
-                    tips=[f"{v:.2f}% ({f} of {m} merged PRs were reverts or regression fixes)" if v is not None else ""
-                          for f, m, v in zip(fails, merged, daily)])
+                    tips=[red_tip(d, f, m, v) for (d, _), f, m, v in zip(rows, reds, merged, daily)])
         y = top + chart_h + 70
         panel += 1
 
@@ -1630,9 +1641,23 @@ def fetch_scorecard_day(repo: str, day: str, cfg: Config) -> dict:
         "not_planned": search_count(f'{base} closed:{day} reason:"not planned"'),
         "closed": search_count(f"{base} closed:{day}"),
         "opened": sum(opened.values()), "opened_by_origin": dict(opened),
-        "reverts": search_count(f"repo:{repo} is:pr is:merged merged:{day} Revert in:title"),
-        "regression_fixes": search_count(f"repo:{repo} is:pr is:merged merged:{day} regression in:title"),
+        **(red_main_day(repo, day, cfg.red_main_label) if cfg.red_main_label else {}),
     }
+
+
+RED_SEARCH = """query($q: String!) { search(query: $q, type: ISSUE, first: 100) { nodes { ... on Issue { createdAt closedAt } } } }"""
+
+
+def red_main_day(repo: str, day: str, label: str) -> dict:
+    """Times main went red that day: issues with the main-watch label opened that day (one per failing check), how many
+    are still open, and the median hours each took to go green. Owner 2026-10-25: this replaces matching "Revert" /
+    "regression" in merged PR titles, which this repo never uses for a fix of a broken main (0 real hits in 2,500
+    merges, and its 2 hits were a perf report and a ReDoS test)."""
+    nodes = [n for n in gh_graphql(RED_SEARCH, q=f'repo:{repo} is:issue label:"{label}" created:{day}')["search"]["nodes"]
+             if n]
+    hours = sorted((_iso(n["closedAt"]) - _iso(n["createdAt"])).total_seconds() / 3600 for n in nodes if n.get("closedAt"))
+    return {"red_main": len(nodes), "red_main_open": sum(not n.get("closedAt") for n in nodes),
+            "red_main_h_median": round(_pct(hours, 0.5), 1) if hours else None}
 
 
 # GitHub's secondary limits count content-creating writes per account (~80/min, ~500/h by its published guidance), apart
@@ -1688,7 +1713,8 @@ def collect_scorecard(cfg: Config, data: dict, today: date, days: int = SCORE_DA
     sc = data.get("scorecard") or {"days": {}}
     window = [(today - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
     for d in window:  # finished days once, the recent ones on every run
-        if d not in sc["days"] or d >= (today - timedelta(days=REFRESH_DAYS - 1)).isoformat():
+        if d not in sc["days"] or d >= (today - timedelta(days=REFRESH_DAYS - 1)).isoformat() or \
+                (cfg.red_main_label and "red_main" not in sc["days"][d]):  # a day counted before the red-main label
             try:
                 sc["days"][d] = fetch_scorecard_day(cfg.repo, d, cfg)
             except RuntimeError as e:
@@ -1882,6 +1908,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-wait-p90", default="", help="alert when the 7-day p90 job queue wait (min) exceeds this")
     p.add_argument("--max-runner-hours-per-pr", default="", help="alert when 7-day runner hours per merged PR exceed this")
     p.add_argument("--cost-max", default="", help="top of the cost-per-PR chart axis, hours (default: fit the data)")
+    p.add_argument("--red-main-label", default="", help="issue label opened when a check fails on main (change failure)")
     p.add_argument("--fail-on-alert", action="store_true")
     p.add_argument("--render-only", action="store_true", help="redraw from metrics.json without fetching")
     a = p.parse_args(argv)
@@ -1892,7 +1919,7 @@ def main(argv: list[str] | None = None) -> int:
                  sample_fraction=a.sample_fraction, sample_min=a.sample_runs or a.sample_min,
                  sample_budget=a.sample_budget, runner_pool=int(a.runner_pool) if str(a.runner_pool).strip() else None,
                  bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
-                 events=_events(a.events), cost_max=_opt_float(a.cost_max))
+                 events=_events(a.events), cost_max=_opt_float(a.cost_max), red_main_label=a.red_main_label.strip())
     a.out.mkdir(parents=True, exist_ok=True)
     occ_file = a.out / OCC_FILE
     if a.occupancy_sample:

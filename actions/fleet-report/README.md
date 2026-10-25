@@ -74,6 +74,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `max-wait-p90` | off | Warn when the 7-day average p90 queue wait (min) exceeds this |
 | `max-runner-hours-per-pr` | off | Warn when 7-day runner hours per merged PR exceed this |
 | `cost-max` | fit the data | Top of the runner-hours-per-merged-PR axis |
+| `red-main-label` | none | Issue label a main-watch workflow opens when a check fails on main; drives the change-failure panel |
 | `fail-on-alert` | `false` | Fail the step on a warning |
 
 Output: `dashboard-url`, the raw URL of the published SVG.
@@ -99,6 +100,7 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **CI load:** each day's estimated runner hours per merged PR. Set `cost-max` to cap the axis; days above it are drawn at the top and marked with their value.
 - **Spend** and **Cost per PR** (when the orchestrator publishes `factory.json` with `usd`): the bot's dollar cost added up since it started, and each day's dollars per merged bot PR with the overall average.
 - **Efficiency:** two percentages per day. **Runs failed:** failed ÷ (passed + failed) workflow runs, exact. **Run minutes saved (est.):** a run cancelled early (usually because a newer push replaced it) would have taken about as long as that day's median successful run of the same workflow; what it saved is that minus what it ran. The chart shows saved ÷ (spent + saved), in run wall-clock minutes. Runs of the configured `bot-workflows` are left out of both sides, and cancelled runs of a workflow with no successful run that day aren't priced. It is an estimate, labelled as one.
+- **Change failure** (with `red-main-label`): each day, the issues with that label opened (one per check that went red on main, opened by a main-watch workflow) ÷ merged PRs, from the bot's start; the tooltip has the median hours to green. An infrastructure failure on main counts too, and one bad merge that breaks two checks counts twice: it is how often main broke per merge, not a count of bad PRs.
 
 Today is drawn faded, as incomplete. The cards use finished days only.
 

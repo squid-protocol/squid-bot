@@ -538,11 +538,35 @@ def _factory_data():
     data = _data(10)
     days = sorted(data["days"])
     data["scorecard"] = {"open_now": 100, "days": {
-        d: {"opened": 6, "closed": 4, "resolved": 4, "resolved_by_bot": 4, "not_planned": 0, "reverts": 1 if d == days[-3] else 0,
-            "regression_fixes": 0, "opened_by_origin": {"owner": 2, "agent": 3, "automation": 1}} for d in days}}
+        d: {"opened": 6, "closed": 4, "resolved": 4, "resolved_by_bot": 4, "not_planned": 0, "red_main": 2 if d == days[-3] else 0,
+            "red_main_open": 0, "red_main_h_median": 1.5 if d == days[-3] else None, "opened_by_origin": {"owner": 2, "agent": 3, "automation": 1}} for d in days}}
     data["factory"] = {"days": {d: {"usd": 40.0, "first_pass": {"merged": 20, "first_pass": 15},
                                     "worker_hours": {"new_work": 1.0}} for d in days}}
     return data
+
+
+def test_red_main_day_counts_the_label_still_red_and_hours_to_green(monkeypatch):
+    seen = []
+
+    def gql(query, **v):
+        seen.append(v["q"])
+        return {"search": {"nodes": [{"createdAt": "2026-10-24T10:00:00Z", "closedAt": "2026-10-24T11:00:00Z"},
+                                     {"createdAt": "2026-10-24T12:00:00Z", "closedAt": "2026-10-24T15:00:00Z"},
+                                     {"createdAt": "2026-10-24T20:00:00Z", "closedAt": None}, {}]}}
+
+    monkeypatch.setattr(dashboard, "gh_graphql", gql)
+    got = dashboard.red_main_day("o/r", "2026-10-24", "ci-red-main")
+    assert got == {"red_main": 3, "red_main_open": 1, "red_main_h_median": 3.0}
+    assert seen == ['repo:o/r is:issue label:"ci-red-main" created:2026-10-24']
+
+
+def test_change_failure_panel_is_left_out_without_red_main_data():
+    data = _factory_data()
+    for s in data["scorecard"]["days"].values():
+        for k in ("red_main", "red_main_open", "red_main_h_median"):
+            s.pop(k)
+        s["reverts"] = 1  # the old title-match fields no longer draw anything
+    assert "Change failure" not in dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
 
 
 def test_dashboard_draws_issue_arrows_first_pass_change_failure_and_cost_per_issue():
@@ -554,6 +578,7 @@ def test_dashboard_draws_issue_arrows_first_pass_change_failure_and_cost_per_iss
                    "First-pass rate", 'class="band"', "Change failure", "Cost per resolved issue"):
         assert needle in svg, needle
     assert "opened 6 (people 2, agents 3, bots 1); closed 4 as completed" in svg
+    assert "6.2% (2 times main went red for 32 merged PRs; median 1.5 h to green)" in svg
     assert "75% first pass (15 of 20" in svg  # exact from the factory's records, with its 95% band
     assert "$10.00 per issue, average of the last 7 day(s)" in svg  # $40 / 4 issues, paired day by day
 
