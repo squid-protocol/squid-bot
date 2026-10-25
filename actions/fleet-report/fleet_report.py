@@ -223,16 +223,43 @@ def bot_workflow_ids(repo: str, cfg: Config) -> dict[str, int]:
     return {w["name"]: w["id"] for w in wfs if w["name"] in cfg.bot_workflows}
 
 
+LIST_CAP = 1000  # a run listing stops here, whatever total_count says
+COUNT_CAP = 2500  # a run listing's total_count stops here
+MIN_WINDOW_S = 300  # windows are split no finer than this
+
+
+def _span(day: str, start_s: int, end_s: int) -> str:
+    """created= range for [start_s, end_s) seconds into the UTC day."""
+    t0 = datetime.fromisoformat(day).replace(tzinfo=timezone.utc)
+    fmt = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")  # noqa: E731
+    return f"{fmt(t0 + timedelta(seconds=start_s))}..{fmt(t0 + timedelta(seconds=end_s - 1))}"
+
+
+def _halves(start_s: int, end_s: int) -> list[tuple[int, int]]:
+    mid = (start_s + end_s) // 2
+    return [(start_s, mid), (mid, end_s)]
+
+
 def day_runs(repo: str, day: str) -> list[dict]:
-    """Every workflow run created on the day."""
+    """Every workflow run created on the day. A listing stops at 1,000 runs, so each 2-hour window whose total_count
+    reaches that is split in half until it doesn't (on 2026-10-24, six 2-hour windows passed 1,000 and about 1,000
+    runs were silently missing)."""
     out = []
-    for h in range(0, 24, 2):  # a listing stops at 1,000 runs: 2-hour windows stay under it on a busy day
-        span = f"{day}T{h:02d}:00:00Z..{day}T{h + 1:02d}:59:59Z"
-        for page in range(1, 11):
+    todo = [(h * 3600, (h + 2) * 3600) for h in range(0, 24, 2)]
+    while todo:
+        start_s, end_s = todo.pop(0)
+        span = _span(day, start_s, end_s)
+        first = gh_json(f"repos/{repo}/actions/runs?created={span}&per_page=100&page=1")
+        if first.get("total_count", 0) >= LIST_CAP and end_s - start_s > MIN_WINDOW_S:
+            todo[:0] = _halves(start_s, end_s)
+            continue
+        runs = first["workflow_runs"]
+        out += runs
+        page = 1
+        while len(runs) == 100 and page < LIST_CAP // 100:
+            page += 1
             runs = gh_json(f"repos/{repo}/actions/runs?created={span}&per_page=100&page={page}")["workflow_runs"]
             out += runs
-            if len(runs) < 100:
-                break
     return out
 
 
@@ -379,7 +406,9 @@ def fetch_detail(repo: str, day: str, bots: dict[str, int], origin, cfg: Config,
     every run of the day)."""
     everything = day_runs(repo, day)
     by_id = {x["id"]: x for x in everything}
-    bot_runs = sum(gh_count(f"repos/{repo}/actions/workflows/{i}/runs?created={day}&per_page=1") for i in bots.values())
+    ids = set(bots.values())  # from the day's full listing: a per-workflow total_count stops at 2,500 too
+    bot_runs = sum(r.get("workflow_id") in ids for r in everything)
+    bot_outcomes = Counter(r.get("conclusion") for r in everything if r.get("workflow_id") in ids)
     changes: dict[int, str] = {}
     for c in gh_json(f"repos/{repo}/commits?path=.github/workflows&since={day}T00:00:00Z&until={day}T23:59:59Z&per_page=100"):
         title = c["commit"]["message"].splitlines()[0]
@@ -421,16 +450,23 @@ def fetch_detail(repo: str, day: str, bots: dict[str, int], origin, cfg: Config,
         "sampled_min_by_origin": {k: round(v, 1) for k, v in by_origin.items()},
         "sample": measured,
         "reruns": rerun_counts(repo, day, everything),
+        "bot_outcomes": {k: bot_outcomes.get(k, 0) for k in ("success", "failure")},
         "cancel_savings": minutes_saved(everything, set(bots)),
     }
 
 
 def count_runs(repo: str, day: str, query: str = "") -> int:
-    # total_count tops out at 2,500 per query, a busy day passes that: count it in 6-hour windows
-    return sum(
-        gh_count(f"repos/{repo}/actions/runs?created={day}T{h:02d}:00:00Z..{day}T{h + 5:02d}:59:59Z{query}&per_page=1")
-        for h in (0, 6, 12, 18)
-    )
+    """Runs created on the day (matching `query`). total_count stops at 2,500 per query and a busy 6-hour window
+    passes that (2026-10-24 read exactly 10,000 of 11,870), so a window at the cap is split in half until it isn't."""
+    total, todo = 0, [(h * 3600, (h + 6) * 3600) for h in (0, 6, 12, 18)]
+    while todo:
+        start_s, end_s = todo.pop(0)
+        n = gh_count(f"repos/{repo}/actions/runs?created={_span(day, start_s, end_s)}{query}&per_page=1")
+        if n >= COUNT_CAP and end_s - start_s > MIN_WINDOW_S:
+            todo[:0] = _halves(start_s, end_s)
+        else:
+            total += n
+    return total
 
 
 def fetch_day(repo: str, day: str, cfg: Config) -> dict:
@@ -595,13 +631,17 @@ def occupancy_day(readings: list[dict], day: str, now: datetime | None = None, r
             "readings": len(pts), "running_mean": round(integral / covered, 1) if covered else None}
 
 
-def runner_minutes(detail: dict) -> float | None:
+def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     """The day's best runner-minute figure: time-sampled occupancy when its readings cover enough of the day, else the
-    stratified sample's estimate."""
+    stratified sample's estimate. With `pool`, never more than the pool can run in a day: an estimate above that is a
+    sampling overshoot (Oct 24 read 520 h ±85 on a 20-runner pool, 480 h), so the charts use the ceiling; the alert
+    reads the raw figure (no pool) and still flags it."""
     occ = detail.get("occupancy") or {}
     if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
-        return occ["runner_min"]
-    return detail.get("runner_min_est")
+        m = occ["runner_min"]
+    else:
+        m = detail.get("runner_min_est")
+    return min(m, pool * 1440) if pool and m is not None else m
 
 
 def runner_source(detail: dict) -> str:
@@ -615,6 +655,13 @@ def runner_source(detail: dict) -> str:
     ci = detail.get("runner_min_ci")
     pct = f" ±{ci / detail['runner_min_est']:.0%}" if ci and detail["runner_min_est"] else ""
     return f"sample of {detail.get('sampled_runs', 0)}/{detail.get('population', '?')} runs{pct}"
+
+
+def judged_runs(row: dict) -> tuple[int, int]:
+    """(passed, failed) workflow runs of the day, leaving out the bot's own bookkeeping workflows (as minutes saved
+    does): on Oct 22, 381 of 443 failed runs were CI shepherd failing for 8 hours, not a check failing on a change."""
+    r, bot = row["runs"], (row.get("detail") or {}).get("bot_outcomes") or {}
+    return max(0, r["success"] - bot.get("success", 0)), max(0, r["failure"] - bot.get("failure", 0))
 
 
 def over_ceiling(detail: dict, pool: int | None, minutes_in_day: float = 1440) -> bool:
@@ -652,11 +699,13 @@ def compare(data: dict, cfg: Config, days: int, today: date) -> dict:
         before = [(d, r) for d, r in rows if first <= d < start]
         with_bot = [(d, r) for d, r in rows if start <= d < today.isoformat()]
         if before or with_bot:
-            return {"start": start, "cur": week_stats([r for _, r in with_bot]), "prev": week_stats([r for _, r in before]),
+            return {"start": start, "cur": week_stats([r for _, r in with_bot], cfg.runner_pool),
+                    "prev": week_stats([r for _, r in before], cfg.runner_pool),
                     "cur_days": [d for d, _ in with_bot], "prev_days": [d for d, _ in before],
                     "cur_label": f"with {cfg.bot_name}", "prev_label": f"before {cfg.bot_name}"}
     done = [(d, r) for d, r in window_rows(data, days, today) if d != today.isoformat()]
-    return {"start": None, "cur": week_stats([r for _, r in done[-7:]]), "prev": week_stats([r for _, r in done[-14:-7]]),
+    return {"start": None, "cur": week_stats([r for _, r in done[-7:]], cfg.runner_pool),
+            "prev": week_stats([r for _, r in done[-14:-7]], cfg.runner_pool),
             "cur_days": [d for d, _ in done[-7:]], "prev_days": [d for d, _ in done[-14:-7]],
             "cur_label": "last 7 days", "prev_label": "previous 7 days"}
 
@@ -677,7 +726,7 @@ def finished(rows: list[tuple[str, dict]], today: date) -> list[dict]:
     return [r for d, r in rows if d != today.isoformat()]
 
 
-def week_stats(rows: list[dict]) -> dict:
+def week_stats(rows: list[dict], pool: int | None = None) -> dict:
     """Aggregates over finished days; None where a figure has no data."""
     n = len(rows)
     if not n:
@@ -687,10 +736,10 @@ def week_stats(rows: list[dict]) -> dict:
     agent = sum(r["merged_by_class"].get("agent", 0) + r["merged_by_class"].get("bot", 0) for r in classed)
     bot = sum(r["merged_by_class"].get("bot", 0) for r in classed)
     runs = sum(r["runs"]["total"] for r in rows)
-    ok = sum(r["runs"]["success"] for r in rows)
-    bad = sum(r["runs"]["failure"] for r in rows)
+    ok = sum(judged_runs(r)[0] for r in rows)
+    bad = sum(judged_runs(r)[1] for r in rows)
     det = [r["detail"] for r in rows if "detail" in r]
-    est = [(runner_minutes(r["detail"]), r["merged"]) for r in rows if runner_minutes(r.get("detail", {})) is not None]
+    est = [(runner_minutes(r["detail"], pool), r["merged"]) for r in rows if runner_minutes(r.get("detail", {})) is not None]
     return {
         "days": n,
         "merged_per_day": merged / n,
@@ -995,8 +1044,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     start = bot_start(data, cfg)
     start = start if start and start <= today_s else None
     last, before = last_two_days(data, today)
-    cur = week_stats([data["days"][last]]) if last else {}
-    prev = week_stats([data["days"][before]]) if before else {}
+    cur = week_stats([data["days"][last]], cfg.runner_pool) if last else {}
+    prev = week_stats([data["days"][before]], cfg.runner_pool) if before else {}
     start_i = next((i for i, (day, _) in enumerate(rows) if day >= start), None) if start else None
     out: list[str] = []
 
@@ -1196,7 +1245,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # 2 · CI hours: runner hours each day (est. from the sampled runs); the tip splits them by origin
     details = [row.get("detail", {}) for _, row in rows]
-    hours = [runner_minutes(detail) / 60 if runner_minutes(detail) is not None else None for detail in details]
+    pool = cfg.runner_pool
+    hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
     known = sorted(v for v in hours if v)
     if known:
         top, chart_h = y, 150
@@ -1213,6 +1263,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             split = runner_split([row], "sampled_min_by_origin")
             tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours (est.){' (today so far)' if day == today_s else ''} · "
                    f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
+            raw = runner_minutes(details[i])
+            if pool and raw > pool * 1440:
+                tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
             fade = ' class="partial"' if day == today_s else ""
             out.append(f'<g{fade}><title>{escape(tip)}</title><path class="hours" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
@@ -1222,7 +1275,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # Queue wait and CI cost per merged PR (sampled)
     wait_values = [detail.get("wait_p90") for detail in details]
-    runner_values = [runner_minutes(detail) / row["merged"] / 60 if runner_minutes(detail) is not None
+    runner_values = [runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
                      and row["merged"] else None for (_, row), detail in zip(rows, details)]
     if any(v is not None for v in wait_values + runner_values):
         top, chart_h = y, 120
@@ -1312,11 +1365,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
             saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
                               f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
-        r = row["runs"]
-        judged = r["success"] + r["failure"]
-        failed_values.append(100 * r["failure"] / judged if judged else None)
-        failed_tips.append(f'{100 * r["failure"] / judged:.1f}% of runs failed ({r["failure"]:,} of {judged:,} CI runs that '
-                           f'passed or failed)' if judged else "")
+        ok, bad = judged_runs(row)
+        judged = ok + bad
+        bot_note = " · the bot's own workflows left out" if (row.get("detail") or {}).get("bot_outcomes") else ""
+        failed_values.append(100 * bad / judged if judged else None)
+        failed_tips.append(f'{100 * bad / judged:.1f}% of runs failed ({bad:,} of {judged:,} CI runs that '
+                           f'passed or failed{bot_note})' if judged else "")
     top, chart_h = y, 120
     pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
     frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",

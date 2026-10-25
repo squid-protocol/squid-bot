@@ -1,5 +1,6 @@
 """Tests for the Fleet CI report action engine (actions/fleet-report/fleet_report.py)."""
 
+import re
 import sys
 import xml.etree.ElementTree as ET
 from datetime import date, timedelta
@@ -472,6 +473,77 @@ def test_collect_never_blanks_an_older_days_estimate_when_the_budget_is_spent(mo
     det = out["days"][old_day]["detail"]
     assert det["runner_min_est"] == 9_000 and det["wait_p90"] == 4.2 and det["bot_runs"] == 7
     assert "est_method" not in det  # still the old estimator: re-sampled once there is budget
+
+
+def _busy_day(per_hour: dict[int, int]) -> list[dict]:
+    """Runs spread evenly through each hour; per_hour[h] runs created in hour h."""
+    out, i = [], 0
+    for h, n in per_hour.items():
+        for k in range(n):
+            i += 1
+            out.append({"id": i, "workflow_id": 7 if i % 4 == 0 else 1,
+                        "created_at": f"2026-10-24T{h:02d}:{k * 3600 // n // 60:02d}:{k * 3600 // n % 60:02d}Z"})
+    return out
+
+
+def _fake_runs_api(runs: list[dict], calls: list[str]):
+    """gh_json for repos/o/r/actions/runs?created=A..B: total_count capped like GitHub (listing stops at 1,000, the
+    count at 2,500)."""
+    def gh(path):
+        calls.append(path)
+        span = path.split("created=")[1].split("&")[0]
+        a, b = span.split("..")
+        hit = [r for r in runs if a <= r["created_at"] <= b]
+        page = int((re.search(r"[?&]page=(\d+)", path) or ["", "1"])[1])
+        per = int(re.search(r"per_page=(\d+)", path)[1])
+        listed = hit[:1000]
+        return {"total_count": min(len(hit), 2500), "workflow_runs": listed[(page - 1) * per: page * per]}
+    return gh
+
+
+def test_busy_days_are_counted_and_listed_in_full_past_githubs_caps(monkeypatch):
+    runs = _busy_day({h: 700 for h in range(24)})  # 16,800 runs: 1,400 per 2 h, 4,200 per 6 h
+    calls: list[str] = []
+    monkeypatch.setattr(dashboard, "gh_json", _fake_runs_api(runs, calls))
+    assert dashboard.count_runs("o/r", "2026-10-24") == len(runs)  # 6-hour windows split until under 2,500
+    listed = dashboard.day_runs("o/r", "2026-10-24")
+    assert sorted(r["id"] for r in listed) == [r["id"] for r in runs]  # every run once, none lost at 1,000
+    quiet = _busy_day({h: 40 for h in range(24)})
+    calls.clear()
+    monkeypatch.setattr(dashboard, "gh_json", _fake_runs_api(quiet, calls))
+    assert len(dashboard.day_runs("o/r", "2026-10-24")) == len(quiet) and len(calls) == 12  # no split, no extra calls
+
+
+def test_bot_runs_come_from_the_full_listing(monkeypatch):
+    runs = [{**r, "name": "wf", "status": "completed", "conclusion": "success", "event": "push", "head_branch": "main",
+             "run_started_at": "2026-10-24T10:00:00Z", "updated_at": "2026-10-24T10:05:00Z"}
+            for r in _busy_day({10: 400})]
+    monkeypatch.setattr(dashboard, "day_runs", lambda repo, day: runs)
+    monkeypatch.setattr(dashboard, "gh_json", lambda path: [] if "/commits" in path else {"jobs": []})
+    det = dashboard.fetch_detail("o/r", "2026-10-24", {"CI shepherd": 7}, lambda r: "main",
+                                 dashboard.Config(repo="o/r"), None, [0])
+    assert det["bot_runs"] == 100  # every 4th run is workflow 7, counted without a capped total_count
+    assert det["bot_outcomes"] == {"success": 100, "failure": 0}
+    row = {"runs": {"success": 900, "failure": 443, "total": 1400}, "detail": {"bot_outcomes": {"success": 400, "failure": 381}}}
+    assert dashboard.judged_runs(row) == (500, 62)  # Oct 22's shape: the bot's own failures don't read as CI failing
+    assert dashboard.judged_runs({"runs": row["runs"]}) == (900, 443)  # a day stored before bot_outcomes: as before
+
+
+def test_charts_and_cards_never_show_more_runner_time_than_the_pool_can_run():
+    detail = {"runner_min_est": 520 * 60, "runner_min_ci": 85 * 60, "sampled_runs": 447, "population": 8606,
+              "est_method": dashboard.EST_METHOD}
+    assert dashboard.runner_minutes(detail) == 520 * 60  # raw: the alert still sees the overshoot
+    assert dashboard.runner_minutes(detail, pool=20) == 480 * 60
+    assert dashboard.runner_minutes({"runner_min_est": 300 * 60}, pool=20) == 300 * 60
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 300 * 60}
+    over = (TODAY - timedelta(days=2)).isoformat()
+    data["days"][over]["detail"] = {**data["days"][over]["detail"], **detail}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    ET.fromstring(svg)
+    assert "480 runner hours" in svg and "the estimate (520 h) is over what 20 runners can do in a day" in svg
+    assert dashboard.check_alerts(data, 10, TODAY, None, None, pool=20)  # flagged all the same
 
 
 def test_occupancy_day_is_time_weighted_bounded_and_reports_coverage():
