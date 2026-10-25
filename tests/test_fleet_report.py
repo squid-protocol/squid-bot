@@ -439,6 +439,40 @@ def test_fetch_detail_measures_each_run_once_within_the_budget(monkeypatch):
     assert d2["est_method"] == dashboard.EST_METHOD and d2["wait_median"] == 1.0
 
 
+def test_collect_never_blanks_an_older_days_estimate_when_the_budget_is_spent(monkeypatch):
+    data = _data(10)
+    for d in data["days"].values():
+        d["merged_by_class"] = {"other": 1}
+    old_day, older_day = (TODAY - timedelta(days=4)).isoformat(), (TODAY - timedelta(days=5)).isoformat()
+    kept = {"runner_min_est": 9_000, "wait_p90": 4.2, "sampled_runs": 24, "bot_runs": 1}  # the old fixed sample
+    data["days"][old_day]["detail"] = dict(kept)
+    data["days"][older_day]["detail"] = dict(kept)
+    fetched = []
+
+    def detail(repo, day, bots, origin, cfg, prev, budget):
+        fetched.append(day)
+        budget[0] = 0  # the fresh days spend the whole budget; nothing left for older days
+        return {"bot_runs": 7, "reruns": {}, "cancel_savings": {}, "est_method": dashboard.EST_METHOD,
+                "runner_min_est": None, "wait_p90": 0.0, "sampled_runs": 0, "sample_target": 150, "sample": {}}
+
+    monkeypatch.setattr(dashboard, "fetch_day", lambda repo, day, cfg: _day(1, 1, 0, 0))
+    monkeypatch.setattr(dashboard, "bot_workflow_ids", lambda repo, cfg: {})
+    monkeypatch.setattr(dashboard, "RunOrigin", lambda repo, cfg: None)
+    monkeypatch.setattr(dashboard, "fetch_detail", detail)
+    monkeypatch.setattr(dashboard, "collect_scorecard", lambda cfg, data, today, days: {})
+    monkeypatch.setattr(dashboard, "gh_count", lambda path: 0)
+    out = dashboard.collect(dashboard.Config(repo="owner/repo"), 10, data, TODAY)
+    assert old_day not in fetched and older_day not in fetched  # no budget: older days are left for the next run
+    assert out["days"][old_day]["detail"] == kept
+    # a day refreshed with nothing measured keeps its estimate, takes the new exact counts, and stays incomplete
+    data["days"][old_day]["detail"] = dict(kept)
+    monkeypatch.setattr(dashboard, "days_to_fetch", lambda have, today, days: [old_day])
+    out = dashboard.collect(dashboard.Config(repo="owner/repo"), 10, data, TODAY)
+    det = out["days"][old_day]["detail"]
+    assert det["runner_min_est"] == 9_000 and det["wait_p90"] == 4.2 and det["bot_runs"] == 7
+    assert "est_method" not in det  # still the old estimator: re-sampled once there is budget
+
+
 def test_occupancy_day_is_time_weighted_bounded_and_reports_coverage():
     day = "2026-10-23"
     full = [{"t": f"{day}T{h:02d}:{m:02d}:00Z", "running": 20} for h in range(24) for m in (0, 15, 30, 45)]
