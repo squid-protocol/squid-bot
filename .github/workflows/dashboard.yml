@@ -9,6 +9,9 @@ name: Dashboard
 # 19:00Z and 20:00Z slots never ran. GitHub cron is UTC only, so each slot is listed at its EDT and its EST offset; the
 # first step runs a slot once (a run late by up to 3 h still runs) and skips the other offset's run, which finds the
 # slot already refreshed. Right across daylight-saving changes.
+# The schedule is the backup since 2026-10-25: on a busy account GitHub delays or drops scheduled runs (that day none
+# of the three slots refreshed on schedule and the 14:47 run never started), so a host timer starts each slot with a
+# workflow_dispatch (templates/systemd/squid-dashboard.{service,timer}); a scheduled run then finds it refreshed.
 on:
   schedule:
     - cron: "47 9,10 * * *"   # 05:47 Eastern (09:47Z EDT, 10:47Z EST) -> fresh by 06:00
