@@ -456,6 +456,7 @@ def test_collect_never_blanks_an_older_days_estimate_when_the_budget_is_spent(mo
                 "runner_min_est": None, "wait_p90": 0.0, "sampled_runs": 0, "sample_target": 150, "sample": {}}
 
     monkeypatch.setattr(dashboard, "fetch_day", lambda repo, day, cfg: _day(1, 1, 0, 0))
+    monkeypatch.setattr(dashboard, "merged_counts", lambda repo, day, cfg: {"merged_by_class": {"other": 1}})
     monkeypatch.setattr(dashboard, "bot_workflow_ids", lambda repo, cfg: {})
     monkeypatch.setattr(dashboard, "RunOrigin", lambda repo, cfg: None)
     monkeypatch.setattr(dashboard, "fetch_detail", detail)
