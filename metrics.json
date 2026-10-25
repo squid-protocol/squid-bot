@@ -15649,7 +15649,7 @@
      "cancelled": 699,
      "saved_min_est": 5613,
      "unpriced": 0,
-     "wall_min": 45914
+     "wall_min": 46267
     },
     "ci_changes": [
      {
@@ -15790,7 +15790,7 @@
      }
     ],
     "est_method": "ratio-v2",
-    "population": 8602,
+    "population": 8609,
     "reruns": {
      "attempts": 10,
      "by_workflow": {
@@ -15814,8 +15814,8 @@
      "passed": 0,
      "runs": 10
     },
-    "runner_min_ci": 9864,
-    "runner_min_est": 36611,
+    "runner_min_ci": 23928,
+    "runner_min_est": 25147,
     "sample": {
      "40044742548": {
       "m": 6.68,
@@ -15846,6 +15846,13 @@
       "o": "main",
       "w": [
        12.3
+      ]
+     },
+     "40081171986": {
+      "m": 0.27,
+      "o": "bot",
+      "w": [
+       63.13
       ]
      },
      "40083499698": {
@@ -15897,13 +15904,6 @@
        3.35
       ]
      },
-     "40103758574": {
-      "m": 0.3,
-      "o": "bot",
-      "w": [
-       0.57
-      ]
-     },
      "40108484886": {
       "m": 11.22,
       "o": "agent",
@@ -15941,66 +15941,66 @@
     },
     "sample_target": 431,
     "sampled_min_by_origin": {
-     "agent": 6879.5,
-     "bot": 22478.0,
-     "main": 7253.5
+     "agent": 4727.6,
+     "bot": 15434.3,
+     "main": 4984.6
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 126.1,
-     "CI shepherd (label events)": 14964.6,
-     "CI shepherd (reconcile)": 1082.2,
-     "CICS Crucible": 903.8,
-     "Cache Prune": 5.6,
-     "Call Graph Accuracy Audit": 137.2,
-     "Call Resolution History": 68.8,
-     "CodeQL Security Scan": 525.1,
-     "Configured Graph Update: pip in /ci/requirements #1649358250": 3.9,
-     "Configured Graph Update: pip in /ci/requirements #1650005622": 0.7,
-     "Configured Graph Update: pip in /ci/requirements #1650357598": 2.1,
-     "Crucible Path Independence": 154.5,
-     "DOOM-rosetta": 372.7,
-     "Deploy Museum of Code Docs": 401.5,
-     "Det Sweep": 2013.1,
-     "Detection Accuracy Audit": 47.8,
-     "Equivalence E2E": 556.0,
-     "Estate Crucible": 119.8,
-     "Evidence Pages": 12.2,
-     "Evidence Refresh": 160.2,
-     "Fact Cross-check": 298.9,
-     "Flake history (refresh)": 13.5,
-     "Full Suite Gate (All OS x Python)": 55.2,
-     "Generated Docs": 717.7,
-     "Generated Java Base Generation": 105.2,
-     "Generated Java Compiles": 331.4,
-     "GitGalaxy Smoke Tests": 4017.6,
-     "GitGalaxy Zero-Trust Pipeline": 762.9,
-     "Golden Crucible Resilience Test": 223.1,
-     "Graph Accuracy Audit": 338.5,
-     "Graph Comparison History": 190.9,
-     "Graph Update: go_modules in /tests/tools/go_callgraph #1649682701": 0.5,
-     "Graph Update: pip in /templates/requirements #1650357608": 2.9,
-     "Main Watch": 213.9,
-     "Mainframe Ground Truth": 3471.4,
-     "Muninn Security Scan": 356.0,
-     "Mypy Audit": 617.1,
-     "OS Smoke Grid": 4.8,
-     "Ports Compile": 520.4,
-     "Referee panel": 9.2,
-     "Ruff Audit": 544.4,
-     "Small Audits": 727.4,
-     "Tree-sitter Accuracy Audit": 101.0,
-     "Tree-sitter Accuracy History": 69.1,
-     "Tri-Comparison Audit": 71.0,
-     "Tri-Comparison History": 64.4,
-     "pages build and deployment": 415.7,
-     "pip in /ci/requirements for setuptools - Update #1650359630": 1.6,
-     "post-merge": 215.4,
-     "rosetta-audit": 250.5,
-     "unicode-gauntlet": 241.5
+     "Archetype Validation": 86.1,
+     "CI shepherd (label events)": 10264.4,
+     "CI shepherd (reconcile)": 738.7,
+     "CICS Crucible": 616.9,
+     "Cache Prune": 3.8,
+     "Call Graph Accuracy Audit": 93.7,
+     "Call Resolution History": 47.0,
+     "CodeQL Security Scan": 358.4,
+     "Configured Graph Update: pip in /ci/requirements #1649358250": 2.7,
+     "Configured Graph Update: pip in /ci/requirements #1650005622": 0.4,
+     "Configured Graph Update: pip in /ci/requirements #1650357598": 1.4,
+     "Crucible Path Independence": 105.5,
+     "DOOM-rosetta": 254.4,
+     "Deploy Museum of Code Docs": 274.0,
+     "Det Sweep": 1391.9,
+     "Detection Accuracy Audit": 32.7,
+     "Equivalence E2E": 398.8,
+     "Estate Crucible": 81.8,
+     "Evidence Pages": 8.3,
+     "Evidence Refresh": 179.0,
+     "Fact Cross-check": 204.0,
+     "Flake history (refresh)": 9.2,
+     "Full Suite Gate (All OS x Python)": 37.7,
+     "Generated Docs": 489.9,
+     "Generated Java Base Generation": 71.8,
+     "Generated Java Compiles": 226.2,
+     "GitGalaxy Smoke Tests": 2742.3,
+     "GitGalaxy Zero-Trust Pipeline": 520.7,
+     "Golden Crucible Resilience Test": 152.3,
+     "Graph Accuracy Audit": 231.1,
+     "Graph Comparison History": 130.3,
+     "Graph Update: go_modules in /tests/tools/go_callgraph #1649682701": 0.3,
+     "Graph Update: pip in /templates/requirements #1650357608": 2.0,
+     "Main Watch": 146.0,
+     "Mainframe Ground Truth": 2369.5,
+     "Muninn Security Scan": 243.0,
+     "Mypy Audit": 421.2,
+     "OS Smoke Grid": 3.2,
+     "Ports Compile": 355.2,
+     "Referee panel": 6.3,
+     "Ruff Audit": 371.6,
+     "Small Audits": 496.5,
+     "Tree-sitter Accuracy Audit": 69.0,
+     "Tree-sitter Accuracy History": 47.2,
+     "Tri-Comparison Audit": 48.5,
+     "Tri-Comparison History": 43.9,
+     "pages build and deployment": 283.7,
+     "pip in /ci/requirements for setuptools - Update #1650359630": 1.1,
+     "post-merge": 147.0,
+     "rosetta-audit": 171.0,
+     "unicode-gauntlet": 164.8
     },
     "sampled_runs": 16,
-    "wait_median": 3.57,
-    "wait_p90": 14.35
+    "wait_median": 4.92,
+    "wait_p90": 16.15
    },
    "merged": 232,
    "merged_by_class": {
@@ -16011,58 +16011,125 @@
    },
    "runs": {
     "cancelled": 2888,
-    "failure": 137,
+    "failure": 139,
     "skipped": 2561,
-    "success": 6275,
+    "success": 6282,
     "total": 10000
    }
   },
   "2026-10-25": {
    "detail": {
-    "bot_runs": 80,
+    "bot_runs": 1297,
     "cancel_savings": {
-     "cancelled": 14,
-     "saved_min_est": 90,
-     "unpriced": 4,
-     "wall_min": 432
+     "cancelled": 243,
+     "saved_min_est": 3047,
+     "unpriced": 0,
+     "wall_min": 28548
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 6561,
+      "title": "Full Suite Gate: legs from the plan job, no hand-set leg JSON (Part of #5919) (#6561)"
+     },
+     {
+      "pr": 6565,
+      "title": "generated pushes: rebase and retry on a rejected push (Part of #6563) (#6565)"
+     },
+     {
+      "pr": 6566,
+      "title": "Blocker feed: survey cics-crucible so its leak scan runs; a feed failure fails the Evidence Refresh run (Part of #5054) (#6566)"
+     },
+     {
+      "pr": 6568,
+      "title": "CI: post-merge Full Suite Gate dispatch on main drops ubuntu/3.12 (Part of #5953) (#6568)"
+     },
+     {
+      "pr": 6569,
+      "title": "CI: narrow unicode-gauntlet, rosetta-audit, ports-compile, fact-crosscheck path filters by import reach (Part of #6278) (#6569)"
+     },
+     {
+      "pr": 6579,
+      "title": "ground-truth: a part with no warm job scans only the corpora its pytest share reads (Part of #5543) (#6579)"
+     },
+     {
+      "pr": 6581,
+      "title": "Graph Accuracy Audit: import-graph as three language subsets, lanes rebalanced (Part of #5501) (#6581)"
+     },
+     {
+      "pr": 6587,
+      "title": "Det Sweep: a manual full sweep on main records its Db2 case seconds (Part of #5882) (#6587)"
+     },
+     {
+      "pr": 6588,
+      "title": "Graph Accuracy Audit: rebalance the four lanes on run 40160191245's gate times (Part of #5501) (#6588)"
+     },
+     {
+      "pr": 6590,
+      "title": "equivalence-e2e db2 job: write the pull-done marker so the harness stops waiting 900 s (Part of #5602) (#6590)"
+     },
+     {
+      "pr": 6595,
+      "title": "ci_cap_headroom: find jobs the cap itself stopped; raise the equivalence-e2e Db2 cap 60 -> 90 (Part of #5156) (#6595)"
+     },
+     {
+      "pr": 6597,
+      "title": "ground-truth: no warm job on a PR cache miss, 4 self-warming parts (Part of #5543) (#6597)"
+     },
+     {
+      "pr": 6605,
+      "title": "java-compile: keep the engine scan across runs through the Actions cache (Part of #5142) (#6605)"
+     },
+     {
+      "pr": 6622,
+      "title": "Muninn: dispatch scope input + SARIF diff tool for the same-SHA check (Part of #5499) (#6622)"
+     },
+     {
+      "pr": 6629,
+      "title": "smoke-test: nightly stores its durations cache though tested-tree is skipped (Part of #5133) (#6629)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 113,
+    "population": 3023,
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
-     "failed_again": 0,
+     "attempts": 3,
+     "by_workflow": {
+      "Det Sweep": [
+       0,
+       3,
+       0
+      ]
+     },
+     "failed_again": 3,
      "passed": 0,
-     "runs": 0
+     "runs": 3
     },
     "runner_min_ci": null,
     "runner_min_est": null,
     "sample": {},
-    "sample_target": 30,
+    "sample_target": 152,
     "sampled_min_by_origin": {},
     "sampled_min_by_workflow": {},
     "sampled_runs": 0,
     "wait_median": 0.0,
     "wait_p90": 0.0
    },
-   "merged": 5,
+   "merged": 76,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 1,
     "automation": 0,
-    "bot": 5,
+    "bot": 75,
     "other": 0
    },
    "runs": {
-    "cancelled": 37,
-    "failure": 0,
-    "skipped": 13,
-    "success": 47,
-    "total": 136
+    "cancelled": 852,
+    "failure": 38,
+    "skipped": 801,
+    "success": 2073,
+    "total": 3815
    }
   }
  },
- "open_prs": 18,
+ "open_prs": 13,
  "repo": "squid-protocol/gitgalaxy",
  "scorecard": {
   "days": {
@@ -16712,7 +16779,6 @@
        "00": 6,
        "01": 5,
        "02": 9,
-       "03": 1,
        "04": 1,
        "05": 5,
        "06": 2,
@@ -16734,18 +16800,18 @@
        "22": 1,
        "23": 4
       },
-      "total": 85
+      "total": 84
      },
      "squid-protocol": {
-      "busiest_hour": 215,
+      "busiest_hour": 214,
       "hours": {
-       "00": 86,
-       "01": 211,
-       "02": 184,
-       "03": 151,
-       "04": 116,
-       "05": 122,
-       "06": 129,
+       "00": 51,
+       "01": 82,
+       "02": 77,
+       "03": 52,
+       "04": 36,
+       "05": 48,
+       "06": 80,
        "07": 136,
        "08": 155,
        "09": 146,
@@ -16756,7 +16822,7 @@
        "14": 118,
        "15": 82,
        "16": 113,
-       "17": 215,
+       "17": 214,
        "18": 103,
        "19": 66,
        "20": 109,
@@ -16764,7 +16830,7 @@
        "22": 11,
        "23": 80
       },
-      "total": 2897
+      "total": 2323
      }
     }
    },
@@ -16846,23 +16912,23 @@
        "06": 177,
        "07": 175,
        "08": 155,
-       "09": 143,
+       "09": 142,
        "10": 101,
        "11": 101,
        "12": 118,
        "13": 162,
        "14": 152,
        "15": 176,
-       "16": 169,
+       "16": 168,
        "17": 117,
-       "18": 198,
-       "19": 178,
+       "18": 195,
+       "19": 177,
        "20": 157,
        "21": 53,
        "22": 39,
-       "23": 55
+       "23": 49
       },
-      "total": 3523
+      "total": 3511
      },
      "squid-shepherd[bot]": {
       "busiest_hour": 68,
@@ -16877,48 +16943,95 @@
     }
    },
    "2026-10-25": {
-    "closed": 2,
+    "closed": 11,
     "not_planned": 0,
-    "opened": 1,
+    "opened": 4,
     "opened_by_origin": {
-     "owner": 1
+     "automation": 2,
+     "owner": 2
     },
     "regression_fixes": 0,
-    "resolve_h_median": 197.4,
-    "resolved": 2,
-    "resolved_by_bot": 2,
+    "resolve_h_median": 71.8,
+    "resolved": 11,
+    "resolved_by_bot": 10,
     "resolved_by_origin": {
-     "automation": 1,
-     "owner": 1
+     "agent": 1,
+     "automation": 5,
+     "owner": 5
     },
     "reverts": 0,
     "writes": {
-     "github-actions[bot]": {
-      "busiest_hour": 5,
+     "github-actions": {
+      "busiest_hour": 2,
       "hours": {
-       "00": 5
+       "04": 2
       },
-      "total": 5
+      "total": 2
+     },
+     "github-actions[bot]": {
+      "busiest_hour": 7,
+      "hours": {
+       "00": 5,
+       "01": 5,
+       "02": 5,
+       "04": 7,
+       "05": 2,
+       "06": 4,
+       "07": 2,
+       "08": 1,
+       "09": 3,
+       "10": 1,
+       "11": 4,
+       "12": 2,
+       "13": 1
+      },
+      "total": 42
      },
      "squid-protocol": {
-      "busiest_hour": 74,
+      "busiest_hour": 79,
       "hours": {
-       "00": 74
+       "00": 79,
+       "01": 36,
+       "02": 35,
+       "03": 19,
+       "04": 37,
+       "05": 24,
+       "06": 41,
+       "07": 37,
+       "08": 32,
+       "09": 28,
+       "10": 19,
+       "11": 30,
+       "12": 35,
+       "13": 7
       },
-      "total": 74
+      "total": 459
      },
      "squid-shepherd[bot]": {
-      "busiest_hour": 56,
+      "busiest_hour": 63,
       "hours": {
-       "00": 56
+       "00": 62,
+       "01": 49,
+       "02": 56,
+       "03": 56,
+       "04": 63,
+       "05": 36,
+       "06": 47,
+       "07": 47,
+       "08": 46,
+       "09": 30,
+       "10": 37,
+       "11": 36,
+       "12": 56,
+       "13": 8
       },
-      "total": 56
+      "total": 629
      }
     }
    }
   },
-  "open_at": "2026-10-25T00:56Z",
-  "open_now": 170
+  "open_at": "2026-10-25T13:19Z",
+  "open_now": 164
  },
- "updated": "2026-10-25T00:56Z"
+ "updated": "2026-10-25T13:19Z"
 }
