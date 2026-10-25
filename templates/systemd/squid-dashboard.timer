@@ -1,0 +1,13 @@
+[Unit]
+Description=squid-bot: dashboard refresh at 05:47, 14:47 and 19:52 US Eastern (fresh by 06:00, 15:00, 20:05)
+
+[Timer]
+# systemd keeps the Eastern clock across daylight-saving changes; GitHub's cron is UTC only and drops or delays
+# scheduled runs under load (2026-10-25: none of the day's slots refreshed on schedule; the 14:47 run never started)
+OnCalendar=*-*-* 05,14:47:00 America/New_York
+OnCalendar=*-*-* 19:52:00 America/New_York
+Persistent=true
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

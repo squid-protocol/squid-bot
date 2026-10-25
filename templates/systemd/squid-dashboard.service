@@ -1,0 +1,8 @@
+[Unit]
+Description=squid-bot: start a fleet dashboard refresh (workflow_dispatch of dashboard.yml)
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env gh workflow run dashboard.yml -R squid-protocol/squid-bot
+TimeoutStartSec=120

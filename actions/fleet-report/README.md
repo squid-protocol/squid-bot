@@ -44,6 +44,16 @@ About 15-60 API calls a reading on the host's `gh` token. A day the host was off
 to the sampled estimate. Without a host, `occupancy-sample: "true"` in a workflow still takes one reading (it leaves
 its own job out).
 
+For refreshes at set times, start them from a host too. GitHub delays or drops scheduled runs on a busy account (on
+2026-10-25 none of squid-bot's three daily slots refreshed on schedule), while a `workflow_dispatch` starts at once.
+`templates/systemd/squid-dashboard.timer` dispatches `dashboard.yml` at 05:47, 14:47 and 19:52 US Eastern (edit
+`OnCalendar` and the repo in the `.service` for yours); keep the workflow's own schedule as the backup:
+
+```sh
+cp templates/systemd/squid-dashboard.{service,timer} ~/.config/systemd/user/
+systemctl --user daemon-reload && systemctl --user enable --now squid-dashboard.timer
+```
+
 The first run backfills 30 days of exact counts, plus the sampled detail for the 3 most recent days. Older days get their sampled detail 4 at a time on later runs (`detail-backfill`), to stay within the API budget.
 
 ### Inputs
