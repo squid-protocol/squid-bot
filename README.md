@@ -1,6 +1,6 @@
 # 🦑 squid-bot
 
-**Gene editing for codebases: squid-bot regulates a fleet of autonomous coding agents that correct known defects in your repository, screens every edit, and integrates only verified ones into `main`, without exhausting the host that runs them.**
+**A controlled release of coding agents: squid-bot starts agents only as the host, CI and budget can take them, screens every change they make, and merges only verified ones into `main`, so a repository gets a steady, rolling stream of small improvements that never has to stop.**
 
 [![Tests](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml)
 [![Dashboard](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml)
@@ -10,37 +10,74 @@
 
 ---
 
-## ⚡ The 15-Second Pitch: The Grasshopper Problem
+## ⚡ What It Does
 
-> You give 5 autonomous coding agents tasks simultaneously.
->
-> Ten minutes later: your machine fans are howling, CPU load is 74 on a 12-core box, tests time out randomly because regex engines were starved of clock cycles, your GitHub Actions queue is backed up for two hours, and two agents crashed mid-sentence because the kernel ran out of memory.
+On [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository it runs on, squid-bot has largely automated the production of code. The owner's job is to **set goals**: an ordered list of issue sets for the fleet to work through. From there the loop runs on its own, around the clock:
 
-Autonomous agents are greedy by default. Left unmanaged, an agent population behaves like a **plague of grasshoppers**: they consume every available core, saturate disk I/O, burn through CI budgets with speculative PRs, and trample shared state until their host habitat collapses.
+1. **Release agents as resources allow.** Every 10 minutes a cheap gate checks the host (CPU, memory and disk pressure), the CI queue, the spend budget, usage limits and connectivity. It starts a new agent only into free capacity, and stops starting them when any of those signals says so.
+2. **Edit in isolation.** Each agent works one slice of an issue in its own git worktree and opens a draft PR.
+3. **Screen, then merge.** Cheap checks first, the full CI suite after. A failure is classified (real defect, infra noise, flake, broken `main`, conflict) and sent back with the exact local repro; only a green PR is squash-merged.
+4. **Keep rolling.** Finished slices free their slots, the queue refills from the goals, and the next agents start. When only a human can decide something, the question goes to the owner's phone and the fleet carries on with other work.
 
-squid-bot keeps the swarm inside its habitat's carrying capacity. What it actually runs, though, is closer to a **gene-editing programme**: it decides which defects in the codebase get corrected and when, edits them in isolation, screens every edited copy, and integrates only the verified ones into the genome.
+The aim is a perpetual cycle: no batch to start, no run to finish, just as much verified improvement per day as the machine, the CI pool and the budget allow.
+
+The system itself is still being tuned. The owner adjusts the rules (PR size caps, pacing, retry limits, which goal comes first) and watches the dashboards below to see whether each change helped.
+
+---
+
+## 🔬 Being Honest About the Numbers
+
+**PRs are deliberately small, so PR counts overstate the work.** Agents are told to slice an issue into small PRs, touching at most 5 hand-written files each, because small PRs pass review and CI far more often (see the quality chart below). The cost is that one issue usually becomes several PRs. From Oct 19 to Oct 25, promoter-bot merged **926 PRs** while closing **193 work items**: about **4.8 PRs per item**. Read the merged-PR line on the dashboard as *throughput of verified changes*, not issues solved; the Issues and Cost-per-resolved-issue panels are the better measures of outcome.
+
+**The fleet isn't free to run.** Since promoter-bot went live on Oct 11, CI runner hours per day and job queue wait have both risen sharply, `main` goes red a few times a day (each one caught and fixed, but counted), and the agents cost about $2,700 in their first two weeks (about $2 per merged PR, about $11 per resolved issue). All of these are on the dashboard rather than left out of it.
+
+**Some things aren't measured yet:** the owner's time saved (the real point of the system), host pressure over time, and rework after merge.
 
 ---
 
 ## 📊 Live Fleet Dashboard
 
-![GitGalaxy promoter-bot fleet over time: delivery, CI hours, speed, CI load, dollar spend, cost per PR and efficiency](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
+![GitGalaxy promoter-bot fleet over time: delivery, CI hours, queue wait, CI load, spend, cost per PR, efficiency, issues, first-pass rate, change failure, cost per resolved issue and GitHub writes](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
-Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository squid-bot runs on, refreshed every 6 hours. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json).
+Live numbers from the GitHub API for GitGalaxy, refreshed three times a day. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json) and the fleet's own [`factory.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/factory.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, seven panels run over time, with solid lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live: merged PRs per day by origin; CI runner hours per day; job queue wait; CI runner hours per merged PR; promoter-bot's total spend in dollars since it started; its dollars per merged PR each day, with the average; and the share of run minutes saved by early cancellation against the share of runs that failed. The weekly report also includes reruns by workflow and, when the orchestrator publishes its own data, agent factory time and slot use. It does not yet include historical host pressure or post-merge rework.
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, twelve panels run over time, with lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live:
 
-### PR quality by size (weekly)
+| | Panel | What it shows |
+|---|---|---|
+| 1 | Delivery | Merged PRs per day, by origin (promoter-bot, other agents, people, automation) |
+| 2 | CI hours | Runner hours per day |
+| 3 | Speed | Job queue wait, p90 |
+| 4 | CI load | Runner hours per merged PR |
+| 5 | Spend | promoter-bot's dollars, cumulative |
+| 6 | Cost per PR | Dollars per merged promoter-bot PR, each day |
+| 7 | Efficiency | Run minutes saved by early cancellation vs runs failed |
+| 8 | Issues | Opened and closed each day, by who |
+| 9 | First-pass rate | promoter-bot PRs merged with no send-back or fix |
+| 10 | Change failure | Times `main` went red, per merged PR |
+| 11 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
+| 12 | GitHub writes | Busiest hour per account, against the API limit |
+
+### PR quality by size: are small PRs worth it?
 
 ![GitGalaxy PR quality by size: weekly fix rate by hand-written file count, and fix runs per 100 merged PRs by cause](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/quality.svg)
 
-The scored check behind promoter-bot's 5-file PR rule. It shows how often a merged bot PR needed a fix (a review send-back or a CI fix run), split by how many hand-written files it changed, and what broke when one did: a derived file not refreshed, a conflict with main, other tests broken, or main red/flaky. Each cause is labelled by a model from the fix run's own report. The tiles score the last full week. The rule's cap can move when the 5+ file line comes down to the 3-4 file line. The data is in `factory.json`'s `quality` field (promoter-bot #72).
+This is the evidence behind the small-PR rule, and we have only just started tracking it (from Oct 10). For every merged promoter-bot PR, the fleet records how many hand-written files it changed and whether it needed a fix before merging: a review send-back or a CI fix run. When it did, a model reads the fix run's own report and labels what broke. So far:
+
+| Hand-written files changed | Merged PRs | Needed a fix |
+|---|---|---|
+| 1-2 | 113 | **21%** |
+| 3-4 | 110 | **22%** |
+| 5 | 37 | **49%** |
+| 6+ | 18 | **44%** |
+
+Up to 4 files, about one PR in five needs a fix; at 5 or more, about half do. The most common causes are a derived file not refreshed (stale), a conflict with `main`, and `main` itself being red or flaky. The chart scores the last full week and draws a week's point only from 3 PRs up, so the larger buckets are still thin. The 5-file cap stays until the 5+ line comes down to the 3-4 line. The data is in `factory.json`'s `quality` field.
 
 ---
 
 ## 🧬 The Frame: Editing a Genome, One Verified Change at a Time
 
-The grasshopper analogy explains why an *unmanaged* swarm crashes a machine, but grasshoppers in a field are independent organisms competing for grass. A coding fleet is doing something different: many agents are making **heritable changes to one shared genome**, `origin/main`, which every future branch inherits.
+Left unmanaged, coding agents behave like a plague of grasshoppers: five started at once will take every core, run the box out of memory, back the CI queue up for hours, and time their own tests out. Keeping them inside the host's carrying capacity is half the job. The other half is that a coding fleet is not a swarm competing for grass: many agents are making **heritable changes to one shared genome**, `origin/main`, which every future branch inherits.
 
 That is gene editing, and the way labs do it safely is a good model for doing it with agents. In an *ex vivo* therapy (the way CAR-T cells are made), cells are taken out of the patient, edited in a dish, screened, and only verified cells are returned. squid-bot does the same with code: each issue is a known defect, each agent edits an isolated copy of the genome, CI screens the edited copy, and only a verified edit is integrated into `main`.
 
@@ -200,7 +237,9 @@ The share is not revised while the job runs: a job that starts alone gets every 
 promoter-bot decides which issues get worked, when, and how many at once, and launches the agents that work them. It runs as a cheap gate every 10 minutes and starts a model session only when something needs judgment:
 * **Signals that switch editing off:** `box-status` RED, a usage limit (paused until its reset, weekly resets included), lost connectivity (workers that died offline are requeued), a run of failing workers, or a stop file.
 * **Dose:** at most `max_workers` agents at once, only into free heavy slots.
+* **Goals:** the owner's ordered list of issue sets. The active goal's issues launch first and lead every refill; later goals follow, then everything else.
 * **Targets:** a tiered queue that refills itself from labelled issues.
+* **Slicing:** a worker takes one slice of an issue, capped at 5 hand-written files, so an issue usually lands as several small PRs. A checklist item that keeps merging partial slices is requeued to be split first.
 * **Housekeeping and alerts:** removes finished worktrees, reaps stale containers, keeps a daily scorecard, and sends phone alerts when it needs a human (through comms-bot's private ntfy server).
 
 ---
@@ -340,7 +379,7 @@ integrase-bot status   # the queue, plus the ledger's most recent events
 
 ## 🔄 The GitGalaxy Live Crucible & Sync Bridge
 
-`squid-bot` was forged inside **[GitGalaxy](https://github.com/squid-protocol/gitgalaxy)**, where it regulates multi-agent editing across **5,200+ pull requests**.
+`squid-bot` was forged inside **[GitGalaxy](https://github.com/squid-protocol/gitgalaxy)**, where it regulates multi-agent editing (4,800+ merged pull requests as of Oct 26, 2026).
 
 To allow continuous evolution inside GitGalaxy while maintaining a clean, generalized open-source package, `squid-bot` includes a bi-directional sync bridge (`scripts/sync.py`):
 
