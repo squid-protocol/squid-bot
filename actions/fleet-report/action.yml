@@ -18,7 +18,7 @@ inputs:
       (needs `permissions: contents: write` to publish).
     default: ${{ github.token }}
   branch:
-    description: Branch of this repository to publish dashboard.svg and metrics.json to. Empty = don't publish.
+    description: Branch of this repository to publish dashboard.svg, quality.svg and metrics.json to. Empty = don't publish.
     default: dashboard
   days:
     description: Days shown on the dashboard.
@@ -169,15 +169,18 @@ runs:
         BRANCH: ${{ inputs.branch }}
         # each mode commits only the files it wrote: the occupancy sampler must never put back an older metrics.json
         FILES: ${{ inputs.occupancy-sample == 'true' && 'occupancy.jsonl' || 'dashboard.svg metrics.json' }}
+        # drawn only when the orchestrator's factory.json has the data for them
+        OPTIONAL: ${{ inputs.occupancy-sample == 'true' && '' || 'quality.svg goals.svg' }}
       run: |
         for f in $FILES; do [ -f "$f" ] || exit 0; done
+        for f in $OPTIONAL; do [ -f "$f" ] && FILES="$FILES $f"; done
         git add $FILES
         if ! git diff --cached --quiet; then
           for try in 1 2 3; do
             git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -q -m "fleet report: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
             git push -q origin "$BRANCH" && break
-            # another writer (an orchestrator publishing factory.json) moved the branch: put only OUR two files on its tip
+            # another writer (an orchestrator publishing factory.json) moved the branch: put only OUR files on its tip
             git fetch -q --depth=1 origin "$BRANCH" && git reset -q --mixed FETCH_HEAD && git add $FILES
             git diff --cached --quiet && break
           done

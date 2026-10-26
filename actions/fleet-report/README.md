@@ -62,7 +62,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 |---|---|---|
 | `repo` | the running repo | Repository to measure (`owner/repo`). Can be another public repo. |
 | `token` | `github.token` | Reads the measured repo and pushes to `branch` |
-| `branch` | `dashboard` | Where `dashboard.svg` and `metrics.json` are published. Empty = don't publish. |
+| `branch` | `dashboard` | Where `dashboard.svg`, `quality.svg` and `metrics.json` are published. Empty = don't publish. |
 | `days` | `30` | Days on the dashboard |
 | `title` | `<repo>: CI activity` | Heading |
 | `agent-branch-prefixes` | `claude/,codex/,copilot/,cursor/,devin/` | Head-branch prefixes that mark a PR as agent-made |
@@ -110,6 +110,8 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **Spend** and **Cost per PR** (when the orchestrator publishes `factory.json` with `usd`): the bot's dollar cost added up since it started, and each day's dollars per merged bot PR with the overall average.
 - **Efficiency:** two percentages per day. **Runs failed:** failed ÷ (passed + failed) workflow runs, exact. **Run minutes saved (est.):** a run cancelled early (usually because a newer push replaced it) would have taken about as long as that day's median successful run of the same workflow; what it saved is that minus what it ran. The chart shows saved ÷ (spent + saved), in run wall-clock minutes. Runs of the configured `bot-workflows` are left out of both sides, and cancelled runs of a workflow with no successful run that day aren't priced. It is an estimate, labelled as one.
 - **Change failure** (with `red-main-label`): each day, the issues with that label opened (one per check that went red on main, opened by a main-watch workflow) ÷ merged PRs, from the bot's start; the tooltip has the median hours to green. An infrastructure failure on main counts too, and one bad merge that breaks two checks counts twice: it is how often main broke per merge, not a count of bad PRs.
+
+**PR quality by size** (`quality.svg`, when `factory.json` days carry a `quality` field): weekly, the share of merged bot PRs that needed a fix (a review send-back or a CI fix run) by hand-written file count (1-2, 3-4, 5, 6+), and fix runs per 100 merged PRs by cause. A week's point is drawn from 3 PRs up. It is published beside `dashboard.svg`, as is `goals.svg` when `factory.json` has `goals`.
 
 Today is drawn faded, as incomplete. The cards use finished days only.
 

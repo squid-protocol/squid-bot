@@ -1981,8 +1981,7 @@ def render_quality(data: dict, today: date, cfg: Config) -> str | None:
     out, y = [], 34
     out.append(f'<text class="h1" x="{pad}" y="{y}">{escape(cfg.repo)}: PR quality by size</text>')
     out.append(f'<text class="lead" x="{pad}" y="{y + 20}">How often a merged {escape(cfg.bot_name)} PR needed a fix '
-               '(a review send-back or a CI fix run), by its hand-written file count, and what broke when one did. '
-               'Weekly.</text>')
+               '(review send-back or CI fix run), by hand-written files changed, and what broke. Weekly.</text>')
     y += 44
     # score tiles: the last full week (the current one is partial)
     full = [w for w in weeks if not w["partial"]] or weeks
