@@ -691,8 +691,8 @@
    "churn_merged": 93,
    "ci_busy_hours": 16.15,
    "first_pass": {
-    "first_pass": 64,
-    "merged": 95
+    "first_pass": 65,
+    "merged": 96
    },
    "holds": {
     "pace": 36,
@@ -735,7 +735,7 @@
      },
      "3-4": {
       "fixed": 10,
-      "merged": 37
+      "merged": 38
      },
      "5": {
       "fixed": 6,
@@ -3046,8 +3046,8 @@
     "churn_merged": 30,
     "ci_busy_hours": 9.08,
     "first_pass": {
-     "first_pass": 21,
-     "merged": 30
+     "first_pass": 22,
+     "merged": 31
     },
     "holds": {
      "pace": 3,
@@ -3087,7 +3087,7 @@
       },
       "3-4": {
        "fixed": 4,
-       "merged": 15
+       "merged": 16
       },
       "5": {
        "fixed": 3,
@@ -3562,5 +3562,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T21:59Z"
+ "updated": "2026-10-26T22:00Z"
 }
