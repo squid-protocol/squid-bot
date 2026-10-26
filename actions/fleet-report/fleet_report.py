@@ -2013,9 +2013,10 @@ def render_quality(data: dict, today: date, cfg: Config) -> str | None:
     out, y = [], 36
     out.append(f'<text class="h1" x="{pad}" y="{y}">{escape(cfg.repo)}: PR quality by size</text>')
     out.append(f'<text class="lead" x="{pad}" y="{y + 22}">How often a merged {escape(cfg.bot_name)} PR needed a fix '
-               f'(review send-back or CI fix run), by hand-written files changed. All hosts, rolling {QUALITY_WINDOW} '
-               'days, updated daily.</text>')
-    y += 50
+               '(review send-back or CI fix run), by hand-written files changed.</text>')
+    out.append(f'<text class="lead" x="{pad}" y="{y + 41}">All hosts, rolling {QUALITY_WINDOW} days, a new point '
+               'every day.</text>')
+    y += 69
     # score tiles: the last window against the window a week before it
     last = days[-1]
     prev = days[-1 - QUALITY_WINDOW] if len(days) > QUALITY_WINDOW else None
@@ -2122,12 +2123,13 @@ def render_quality(data: dict, today: date, cfg: Config) -> str | None:
                          f"own tests, review, other, last {QUALITY_WINDOW} days: {other[-1]} fix runs per "
                          f"{last['merged']} merged PRs"))
     chart("What broke: fix runs per 100 merged PRs, by cause", cause_series, "")
-    out.append(f'<text class="meta" x="{pad}" y="{y - 16}">Each day is the {QUALITY_WINDOW} days ending on it (fewer at '
-               f'the start); a size line is drawn where that window has {QUALITY_DAY_MIN_N} merged PRs or more. Tiles: '
-               'the last window, change on the window a week before.</text>')
-    out.append(f'<text class="meta" x="{pad}" y="{y + 2}">Causes are labelled by a model from each fix run&apos;s report '
-               '(factory.json "quality", summed over every orchestrator host).</text>')
-    height = y + 20
+    out.append(f'<text class="meta" x="{pad}" y="{y - 6}">Each day is the {QUALITY_WINDOW} days ending on it (fewer at '
+               f'the start); a size line is drawn where that window has {QUALITY_DAY_MIN_N} merged PRs or more.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{y + 12}">Tiles: the last {QUALITY_WINDOW} days, change on the '
+               f'{QUALITY_WINDOW} before. Causes are labelled by a model from each fix run&apos;s report.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{y + 30}">Data: factory.json "quality", summed over every orchestrator '
+               'host.</text>')
+    height = y + 48
     style = STYLE + """
   .h1 { font-size: 19px; font-weight: 750; } .h2 { font-size: 15px; font-weight: 700; }
   .lead { font-size: 13.5px; font-weight: 600; } .meta { font-size: 12px; font-weight: 600; }
