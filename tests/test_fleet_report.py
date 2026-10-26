@@ -732,3 +732,39 @@ def test_writes_are_counted_per_account_and_hour_and_drawn_against_the_guidance(
         data["scorecard"]["days"][d]["writes"] = w
     svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
     assert "GitHub writes — busiest hour per account" in svg and "me: busiest hour 7 writes, 7 that day" in svg
+
+
+def _quality_day(sizes, causes, merged, first_pass):
+    return {"quality": {"by_size": {b: {"merged": m, "fixed": f} for b, (m, f) in sizes.items()},
+                        "causes": causes, "fix_runs": sum(causes.values())},
+            "first_pass": {"merged": merged, "first_pass": first_pass}}
+
+
+def test_quality_sheet_draws_weekly_fix_rates_by_size_and_causes():
+    """Owner 2026-10-26: the PR-size rule as a weekly score: fix rate by hand-written file count, and what broke."""
+    data = _data(3)
+    monday = TODAY - dashboard.timedelta(days=TODAY.weekday())
+    days = {}
+    for wk, (big_fixed, stale) in enumerate([(3, 4), (2, 3), (1, 1)]):  # three weeks back to the last full one
+        d = (monday - dashboard.timedelta(days=7 * (3 - wk))).isoformat()
+        days[d] = _quality_day({"1-2": (10, 1), "3-4": (6, 2), "5": (4, big_fixed), "6+": (1, 1)},
+                               {"stale": stale, "env": 1, "review": 1}, 21, 15)
+    days[monday.isoformat()] = _quality_day({"1-2": (2, 0)}, {"conflict": 1}, 2, 2)  # this week so far
+    data["factory"] = {"days": days}
+    weeks = dashboard.quality_weeks(data, TODAY)
+    assert [w["partial"] for w in weeks] == [False, False, False, True]
+    assert weeks[-2]["by_size"]["5"] == {"merged": 4, "fixed": 1} and weeks[-2]["causes"]["stale"] == 1
+    svg = dashboard.render_quality(data, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "PR quality by size" in svg and "FIX RATE, 5+ FILES" in svg
+    assert "40%" in svg and "2 of 5 PRs" in svg  # last full week: (1 + 1) of (4 + 1) at 5+ files
+    assert "-20 pts" in svg  # week before: (2 + 1) of 5 -> 60%
+    assert "5 files: 1 of 4 merged PRs needed a fix" in svg  # hover text per point
+    assert "6+ files: 1 of 1" not in svg and ">6+ files" not in svg  # under 3 PRs a week: a gap, no point, no label
+    assert ">stale 5<" in svg and ">other 5<" in svg  # direct labels, last full week: 1 per 21 PRs; review folds into other
+    assert ">conflict 50<" not in svg  # this week's 2 PRs are too few to draw
+    assert " *" in svg  # the partial week is marked on the axis
+    md = "\n".join(dashboard.quality_md(data, TODAY))
+    assert "| fix 5 |" in md and "1/4" in md and "(partial)" in md
+    assert dashboard.render_quality(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
+    assert dashboard.quality_md(_data(3), TODAY) == []

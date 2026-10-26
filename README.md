@@ -30,6 +30,12 @@ Live numbers from the GitHub API for [GitGalaxy](https://github.com/squid-protoc
 
 It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, seven panels run over time, with solid lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live: merged PRs per day by origin; CI runner hours per day; job queue wait; CI runner hours per merged PR; promoter-bot's total spend in dollars since it started; its dollars per merged PR each day, with the average; and the share of run minutes saved by early cancellation against the share of runs that failed. The weekly report also includes reruns by workflow and, when the orchestrator publishes its own data, agent factory time and slot use. It does not yet include historical host pressure or post-merge rework.
 
+### PR quality by size (weekly)
+
+![GitGalaxy PR quality by size: weekly fix rate by hand-written file count, and fix runs per 100 merged PRs by cause](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/quality.svg)
+
+The scored check behind promoter-bot's 5-file PR rule. It shows how often a merged bot PR needed a fix (a review send-back or a CI fix run), split by how many hand-written files it changed, and what broke when one did: a derived file not refreshed, a conflict with main, other tests broken, or main red/flaky. Each cause is labelled by a model from the fix run's own report. The tiles score the last full week. The rule's cap can move when the 5+ file line comes down to the 3-4 file line. The data is in `factory.json`'s `quality` field (promoter-bot #72).
+
 ---
 
 ## 🧬 The Frame: Editing a Genome, One Verified Change at a Time
