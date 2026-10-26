@@ -60,7 +60,7 @@ It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The
 
 ### PR quality by size: are small PRs worth it?
 
-![GitGalaxy PR quality by size: weekly fix rate by hand-written file count, and fix runs per 100 merged PRs by cause](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/quality.svg)
+![GitGalaxy PR quality by size: daily rolling 7-day fix rate by hand-written file count, and fix runs per 100 merged PRs by cause, all hosts](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/quality.svg)
 
 This is the evidence behind the small-PR rule, and we have only just started tracking it (from Oct 10). For every merged promoter-bot PR, the fleet records how many hand-written files it changed and whether it needed a fix before merging: a review send-back or a CI fix run. When it did, a model reads the fix run's own report and labels what broke. So far:
 
@@ -71,7 +71,7 @@ This is the evidence behind the small-PR rule, and we have only just started tra
 | 5 | 37 | **49%** |
 | 6+ | 18 | **44%** |
 
-Up to 4 files, about one PR in five needs a fix; at 5 or more, about half do. The most common causes are a derived file not refreshed (stale), a conflict with `main`, and `main` itself being red or flaky. The chart scores the last full week and draws a week's point only from 3 PRs up, so the larger buckets are still thin. The 5-file cap stays until the 5+ line comes down to the 3-4 line. The data is in `factory.json`'s `quality` field.
+Up to 4 files, about one PR in five needs a fix; at 5 or more, about half do. The most common causes are a derived file not refreshed (stale), a conflict with `main`, and `main` itself being red or flaky. The chart covers every orchestrator host and gains a point each day: each point is the 7 days ending on it, and a size line is drawn only where those 7 days have 5 PRs or more. The tiles score the last 7 days against the 7 before. The 5-file cap stays until the 5+ line comes down to the 3-4 line. The data is in `factory.json`'s `quality` field.
 
 ---
 
