@@ -772,7 +772,7 @@
    "churn_merged": 98,
    "ci_busy_hours": 16.23,
    "first_pass": {
-    "first_pass": 59,
+    "first_pass": 56,
     "merged": 102
    },
    "holds": {
@@ -814,7 +814,7 @@
       "merged": 53
      },
      "3-4": {
-      "fixed": 9,
+      "fixed": 12,
       "merged": 35
      },
      "5": {
@@ -829,12 +829,12 @@
     "causes": {
      "collateral": 7,
      "conflict": 11,
-     "env": 26,
+     "env": 29,
      "own_test": 1,
-     "stale": 19,
+     "stale": 20,
      "unlabelled": 1
     },
-    "fix_runs": 65
+    "fix_runs": 69
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 70,
@@ -3132,7 +3132,7 @@
     "churn_merged": 28,
     "ci_busy_hours": 14.48,
     "first_pass": {
-     "first_pass": 21,
+     "first_pass": 18,
      "merged": 29
     },
     "holds": {
@@ -3167,7 +3167,7 @@
        "merged": 8
       },
       "3-4": {
-       "fixed": 5,
+       "fixed": 8,
        "merged": 18
       },
       "5": {
@@ -3181,10 +3181,10 @@
      },
      "causes": {
       "collateral": 1,
-      "env": 4,
-      "stale": 2
+      "env": 7,
+      "stale": 3
      },
-     "fix_runs": 7
+     "fix_runs": 11
     },
     "review_wait_min_median": 1.0,
     "slices_merged": 9,
