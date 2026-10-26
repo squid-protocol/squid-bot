@@ -532,7 +532,7 @@
    "churn_merged": 119,
    "ci_busy_hours": 6.12,
    "first_pass": {
-    "first_pass": 70,
+    "first_pass": 69,
     "merged": 125
    },
    "holds": {
@@ -589,13 +589,13 @@
     "causes": {
      "collateral": 11,
      "conflict": 7,
-     "env": 6,
+     "env": 7,
      "other": 2,
      "own_test": 2,
      "review": 2,
-     "stale": 13
+     "stale": 15
     },
-    "fix_runs": 43
+    "fix_runs": 46
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 0,
@@ -2878,7 +2878,7 @@
     "churn_merged": 18,
     "ci_busy_hours": 1.8,
     "first_pass": {
-     "first_pass": 8,
+     "first_pass": 7,
      "merged": 19
     },
     "holds": {
@@ -2927,13 +2927,13 @@
      },
      "causes": {
       "collateral": 3,
-      "env": 3,
+      "env": 4,
       "other": 1,
       "own_test": 1,
       "review": 1,
-      "stale": 1
+      "stale": 3
      },
-     "fix_runs": 10
+     "fix_runs": 13
     },
     "review_wait_min_median": 1.0,
     "slices_merged": 0,
