@@ -912,8 +912,8 @@
    "churn_merged": 187,
    "ci_busy_hours": 44.98,
    "first_pass": {
-    "first_pass": 41,
-    "merged": 55
+    "first_pass": 119,
+    "merged": 189
    },
    "holds": {
     "pace": 78,
@@ -951,29 +951,32 @@
    "quality": {
     "by_size": {
      "1-2": {
-      "fixed": 3,
-      "merged": 20
+      "fixed": 16,
+      "merged": 88
      },
      "3-4": {
-      "fixed": 1,
-      "merged": 22
+      "fixed": 10,
+      "merged": 66
      },
      "5": {
-      "fixed": 4,
-      "merged": 9
+      "fixed": 9,
+      "merged": 18
      },
      "6+": {
-      "fixed": 2,
-      "merged": 4
+      "fixed": 11,
+      "merged": 17
      }
     },
     "causes": {
-     "collateral": 3,
-     "conflict": 2,
-     "review": 2,
-     "stale": 4
+     "collateral": 18,
+     "conflict": 12,
+     "env": 4,
+     "other": 1,
+     "own_test": 1,
+     "review": 3,
+     "stale": 17
     },
-    "fix_runs": 11
+    "fix_runs": 56
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 104,
@@ -1631,6 +1634,10 @@
    "2026-10-23": {
     "churn_merged": 132,
     "ci_busy_hours": 44.98,
+    "first_pass": {
+     "first_pass": 78,
+     "merged": 134
+    },
     "holds": {
      "pace": 77,
      "paused": 12,
@@ -1662,6 +1669,36 @@
      "failed_again": 3,
      "passed": 171,
      "sent_back": 31
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 13,
+       "merged": 68
+      },
+      "3-4": {
+       "fixed": 9,
+       "merged": 44
+      },
+      "5": {
+       "fixed": 5,
+       "merged": 9
+      },
+      "6+": {
+       "fixed": 9,
+       "merged": 13
+      }
+     },
+     "causes": {
+      "collateral": 15,
+      "conflict": 10,
+      "env": 4,
+      "other": 1,
+      "own_test": 1,
+      "review": 1,
+      "stale": 13
+     },
+     "fix_runs": 45
     },
     "review_wait_min_median": 1.0,
     "slices_merged": 72,
@@ -3174,5 +3211,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T21:27Z"
+ "updated": "2026-10-26T21:30Z"
 }
