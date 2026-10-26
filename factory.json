@@ -601,8 +601,8 @@
    "churn_merged": 94,
    "ci_busy_hours": 11.22,
    "first_pass": {
-    "first_pass": 22,
-    "merged": 36
+    "first_pass": 61,
+    "merged": 97
    },
    "holds": {
     "pace": 48,
@@ -636,31 +636,32 @@
    "quality": {
     "by_size": {
      "1-2": {
-      "fixed": 4,
-      "merged": 15
+      "fixed": 10,
+      "merged": 52
      },
      "3-4": {
-      "fixed": 2,
-      "merged": 10
+      "fixed": 8,
+      "merged": 25
      },
      "5": {
-      "fixed": 5,
-      "merged": 8
+      "fixed": 9,
+      "merged": 14
      },
      "6+": {
-      "fixed": 1,
-      "merged": 3
+      "fixed": 2,
+      "merged": 6
      }
     },
     "causes": {
-     "collateral": 2,
-     "conflict": 3,
-     "env": 7,
-     "other": 4,
+     "collateral": 5,
+     "conflict": 6,
+     "env": 12,
+     "other": 7,
+     "own_test": 1,
      "review": 1,
-     "stale": 2
+     "stale": 11
     },
-    "fix_runs": 19
+    "fix_runs": 43
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 33,
@@ -1471,6 +1472,10 @@
    "2026-10-19": {
     "churn_merged": 58,
     "ci_busy_hours": 11.22,
+    "first_pass": {
+     "first_pass": 39,
+     "merged": 61
+    },
     "holds": {
      "pace": 48,
      "paused": 25,
@@ -1494,6 +1499,35 @@
      "failed_again": 1,
      "passed": 80,
      "sent_back": 10
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 6,
+       "merged": 37
+      },
+      "3-4": {
+       "fixed": 6,
+       "merged": 15
+      },
+      "5": {
+       "fixed": 4,
+       "merged": 6
+      },
+      "6+": {
+       "fixed": 1,
+       "merged": 3
+      }
+     },
+     "causes": {
+      "collateral": 3,
+      "conflict": 3,
+      "env": 5,
+      "other": 3,
+      "own_test": 1,
+      "stale": 9
+     },
+     "fix_runs": 24
     },
     "review_wait_min_median": 1.0,
     "slices_merged": 32,
@@ -3315,5 +3349,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T21:39Z"
+ "updated": "2026-10-26T21:42Z"
 }
