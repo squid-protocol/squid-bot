@@ -773,7 +773,7 @@
    "ci_busy_hours": 16.23,
    "first_pass": {
     "first_pass": 59,
-    "merged": 101
+    "merged": 102
    },
    "holds": {
     "pace": 18,
@@ -811,7 +811,7 @@
     "by_size": {
      "1-2": {
       "fixed": 15,
-      "merged": 52
+      "merged": 53
      },
      "3-4": {
       "fixed": 9,
@@ -3133,7 +3133,7 @@
     "ci_busy_hours": 14.48,
     "first_pass": {
      "first_pass": 21,
-     "merged": 28
+     "merged": 29
     },
     "holds": {
      "pace": 3,
@@ -3164,7 +3164,7 @@
      "by_size": {
       "1-2": {
        "fixed": 0,
-       "merged": 7
+       "merged": 8
       },
       "3-4": {
        "fixed": 5,
