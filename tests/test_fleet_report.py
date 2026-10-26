@@ -740,31 +740,34 @@ def _quality_day(sizes, causes, merged, first_pass):
             "first_pass": {"merged": merged, "first_pass": first_pass}}
 
 
-def test_quality_sheet_draws_weekly_fix_rates_by_size_and_causes():
-    """Owner 2026-10-26: the PR-size rule as a weekly score: fix rate by hand-written file count, and what broke."""
+def test_quality_sheet_draws_daily_rolling_fix_rates_by_size_and_causes():
+    """Owner 2026-10-26: the PR-size rule as a score that moves every day: the trailing 7 days' fix rate by hand-written
+    file count, and what broke; plain lines (no points), fleet-wide."""
     data = _data(3)
-    monday = TODAY - dashboard.timedelta(days=TODAY.weekday())
-    days = {}
-    for wk, (big_fixed, stale) in enumerate([(3, 4), (2, 3), (1, 1)]):  # three weeks back to the last full one
-        d = (monday - dashboard.timedelta(days=7 * (3 - wk))).isoformat()
-        days[d] = _quality_day({"1-2": (10, 1), "3-4": (6, 2), "5": (4, big_fixed), "6+": (1, 1)},
-                               {"stale": stale, "env": 1, "review": 1}, 21, 15)
-    days[monday.isoformat()] = _quality_day({"1-2": (2, 0)}, {"conflict": 1}, 2, 2)  # this week so far
+    first = date(2026, 9, 30)
+    days = {"2026-09-28": _quality_day({}, {}, 0, 0), "2026-09-29": _quality_day({}, {}, 0, 0)}  # before any churn PR
+    for k in range(14):  # Sep 30 .. Oct 13: the 5-file bucket always needs a fix in week one, never in week two
+        d = first + dashboard.timedelta(days=k)
+        sizes = {"1-2": (2, int(k == 13)), "3-4": (1, 0), "5": (1, int(k < 7))}
+        if k >= 11:
+            sizes["6+"] = (1, 1)  # 3 PRs in the last window: too few to draw
+        days[d.isoformat()] = _quality_day(sizes, {"stale": 1, "review": 1}, 4, 3)
     data["factory"] = {"days": days}
-    weeks = dashboard.quality_weeks(data, TODAY)
-    assert [w["partial"] for w in weeks] == [False, False, False, True]
-    assert weeks[-2]["by_size"]["5"] == {"merged": 4, "fixed": 1} and weeks[-2]["causes"]["stale"] == 1
+    rows = dashboard.quality_days(data)
+    assert len(rows) == 14 and rows[0]["day"] == "2026-09-30" and rows[-1]["day"] == "2026-10-13"
+    assert rows[0]["by_size"]["5"] == {"merged": 1, "fixed": 1}  # the first window is just its own day
+    assert rows[-1]["by_size"]["5"] == {"merged": 7, "fixed": 0} and rows[-1]["causes"]["stale"] == 7
     svg = dashboard.render_quality(data, TODAY, dashboard.Config(repo="owner/repo"))
     ET.fromstring(svg)
-    assert "PR quality by size" in svg and "FIX RATE, 5+ FILES" in svg
-    assert "40%" in svg and "2 of 5 PRs" in svg  # last full week: (1 + 1) of (4 + 1) at 5+ files
-    assert "-20 pts" in svg  # week before: (2 + 1) of 5 -> 60%
-    assert "5 files: 1 of 4 merged PRs needed a fix" in svg  # hover text per point
-    assert "6+ files: 1 of 1" not in svg and ">6+ files" not in svg  # under 3 PRs a week: a gap, no point, no label
-    assert ">stale 5<" in svg and ">other 5<" in svg  # direct labels, last full week: 1 per 21 PRs; review folds into other
-    assert ">conflict 50<" not in svg  # this week's 2 PRs are too few to draw
-    assert " *" in svg  # the partial week is marked on the axis
+    assert "PR quality by size" in svg and "All hosts, rolling 7 days" in svg and "FIX RATE, 5+ FILES" in svg
+    assert "3 of 10 PRs · -70 pts" in svg  # 5+ files: (0 + 3) of (7 + 3), against 7 of 7 the window a week before
+    assert "1 of 21 PRs" in svg  # 1-4 files
+    assert "<circle" not in svg and "<polyline" in svg  # lines only
+    assert "5 files, last 7 days: 0 of 7 merged PRs needed a fix" in svg  # hover text per line
+    assert ">6+ files" not in svg  # under 5 PRs in a window: a gap, no label
+    assert ">stale 25<" in svg and ">other 25<" in svg  # 7 fix runs per 28 merged PRs; review folds into other
+    assert ">Oct 13<" in svg and ">Oct 1<" in svg and ">Sep 30<" not in svg  # every 2nd day, counted from the last
     md = "\n".join(dashboard.quality_md(data, TODAY))
-    assert "| fix 5 |" in md and "1/4" in md and "(partial)" in md
+    assert "| fix 5 |" in md and "(partial)" in md
     assert dashboard.render_quality(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
     assert dashboard.quality_md(_data(3), TODAY) == []
