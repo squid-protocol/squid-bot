@@ -532,7 +532,7 @@
    "churn_merged": 119,
    "ci_busy_hours": 6.12,
    "first_pass": {
-    "first_pass": 69,
+    "first_pass": 67,
     "merged": 125
    },
    "holds": {
@@ -1608,7 +1608,7 @@
     "churn_merged": 101,
     "ci_busy_hours": 6.12,
     "first_pass": {
-     "first_pass": 62,
+     "first_pass": 60,
      "merged": 106
     },
     "holds": {
@@ -3563,5 +3563,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T22:25Z"
+ "updated": "2026-10-26T22:28Z"
 }
