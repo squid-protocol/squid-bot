@@ -852,8 +852,8 @@
    "churn_merged": 122,
    "ci_busy_hours": 1.25,
    "first_pass": {
-    "first_pass": 77,
-    "merged": 125
+    "first_pass": 78,
+    "merged": 126
    },
    "holds": {
     "pace": 20,
@@ -890,7 +890,7 @@
     "by_size": {
      "1-2": {
       "fixed": 11,
-      "merged": 69
+      "merged": 70
      },
      "3-4": {
       "fixed": 9,
@@ -3212,8 +3212,8 @@
     "churn_merged": 29,
     "ci_busy_hours": 1.12,
     "first_pass": {
-     "first_pass": 21,
-     "merged": 29
+     "first_pass": 22,
+     "merged": 30
     },
     "holds": {
      "pace": 3,
@@ -3245,7 +3245,7 @@
      "by_size": {
       "1-2": {
        "fixed": 1,
-       "merged": 8
+       "merged": 9
       },
       "3-4": {
        "fixed": 3,
