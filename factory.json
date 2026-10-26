@@ -521,8 +521,8 @@
    "churn_merged": 119,
    "ci_busy_hours": 6.12,
    "first_pass": {
-    "first_pass": 8,
-    "merged": 18
+    "first_pass": 70,
+    "merged": 124
    },
    "holds": {
     "pace": 5,
@@ -559,31 +559,32 @@
    "quality": {
     "by_size": {
      "1-2": {
-      "fixed": 3,
-      "merged": 7
+      "fixed": 11,
+      "merged": 59
      },
      "3-4": {
-      "fixed": 2,
-      "merged": 8
+      "fixed": 15,
+      "merged": 42
      },
      "5": {
-      "fixed": 1,
-      "merged": 2
+      "fixed": 7,
+      "merged": 15
      },
      "6+": {
-      "fixed": 1,
-      "merged": 1
+      "fixed": 3,
+      "merged": 8
      }
     },
     "causes": {
-     "collateral": 3,
-     "env": 3,
-     "other": 1,
-     "own_test": 1,
-     "review": 1,
-     "stale": 1
+     "collateral": 11,
+     "conflict": 7,
+     "env": 6,
+     "other": 2,
+     "own_test": 2,
+     "review": 2,
+     "stale": 13
     },
-    "fix_runs": 10
+    "fix_runs": 43
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 0,
@@ -1429,6 +1430,10 @@
    "2026-10-18": {
     "churn_merged": 101,
     "ci_busy_hours": 6.12,
+    "first_pass": {
+     "first_pass": 62,
+     "merged": 106
+    },
     "holds": {
      "pace": 4,
      "paused": 0,
@@ -1457,6 +1462,36 @@
      "failed_again": 4,
      "passed": 128,
      "sent_back": 18
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 8,
+       "merged": 52
+      },
+      "3-4": {
+       "fixed": 13,
+       "merged": 34
+      },
+      "5": {
+       "fixed": 6,
+       "merged": 13
+      },
+      "6+": {
+       "fixed": 2,
+       "merged": 7
+      }
+     },
+     "causes": {
+      "collateral": 8,
+      "conflict": 7,
+      "env": 3,
+      "other": 1,
+      "own_test": 1,
+      "review": 1,
+      "stale": 12
+     },
+     "fix_runs": 33
     },
     "review_wait_min_median": 1.0,
     "slot_use": 1.231,
@@ -3349,5 +3384,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T21:42Z"
+ "updated": "2026-10-26T21:45Z"
 }
