@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 2516" width="920" height="2516" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, speed, cost and CI waste per day, before and with promoter-bot; 2,128 merged PRs in the selected period">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 2706" width="920" height="2706" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, speed, cost and CI waste per day, before and with promoter-bot; 2,179 merged PRs in the selected period">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
@@ -44,17 +44,17 @@
   .noissue { font-size: 10.5px; font-weight: 650; fill: var(--failed); }
 </style>
 <g class="root">
-  <rect class="bg" x="0.5" y="0.5" width="919" height="2515" rx="10"/>
+  <rect class="bg" x="0.5" y="0.5" width="919" height="2705" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet</text>
-  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-26 01:06 UTC</text>
-  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 1,310 of the 1,486 PRs merged since then were its own (88%). Today so far: 6 merged.</text>
+  <text class="meta" x="896" y="34" text-anchor="end">last 30 days · updated 2026-10-26 19:37 UTC</text>
+  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 1,354 of the 1,537 PRs merged since then were its own (88%). Today so far: 57 merged.</text>
   <g>
   <rect class="tile" x="24.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="88">MERGED PRs</text>
   <text class="v" x="38.0" y="114">121</text>
   <text class="sub" x="38.0" y="131">Oct 24: 232 · -48%</text>
   </g>
-  <g><title>Agent time on new work (7d): 82.4%. Fixes 3.7h/day; send-backs 5.5h/day. Worker slots used: 56.1% of 3. Fix loops per merged PR: 0.6. Idle with a free slot: 22.9h/day</title>
+  <g><title>Agent time on new work (7d): 82.4%. Fixes 3.7h/day; send-backs 5.5h/day. Worker slots used: 50.0% of 3. Fix loops per merged PR: 0.6. Idle with a free slot: 25.8h/day</title>
   <desc>Merged PRs per day, by origin. Agent share of merged PRs</desc>
   <rect class="tile" x="245.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="259.0" y="88">PROMOTER-BOT-MADE SHARE</text>
@@ -123,7 +123,7 @@
   <g><title>Oct 23 · 199 merged PRs · promoter-bot 189, other agents 5, other 1, automation 4, unclassified 0</title><rect class="bot seg" x="786.3" y="269.6" width="25.7" height="147.4"/><rect class="agent seg" x="786.3" y="265.7" width="25.7" height="3.9"/><rect class="other seg" x="786.3" y="264.9" width="25.7" height="0.8"/><path class="automation seg" d="M786.3,264.9 V264.9 Q786.3,261.8 789.5,261.8 H808.9 Q812.0,261.8 812.0,264.9 V264.9 Z"/></g>
   <g><title>Oct 24 · 232 merged PRs · promoter-bot 225, other agents 7, other 0, automation 0, unclassified 0</title><rect class="bot seg" x="814.0" y="241.5" width="25.7" height="175.5"/><path class="agent seg" d="M814.0,241.5 V240.0 Q814.0,236.0 818.0,236.0 H835.7 Q839.7,236.0 839.7,240.0 V241.5 Z"/></g>
   <g><title>Oct 25 · 121 merged PRs · promoter-bot 109, other agents 10, other 1, automation 1, unclassified 0</title><rect class="bot seg" x="841.7" y="332.0" width="25.7" height="85.0"/><rect class="agent seg" x="841.7" y="324.2" width="25.7" height="7.8"/><rect class="other seg" x="841.7" y="323.4" width="25.7" height="0.8"/><path class="automation seg" d="M841.7,323.4 V323.4 Q841.7,322.6 842.4,322.6 H866.6 Q867.3,322.6 867.3,323.4 V323.4 Z"/></g>
-  <g class="partial"><title>Oct 26 · 6 merged PRs (today so far) · promoter-bot 4, other agents 1, other 1, automation 0, unclassified 0</title><rect class="bot seg" x="869.3" y="413.9" width="25.7" height="3.1"/><rect class="agent seg" x="869.3" y="413.1" width="25.7" height="0.8"/><path class="other seg" d="M869.3,413.1 V413.1 Q869.3,412.3 870.1,412.3 H894.2 Q895.0,412.3 895.0,413.1 V413.1 Z"/></g>
+  <g class="partial"><title>Oct 26 · 57 merged PRs (today so far) · promoter-bot 48, other agents 6, other 2, automation 1, unclassified 0</title><rect class="bot seg" x="869.3" y="379.6" width="25.7" height="37.4"/><rect class="agent seg" x="869.3" y="374.9" width="25.7" height="4.7"/><rect class="other seg" x="869.3" y="373.3" width="25.7" height="1.6"/><path class="automation seg" d="M869.3,373.3 V373.3 Q869.3,372.5 870.1,372.5 H894.2 Q895.0,372.5 895.0,373.3 V373.3 Z"/></g>
   <text class="startl" x="458.3" y="214" text-anchor="start">promoter-bot live · Oct 11</text>
   <text class="evl" x="420.7" y="214" text-anchor="end">Oct 10 · integrase-bot (CI shepherd) on</text>
   <rect class="automation" x="812.0" y="184" width="9" height="9" rx="2"/>
@@ -183,7 +183,7 @@
   <g><title>Oct 23 · 480 runner hours (est.) · 9,688 runs · bot 74%, main 24%, automation 1%, agent 1%, other 0% · the estimate (481 h) is over what 20 runners can do in a day: drawn at that ceiling</title><path class="hours" d="M786.3,637.0 V497.0 Q786.3,493.0 790.3,493.0 H808.0 Q812.0,493.0 812.0,497.0 V637.0 Z"/></g>
   <g><title>Oct 24 · 480 runner hours (est.) · 11,870 runs · bot 72%, main 26%, other 1%, agent 1%, automation 0% · the estimate (540 h) is over what 20 runners can do in a day: drawn at that ceiling</title><path class="hours" d="M814.0,637.0 V497.0 Q814.0,493.0 818.0,493.0 H835.7 Q839.7,493.0 839.7,497.0 V637.0 Z"/></g>
   <g><title>Oct 25 · 468 runner hours (est.) · 6,225 runs · bot 56%, main 26%, other 16%, agent 3%, automation 0%</title><path class="hours" d="M841.7,637.0 V500.7 Q841.7,496.7 845.7,496.7 H863.3 Q867.3,496.7 867.3,500.7 V637.0 Z"/></g>
-  <g class="partial"><title>Oct 26 · 10 runner hours (est.) (today so far) · 137 runs · main 69%, bot 31%, other 0%</title><path class="hours" d="M869.3,637.0 V637.0 Q869.3,634.1 872.2,634.1 H892.1 Q895.0,634.1 895.0,637.0 V637.0 Z"/></g>
+  <g class="partial"><title>Oct 26 · 134 runner hours (est.) (today so far) · 2,679 runs · main 49%, bot 34%, automation 10%, agent 7%, other 0%</title><path class="hours" d="M869.3,637.0 V600.9 Q869.3,596.9 873.3,596.9 H891.0 Q895.0,596.9 895.0,600.9 V637.0 Z"/></g>
   <g><text class="h2" x="24" y="677">3 · Speed — job queue wait (p90) per day, sampled (minutes)</text></g>
   <line class="base" x1="66" x2="896" y1="827.0" y2="827.0"/>
   <text class="tick" x="58" y="830.5" text-anchor="end">0</text>
@@ -233,8 +233,8 @@
   <g><title>Oct 23: CI change(s) merged #6100, #6102, #6140, #6170, #6212, #6213</title><path class="markd" d="M799.2,698 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Oct 24: CI change(s) merged #6155, #6296, #6319, #6333, #6356, #6371</title><path class="markd" d="M826.8,698 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Oct 25: CI change(s) merged #6561, #6565, #6566, #6568, #6569, #6579</title><path class="markd" d="M854.5,698 l3,3 l-3,3 l-3,-3 Z"/></g>
-  <g><title>Oct 26: CI change(s) merged #6685</title><path class="markd" d="M882.2,698 l3,3 l-3,3 l-3,-3 Z"/></g>
-  <polyline class="line " points="79.8,808.4 107.5,823.6 135.2,787.3 162.8,817.5 190.5,820.2 218.2,767.2 245.8,792.2 273.5,813.2 301.2,781.5 328.8,804.3 356.5,799.3 384.2,785.5 411.8,761.2 439.5,781.9 467.2,757.3 494.8,779.9 522.5,718.5 550.2,750.1 577.8,786.3 605.5,790.8 633.2,791.5 660.8,781.6 688.5,779.6 716.2,740.5 743.8,729.8 771.5,790.9 799.2,763.6 826.8,763.3 854.5,742.2 882.2,799.2"/>
+  <g><title>Oct 26: CI change(s) merged #6601, #6661, #6685</title><path class="markd" d="M882.2,698 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <polyline class="line " points="79.8,808.4 107.5,823.6 135.2,787.3 162.8,817.5 190.5,820.2 218.2,767.2 245.8,792.2 273.5,813.2 301.2,781.5 328.8,804.3 356.5,799.3 384.2,785.5 411.8,761.2 439.5,781.9 467.2,757.3 494.8,779.9 522.5,718.5 550.2,750.1 577.8,786.3 605.5,790.8 633.2,791.5 660.8,781.6 688.5,779.6 716.2,740.5 743.8,729.8 771.5,790.9 799.2,763.6 826.8,763.3 854.5,742.2 882.2,789.8"/>
   <circle class="dot " cx="79.8" cy="808.4" r="4"><title>Sep 27: 3.9 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="107.5" cy="823.6" r="4"><title>Sep 28: 0.7 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="135.2" cy="787.3" r="4"><title>Sep 29: 8.3 minutes · 5% of each day's runs sampled</title></circle>
@@ -264,7 +264,7 @@
   <circle class="dot " cx="799.2" cy="763.6" r="4"><title>Oct 23: 13.2 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="826.8" cy="763.3" r="4"><title>Oct 24: 13.3 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="854.5" cy="742.2" r="4"><title>Oct 25: 17.7 minutes · 5% of each day's runs sampled</title></circle>
-  <circle class="dot  partial" cx="882.2" cy="799.2" r="4"><title>Oct 26: 5.8 minutes · 5% of each day's runs sampled (today so far)</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="789.8" r="4"><title>Oct 26: 7.8 minutes · 5% of each day's runs sampled (today so far)</title></circle>
   <rect class="markd" x="774.8" y="669" width="9" height="9" rx="2"/>
   <text class="lbl" x="787.8" y="677">CI change merged</text>
   <g><text class="h2" x="24" y="867">4 · CI load — runner hours per merged PR (est., sampled)</text></g>
@@ -287,7 +287,7 @@
   <text class="tick" x="882.2" y="1033" text-anchor="middle">Oct 26</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="893" y2="1017"/></g>
   <line class="start" x1="453.3" x2="453.3" y1="893" y2="1017"/>
-  <polyline class="line " points="79.8,993.1 107.5,990.1 135.2,985.5 162.8,992.4 190.5,991.0 218.2,990.2 245.8,996.7 273.5,995.8 301.2,979.2 328.8,973.8 356.5,956.1 384.2,912.8 411.8,938.0 439.5,941.7 467.2,952.8 494.8,914.9 522.5,916.1 550.2,910.3 577.8,915.1 605.5,967.8 633.2,969.5 660.8,978.8 688.5,963.3 716.2,967.3 743.8,970.4 771.5,987.3 799.2,988.1 826.8,992.2 854.5,970.6 882.2,998.0"/>
+  <polyline class="line " points="79.8,993.1 107.5,990.1 135.2,985.5 162.8,992.4 190.5,991.0 218.2,990.2 245.8,996.7 273.5,995.8 301.2,979.2 328.8,973.8 356.5,956.1 384.2,912.8 411.8,938.0 439.5,941.7 467.2,952.8 494.8,914.9 522.5,916.1 550.2,910.3 577.8,915.1 605.5,967.8 633.2,969.5 660.8,978.8 688.5,963.3 716.2,967.3 743.8,970.4 771.5,987.3 799.2,988.1 826.8,992.2 854.5,970.6 882.2,988.9"/>
   <circle class="dot " cx="79.8" cy="993.1" r="4"><title>Sep 27: 1.99 runner hours / merged PR</title></circle>
   <circle class="dot " cx="107.5" cy="990.1" r="4"><title>Sep 28: 2.25 runner hours / merged PR</title></circle>
   <circle class="dot " cx="135.2" cy="985.5" r="4"><title>Sep 29: 2.62 runner hours / merged PR</title></circle>
@@ -317,7 +317,7 @@
   <circle class="dot " cx="799.2" cy="988.1" r="4"><title>Oct 23: 2.41 runner hours / merged PR</title></circle>
   <circle class="dot " cx="826.8" cy="992.2" r="4"><title>Oct 24: 2.07 runner hours / merged PR</title></circle>
   <circle class="dot " cx="854.5" cy="970.6" r="4"><title>Oct 25: 3.87 runner hours / merged PR</title></circle>
-  <circle class="dot  partial" cx="882.2" cy="998.0" r="4"><title>Oct 26: 1.59 runner hours / merged PR (today so far)</title></circle>
+  <circle class="dot  partial" cx="882.2" cy="988.9" r="4"><title>Oct 26: 2.35 runner hours / merged PR (today so far)</title></circle>
   <g><title>1,302 merged promoter-bot PRs for $2,746</title><text class="h2" x="24" y="1057">5 · Spend — promoter-bot cost in dollars, cumulative since Oct 11</text></g>
   <line class="base" x1="66" x2="896" y1="1237.0" y2="1237.0"/>
   <text class="tick" x="58" y="1240.5" text-anchor="end">$0</text>
@@ -395,15 +395,15 @@
   <line class="base" x1="66" x2="896" y1="1617.0" y2="1617.0"/>
   <text class="tick" x="58" y="1620.5" text-anchor="end">0%</text>
   <line class="grid" x1="66" x2="896" y1="1593.0" y2="1593.0"/>
-  <text class="tick" x="58" y="1596.5" text-anchor="end">5%</text>
+  <text class="tick" x="58" y="1596.5" text-anchor="end">2.5%</text>
   <line class="grid" x1="66" x2="896" y1="1569.0" y2="1569.0"/>
-  <text class="tick" x="58" y="1572.5" text-anchor="end">10%</text>
+  <text class="tick" x="58" y="1572.5" text-anchor="end">5%</text>
   <line class="grid" x1="66" x2="896" y1="1545.0" y2="1545.0"/>
-  <text class="tick" x="58" y="1548.5" text-anchor="end">15%</text>
+  <text class="tick" x="58" y="1548.5" text-anchor="end">7.5%</text>
   <line class="grid" x1="66" x2="896" y1="1521.0" y2="1521.0"/>
-  <text class="tick" x="58" y="1524.5" text-anchor="end">20%</text>
+  <text class="tick" x="58" y="1524.5" text-anchor="end">10%</text>
   <line class="grid" x1="66" x2="896" y1="1497.0" y2="1497.0"/>
-  <text class="tick" x="58" y="1500.5" text-anchor="end">25%</text>
+  <text class="tick" x="58" y="1500.5" text-anchor="end">12.5%</text>
   <text class="tick" x="107.5" y="1633" text-anchor="middle">Sep 28</text>
   <text class="tick" x="301.2" y="1633" text-anchor="middle">Oct 5</text>
   <text class="tick" x="494.8" y="1633" text-anchor="middle">Oct 12</text>
@@ -411,68 +411,68 @@
   <text class="tick" x="882.2" y="1633" text-anchor="middle">Oct 26</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="1493" y2="1617"/></g>
   <line class="start" x1="453.3" x2="453.3" y1="1493" y2="1617"/>
-  <polyline class="line saved" points="79.8,1589.6 107.5,1596.8 135.2,1603.0 162.8,1594.2 190.5,1599.2 218.2,1600.1 245.8,1578.7 273.5,1588.1 301.2,1595.7 328.8,1594.2 356.5,1589.4 384.2,1590.1 411.8,1592.8 439.5,1597.7 467.2,1591.2 494.8,1598.7 522.5,1595.2 550.2,1579.5 577.8,1604.4 605.5,1578.8 633.2,1597.0 660.8,1580.2 688.5,1600.0 716.2,1597.7 743.8,1572.6 771.5,1603.6 799.2,1566.7 826.8,1566.1 854.5,1584.4 882.2,1503.9"/>
-  <circle class="dot saved" cx="79.8" cy="1589.6" r="4"><title>Sep 27: 5.7% of run minutes saved by early cancellation (est. 468 of 8,211 min; 136 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="107.5" cy="1596.8" r="4"><title>Sep 28: 4.2% of run minutes saved by early cancellation (est. 69 of 1,637 min; 29 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="135.2" cy="1603.0" r="4"><title>Sep 29: 2.9% of run minutes saved by early cancellation (est. 98 of 3,369 min; 51 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="162.8" cy="1594.2" r="4"><title>Sep 30: 4.7% of run minutes saved by early cancellation (est. 82 of 1,727 min; 34 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="190.5" cy="1599.2" r="4"><title>Oct 1: 3.7% of run minutes saved by early cancellation (est. 98 of 2,638 min; 26 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="218.2" cy="1600.1" r="4"><title>Oct 2: 3.5% of run minutes saved by early cancellation (est. 432 of 12,275 min; 130 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="245.8" cy="1578.7" r="4"><title>Oct 3: 8.0% of run minutes saved by early cancellation (est. 568 of 7,127 min; 146 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="273.5" cy="1588.1" r="4"><title>Oct 4: 6.0% of run minutes saved by early cancellation (est. 411 of 6,829 min; 105 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="301.2" cy="1595.7" r="4"><title>Oct 5: 4.4% of run minutes saved by early cancellation (est. 806 of 18,171 min; 246 runs cancelled, 19 not priced)</title></circle>
-  <circle class="dot saved" cx="328.8" cy="1594.2" r="4"><title>Oct 6: 4.8% of run minutes saved by early cancellation (est. 555 of 11,659 min; 157 runs cancelled, 19 not priced)</title></circle>
-  <circle class="dot saved" cx="356.5" cy="1589.4" r="4"><title>Oct 7: 5.8% of run minutes saved by early cancellation (est. 658 of 11,433 min; 181 runs cancelled, 13 not priced)</title></circle>
-  <circle class="dot saved" cx="384.2" cy="1590.1" r="4"><title>Oct 8: 5.6% of run minutes saved by early cancellation (est. 622 of 11,119 min; 49 runs cancelled, 10 not priced)</title></circle>
-  <circle class="dot saved" cx="411.8" cy="1592.8" r="4"><title>Oct 9: 5.1% of run minutes saved by early cancellation (est. 1,526 of 30,209 min; 190 runs cancelled, 29 not priced)</title></circle>
-  <circle class="dot saved" cx="439.5" cy="1597.7" r="4"><title>Oct 10: 4.0% of run minutes saved by early cancellation (est. 343 of 8,509 min; 79 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="467.2" cy="1591.2" r="4"><title>Oct 11: 5.4% of run minutes saved by early cancellation (est. 558 of 10,398 min; 82 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="494.8" cy="1598.7" r="4"><title>Oct 12: 3.8% of run minutes saved by early cancellation (est. 553 of 14,516 min; 164 runs cancelled, 3 not priced)</title></circle>
-  <circle class="dot saved" cx="522.5" cy="1595.2" r="4"><title>Oct 13: 4.5% of run minutes saved by early cancellation (est. 509 of 11,200 min; 106 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="550.2" cy="1579.5" r="4"><title>Oct 14: 7.8% of run minutes saved by early cancellation (est. 2,580 of 33,066 min; 295 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="577.8" cy="1604.4" r="4"><title>Oct 15: 2.6% of run minutes saved by early cancellation (est. 407 of 15,534 min; 68 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="605.5" cy="1578.8" r="4"><title>Oct 16: 8.0% of run minutes saved by early cancellation (est. 847 of 10,653 min; 177 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="633.2" cy="1597.0" r="4"><title>Oct 17: 4.2% of run minutes saved by early cancellation (est. 672 of 16,114 min; 175 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="660.8" cy="1580.2" r="4"><title>Oct 18: 7.7% of run minutes saved by early cancellation (est. 2,142 of 27,961 min; 348 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="688.5" cy="1600.0" r="4"><title>Oct 19: 3.5% of run minutes saved by early cancellation (est. 865 of 24,432 min; 160 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="716.2" cy="1597.7" r="4"><title>Oct 20: 4.0% of run minutes saved by early cancellation (est. 1,142 of 28,330 min; 224 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="743.8" cy="1572.6" r="4"><title>Oct 21: 9.2% of run minutes saved by early cancellation (est. 3,643 of 39,426 min; 425 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="771.5" cy="1603.6" r="4"><title>Oct 22: 2.8% of run minutes saved by early cancellation (est. 492 of 17,615 min; 234 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="799.2" cy="1566.7" r="4"><title>Oct 23: 10.5% of run minutes saved by early cancellation (est. 4,699 of 44,881 min; 655 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="826.8" cy="1566.1" r="4"><title>Oct 24: 10.6% of run minutes saved by early cancellation (est. 5,890 of 55,557 min; 742 runs cancelled)</title></circle>
-  <circle class="dot saved" cx="854.5" cy="1584.4" r="4"><title>Oct 25: 6.8% of run minutes saved by early cancellation (est. 3,235 of 47,644 min; 336 runs cancelled)</title></circle>
-  <circle class="dot saved partial" cx="882.2" cy="1503.9" r="4"><title>Oct 26: 23.6% of run minutes saved by early cancellation (est. 176 of 747 min; 11 runs cancelled) (today so far)</title></circle>
-  <polyline class="line failedl" points="79.8,1610.7 107.5,1602.4 135.2,1610.0 162.8,1604.5 190.5,1608.1 218.2,1606.5 245.8,1605.7 273.5,1606.0 301.2,1604.2 328.8,1601.2 356.5,1592.0 384.2,1604.6 411.8,1599.9 439.5,1597.3 467.2,1605.0 494.8,1597.0 522.5,1607.4 550.2,1604.6 577.8,1596.0 605.5,1604.3 633.2,1605.8 660.8,1606.0 688.5,1606.0 716.2,1608.3 743.8,1607.8 771.5,1606.4 799.2,1607.4 826.8,1605.6 854.5,1605.8 882.2,1617.0"/>
-  <circle class="dot failedl" cx="79.8" cy="1610.7" r="4"><title>Sep 27: 1.3% of runs failed (20 of 1,525 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="107.5" cy="1602.4" r="4"><title>Sep 28: 3.0% of runs failed (13 of 427 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="135.2" cy="1610.0" r="4"><title>Sep 29: 1.5% of runs failed (10 of 683 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="162.8" cy="1604.5" r="4"><title>Sep 30: 2.6% of runs failed (10 of 383 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="190.5" cy="1608.1" r="4"><title>Oct 1: 1.9% of runs failed (11 of 593 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="218.2" cy="1606.5" r="4"><title>Oct 2: 2.2% of runs failed (35 of 1,603 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="245.8" cy="1605.7" r="4"><title>Oct 3: 2.4% of runs failed (29 of 1,229 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="273.5" cy="1606.0" r="4"><title>Oct 4: 2.3% of runs failed (29 of 1,260 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="301.2" cy="1604.2" r="4"><title>Oct 5: 2.7% of runs failed (53 of 1,995 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="328.8" cy="1601.2" r="4"><title>Oct 6: 3.3% of runs failed (49 of 1,491 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="356.5" cy="1592.0" r="4"><title>Oct 7: 5.2% of runs failed (64 of 1,229 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="384.2" cy="1604.6" r="4"><title>Oct 8: 2.6% of runs failed (33 of 1,280 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="411.8" cy="1599.9" r="4"><title>Oct 9: 3.6% of runs failed (80 of 2,249 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="439.5" cy="1597.3" r="4"><title>Oct 10: 4.1% of runs failed (36 of 875 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="467.2" cy="1605.0" r="4"><title>Oct 11: 2.5% of runs failed (27 of 1,078 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="494.8" cy="1597.0" r="4"><title>Oct 12: 4.2% of runs failed (63 of 1,514 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="522.5" cy="1607.4" r="4"><title>Oct 13: 2.0% of runs failed (22 of 1,096 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="550.2" cy="1604.6" r="4"><title>Oct 14: 2.6% of runs failed (43 of 1,670 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="577.8" cy="1596.0" r="4"><title>Oct 15: 4.4% of runs failed (70 of 1,603 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="605.5" cy="1604.3" r="4"><title>Oct 16: 2.6% of runs failed (36 of 1,362 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="633.2" cy="1605.8" r="4"><title>Oct 17: 2.3% of runs failed (45 of 1,931 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="660.8" cy="1606.0" r="4"><title>Oct 18: 2.3% of runs failed (64 of 2,796 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="688.5" cy="1606.0" r="4"><title>Oct 19: 2.3% of runs failed (54 of 2,362 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="716.2" cy="1608.3" r="4"><title>Oct 20: 1.8% of runs failed (43 of 2,366 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="743.8" cy="1607.8" r="4"><title>Oct 21: 1.9% of runs failed (50 of 2,621 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="771.5" cy="1606.4" r="4"><title>Oct 22: 2.2% of runs failed (61 of 2,757 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="799.2" cy="1607.4" r="4"><title>Oct 23: 2.0% of runs failed (73 of 3,634 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="826.8" cy="1605.6" r="4"><title>Oct 24: 2.4% of runs failed (107 of 4,524 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl" cx="854.5" cy="1605.8" r="4"><title>Oct 25: 2.3% of runs failed (64 of 2,733 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl partial" cx="882.2" cy="1617.0" r="4"><title>Oct 26: 0.0% of runs failed (0 of 30 CI runs that passed or failed · the bot's own workflows left out) (today so far)</title></circle>
+  <polyline class="line saved" points="79.8,1562.3 107.5,1576.5 135.2,1589.1 162.8,1571.4 190.5,1581.3 218.2,1583.2 245.8,1540.5 273.5,1559.2 301.2,1574.4 328.8,1571.3 356.5,1561.7 384.2,1563.3 411.8,1568.5 439.5,1578.3 467.2,1565.5 494.8,1580.4 522.5,1573.4 550.2,1542.1 577.8,1591.8 605.5,1540.7 633.2,1577.0 660.8,1543.5 688.5,1583.0 716.2,1578.3 743.8,1528.3 771.5,1590.2 799.2,1516.5 826.8,1515.2 854.5,1551.8 882.2,1580.7"/>
+  <circle class="dot saved" cx="79.8" cy="1562.3" r="4"><title>Sep 27: 5.7% of run minutes saved by early cancellation (est. 468 of 8,211 min; 136 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="107.5" cy="1576.5" r="4"><title>Sep 28: 4.2% of run minutes saved by early cancellation (est. 69 of 1,637 min; 29 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="135.2" cy="1589.1" r="4"><title>Sep 29: 2.9% of run minutes saved by early cancellation (est. 98 of 3,369 min; 51 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="162.8" cy="1571.4" r="4"><title>Sep 30: 4.7% of run minutes saved by early cancellation (est. 82 of 1,727 min; 34 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="190.5" cy="1581.3" r="4"><title>Oct 1: 3.7% of run minutes saved by early cancellation (est. 98 of 2,638 min; 26 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="218.2" cy="1583.2" r="4"><title>Oct 2: 3.5% of run minutes saved by early cancellation (est. 432 of 12,275 min; 130 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="245.8" cy="1540.5" r="4"><title>Oct 3: 8.0% of run minutes saved by early cancellation (est. 568 of 7,127 min; 146 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="273.5" cy="1559.2" r="4"><title>Oct 4: 6.0% of run minutes saved by early cancellation (est. 411 of 6,829 min; 105 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="301.2" cy="1574.4" r="4"><title>Oct 5: 4.4% of run minutes saved by early cancellation (est. 806 of 18,171 min; 246 runs cancelled, 19 not priced)</title></circle>
+  <circle class="dot saved" cx="328.8" cy="1571.3" r="4"><title>Oct 6: 4.8% of run minutes saved by early cancellation (est. 555 of 11,659 min; 157 runs cancelled, 19 not priced)</title></circle>
+  <circle class="dot saved" cx="356.5" cy="1561.7" r="4"><title>Oct 7: 5.8% of run minutes saved by early cancellation (est. 658 of 11,433 min; 181 runs cancelled, 13 not priced)</title></circle>
+  <circle class="dot saved" cx="384.2" cy="1563.3" r="4"><title>Oct 8: 5.6% of run minutes saved by early cancellation (est. 622 of 11,119 min; 49 runs cancelled, 10 not priced)</title></circle>
+  <circle class="dot saved" cx="411.8" cy="1568.5" r="4"><title>Oct 9: 5.1% of run minutes saved by early cancellation (est. 1,526 of 30,209 min; 190 runs cancelled, 29 not priced)</title></circle>
+  <circle class="dot saved" cx="439.5" cy="1578.3" r="4"><title>Oct 10: 4.0% of run minutes saved by early cancellation (est. 343 of 8,509 min; 79 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="467.2" cy="1565.5" r="4"><title>Oct 11: 5.4% of run minutes saved by early cancellation (est. 558 of 10,398 min; 82 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="494.8" cy="1580.4" r="4"><title>Oct 12: 3.8% of run minutes saved by early cancellation (est. 553 of 14,516 min; 164 runs cancelled, 3 not priced)</title></circle>
+  <circle class="dot saved" cx="522.5" cy="1573.4" r="4"><title>Oct 13: 4.5% of run minutes saved by early cancellation (est. 509 of 11,200 min; 106 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="550.2" cy="1542.1" r="4"><title>Oct 14: 7.8% of run minutes saved by early cancellation (est. 2,580 of 33,066 min; 295 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="577.8" cy="1591.8" r="4"><title>Oct 15: 2.6% of run minutes saved by early cancellation (est. 407 of 15,534 min; 68 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="605.5" cy="1540.7" r="4"><title>Oct 16: 8.0% of run minutes saved by early cancellation (est. 847 of 10,653 min; 177 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="633.2" cy="1577.0" r="4"><title>Oct 17: 4.2% of run minutes saved by early cancellation (est. 672 of 16,114 min; 175 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="660.8" cy="1543.5" r="4"><title>Oct 18: 7.7% of run minutes saved by early cancellation (est. 2,142 of 27,961 min; 348 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="688.5" cy="1583.0" r="4"><title>Oct 19: 3.5% of run minutes saved by early cancellation (est. 865 of 24,432 min; 160 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="716.2" cy="1578.3" r="4"><title>Oct 20: 4.0% of run minutes saved by early cancellation (est. 1,142 of 28,330 min; 224 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="743.8" cy="1528.3" r="4"><title>Oct 21: 9.2% of run minutes saved by early cancellation (est. 3,643 of 39,426 min; 425 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="771.5" cy="1590.2" r="4"><title>Oct 22: 2.8% of run minutes saved by early cancellation (est. 492 of 17,615 min; 234 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="799.2" cy="1516.5" r="4"><title>Oct 23: 10.5% of run minutes saved by early cancellation (est. 4,699 of 44,881 min; 655 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="826.8" cy="1515.2" r="4"><title>Oct 24: 10.6% of run minutes saved by early cancellation (est. 5,890 of 55,557 min; 742 runs cancelled)</title></circle>
+  <circle class="dot saved" cx="854.5" cy="1551.8" r="4"><title>Oct 25: 6.8% of run minutes saved by early cancellation (est. 3,235 of 47,644 min; 336 runs cancelled)</title></circle>
+  <circle class="dot saved partial" cx="882.2" cy="1580.7" r="4"><title>Oct 26: 3.8% of run minutes saved by early cancellation (est. 295 of 7,798 min; 76 runs cancelled) (today so far)</title></circle>
+  <polyline class="line failedl" points="79.8,1604.4 107.5,1587.8 135.2,1602.9 162.8,1591.9 190.5,1599.2 218.2,1596.0 245.8,1594.3 273.5,1594.9 301.2,1591.5 328.8,1585.5 356.5,1567.0 384.2,1592.2 411.8,1582.9 439.5,1577.5 467.2,1593.0 494.8,1577.1 522.5,1597.7 550.2,1592.3 577.8,1575.1 605.5,1591.6 633.2,1594.6 660.8,1595.0 688.5,1595.1 716.2,1599.6 743.8,1598.7 771.5,1595.8 799.2,1597.7 826.8,1594.3 854.5,1594.5 882.2,1593.6"/>
+  <circle class="dot failedl" cx="79.8" cy="1604.4" r="4"><title>Sep 27: 1.3% of runs failed (20 of 1,525 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="107.5" cy="1587.8" r="4"><title>Sep 28: 3.0% of runs failed (13 of 427 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="135.2" cy="1602.9" r="4"><title>Sep 29: 1.5% of runs failed (10 of 683 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="162.8" cy="1591.9" r="4"><title>Sep 30: 2.6% of runs failed (10 of 383 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="190.5" cy="1599.2" r="4"><title>Oct 1: 1.9% of runs failed (11 of 593 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="218.2" cy="1596.0" r="4"><title>Oct 2: 2.2% of runs failed (35 of 1,603 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="245.8" cy="1594.3" r="4"><title>Oct 3: 2.4% of runs failed (29 of 1,229 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="273.5" cy="1594.9" r="4"><title>Oct 4: 2.3% of runs failed (29 of 1,260 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="301.2" cy="1591.5" r="4"><title>Oct 5: 2.7% of runs failed (53 of 1,995 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="328.8" cy="1585.5" r="4"><title>Oct 6: 3.3% of runs failed (49 of 1,491 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="356.5" cy="1567.0" r="4"><title>Oct 7: 5.2% of runs failed (64 of 1,229 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="384.2" cy="1592.2" r="4"><title>Oct 8: 2.6% of runs failed (33 of 1,280 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="411.8" cy="1582.9" r="4"><title>Oct 9: 3.6% of runs failed (80 of 2,249 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="439.5" cy="1577.5" r="4"><title>Oct 10: 4.1% of runs failed (36 of 875 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="467.2" cy="1593.0" r="4"><title>Oct 11: 2.5% of runs failed (27 of 1,078 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="494.8" cy="1577.1" r="4"><title>Oct 12: 4.2% of runs failed (63 of 1,514 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="522.5" cy="1597.7" r="4"><title>Oct 13: 2.0% of runs failed (22 of 1,096 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="550.2" cy="1592.3" r="4"><title>Oct 14: 2.6% of runs failed (43 of 1,670 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="577.8" cy="1575.1" r="4"><title>Oct 15: 4.4% of runs failed (70 of 1,603 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="605.5" cy="1591.6" r="4"><title>Oct 16: 2.6% of runs failed (36 of 1,362 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="633.2" cy="1594.6" r="4"><title>Oct 17: 2.3% of runs failed (45 of 1,931 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="660.8" cy="1595.0" r="4"><title>Oct 18: 2.3% of runs failed (64 of 2,796 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="688.5" cy="1595.1" r="4"><title>Oct 19: 2.3% of runs failed (54 of 2,362 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="716.2" cy="1599.6" r="4"><title>Oct 20: 1.8% of runs failed (43 of 2,366 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="743.8" cy="1598.7" r="4"><title>Oct 21: 1.9% of runs failed (50 of 2,621 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="771.5" cy="1595.8" r="4"><title>Oct 22: 2.2% of runs failed (61 of 2,757 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="799.2" cy="1597.7" r="4"><title>Oct 23: 2.0% of runs failed (73 of 3,634 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="826.8" cy="1594.3" r="4"><title>Oct 24: 2.4% of runs failed (107 of 4,524 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl" cx="854.5" cy="1594.5" r="4"><title>Oct 25: 2.3% of runs failed (64 of 2,733 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
+  <circle class="dot failedl partial" cx="882.2" cy="1593.6" r="4"><title>Oct 26: 2.4% of runs failed (28 of 1,151 CI runs that passed or failed · the bot's own workflows left out) (today so far)</title></circle>
   <rect class="failed" x="805.8" y="1459" width="9" height="9" rx="2"/>
   <text class="lbl" x="818.8" y="1467">runs failed</text>
   <rect class="saved" x="659.8" y="1459" width="9" height="9" rx="2"/>
@@ -536,140 +536,168 @@
   <g><title>Oct 24: opened 13 (people 6, agents 2, bots 5); closed 30 as completed, 0 as not planned</title><rect class="people" x="816.6" y="1763.8" width="8.3" height="8.2"/><rect class="agents" x="816.6" y="1761.0" width="8.3" height="2.7"/><rect class="bots" x="816.6" y="1761.0" width="8.3" height="0.0"/><path class="bots" d="M813.7,1761.0 L820.7,1754.2 L827.8,1761.0 Z"/><rect class="closed" x="828.8" y="1772.0" width="8.3" height="33.7"/><path class="closed" d="M825.9,1805.7 L832.9,1813.1 L840.0,1805.7 Z"/></g>
   <rect class="dayband" x="840.7" y="1683" width="27.7" height="178"/>
   <g><title>Oct 25: opened 9 (people 6, agents 0, bots 3); closed 17 as completed, 0 as not planned</title><rect class="people" x="844.3" y="1763.8" width="8.3" height="8.2"/><rect class="bots" x="844.3" y="1763.8" width="8.3" height="0.0"/><path class="bots" d="M841.4,1763.8 L848.4,1759.7 L855.5,1763.8 Z"/><rect class="closed" x="856.4" y="1772.0" width="8.3" height="15.8"/><path class="closed" d="M853.5,1787.8 L860.6,1795.3 L867.6,1787.8 Z"/></g>
-  <g class="partial"><title>Oct 26: opened 3 (people 2, agents 1, bots 0); closed 0 as completed, 0 as not planned (today so far)</title><rect class="people" x="871.9" y="1769.3" width="8.3" height="2.7"/><rect class="agents" x="871.9" y="1769.3" width="8.3" height="0.0"/><path class="agents" d="M869.0,1769.3 L876.1,1767.9 L883.1,1769.3 Z"/></g>
+  <g class="partial"><title>Oct 26: opened 12 (people 8, agents 1, bots 3); closed 11 as completed, 0 as not planned (today so far)</title><rect class="people" x="871.9" y="1761.0" width="8.3" height="11.0"/><rect class="agents" x="871.9" y="1759.7" width="8.3" height="1.4"/><rect class="bots" x="871.9" y="1759.7" width="8.3" height="0.0"/><path class="bots" d="M869.0,1759.7 L876.1,1755.5 L883.1,1759.7 Z"/><rect class="closed" x="884.1" y="1772.0" width="8.3" height="7.6"/><path class="closed" d="M881.2,1779.6 L888.3,1787.1 L895.3,1779.6 Z"/></g>
   <text class="tick" x="107.5" y="1875" text-anchor="middle">Sep 28</text>
   <text class="tick" x="301.2" y="1875" text-anchor="middle">Oct 5</text>
   <text class="tick" x="494.8" y="1875" text-anchor="middle">Oct 12</text>
   <text class="tick" x="688.5" y="1875" text-anchor="middle">Oct 19</text>
   <text class="tick" x="882.2" y="1875" text-anchor="middle">Oct 26</text>
   <line class="base" x1="66" x2="896" y1="1772.0" y2="1772.0"/>
-  <g><text class="h2" x="24" y="1897">9 · Change failure — times main went red (a ci-red-main issue) per merged PR, each day</text></g>
-  <line class="base" x1="66" x2="896" y1="2037.0" y2="2037.0"/>
-  <text class="tick" x="58" y="2040.5" text-anchor="end">0%</text>
-  <line class="grid" x1="66" x2="896" y1="2015.0" y2="2015.0"/>
-  <text class="tick" x="58" y="2018.5" text-anchor="end">2.5%</text>
-  <line class="grid" x1="66" x2="896" y1="1993.0" y2="1993.0"/>
-  <text class="tick" x="58" y="1996.5" text-anchor="end">5%</text>
-  <line class="grid" x1="66" x2="896" y1="1971.0" y2="1971.0"/>
-  <text class="tick" x="58" y="1974.5" text-anchor="end">7.5%</text>
-  <line class="grid" x1="66" x2="896" y1="1949.0" y2="1949.0"/>
-  <text class="tick" x="58" y="1952.5" text-anchor="end">10%</text>
+  <g><text class="h2" x="24" y="1897">9 · First-pass rate — promoter-bot PRs merged with no send-back or fix, each day (band: 95% for the day's count)</text></g>
+  <line class="base" x1="66" x2="896" y1="2047.0" y2="2047.0"/>
+  <text class="tick" x="58" y="2050.5" text-anchor="end">0%</text>
+  <line class="grid" x1="66" x2="896" y1="2017.0" y2="2017.0"/>
+  <text class="tick" x="58" y="2020.5" text-anchor="end">25%</text>
+  <line class="grid" x1="66" x2="896" y1="1987.0" y2="1987.0"/>
+  <text class="tick" x="58" y="1990.5" text-anchor="end">50%</text>
+  <line class="grid" x1="66" x2="896" y1="1957.0" y2="1957.0"/>
+  <text class="tick" x="58" y="1960.5" text-anchor="end">75%</text>
   <line class="grid" x1="66" x2="896" y1="1927.0" y2="1927.0"/>
-  <text class="tick" x="58" y="1930.5" text-anchor="end">12.5%</text>
-  <text class="tick" x="107.5" y="2053" text-anchor="middle">Sep 28</text>
-  <text class="tick" x="301.2" y="2053" text-anchor="middle">Oct 5</text>
-  <text class="tick" x="494.8" y="2053" text-anchor="middle">Oct 12</text>
-  <text class="tick" x="688.5" y="2053" text-anchor="middle">Oct 19</text>
-  <text class="tick" x="882.2" y="2053" text-anchor="middle">Oct 26</text>
-  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="1923" y2="2037"/></g>
-  <line class="start" x1="453.3" x2="453.3" y1="1923" y2="2037"/>
-  <polyline class="line failedl" points="467.2,1927.0 494.8,1996.1 522.5,1980.2 550.2,1939.2 577.8,1975.6 605.5,1959.8 633.2,1964.5 660.8,1995.8 688.5,1974.1 716.2,2019.2 743.8,2022.2 771.5,1990.0 799.2,2019.3 826.8,2018.0 854.5,2015.2 882.2,2037.0"/>
-  <circle class="dot failedl" cx="467.2" cy="1927.0" r="4"><title>Oct 11: 12.5% (5 times main went red for 40 merged PRs; median 0.8 h to green)</title></circle>
-  <circle class="dot failedl" cx="494.8" cy="1996.1" r="4"><title>Oct 12: 4.7% (2 times main went red for 43 merged PRs; median 22.5 h to green)</title></circle>
-  <circle class="dot failedl" cx="522.5" cy="1980.2" r="4"><title>Oct 13: 6.5% (2 times main went red for 31 merged PRs; median 1.5 h to green)</title></circle>
-  <circle class="dot failedl" cx="550.2" cy="1939.2" r="4"><title>Oct 14: 11.1% (6 times main went red for 54 merged PRs; median 3.1 h to green)</title></circle>
-  <circle class="dot failedl" cx="577.8" cy="1975.6" r="4"><title>Oct 15: 7.0% (3 times main went red for 43 merged PRs; median 0.3 h to green)</title></circle>
-  <circle class="dot failedl" cx="605.5" cy="1959.8" r="4"><title>Oct 16: 8.8% (5 times main went red for 57 merged PRs; median 0.5 h to green)</title></circle>
-  <circle class="dot failedl" cx="633.2" cy="1964.5" r="4"><title>Oct 17: 8.2% (7 times main went red for 85 merged PRs; median 0.3 h to green)</title></circle>
-  <circle class="dot failedl" cx="660.8" cy="1995.8" r="4"><title>Oct 18: 4.7% (6 times main went red for 128 merged PRs; median 1.4 h to green)</title></circle>
-  <circle class="dot failedl" cx="688.5" cy="1974.1" r="4"><title>Oct 19: 7.1% (7 times main went red for 98 merged PRs; median 0.5 h to green)</title></circle>
-  <circle class="dot failedl" cx="716.2" cy="2019.2" r="4"><title>Oct 20: 2.0% (2 times main went red for 99 merged PRs; median 2 h to green)</title></circle>
-  <circle class="dot failedl" cx="743.8" cy="2022.2" r="4"><title>Oct 21: 1.7% (2 times main went red for 119 merged PRs; median 1.8 h to green)</title></circle>
-  <circle class="dot failedl" cx="771.5" cy="1990.0" r="4"><title>Oct 22: 5.3% (7 times main went red for 131 merged PRs; median 0.2 h to green)</title></circle>
-  <circle class="dot failedl" cx="799.2" cy="2019.3" r="4"><title>Oct 23: 2.0% (4 times main went red for 199 merged PRs; median 1.7 h to green)</title></circle>
-  <circle class="dot failedl" cx="826.8" cy="2018.0" r="4"><title>Oct 24: 2.2% (5 times main went red for 232 merged PRs; median 2.7 h to green)</title></circle>
-  <circle class="dot failedl" cx="854.5" cy="2015.2" r="4"><title>Oct 25: 2.5% (3 times main went red for 121 merged PRs; median 1.6 h to green; 1 still red)</title></circle>
-  <circle class="dot failedl partial" cx="882.2" cy="2037.0" r="4"><title>Oct 26: 0.0% (0 times main went red for 6 merged PRs) (today so far)</title></circle>
-  <g><text class="h2" x="24" y="2077">10 · Cost per resolved issue — promoter-bot dollars per issue it resolved (dots: each day; line: average of the days so far, up to 7)</text></g>
-  <line class="base" x1="66" x2="896" y1="2217.0" y2="2217.0"/>
-  <text class="tick" x="58" y="2220.5" text-anchor="end">$0</text>
-  <line class="grid" x1="66" x2="896" y1="2189.5" y2="2189.5"/>
-  <text class="tick" x="58" y="2193.0" text-anchor="end">$5</text>
-  <line class="grid" x1="66" x2="896" y1="2162.0" y2="2162.0"/>
-  <text class="tick" x="58" y="2165.5" text-anchor="end">$10</text>
-  <line class="grid" x1="66" x2="896" y1="2134.5" y2="2134.5"/>
-  <text class="tick" x="58" y="2138.0" text-anchor="end">$15</text>
-  <line class="grid" x1="66" x2="896" y1="2107.0" y2="2107.0"/>
-  <text class="tick" x="58" y="2110.5" text-anchor="end">$20</text>
-  <text class="tick" x="107.5" y="2233" text-anchor="middle">Sep 28</text>
-  <text class="tick" x="301.2" y="2233" text-anchor="middle">Oct 5</text>
-  <text class="tick" x="494.8" y="2233" text-anchor="middle">Oct 12</text>
-  <text class="tick" x="688.5" y="2233" text-anchor="middle">Oct 19</text>
-  <text class="tick" x="882.2" y="2233" text-anchor="middle">Oct 26</text>
-  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="2103" y2="2217"/></g>
-  <line class="start" x1="453.3" x2="453.3" y1="2103" y2="2217"/>
-  <circle class="daily" cx="494.8" cy="2168.3" r="2.6"><title>Oct 12: $124 / 14 issues resolved with promoter-bot work = $8.85</title></circle>
-  <circle class="daily" cx="522.5" cy="2158.3" r="2.6"><title>Oct 13: $117 / 11 issues resolved with promoter-bot work = $10.67</title></circle>
-  <circle class="daily" cx="550.2" cy="2172.0" r="2.6"><title>Oct 14: $253 / 31 issues resolved with promoter-bot work = $8.18</title></circle>
-  <circle class="daily" cx="577.8" cy="2107.0" r="2.6"><title>Oct 15: $217 / 9 issues resolved with promoter-bot work = $24.14</title></circle>
-  <circle class="daily" cx="605.5" cy="2131.4" r="2.6"><title>Oct 16: $265 / 17 issues resolved with promoter-bot work = $15.56</title></circle>
-  <circle class="daily" cx="633.2" cy="2162.0" r="2.6"><title>Oct 17: $190 / 19 issues resolved with promoter-bot work = $10.00</title></circle>
-  <circle class="daily" cx="660.8" cy="2129.5" r="2.6"><title>Oct 18: $239 / 15 issues resolved with promoter-bot work = $15.92</title></circle>
-  <circle class="daily" cx="688.5" cy="2182.6" r="2.6"><title>Oct 19: $131 / 21 issues resolved with promoter-bot work = $6.25</title></circle>
-  <circle class="daily" cx="716.2" cy="2155.5" r="2.6"><title>Oct 20: $134 / 12 issues resolved with promoter-bot work = $11.18</title></circle>
-  <circle class="daily" cx="743.8" cy="2114.1" r="2.6"><title>Oct 21: $150 / 8 issues resolved with promoter-bot work = $18.70</title></circle>
-  <circle class="daily" cx="771.5" cy="2155.5" r="2.6"><title>Oct 22: $190 / 17 issues resolved with promoter-bot work = $11.18</title></circle>
-  <circle class="daily" cx="799.2" cy="2137.2" r="2.6"><title>Oct 23: $261 / 18 issues resolved with promoter-bot work = $14.51</title></circle>
-  <circle class="daily" cx="826.8" cy="2164.0" r="2.6"><title>Oct 24: $289 / 30 issues resolved with promoter-bot work = $9.63</title></circle>
-  <circle class="daily" cx="854.5" cy="2137.5" r="2.6"><title>Oct 25: $173 / 12 issues resolved with promoter-bot work = $14.45</title></circle>
-  <polyline class="line cum" points="494.8,2168.3 522.5,2163.9 550.2,2168.4 577.8,2156.8 605.5,2151.5 633.2,2153.5 660.8,2150.4 688.5,2153.8 716.2,2153.6 743.8,2144.8 771.5,2151.5 799.2,2152.2 826.8,2153.6 854.5,2155.1"/>
-  <circle class="dot cum" cx="494.8" cy="2168.3" r="4"><title>Oct 12: $8.85 per issue, average of the last 1 day(s)</title></circle>
-  <circle class="dot cum" cx="522.5" cy="2163.9" r="4"><title>Oct 13: $9.65 per issue, average of the last 2 day(s)</title></circle>
-  <circle class="dot cum" cx="550.2" cy="2168.4" r="4"><title>Oct 14: $8.83 per issue, average of the last 3 day(s)</title></circle>
-  <circle class="dot cum" cx="577.8" cy="2156.8" r="4"><title>Oct 15: $10.95 per issue, average of the last 4 day(s)</title></circle>
-  <circle class="dot cum" cx="605.5" cy="2151.5" r="4"><title>Oct 16: $11.91 per issue, average of the last 5 day(s)</title></circle>
-  <circle class="dot cum" cx="633.2" cy="2153.5" r="4"><title>Oct 17: $11.55 per issue, average of the last 6 day(s)</title></circle>
-  <circle class="dot cum" cx="660.8" cy="2150.4" r="4"><title>Oct 18: $12.11 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="688.5" cy="2153.8" r="4"><title>Oct 19: $11.49 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="716.2" cy="2153.6" r="4"><title>Oct 20: $11.53 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="743.8" cy="2144.8" r="4"><title>Oct 21: $13.13 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="771.5" cy="2151.5" r="4"><title>Oct 22: $11.91 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="799.2" cy="2152.2" r="4"><title>Oct 23: $11.77 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="826.8" cy="2153.6" r="4"><title>Oct 24: $11.52 per issue, average of the last 7 day(s)</title></circle>
-  <circle class="dot cum" cx="854.5" cy="2155.1" r="4"><title>Oct 25: $11.26 per issue, average of the last 7 day(s)</title></circle>
-  <g><title>comments, label and state changes, merges, new PRs and issues; GitHub's secondary-limit guidance is about 500 content-creating requests an hour per account</title><text class="h2" x="24" y="2257">11 · GitHub writes — busiest hour per account</text></g>
-  <line class="base" x1="66" x2="896" y1="2397.0" y2="2397.0"/>
-  <text class="tick" x="58" y="2400.5" text-anchor="end">0</text>
-  <line class="grid" x1="66" x2="896" y1="2375.0" y2="2375.0"/>
-  <text class="tick" x="58" y="2378.5" text-anchor="end">100</text>
-  <line class="grid" x1="66" x2="896" y1="2353.0" y2="2353.0"/>
-  <text class="tick" x="58" y="2356.5" text-anchor="end">200</text>
-  <line class="grid" x1="66" x2="896" y1="2331.0" y2="2331.0"/>
-  <text class="tick" x="58" y="2334.5" text-anchor="end">300</text>
-  <line class="grid" x1="66" x2="896" y1="2309.0" y2="2309.0"/>
-  <text class="tick" x="58" y="2312.5" text-anchor="end">400</text>
-  <line class="grid" x1="66" x2="896" y1="2287.0" y2="2287.0"/>
-  <text class="tick" x="58" y="2290.5" text-anchor="end">500</text>
-  <text class="tick" x="107.5" y="2413" text-anchor="middle">Sep 28</text>
-  <text class="tick" x="301.2" y="2413" text-anchor="middle">Oct 5</text>
-  <text class="tick" x="494.8" y="2413" text-anchor="middle">Oct 12</text>
-  <text class="tick" x="688.5" y="2413" text-anchor="middle">Oct 19</text>
-  <text class="tick" x="882.2" y="2413" text-anchor="middle">Oct 26</text>
-  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="2283" y2="2397"/></g>
-  <line class="start" x1="453.3" x2="453.3" y1="2283" y2="2397"/>
-  <line class="avg" x1="66" x2="896" y1="2287.0" y2="2287.0"/><text class="avgl" x="896" y="2282.0" text-anchor="end">~500/h</text>
-  <polyline class="line cum" points="799.2,2349.9 826.8,2335.4 854.5,2379.6 882.2,2392.4"/>
-  <circle class="dot cum" cx="799.2" cy="2349.9" r="4"><title>Oct 23: squid-protocol: busiest hour 214 writes, 2129 that day</title></circle>
-  <circle class="dot cum" cx="826.8" cy="2335.4" r="4"><title>Oct 24: squid-protocol: busiest hour 280 writes, 3502 that day</title></circle>
-  <circle class="dot cum" cx="854.5" cy="2379.6" r="4"><title>Oct 25: squid-protocol: busiest hour 79 writes, 732 that day</title></circle>
-  <circle class="dot cum partial" cx="882.2" cy="2392.4" r="4"><title>Oct 26: squid-protocol: busiest hour 21 writes, 22 that day (today so far)</title></circle>
-  <polyline class="line failedl" points="826.8,2382.0 854.5,2383.1 882.2,2390.4"/>
-  <circle class="dot failedl" cx="826.8" cy="2382.0" r="4"><title>Oct 24: squid-shepherd[bot]: busiest hour 68 writes, 204 that day</title></circle>
-  <circle class="dot failedl" cx="854.5" cy="2383.1" r="4"><title>Oct 25: squid-shepherd[bot]: busiest hour 63 writes, 950 that day</title></circle>
-  <circle class="dot failedl partial" cx="882.2" cy="2390.4" r="4"><title>Oct 26: squid-shepherd[bot]: busiest hour 30 writes, 32 that day (today so far)</title></circle>
-  <polyline class="line saved" points="799.2,2395.0 826.8,2395.0 854.5,2395.5 882.2,2396.6"/>
-  <circle class="dot saved" cx="799.2" cy="2395.0" r="4"><title>Oct 23: github-actions[bot]: busiest hour 9 writes, 84 that day</title></circle>
-  <circle class="dot saved" cx="826.8" cy="2395.0" r="4"><title>Oct 24: github-actions[bot]: busiest hour 9 writes, 112 that day</title></circle>
-  <circle class="dot saved" cx="854.5" cy="2395.5" r="4"><title>Oct 25: github-actions[bot]: busiest hour 7 writes, 64 that day</title></circle>
-  <circle class="dot saved partial" cx="882.2" cy="2396.6" r="4"><title>Oct 26: github-actions[bot]: busiest hour 2 writes, 2 that day (today so far)</title></circle>
-  <rect class="saved" x="756.2" y="2249" width="9" height="9" rx="2"/>
-  <text class="lbl" x="769.2" y="2257">github-actions[bot]</text>
-  <rect class="failed" x="616.4" y="2249" width="9" height="9" rx="2"/>
-  <text class="lbl" x="629.4" y="2257">squid-shepherd[bot]</text>
-  <rect class="bot" x="507.6" y="2249" width="9" height="9" rx="2"/>
-  <text class="lbl" x="520.6" y="2257">squid-protocol</text>
-  <text class="meta" x="24" y="2467">Source: GitHub API. Days are UTC; faded marks are today so far.</text>
-  <text class="meta" x="24" y="2482">Queue wait is sampled from 5% of each day's runs (at least 30); runner time is runner occupancy where its readings cover the day, else that sample's estimate (± 95%).</text>
-  <text class="meta" x="24" y="2497">promoter-bot = PRs from churn/, agy/ branches. Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; minutes saved is estimated.</text>
+  <text class="tick" x="58" y="1930.5" text-anchor="end">100%</text>
+  <text class="tick" x="107.5" y="2063" text-anchor="middle">Sep 28</text>
+  <text class="tick" x="301.2" y="2063" text-anchor="middle">Oct 5</text>
+  <text class="tick" x="494.8" y="2063" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="688.5" y="2063" text-anchor="middle">Oct 19</text>
+  <text class="tick" x="882.2" y="2063" text-anchor="middle">Oct 26</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="1923" y2="2047"/></g>
+  <line class="start" x1="453.3" x2="453.3" y1="1923" y2="2047"/>
+  <polygon class="band" points="660.8,1967.5 688.5,1956.7 716.2,1947.0 743.8,1942.2 771.5,1944.6 799.2,1946.0 826.8,1949.2 854.5,1950.7 854.5,1995.5 826.8,1975.9 799.2,1973.0 771.5,1981.9 743.8,1979.0 716.2,1984.5 688.5,1993.2 660.8,2017.5"/>
+  <polyline class="line cum" points="660.8,1993.7 688.5,1973.7 716.2,1963.0 743.8,1957.0 771.5,1960.1 799.2,1957.5 826.8,1961.0 854.5,1970.6"/>
+  <circle class="dot cum" cx="660.8" cy="1993.7" r="4"><title>Oct 18: 44% first pass (8 of 18 promoter-bot PRs merged with no send-back or fix; 95% band 25-66%)</title></circle>
+  <circle class="dot cum" cx="688.5" cy="1973.7" r="4"><title>Oct 19: 61% first pass (22 of 36 promoter-bot PRs merged with no send-back or fix; 95% band 45-75%)</title></circle>
+  <circle class="dot cum" cx="716.2" cy="1963.0" r="4"><title>Oct 20: 70% first pass (21 of 30 promoter-bot PRs merged with no send-back or fix; 95% band 52-83%)</title></circle>
+  <circle class="dot cum" cx="743.8" cy="1957.0" r="4"><title>Oct 21: 75% first pass (21 of 28 promoter-bot PRs merged with no send-back or fix; 95% band 57-87%)</title></circle>
+  <circle class="dot cum" cx="771.5" cy="1960.1" r="4"><title>Oct 22: 72% first pass (21 of 29 promoter-bot PRs merged with no send-back or fix; 95% band 54-85%)</title></circle>
+  <circle class="dot cum" cx="799.2" cy="1957.5" r="4"><title>Oct 23: 75% first pass (41 of 55 promoter-bot PRs merged with no send-back or fix; 95% band 62-84%)</title></circle>
+  <circle class="dot cum" cx="826.8" cy="1961.0" r="4"><title>Oct 24: 72% first pass (43 of 60 promoter-bot PRs merged with no send-back or fix; 95% band 59-81%)</title></circle>
+  <circle class="dot cum" cx="854.5" cy="1970.6" r="4"><title>Oct 25: 64% first pass (14 of 22 promoter-bot PRs merged with no send-back or fix; 95% band 43-80%)</title></circle>
+  <g><text class="h2" x="24" y="2087">10 · Change failure — times main went red (a ci-red-main issue) per merged PR, each day</text></g>
+  <line class="base" x1="66" x2="896" y1="2227.0" y2="2227.0"/>
+  <text class="tick" x="58" y="2230.5" text-anchor="end">0%</text>
+  <line class="grid" x1="66" x2="896" y1="2205.0" y2="2205.0"/>
+  <text class="tick" x="58" y="2208.5" text-anchor="end">2.5%</text>
+  <line class="grid" x1="66" x2="896" y1="2183.0" y2="2183.0"/>
+  <text class="tick" x="58" y="2186.5" text-anchor="end">5%</text>
+  <line class="grid" x1="66" x2="896" y1="2161.0" y2="2161.0"/>
+  <text class="tick" x="58" y="2164.5" text-anchor="end">7.5%</text>
+  <line class="grid" x1="66" x2="896" y1="2139.0" y2="2139.0"/>
+  <text class="tick" x="58" y="2142.5" text-anchor="end">10%</text>
+  <line class="grid" x1="66" x2="896" y1="2117.0" y2="2117.0"/>
+  <text class="tick" x="58" y="2120.5" text-anchor="end">12.5%</text>
+  <text class="tick" x="107.5" y="2243" text-anchor="middle">Sep 28</text>
+  <text class="tick" x="301.2" y="2243" text-anchor="middle">Oct 5</text>
+  <text class="tick" x="494.8" y="2243" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="688.5" y="2243" text-anchor="middle">Oct 19</text>
+  <text class="tick" x="882.2" y="2243" text-anchor="middle">Oct 26</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="2113" y2="2227"/></g>
+  <line class="start" x1="453.3" x2="453.3" y1="2113" y2="2227"/>
+  <polyline class="line failedl" points="467.2,2117.0 494.8,2186.1 522.5,2170.2 550.2,2129.2 577.8,2165.6 605.5,2149.8 633.2,2154.5 660.8,2185.8 688.5,2164.1 716.2,2209.2 743.8,2212.2 771.5,2180.0 799.2,2209.3 826.8,2208.0 854.5,2205.2 882.2,2180.7"/>
+  <circle class="dot failedl" cx="467.2" cy="2117.0" r="4"><title>Oct 11: 12.5% (5 times main went red for 40 merged PRs; median 0.8 h to green)</title></circle>
+  <circle class="dot failedl" cx="494.8" cy="2186.1" r="4"><title>Oct 12: 4.7% (2 times main went red for 43 merged PRs; median 22.5 h to green)</title></circle>
+  <circle class="dot failedl" cx="522.5" cy="2170.2" r="4"><title>Oct 13: 6.5% (2 times main went red for 31 merged PRs; median 1.5 h to green)</title></circle>
+  <circle class="dot failedl" cx="550.2" cy="2129.2" r="4"><title>Oct 14: 11.1% (6 times main went red for 54 merged PRs; median 3.1 h to green)</title></circle>
+  <circle class="dot failedl" cx="577.8" cy="2165.6" r="4"><title>Oct 15: 7.0% (3 times main went red for 43 merged PRs; median 0.3 h to green)</title></circle>
+  <circle class="dot failedl" cx="605.5" cy="2149.8" r="4"><title>Oct 16: 8.8% (5 times main went red for 57 merged PRs; median 0.5 h to green)</title></circle>
+  <circle class="dot failedl" cx="633.2" cy="2154.5" r="4"><title>Oct 17: 8.2% (7 times main went red for 85 merged PRs; median 0.3 h to green)</title></circle>
+  <circle class="dot failedl" cx="660.8" cy="2185.8" r="4"><title>Oct 18: 4.7% (6 times main went red for 128 merged PRs; median 1.4 h to green)</title></circle>
+  <circle class="dot failedl" cx="688.5" cy="2164.1" r="4"><title>Oct 19: 7.1% (7 times main went red for 98 merged PRs; median 0.5 h to green)</title></circle>
+  <circle class="dot failedl" cx="716.2" cy="2209.2" r="4"><title>Oct 20: 2.0% (2 times main went red for 99 merged PRs; median 2 h to green)</title></circle>
+  <circle class="dot failedl" cx="743.8" cy="2212.2" r="4"><title>Oct 21: 1.7% (2 times main went red for 119 merged PRs; median 1.8 h to green)</title></circle>
+  <circle class="dot failedl" cx="771.5" cy="2180.0" r="4"><title>Oct 22: 5.3% (7 times main went red for 131 merged PRs; median 0.2 h to green)</title></circle>
+  <circle class="dot failedl" cx="799.2" cy="2209.3" r="4"><title>Oct 23: 2.0% (4 times main went red for 199 merged PRs; median 1.7 h to green)</title></circle>
+  <circle class="dot failedl" cx="826.8" cy="2208.0" r="4"><title>Oct 24: 2.2% (5 times main went red for 232 merged PRs; median 2.7 h to green)</title></circle>
+  <circle class="dot failedl" cx="854.5" cy="2205.2" r="4"><title>Oct 25: 2.5% (3 times main went red for 121 merged PRs; median 1.6 h to green)</title></circle>
+  <circle class="dot failedl partial" cx="882.2" cy="2180.7" r="4"><title>Oct 26: 5.3% (3 times main went red for 57 merged PRs; median 0.2 h to green) (today so far)</title></circle>
+  <g><text class="h2" x="24" y="2267">11 · Cost per resolved issue — promoter-bot dollars per issue it resolved (dots: each day; line: average of the days so far, up to 7)</text></g>
+  <line class="base" x1="66" x2="896" y1="2407.0" y2="2407.0"/>
+  <text class="tick" x="58" y="2410.5" text-anchor="end">$0</text>
+  <line class="grid" x1="66" x2="896" y1="2379.5" y2="2379.5"/>
+  <text class="tick" x="58" y="2383.0" text-anchor="end">$5</text>
+  <line class="grid" x1="66" x2="896" y1="2352.0" y2="2352.0"/>
+  <text class="tick" x="58" y="2355.5" text-anchor="end">$10</text>
+  <line class="grid" x1="66" x2="896" y1="2324.5" y2="2324.5"/>
+  <text class="tick" x="58" y="2328.0" text-anchor="end">$15</text>
+  <line class="grid" x1="66" x2="896" y1="2297.0" y2="2297.0"/>
+  <text class="tick" x="58" y="2300.5" text-anchor="end">$20</text>
+  <text class="tick" x="107.5" y="2423" text-anchor="middle">Sep 28</text>
+  <text class="tick" x="301.2" y="2423" text-anchor="middle">Oct 5</text>
+  <text class="tick" x="494.8" y="2423" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="688.5" y="2423" text-anchor="middle">Oct 19</text>
+  <text class="tick" x="882.2" y="2423" text-anchor="middle">Oct 26</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="2293" y2="2407"/></g>
+  <line class="start" x1="453.3" x2="453.3" y1="2293" y2="2407"/>
+  <circle class="daily" cx="494.8" cy="2358.3" r="2.6"><title>Oct 12: $124 / 14 issues resolved with promoter-bot work = $8.85</title></circle>
+  <circle class="daily" cx="522.5" cy="2348.3" r="2.6"><title>Oct 13: $117 / 11 issues resolved with promoter-bot work = $10.67</title></circle>
+  <circle class="daily" cx="550.2" cy="2362.0" r="2.6"><title>Oct 14: $253 / 31 issues resolved with promoter-bot work = $8.18</title></circle>
+  <circle class="daily" cx="577.8" cy="2297.0" r="2.6"><title>Oct 15: $217 / 9 issues resolved with promoter-bot work = $24.14</title></circle>
+  <circle class="daily" cx="605.5" cy="2321.4" r="2.6"><title>Oct 16: $265 / 17 issues resolved with promoter-bot work = $15.56</title></circle>
+  <circle class="daily" cx="633.2" cy="2352.0" r="2.6"><title>Oct 17: $190 / 19 issues resolved with promoter-bot work = $10.00</title></circle>
+  <circle class="daily" cx="660.8" cy="2319.5" r="2.6"><title>Oct 18: $239 / 15 issues resolved with promoter-bot work = $15.92</title></circle>
+  <circle class="daily" cx="688.5" cy="2372.6" r="2.6"><title>Oct 19: $131 / 21 issues resolved with promoter-bot work = $6.25</title></circle>
+  <circle class="daily" cx="716.2" cy="2345.5" r="2.6"><title>Oct 20: $134 / 12 issues resolved with promoter-bot work = $11.18</title></circle>
+  <circle class="daily" cx="743.8" cy="2304.1" r="2.6"><title>Oct 21: $150 / 8 issues resolved with promoter-bot work = $18.70</title></circle>
+  <circle class="daily" cx="771.5" cy="2345.5" r="2.6"><title>Oct 22: $190 / 17 issues resolved with promoter-bot work = $11.18</title></circle>
+  <circle class="daily" cx="799.2" cy="2327.2" r="2.6"><title>Oct 23: $261 / 18 issues resolved with promoter-bot work = $14.51</title></circle>
+  <circle class="daily" cx="826.8" cy="2354.0" r="2.6"><title>Oct 24: $289 / 30 issues resolved with promoter-bot work = $9.63</title></circle>
+  <circle class="daily" cx="854.5" cy="2327.5" r="2.6"><title>Oct 25: $173 / 12 issues resolved with promoter-bot work = $14.45</title></circle>
+  <polyline class="line cum" points="494.8,2358.3 522.5,2353.9 550.2,2358.4 577.8,2346.8 605.5,2341.5 633.2,2343.5 660.8,2340.4 688.5,2343.8 716.2,2343.6 743.8,2334.8 771.5,2341.5 799.2,2342.2 826.8,2343.6 854.5,2345.1"/>
+  <circle class="dot cum" cx="494.8" cy="2358.3" r="4"><title>Oct 12: $8.85 per issue, average of the last 1 day(s)</title></circle>
+  <circle class="dot cum" cx="522.5" cy="2353.9" r="4"><title>Oct 13: $9.65 per issue, average of the last 2 day(s)</title></circle>
+  <circle class="dot cum" cx="550.2" cy="2358.4" r="4"><title>Oct 14: $8.83 per issue, average of the last 3 day(s)</title></circle>
+  <circle class="dot cum" cx="577.8" cy="2346.8" r="4"><title>Oct 15: $10.95 per issue, average of the last 4 day(s)</title></circle>
+  <circle class="dot cum" cx="605.5" cy="2341.5" r="4"><title>Oct 16: $11.91 per issue, average of the last 5 day(s)</title></circle>
+  <circle class="dot cum" cx="633.2" cy="2343.5" r="4"><title>Oct 17: $11.55 per issue, average of the last 6 day(s)</title></circle>
+  <circle class="dot cum" cx="660.8" cy="2340.4" r="4"><title>Oct 18: $12.11 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="688.5" cy="2343.8" r="4"><title>Oct 19: $11.49 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="716.2" cy="2343.6" r="4"><title>Oct 20: $11.53 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="743.8" cy="2334.8" r="4"><title>Oct 21: $13.13 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="771.5" cy="2341.5" r="4"><title>Oct 22: $11.91 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="799.2" cy="2342.2" r="4"><title>Oct 23: $11.77 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="826.8" cy="2343.6" r="4"><title>Oct 24: $11.52 per issue, average of the last 7 day(s)</title></circle>
+  <circle class="dot cum" cx="854.5" cy="2345.1" r="4"><title>Oct 25: $11.26 per issue, average of the last 7 day(s)</title></circle>
+  <g><title>comments, label and state changes, merges, new PRs and issues; GitHub's secondary-limit guidance is about 500 content-creating requests an hour per account</title><text class="h2" x="24" y="2447">12 · GitHub writes — busiest hour per account</text></g>
+  <line class="base" x1="66" x2="896" y1="2587.0" y2="2587.0"/>
+  <text class="tick" x="58" y="2590.5" text-anchor="end">0</text>
+  <line class="grid" x1="66" x2="896" y1="2565.0" y2="2565.0"/>
+  <text class="tick" x="58" y="2568.5" text-anchor="end">100</text>
+  <line class="grid" x1="66" x2="896" y1="2543.0" y2="2543.0"/>
+  <text class="tick" x="58" y="2546.5" text-anchor="end">200</text>
+  <line class="grid" x1="66" x2="896" y1="2521.0" y2="2521.0"/>
+  <text class="tick" x="58" y="2524.5" text-anchor="end">300</text>
+  <line class="grid" x1="66" x2="896" y1="2499.0" y2="2499.0"/>
+  <text class="tick" x="58" y="2502.5" text-anchor="end">400</text>
+  <line class="grid" x1="66" x2="896" y1="2477.0" y2="2477.0"/>
+  <text class="tick" x="58" y="2480.5" text-anchor="end">500</text>
+  <text class="tick" x="107.5" y="2603" text-anchor="middle">Sep 28</text>
+  <text class="tick" x="301.2" y="2603" text-anchor="middle">Oct 5</text>
+  <text class="tick" x="494.8" y="2603" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="688.5" y="2603" text-anchor="middle">Oct 19</text>
+  <text class="tick" x="882.2" y="2603" text-anchor="middle">Oct 26</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="425.7" x2="425.7" y1="2473" y2="2587"/></g>
+  <line class="start" x1="453.3" x2="453.3" y1="2473" y2="2587"/>
+  <line class="avg" x1="66" x2="896" y1="2477.0" y2="2477.0"/><text class="avgl" x="896" y="2472.0" text-anchor="end">~500/h</text>
+  <polyline class="line cum" points="799.2,2539.9 826.8,2525.8 854.5,2569.6 882.2,2580.2"/>
+  <circle class="dot cum" cx="799.2" cy="2539.9" r="4"><title>Oct 23: squid-protocol: busiest hour 214 writes, 2129 that day</title></circle>
+  <circle class="dot cum" cx="826.8" cy="2525.8" r="4"><title>Oct 24: squid-protocol: busiest hour 278 writes, 3499 that day</title></circle>
+  <circle class="dot cum" cx="854.5" cy="2569.6" r="4"><title>Oct 25: squid-protocol: busiest hour 79 writes, 726 that day</title></circle>
+  <circle class="dot cum partial" cx="882.2" cy="2580.2" r="4"><title>Oct 26: squid-protocol: busiest hour 31 writes, 247 that day (today so far)</title></circle>
+  <polyline class="line failedl" points="826.8,2572.0 854.5,2573.1 882.2,2575.1"/>
+  <circle class="dot failedl" cx="826.8" cy="2572.0" r="4"><title>Oct 24: squid-shepherd[bot]: busiest hour 68 writes, 204 that day</title></circle>
+  <circle class="dot failedl" cx="854.5" cy="2573.1" r="4"><title>Oct 25: squid-shepherd[bot]: busiest hour 63 writes, 950 that day</title></circle>
+  <circle class="dot failedl partial" cx="882.2" cy="2575.1" r="4"><title>Oct 26: squid-shepherd[bot]: busiest hour 54 writes, 381 that day (today so far)</title></circle>
+  <polyline class="line saved" points="799.2,2585.0 826.8,2585.0 854.5,2585.5 882.2,2585.5"/>
+  <circle class="dot saved" cx="799.2" cy="2585.0" r="4"><title>Oct 23: github-actions[bot]: busiest hour 9 writes, 84 that day</title></circle>
+  <circle class="dot saved" cx="826.8" cy="2585.0" r="4"><title>Oct 24: github-actions[bot]: busiest hour 9 writes, 112 that day</title></circle>
+  <circle class="dot saved" cx="854.5" cy="2585.5" r="4"><title>Oct 25: github-actions[bot]: busiest hour 7 writes, 64 that day</title></circle>
+  <circle class="dot saved partial" cx="882.2" cy="2585.5" r="4"><title>Oct 26: github-actions[bot]: busiest hour 7 writes, 23 that day (today so far)</title></circle>
+  <rect class="saved" x="756.2" y="2439" width="9" height="9" rx="2"/>
+  <text class="lbl" x="769.2" y="2447">github-actions[bot]</text>
+  <rect class="failed" x="616.4" y="2439" width="9" height="9" rx="2"/>
+  <text class="lbl" x="629.4" y="2447">squid-shepherd[bot]</text>
+  <rect class="bot" x="507.6" y="2439" width="9" height="9" rx="2"/>
+  <text class="lbl" x="520.6" y="2447">squid-protocol</text>
+  <text class="meta" x="24" y="2657">Source: GitHub API. Days are UTC; faded marks are today so far.</text>
+  <text class="meta" x="24" y="2672">Queue wait is sampled from 5% of each day's runs (at least 30); runner time is runner occupancy where its readings cover the day, else that sample's estimate (± 95%).</text>
+  <text class="meta" x="24" y="2687">promoter-bot = PRs from churn/, agy/ branches. Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; minutes saved is estimated.</text>
 </g>
 </svg>
