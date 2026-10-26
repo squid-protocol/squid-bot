@@ -319,7 +319,7 @@
    "churn_merged": 36,
    "ci_busy_hours": 2.05,
    "first_pass": {
-    "first_pass": 37,
+    "first_pass": 12,
     "merged": 37
    },
    "holds": {
@@ -347,11 +347,11 @@
    "quality": {
     "by_size": {
      "1-2": {
-      "fixed": 0,
+      "fixed": 1,
       "merged": 5
      },
      "3-4": {
-      "fixed": 0,
+      "fixed": 5,
       "merged": 8
      },
      "5": {
@@ -359,12 +359,20 @@
       "merged": 1
      },
      "6+": {
-      "fixed": 0,
+      "fixed": 18,
       "merged": 23
      }
     },
-    "causes": {},
-    "fix_runs": 0
+    "causes": {
+     "collateral": 10,
+     "conflict": 3,
+     "env": 23,
+     "other": 5,
+     "own_test": 3,
+     "review": 1,
+     "stale": 6
+    },
+    "fix_runs": 51
    },
    "review_wait_min_median": 1.0,
    "slices_merged": 0,
@@ -1411,7 +1419,7 @@
     "churn_merged": 36,
     "ci_busy_hours": 2.05,
     "first_pass": {
-     "first_pass": 37,
+     "first_pass": 12,
      "merged": 37
     },
     "holds": {
@@ -1434,11 +1442,11 @@
     "quality": {
      "by_size": {
       "1-2": {
-       "fixed": 0,
+       "fixed": 1,
        "merged": 5
       },
       "3-4": {
-       "fixed": 0,
+       "fixed": 5,
        "merged": 8
       },
       "5": {
@@ -1446,12 +1454,20 @@
        "merged": 1
       },
       "6+": {
-       "fixed": 0,
+       "fixed": 18,
        "merged": 23
       }
      },
-     "causes": {},
-     "fix_runs": 0
+     "causes": {
+      "collateral": 10,
+      "conflict": 3,
+      "env": 23,
+      "other": 5,
+      "own_test": 3,
+      "review": 1,
+      "stale": 6
+     },
+     "fix_runs": 51
     },
     "review_wait_min_median": 1.0,
     "slot_use": 0.52,
@@ -3571,5 +3587,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-26T22:33Z"
+ "updated": "2026-10-26T22:36Z"
 }
