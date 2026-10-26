@@ -592,74 +592,47 @@
    }
   },
   "2026-10-25": {
-   "api": {
-    "churn_by_caller": {
-     "ci_in_progress": 191,
-     "ci_occupancy": 616,
-     "ci_profile_sample": 224,
-     "ci_queue": 199,
-     "claimed_here": 191,
-     "gh_comment": 181,
-     "gh_json_etag": 168,
-     "live_pr_job_waits": 214
-    },
-    "churn_calls": 2884,
-    "churn_writes": 218,
-    "churn_writes_busiest_hour": 41,
-    "peak_hour": 3089,
-    "readings": 112,
-    "readings_at_zero": 0,
-    "used_by_hour": {
-     "14": 2784,
-     "15": 1700,
-     "16": 3089,
-     "17": 1682,
-     "18": 1132,
-     "19": 1274,
-     "20": 1940,
-     "21": 0,
-     "23": 664
-    }
-   },
-   "churn_merged": 22,
+   "churn_merged": 108,
    "ci_busy_hours": 37.28,
    "holds": {
-    "pace": 0,
+    "pace": 17,
     "paused": 19,
     "prs-need-work": 0
    },
+   "hosts": 2,
    "idle_blockers": {},
    "idle_causes": {
-    "ci-admission": 41,
-    "frontier": 36,
-    "off-focus": 24,
-    "owner": 60,
-    "wait": 54
+    "ci-admission": 88,
+    "frontier": 54,
+    "off-focus": 53,
+    "other": 3,
+    "owner": 103,
+    "wait": 67
    },
-   "idle_hours": 6.83,
-   "idle_ticks": 60,
-   "items_done": 2,
-   "loop_runs": 15,
-   "loops_per_merged_pr": 0.68,
-   "max_workers": 2,
-   "new_work_share": 0.916,
+   "idle_hours": 11.68,
+   "idle_ticks": 107,
+   "items_done": 11,
+   "loop_runs": 60,
+   "loops_per_merged_pr": 0.56,
+   "max_workers": 3,
+   "new_work_share": 0.831,
    "paused_hours": 2.55,
-   "pr_open_to_merge_h_median": 0.83,
+   "pr_open_to_merge_h_median": 0.85,
    "precheck": {
     "failed_again": 4,
-    "passed": 30,
-    "sent_back": 4
+    "passed": 143,
+    "sent_back": 9
    },
    "review_wait_min_median": 1.0,
-   "slices_merged": 12,
-   "slot_use": 0.299,
-   "usd": 34.42,
-   "usd_per_merged_churn_pr": 1.56,
+   "slices_merged": 47,
+   "slot_use": 0.486,
+   "usd": 173.39,
+   "usd_per_merged_churn_pr": 1.61,
    "worker_hours": {
-    "new_work": 13.13,
-    "pr_fix": 0.1,
-    "precheck_retry": 0.07,
-    "send_back": 1.03
+    "new_work": 29.05,
+    "pr_fix": 3.47,
+    "precheck_retry": 0.14,
+    "send_back": 2.3
    }
   }
  },
@@ -1262,6 +1235,93 @@
      "pr_fix": 2.58,
      "precheck_retry": 0.6,
      "send_back": 3.35
+    }
+   },
+   "2026-10-25": {
+    "api": {
+     "churn_by_caller": {
+      "ci_occupancy": 1043,
+      "ci_queue": 518,
+      "gh_json_etag": 678,
+      "gh_pages": 826,
+      "live_pr_job_waits": 695,
+      "pr_is_open": 716,
+      "prs_graphql": 497,
+      "tend_bot_prs": 760
+     },
+     "churn_calls": 9762,
+     "churn_writes": 941,
+     "churn_writes_busiest_hour": 99,
+     "peak_hour": 2953,
+     "readings": 497,
+     "readings_at_zero": 0,
+     "used_by_hour": {
+      "00": 1331,
+      "01": 1081,
+      "02": 509,
+      "03": 631,
+      "04": 2850,
+      "05": 1285,
+      "06": 2073,
+      "07": 1421,
+      "08": 567,
+      "09": 745,
+      "10": 591,
+      "11": 493,
+      "12": 1175,
+      "13": 354,
+      "14": 2953,
+      "15": 2721,
+      "16": 2540,
+      "17": 1724,
+      "18": 955,
+      "19": 1280,
+      "20": 2019,
+      "21": 405,
+      "22": 388,
+      "23": 629
+     }
+    },
+    "churn_merged": 86,
+    "ci_busy_hours": 28.08,
+    "holds": {
+     "pace": 17,
+     "paused": 0,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "ci-admission": 47,
+     "frontier": 18,
+     "off-focus": 29,
+     "other": 3,
+     "owner": 43,
+     "wait": 13
+    },
+    "idle_hours": 4.85,
+    "idle_ticks": 47,
+    "items_done": 9,
+    "loop_runs": 45,
+    "loops_per_merged_pr": 0.52,
+    "max_workers": 1,
+    "new_work_share": 0.772,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": 0.85,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 113,
+     "sent_back": 5
+    },
+    "review_wait_min_median": 1.0,
+    "slices_merged": 35,
+    "slot_use": 0.859,
+    "usd": 138.97,
+    "usd_per_merged_churn_pr": 1.62,
+    "worker_hours": {
+     "new_work": 15.92,
+     "pr_fix": 3.37,
+     "precheck_retry": 0.07,
+     "send_back": 1.27
     }
    }
   },
