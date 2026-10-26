@@ -912,6 +912,7 @@ def summary_md(data: dict, cfg: Config, days: int, today: date, alerts: list[str
         out += [f"- #{c['pr']}: {c['title']}" for c in cur["ci_changes"][-25:]]
         if len(cur["ci_changes"]) > 25:
             out.append(f"- …and {len(cur['ci_changes']) - 25} earlier in the week")
+    out += quality_md(data, today)
     out += ["", "<sub>Exact: merged PRs, run counts and outcomes, bot runs, CI changes, reruns. Sampled: queue wait and runner "
             "time. Agent PRs (bot PRs included): an agent branch prefix or an agent marker in the PR body.</sub>", ""]
     return "\n".join(out)
@@ -1929,6 +1930,219 @@ def render_goals(data: dict, today: date, cfg: Config) -> str | None:
             + "\n  ".join(out) + "\n</g>\n</svg>\n")
 
 
+# ---------------------------------------------------------------- PR quality (quality.svg, owner 2026-10-26)
+# What the orchestrator's PR-size rule rests on, weekly: how often a merged PR needed a fix, by its hand-written file
+# count, and what broke when one did. From factory.json days: "quality" {by_size {bucket: {merged, fixed}}, causes
+# {cause: n}, fix_runs} and "first_pass" {merged, first_pass} (promoter-bot #72).
+QUALITY_SIZES = (("1-2", "s1"), ("3-4", "s3"), ("5", "s2"), ("6+", "s4"))  # fixed order: the hue follows the bucket
+QUALITY_CAUSES = (("stale", "derived file not refreshed", "s1"), ("conflict", "conflict with main", "s3"),
+                  ("collateral", "broke other tests", "s2"), ("env", "main red / flake / infra", "s4"))
+QUALITY_OTHER = ("own_test", "review", "other", "unlabelled")  # folded into one neutral line
+QUALITY_MIN_N = 3  # a week's bucket rate is drawn from 3 merged PRs up; fewer is a gap, not a point
+QUALITY_WEEKS = 16
+
+
+def quality_weeks(data: dict, today: date, n: int = QUALITY_WEEKS) -> list[dict]:
+    """Up to n ISO weeks (Monday first) that have quality numbers, oldest first: {week, partial, by_size, causes,
+    fix_runs, merged, first_pass}. The current week is partial."""
+    days = (data.get("factory") or {}).get("days") or {}
+    weeks: dict[date, dict] = {}
+    for d, row in sorted(days.items()):
+        q, fp = row.get("quality"), row.get("first_pass")
+        if not q:
+            continue
+        day = date.fromisoformat(d)
+        w = weeks.setdefault(day - timedelta(days=day.weekday()), {
+            "by_size": {b: {"merged": 0, "fixed": 0} for b, _ in QUALITY_SIZES}, "causes": {}, "fix_runs": 0,
+            "merged": 0, "first_pass": 0})
+        for b, v in (q.get("by_size") or {}).items():
+            if b in w["by_size"]:
+                w["by_size"][b]["merged"] += v.get("merged", 0)
+                w["by_size"][b]["fixed"] += v.get("fixed", 0)
+        for c, k in (q.get("causes") or {}).items():
+            w["causes"][c] = w["causes"].get(c, 0) + k
+        w["fix_runs"] += q.get("fix_runs", 0)
+        w["merged"] += (fp or {}).get("merged", 0)
+        w["first_pass"] += (fp or {}).get("first_pass", 0)
+    this_week = today - timedelta(days=today.weekday())
+    return [{"week": wk.isoformat(), "partial": wk >= this_week, **w} for wk, w in sorted(weeks.items())][-n:]
+
+
+def _rate(k: int, n: int) -> float | None:
+    return 100 * k / n if n >= QUALITY_MIN_N else None
+
+
+def render_quality(data: dict, today: date, cfg: Config) -> str | None:
+    weeks = quality_weeks(data, today)
+    if not weeks:
+        return None
+    width, pad, chart_h, label_w = 920, 24, 150, 150
+    left, right = pad + 34, width - pad - label_w
+    out, y = [], 34
+    out.append(f'<text class="h1" x="{pad}" y="{y}">{escape(cfg.repo)}: PR quality by size</text>')
+    out.append(f'<text class="lead" x="{pad}" y="{y + 20}">How often a merged {escape(cfg.bot_name)} PR needed a fix '
+               '(a review send-back or a CI fix run), by its hand-written file count, and what broke when one did. '
+               'Weekly.</text>')
+    y += 44
+    # score tiles: the last full week (the current one is partial)
+    full = [w for w in weeks if not w["partial"]] or weeks
+    last, prev = full[-1], (full[-2] if len(full) > 1 else None)
+
+    def small(w: dict) -> tuple[int, int]:
+        s = w["by_size"]
+        return s["1-2"]["fixed"] + s["3-4"]["fixed"], s["1-2"]["merged"] + s["3-4"]["merged"]
+
+    def big(w: dict) -> tuple[int, int]:
+        s = w["by_size"]
+        return s["5"]["fixed"] + s["6+"]["fixed"], s["5"]["merged"] + s["6+"]["merged"]
+
+    def pct(k: int, n: int) -> str:
+        return f"{100 * k / n:.0f}%" if n else "–"
+
+    def delta(cur: tuple[int, int], before: tuple[int, int] | None) -> str:
+        if not before or not cur[1] or not before[1]:
+            return ""
+        d = 100 * cur[0] / cur[1] - 100 * before[0] / before[1]
+        return f" · {d:+.0f} pts"
+
+    top_cause = max(((c, k) for c, k in last["causes"].items() if c != "unlabelled"), key=lambda x: x[1], default=None)
+    tiles = [
+        ("FIRST PASS", pct(last["first_pass"], last["merged"]),
+         f"{last['first_pass']} of {last['merged']} merged"
+         + delta((last["first_pass"], last["merged"]), prev and (prev["first_pass"], prev["merged"]))),
+        ("FIX RATE, 1-4 FILES", pct(*small(last)), f"{small(last)[0]} of {small(last)[1]} PRs"
+         + delta(small(last), prev and small(prev))),
+        ("FIX RATE, 5+ FILES", pct(*big(last)), f"{big(last)[0]} of {big(last)[1]} PRs"
+         + delta(big(last), prev and big(prev))),
+        ("TOP CAUSE", top_cause[0] if top_cause else "–",
+         f"{top_cause[1]} of {last['fix_runs']} fix runs" if top_cause else "no fix runs"),
+    ]
+    tw = (width - 2 * pad - 3 * 12) / 4
+    for i, (k, v, sub) in enumerate(tiles):
+        x = pad + i * (tw + 12)
+        out.append(f'<rect class="tile" x="{x:.1f}" y="{y}" width="{tw:.1f}" height="70" rx="8"/>')
+        out.append(f'<text class="k" x="{x + 12:.1f}" y="{y + 20}">{k}</text>')
+        out.append(f'<text class="v" x="{x + 12:.1f}" y="{y + 46}">{escape(v)}</text>')
+        out.append(f'<text class="sub" x="{x + 12:.1f}" y="{y + 62}">{escape(_short(sub, 44))}</text>')
+    out.append(f'<text class="meta" x="{width - pad}" y="{y - 6}" text-anchor="end">week of '
+               f'{_fmt_day(last["week"])}</text>')
+    y += 96
+    n = len(weeks)
+    x_at = (lambda i: (left + right) / 2) if n == 1 else (lambda i: left + (right - left) * i / (n - 1))
+
+    def chart(title: str, series: list[tuple[str, str, list[float | None], list[str]]], unit: str) -> None:
+        nonlocal y
+        out.append(f'<text class="h2" x="{pad}" y="{y}">{escape(title)}</text>')
+        top = y + 14
+        vmax = max([v for _, _, vals, _ in series for v in vals if v is not None] or [1])
+        axis_top, step = _nice_axis(vmax)
+        y_at = lambda v: top + chart_h - chart_h * v / axis_top  # noqa: E731
+        t = 0.0
+        while t <= axis_top + 1e-9:
+            out.append(f'<line class="{"base" if t == 0 else "grid"}" x1="{left}" x2="{right}" y1="{y_at(t):.1f}" '
+                       f'y2="{y_at(t):.1f}"/>')
+            out.append(f'<text class="tick" x="{left - 6}" y="{y_at(t) + 3.5:.1f}" text-anchor="end">{t:g}{unit}</text>')
+            t += step
+        for i, w in enumerate(weeks):
+            if n <= 8 or i % 2 == 0 or i == n - 1:
+                out.append(f'<text class="tick" x="{x_at(i):.1f}" y="{top + chart_h + 15}" text-anchor="middle">'
+                           f'{_fmt_day(w["week"])}{" *" if w["partial"] else ""}</text>')
+        ends = []
+        for name, cls, vals, tips in series:
+            runs, cur = [], []
+            for i, v in enumerate(vals):
+                if v is None:
+                    if cur:
+                        runs.append(cur)
+                    cur = []
+                else:
+                    cur.append(i)
+            if cur:
+                runs.append(cur)
+            for r in runs:  # a partial week is the dashed step to a hollow point: never a full-weight end
+                done = [i for i in r if not weeks[i]["partial"]]
+                if len(done) > 1:
+                    pts = " ".join(f"{x_at(i):.1f},{y_at(vals[i]):.1f}" for i in done)
+                    out.append(f'<polyline class="line q{cls}" points="{pts}"/>')
+                for i in r:
+                    if weeks[i]["partial"] and i - 1 in r:
+                        out.append(f'<line class="line q{cls} pend" x1="{x_at(i - 1):.1f}" y1="{y_at(vals[i - 1]):.1f}" '
+                                   f'x2="{x_at(i):.1f}" y2="{y_at(vals[i]):.1f}"/>')
+            for i, v in enumerate(vals):
+                if v is not None:
+                    part = " open" if weeks[i]["partial"] else ""
+                    out.append(f'<circle class="dot q{cls}{part}" cx="{x_at(i):.1f}" cy="{y_at(v):.1f}" r="4">'
+                               f'<title>{escape(_fmt_day(weeks[i]["week"]))}{" (week so far)" if part else ""}: '
+                               f'{escape(tips[i])}</title></circle>')
+            last_i = max((i for i, v in enumerate(vals) if v is not None and not weeks[i]["partial"]), default=None)
+            if last_i is not None:
+                ends.append([y_at(vals[last_i]), f"{name} {vals[last_i]:.0f}{unit}", cls])
+        ends.sort()  # direct labels at the right edge, nudged apart so they never overlap
+        for j in range(1, len(ends)):
+            ends[j][0] = max(ends[j][0], ends[j - 1][0] + 13)
+        for ly, text, cls in ends:
+            out.append(f'<rect class="q{cls}k" x="{right + 10}" y="{ly - 5:.1f}" width="10" height="3" rx="1.5"/>')
+            out.append(f'<text class="lbl" x="{right + 26}" y="{ly + 3.5:.1f}">{escape(text)}</text>')
+        y = top + chart_h + 40
+
+    size_series = []
+    for b, cls in QUALITY_SIZES:
+        vals = [_rate(w["by_size"][b]["fixed"], w["by_size"][b]["merged"]) for w in weeks]
+        tips = [f"{b} files: {w['by_size'][b]['fixed']} of {w['by_size'][b]['merged']} merged PRs needed a fix"
+                + ("" if w["by_size"][b]["merged"] >= QUALITY_MIN_N else f" (under {QUALITY_MIN_N} PRs: not drawn)")
+                for w in weeks]
+        size_series.append((f"{b} files", cls, vals, tips))
+    chart("Fix rate by PR size: share of merged PRs that needed a review send-back or CI fix run", size_series, "%")
+    cause_series = []
+    for c, label, cls in QUALITY_CAUSES:
+        vals = [100 * w["causes"].get(c, 0) / w["merged"] if w["merged"] >= QUALITY_MIN_N else None for w in weeks]
+        tips = [f"{label}: {w['causes'].get(c, 0)} fix runs per {w['merged']} merged PRs" for w in weeks]
+        cause_series.append((c, cls, vals, tips))
+    vals = [100 * sum(w["causes"].get(c, 0) for c in QUALITY_OTHER) / w["merged"] if w["merged"] >= QUALITY_MIN_N else None
+            for w in weeks]
+    cause_series.append(("other", "n", vals, [f"own tests, review, other: {sum(w['causes'].get(c, 0) for c in QUALITY_OTHER)}"
+                                              f" fix runs per {w['merged']} merged PRs" for w in weeks]))
+    chart("What broke: fix runs per 100 merged PRs, by cause", cause_series, "")
+    out.append(f'<text class="meta" x="{pad}" y="{y - 14}">* this week so far (dashed, hollow point); a line is drawn '
+               f'where a week has {QUALITY_MIN_N} merged PRs or more. Tiles: the last full week, change on the week '
+               'before.</text>')
+    out.append(f'<text class="meta" x="{pad}" y="{y + 1}">Causes are labelled by a model from each fix run&apos;s report '
+               '(factory.json "quality", published by the orchestrator).</text>')
+    height = y + 18
+    style = STYLE + """
+  .qs1 { stroke: var(--s1); } .qs2 { stroke: var(--s2); } .qs3 { stroke: var(--s3); } .qs4 { stroke: #8b5cf6; }
+  .qn { stroke: var(--neutral); }
+  .dot.qs1, .qs1k { fill: var(--s1); } .dot.qs2, .qs2k { fill: var(--s2); } .dot.qs3, .qs3k { fill: var(--s3); }
+  .dot.qs4, .qs4k { fill: #8b5cf6; } .dot.qn, .qnk { fill: var(--neutral); }
+  .dot.qs1, .dot.qs2, .dot.qs3, .dot.qs4, .dot.qn { stroke: var(--surface); stroke-width: 2; }
+  .pend { stroke-dasharray: 4 4; stroke-width: 1.5; }
+  .dot.open { fill: var(--surface); stroke-width: 2; } .dot.open.qs1 { stroke: var(--s1); } .dot.open.qs2 { stroke: var(--s2); }
+  .dot.open.qs3 { stroke: var(--s3); } .dot.open.qs4 { stroke: #8b5cf6; } .dot.open.qn { stroke: var(--neutral); }
+"""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
+            f'role="img" aria-label="{escape(cfg.repo)} PR quality by size">\n<style>{style}</style>\n<g class="root">\n'
+            f'  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="10"/>\n  '
+            + "\n  ".join(out) + "\n</g>\n</svg>\n")
+
+
+def quality_md(data: dict, today: date) -> list[str]:
+    """The weekly report's PR quality table (empty without quality numbers)."""
+    weeks = quality_weeks(data, today, n=6)
+    if not weeks:
+        return []
+    out = ["", "### PR quality by size (weekly; quality.svg)", "",
+           "| week | merged | first pass | fix 1-2 | fix 3-4 | fix 5 | fix 6+ | fix runs | top causes |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    for w in weeks:
+        s = w["by_size"]
+        cell = lambda b: f"{s[b]['fixed']}/{s[b]['merged']}" if s[b]["merged"] else "–"  # noqa: E731
+        causes = ", ".join(f"{c} {k}" for c, k in sorted(w["causes"].items(), key=lambda x: -x[1])[:3])
+        fp = f"{100 * w['first_pass'] / w['merged']:.0f}%" if w["merged"] else "–"
+        out.append(f"| {w['week']}{' (partial)' if w['partial'] else ''} | {w['merged']} | {fp} | {cell('1-2')} | "
+                   f"{cell('3-4')} | {cell('5')} | {cell('6+')} | {w['fix_runs']} | {causes or '–'} |")
+    return out
+
+
 # ---------------------------------------------------------------- CLI
 
 def _opt_float(s: str | None) -> float | None:
@@ -2012,6 +2226,9 @@ def main(argv: list[str] | None = None) -> int:
     goals_svg = render_goals(data, today, cfg)
     if goals_svg:
         (a.out / "goals.svg").write_text(goals_svg, encoding="utf-8")
+    quality_svg = render_quality(data, today, cfg)
+    if quality_svg:
+        (a.out / "quality.svg").write_text(quality_svg, encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
                           cfg.runner_pool)
     for msg in alerts:
