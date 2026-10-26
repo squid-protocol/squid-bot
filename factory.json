@@ -613,7 +613,7 @@
    "churn_merged": 94,
    "ci_busy_hours": 11.22,
    "first_pass": {
-    "first_pass": 61,
+    "first_pass": 60,
     "merged": 97
    },
    "holds": {
@@ -2961,7 +2961,7 @@
     "churn_merged": 36,
     "ci_busy_hours": 6.23,
     "first_pass": {
-     "first_pass": 22,
+     "first_pass": 21,
      "merged": 36
     },
     "holds": {
