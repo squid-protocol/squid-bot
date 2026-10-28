@@ -199,3 +199,7 @@
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 0, "running": 9}}, "queued": 0, "queued_runs": 0, "repos_read": 20, "running": 9, "scope": "org", "t": "2026-10-28T03:15:44Z"}
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 1, "running": 5}}, "queued": 0, "queued_runs": 1, "repos_read": 20, "running": 5, "scope": "org", "t": "2026-10-28T03:31:08Z"}
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 0, "running": 17}}, "queued": 0, "queued_runs": 0, "repos_read": 20, "running": 17, "scope": "org", "t": "2026-10-28T03:46:29Z"}
+{"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 8, "running": 18}, "squid-protocol/squid-telemetry": {"queued": 0, "queued_runs": 0, "running": 1}}, "queued": 0, "queued_runs": 8, "repos_read": 20, "running": 19, "scope": "org", "t": "2026-10-28T04:00:36Z"}
+{"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 11, "running": 13}}, "queued": 0, "queued_runs": 11, "repos_read": 20, "running": 13, "scope": "org", "t": "2026-10-28T04:15:30Z"}
+{"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 22, "running": 12}}, "queued": 0, "queued_runs": 22, "repos_read": 20, "running": 12, "scope": "org", "t": "2026-10-28T04:30:47Z"}
+{"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 1, "running": 16}}, "queued": 0, "queued_runs": 1, "repos_read": 20, "running": 16, "scope": "org", "t": "2026-10-28T04:46:22Z"}
