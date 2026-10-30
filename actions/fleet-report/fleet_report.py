@@ -646,6 +646,15 @@ def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     return min(m, pool * 1440) if pool and m is not None else m
 
 
+def org_runner_minutes(detail: dict, pool: int | None = None) -> float | None:
+    """The whole owner's runner minutes for the day, from org-scope occupancy; None when its readings don't cover the
+    day (there's no org figure before the sampler started, and the run sample only reads this repo)."""
+    occ = detail.get("occupancy_org") or {}
+    if occ.get("runner_min") is None or occ.get("coverage", 0) < OCC_MIN_COVERAGE:
+        return None
+    return min(occ["runner_min"], pool * 1440) if pool else occ["runner_min"]
+
+
 def runner_source(detail: dict) -> str:
     occ = detail.get("occupancy") or {}
     if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
@@ -969,7 +978,8 @@ STYLE = """
   .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
-  .hours { fill: var(--ink2); opacity: 0.55; }
+  .hours { fill: var(--ink2); opacity: 0.55; } .hoursorg { fill: var(--s1); }
+  .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
   .failed { fill: var(--failed); } .saved { fill: var(--good); }
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
@@ -1186,12 +1196,27 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 8}" width="9" height="9" rx="2"/>')
             out.append(f'<text class="lbl" x="{x + 13:.1f}" y="{y}">{escape(label)}</text>')
 
-    # The panels run as a story (owner 2026-10-30): what came out (delivery, issues), was it good (first pass, change
-    # failure), what did it cost (spend, per PR, per issue), and how close the limits are (CI hours, queue wait, CI load,
-    # efficiency, GitHub API and writes). A panel with no data drops out and the rest renumber.
+    # The panels run as a story under four headings (owner 2026-10-30): what came out (delivery, issues), was it good
+    # (first pass, change failure), what did it cost (spend, per PR, per issue), and how close the limits are (CI hours,
+    # queue wait, CI load, efficiency, GitHub API and writes). A panel with no data drops out and the rest renumber.
+    sections: list[tuple[int, int, int]] = []  # (where in out, y, panel) at each heading
+
+    def section(title: str) -> None:
+        """Start a section with its heading, taking the last one back off if no panel followed it. An empty title
+        closes the last section."""
+        nonlocal y
+        if sections and sections[-1][2] == panel:
+            at, y, _ = sections.pop()
+            del out[at:]
+        if title:
+            sections.append((len(out), y, panel))
+            out.append(f'<line class="base" x1="{pad}" x2="{right}" y1="{y - 40}" y2="{y - 40}"/>'
+                       f'<text class="sect" x="{pad}" y="{y - 24}">{escape(title.upper())}</text>')
+            y += 34
 
     # 1 · Delivery: merged PRs each day, by origin
-    y = card_y + card_h + 18 + 62
+    y, panel = card_y + card_h + 18 + 62, 1
+    section("What came out?")
     top, chart_h = y, 195
     delivery = [_origin_parts(row) for _, row in rows]
     delivery_axis = _nice_axis(max(1.0, max(sum(parts.values()) for parts in delivery)))
@@ -1220,7 +1245,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     annotate(top)
     legend(top - 30, [(label, kind) for kind, label in origins if kind != "unknown" or any(p["unknown"] for p in delivery)])
     y = top + chart_h + 70
-    panel = 2
+    panel += 1
 
     def running_total(top: int, per_day: dict[str, float], title: str, axis_fmt, end_fmt, tip_fmt, note: str = "") -> int:
         """A running total of per_day from the bot's start, as a filled line ending in its total; days past the last one
@@ -1330,8 +1355,10 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out_v.append(sum(a for a, _ in pairs) / b_sum if b_sum and num[i] is not None else None)
         return out_v
 
+    section("Was it good?")
+
     # First-pass rate: exact (every merged bot PR is known), with a 95% band for the day's sample size
-    fp = [(fac_days.get(d) or {}).get("first_pass") for d, _ in rows]
+    fp =[(fac_days.get(d) or {}).get("first_pass") for d, _ in rows]
     if any(x and x.get("merged") for x in fp):
         top, chart_h = y, 120
         vals, lo_b, hi_b, tips = [], [], [], []
@@ -1384,8 +1411,10 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
+    section("What did it cost?")
+
     # The bot's own spend in dollars (factory.json: what its agent sessions cost, all hosts) and per merged bot PR
-    fdays = {d: r for d, r in ((data.get("factory") or {}).get("days") or {}).items()
+    fdays ={d: r for d, r in ((data.get("factory") or {}).get("days") or {}).items()
              if start and d >= start and r.get("usd") is not None}
     if start_i is not None and fdays:
         usd = {d: float(r["usd"]) for d, r in fdays.items()}
@@ -1440,11 +1469,18 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
-    # CI hours: runner hours each day (est. from the sampled runs); the tip splits them by origin. With a pool, a dotted
-    # line marks what its runners can do in a day (owner 2026-10-30), and sits above the queue wait it explains
+    section("How close are the limits?")
+
+    # CI hours: every repo's runner hours each day where org readings cover it (the pool is shared), else this repo's
+    # own figure, in a second color (owner 2026-10-30); the tip splits this repo's by origin. With a pool, a dotted line
+    # marks what its runners can do in a day, and sits above the queue wait it explains
     details = [row.get("detail", {}) for _, row in rows]
     pool = cfg.runner_pool
-    hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
+    repo_hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
+    org_hours = [None if (m := org_runner_minutes(detail, pool)) is None else m / 60 for detail in details]
+    hours = [r if o is None else o for r, o in zip(repo_hours, org_hours)]
+    any_org = any(o is not None for o in org_hours)
+    repo_name = cfg.repo.split("/")[-1]
     known = sorted(v for v in hours if v)
     if known:
         top, chart_h = y, 150
@@ -1453,20 +1489,25 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         ceiling = pool * 24 if pool else 0
         hours_axis = _nice_axis(max(min(known[-1], 3 * known[len(known) // 2]), ceiling))
         hours_max = hours_axis[0]
-        frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day (est., sampled)", lambda v: f"{v:g}")
+        frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day"
+              + ("" if any_org else " (est., sampled)"), lambda v: f"{v:g}")
         panel += 1
+        if any_org:
+            legend(top - 30, [("all repos, measured", "hoursorg"), (f"{repo_name} only (est.)", "hours")])
         for i, ((day, row), v) in enumerate(zip(rows, hours)):
             if v is None:
                 continue
             h = chart_h * min(v, hours_max) / hours_max
             split = runner_split([row], "sampled_min_by_origin")
-            tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours (est.){' (today so far)' if day == today_s else ''} · "
+            org = org_hours[i] is not None
+            whose = f"all repos, measured · {repo_name} {repo_hours[i] or 0:,.0f} h" if org else "(est.)"
+            tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours {whose}{' (today so far)' if day == today_s else ''} · "
                    f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
             raw = runner_minutes(details[i])
-            if pool and raw > pool * 1440:
+            if not org and pool and raw > pool * 1440:
                 tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
             fade = ' class="partial"' if day == today_s else ""
-            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="hours" '
+            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="{"hoursorg" if org else "hours"}" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
             if v > hours_max:
                 out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
@@ -1605,6 +1646,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
+    section("")
     prefixes = ", ".join(cfg.bot_prefixes)
     out.append(f'<text class="meta" x="{pad}" y="{y}">Source: GitHub API. Days are UTC; faded marks are today so far.</text>')
     y += 15
