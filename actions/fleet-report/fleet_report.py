@@ -1007,7 +1007,13 @@ STYLE = """
 # factory.json `limits` (owner 2026-10-30): the limit in force each minute, the first thing that, if removed, would
 # start another worker. (key, label, css), in stacking order.
 LIMITS = (("code-gen", "Code generation at max", "ls1"), ("ci", "CI", "ls2"), ("box", "Box", "ls3"), ("tokens", "Tokens", "ls4"),
-          ("owner", "Waiting on owner", "ls5"), ("no-work", "No ready work", "ls6"), ("unknown", "Unknown", "lunk"))
+          ("no-work", "No ready work", "ls5"), ("unknown", "Unknown", "lunk"))
+
+
+def limit_counts(counts: dict) -> dict:
+    """`owner` minutes count as no ready work (owner 2026-10-30): the logged items were mostly parked ones the owner had
+    already ruled on, so a separate color blamed a wait that wasn't there. The log can't tell the two apart."""
+    return {k: v for k, v in {**counts, "no-work": counts.get("no-work", 0) + counts.get("owner", 0)}.items() if k != "owner"}
 
 
 def _nice_axis(v: float) -> tuple[float, float]:
@@ -1503,7 +1509,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         big_legend(top - 9, [(label, css) for _, label, css in LIMITS])
         for i, day, lim in limit_days:
             hosts, base = lim.get("hosts") or 1, top + chart_h
-            spans = [(label, css, lim["minutes"].get(key, 0) / 60 / hosts) for key, label, css in LIMITS]
+            minutes = limit_counts(lim["minutes"])
+            spans = [(label, css, minutes.get(key, 0) / 60 / hosts) for key, label, css in LIMITS]
             spans = [s for s in spans if s[2] >= 0.05]
             parts = []
             for _, css, v in spans:
@@ -1526,7 +1533,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             cy = top + row * cell
             out.append(f'<text class="tick" x="{left - 8}" y="{cy + 11}" text-anchor="end">{_fmt_day(day)}</text>')
             for hour, counts in lim.get("hours", {}).items():
-                key = max(counts, key=counts.get)
+                folded = limit_counts(counts)
+                key = max(folded, key=folded.get)
                 label, css = next(((la, c) for k, la, c in LIMITS if k == key), ("Unknown", "lunk"))
                 out.append(f'<rect class="{css}" x="{left + int(hour) * cell_w:.1f}" y="{cy}" width="{cell_w - 1.5:.1f}" '
                            f'height="{cell - 1.5}" rx="2"><title>{_fmt_day(day)} {hour}:00 UTC: {escape(label)}</title></rect>')

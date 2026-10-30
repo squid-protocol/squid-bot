@@ -56,7 +56,7 @@ It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The
 | 6 | Cost per PR | Dollars per merged promoter-bot PR, each day |
 | 7 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
 | | **How close are the limits?** | |
-| 8 | Limit each day | Hours per host under each limit: code generation at max, CI, box, tokens, waiting on owner, no ready work. Each minute gets the first thing that, if removed, would start another bot |
+| 8 | Limit each day | Hours per host under each limit: code generation at max, CI, box, tokens, no ready work. Each minute gets the first thing that, if removed, would start another bot |
 | 9 | Limit each hour | The same limits as a timeline: one row a day, one cell an hour |
 | 10 | Bots allowed vs working | The most bots allowed against the average working, split into new work and fix loops |
 | 11 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. Days before the org readings show GitGalaxy's estimate, in gray |
