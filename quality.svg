@@ -2,10 +2,12 @@
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --s4:#eda100; --s5:#e87ba4; --s6:#008300; --unused:#e5e4de;
           --neutral:#c3c2b7; --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
             --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --s4:#c98500; --s5:#d55181; --s6:#008300; --unused:#2f2f2c;
             --neutral:#5c5c58; }
   }
   text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
@@ -26,7 +28,12 @@
   .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
-  .hours { fill: var(--ink2); opacity: 0.55; }
+  .hours { fill: var(--ink2); opacity: 0.55; } .hoursorg { fill: var(--s1); }
+  .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
+  .ls1 { fill: var(--s1); } .ls2 { fill: var(--s2); } .ls3 { fill: var(--s3); } .ls4 { fill: var(--s4); } .ls5 { fill: var(--s5); }
+  .ls6 { fill: var(--s6); } .lunk { fill: var(--neutral); } .unused { fill: var(--unused); } .inkkey { fill: var(--ink); }
+  .maxline { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .biglbl { font-size: 13px; font-weight: 600; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
   .failed { fill: var(--failed); } .saved { fill: var(--good); }
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
