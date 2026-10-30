@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: the limit in force each day and hour, and bots allowed against bots working">
+<style>
+  .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
+          --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --s4:#eda100; --s5:#e87ba4; --s6:#008300; --unused:#e5e4de;
+          --neutral:#c3c2b7; --failed:#d03b3b; --good:#0ca30c; }
+  @media (prefers-color-scheme: dark) {
+    .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
+            --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --s4:#c98500; --s5:#d55181; --s6:#008300; --unused:#2f2f2c;
+            --neutral:#5c5c58; }
+  }
+  text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
+  .bg { fill: var(--surface); stroke: var(--border); }
+  .tile { fill: var(--tile); }
+  .h1 { font-size: 16px; font-weight: 650; }
+  .lead { font-size: 12.5px; fill: var(--ink2); }
+  .h2 { font-size: 12.5px; font-weight: 600; }
+  .meta, .tick, .lbl { font-size: 10.5px; fill: var(--muted); }
+  .tick { font-variant-numeric: tabular-nums; }
+  .k { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; fill: var(--ink2); }
+  .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .sub { font-size: 10.5px; fill: var(--ink2); }
+  .grid { stroke: var(--grid); stroke-width: 1; }
+  .base { stroke: var(--axis); stroke-width: 1; }
+  .start { stroke: var(--s1); stroke-width: 1.5; }
+  .startl { font-size: 11px; font-weight: 650; fill: var(--ink); }
+  .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
+  .evl { font-size: 10.5px; fill: var(--ink2); }
+  .seg { stroke: var(--surface); stroke-width: 1; }
+  .hours { fill: var(--ink2); opacity: 0.55; } .hoursorg { fill: var(--s1); }
+  .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
+  .ls1 { fill: var(--s1); } .ls2 { fill: var(--s2); } .ls3 { fill: var(--s3); } .ls4 { fill: var(--s4); } .ls5 { fill: var(--s5); }
+  .ls6 { fill: var(--s6); } .lunk { fill: var(--neutral); } .unused { fill: var(--unused); } .inkkey { fill: var(--ink); }
+  .maxline { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .biglbl { font-size: 13px; font-weight: 600; }
+  .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
+  .failed { fill: var(--failed); } .saved { fill: var(--good); }
+  .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
+  .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
+  .partial { opacity: 0.5; }
+  .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
+  .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
+  .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);
+    paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+  .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
+  .line { fill: none; stroke: var(--ink2); stroke-width: 2; } .dot { fill: var(--ink2); stroke: var(--surface); stroke-width: 2; }
+  .people { fill: #8b5cf6; } .agents { fill: var(--s1); } .bots { fill: var(--neutral); } .closed { fill: var(--good); }
+  .dayband { fill: var(--tile); } .band { fill: var(--s1); opacity: 0.13; }
+  .daily { fill: var(--surface); stroke: var(--ink2); stroke-width: 1.5; }
+  .noissue { font-size: 10.5px; font-weight: 650; fill: var(--failed); }
+</style>
+<g class="root">
+  <rect class="bg" x="0.5" y="0.5" width="919" height="399" rx="10"/>
+  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet: what limits the fleet</text><text class="lead" x="24" y="54">The fleet's limit in force each day, and how much of its capacity it used.</text>
+  <g transform="translate(0 -1707)">
+  <g><title>The agy lane isn't counted in bots working. Bots allowed is one reading per day</title><text class="h2" x="24" y="1793">1 · Bots allowed vs working — average working each day, all hosts</text></g>
+  <line class="base" x1="66" x2="896" y1="2033.0" y2="2033.0"/>
+  <text class="tick" x="58" y="2036.5" text-anchor="end">0</text>
+  <line class="grid" x1="66" x2="896" y1="1963.0" y2="1963.0"/>
+  <text class="tick" x="58" y="1966.5" text-anchor="end">2</text>
+  <line class="grid" x1="66" x2="896" y1="1893.0" y2="1893.0"/>
+  <text class="tick" x="58" y="1896.5" text-anchor="end">4</text>
+  <line class="grid" x1="66" x2="896" y1="1823.0" y2="1823.0"/>
+  <text class="tick" x="58" y="1826.5" text-anchor="end">6</text>
+  <text class="tick" x="200.3" y="2049" text-anchor="middle">Oct 2</text>
+  <text class="tick" x="371.1" y="2049" text-anchor="middle">Oct 9</text>
+  <text class="tick" x="542.0" y="2049" text-anchor="middle">Oct 16</text>
+  <text class="tick" x="712.9" y="2049" text-anchor="middle">Oct 23</text>
+  <text class="tick" x="883.8" y="2049" text-anchor="middle">Oct 30</text>
+  <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="383.4" x2="383.4" y1="1819" y2="2033"/></g>
+  <line class="start" x1="407.8" x2="407.8" y1="1819" y2="2033"/>
+  <rect class="inkkey" x="66.0" y="1804" width="12" height="12" rx="2"/>
+  <text class="biglbl" x="83.0" y="1814">Bots allowed</text>
+  <rect class="ls1" x="191.8" y="1804" width="12" height="12" rx="2"/>
+  <text class="biglbl" x="208.8" y="1814">Working: new work</text>
+  <rect class="ls2" x="354.6" y="1804" width="12" height="12" rx="2"/>
+  <text class="biglbl" x="371.6" y="1814">Working: fix loops</text>
+  <rect class="unused" x="524.8" y="1804" width="12" height="12" rx="2"/>
+  <text class="biglbl" x="541.8" y="1814">Unused</text>
+  <g><title>Oct 10 · up to 4 bots · 0.0 working on average (0% of slots) · 96 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 0.0 host-hours</title><rect class="unused" x="384.4" y="1893.0" width="22.4" height="140.0"/><rect class="ls2 seg" x="384.4" y="2033.0" width="22.4" height="0.0"/><rect class="ls1 seg" x="384.4" y="2033.0" width="22.4" height="0.0"/></g>
+  <g><title>Oct 11 · up to 4 bots · 0.1 working on average (2% of slots) · 94 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 1.6 host-hours</title><rect class="unused" x="408.8" y="1893.0" width="22.4" height="136.8"/><rect class="ls2 seg" x="408.8" y="2029.8" width="22.4" height="1.1"/><rect class="ls1 seg" x="408.8" y="2031.0" width="22.4" height="2.0"/></g>
+  <g><title>Oct 12 · up to 4 bots · 0.7 working on average (18% of slots) · 79 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 12.2 host-hours</title><rect class="unused" x="433.2" y="1893.0" width="22.4" height="115.4"/><rect class="ls2 seg" x="433.2" y="2008.4" width="22.4" height="4.7"/><rect class="ls1 seg" x="433.2" y="2013.1" width="22.4" height="19.9"/></g>
+  <g><title>Oct 13 · up to 4 bots · 0.8 working on average (21% of slots) · 76 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 2.5 host-hours</title><rect class="unused" x="457.6" y="1893.0" width="22.4" height="110.4"/><rect class="ls2 seg" x="457.6" y="2003.4" width="22.4" height="7.3"/><rect class="ls1 seg" x="457.6" y="2010.7" width="22.4" height="22.3"/></g>
+  <g><title>Oct 14 · up to 4 bots · 1.5 working on average (37% of slots) · 61 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 0.6 host-hours</title><rect class="unused" x="482.0" y="1893.0" width="22.4" height="88.5"/><rect class="ls2 seg" x="482.0" y="1981.5" width="22.4" height="15.4"/><rect class="ls1 seg" x="482.0" y="1996.9" width="22.4" height="36.1"/></g>
+  <g><title>Oct 15 · up to 4 bots · 1.0 working on average (26% of slots) · 71 bot-hours unused · idle with nothing launchable 0.0 host-hours · paused 0.8 host-hours</title><rect class="unused" x="506.4" y="1893.0" width="22.4" height="103.6"/><rect class="ls2 seg" x="506.4" y="1996.6" width="22.4" height="14.7"/><rect class="ls1 seg" x="506.4" y="2011.3" width="22.4" height="21.7"/></g>
+  <g><title>Oct 16 · up to 4 bots · 0.9 working on average (22% of slots) · 75 bot-hours unused · idle with nothing launchable 6.9 host-hours · paused 3.8 host-hours</title><rect class="unused" x="530.8" y="1893.0" width="22.4" height="109.0"/><rect class="ls2 seg" x="530.8" y="2002.0" width="22.4" height="6.6"/><rect class="ls1 seg" x="530.8" y="2008.7" width="22.4" height="24.3"/></g>
+  <g><title>Oct 17 · up to 4 bots · 1.5 working on average (38% of slots) · 59 bot-hours unused · idle with nothing launchable 3.3 host-hours · paused 0.0 host-hours</title><rect class="unused" x="555.2" y="1893.0" width="22.4" height="86.3"/><rect class="ls2 seg" x="555.2" y="1979.3" width="22.4" height="9.7"/><rect class="ls1 seg" x="555.2" y="1989.0" width="22.4" height="44.0"/></g>
+  <g><title>Oct 18 · up to 3 bots · 1.7 working on average (55% of slots) · 32 bot-hours unused · idle with nothing launchable 2.6 host-hours · paused 0.6 host-hours</title><rect class="unused" x="579.6" y="1928.0" width="22.4" height="47.1"/><rect class="ls2 seg" x="579.6" y="1975.1" width="22.4" height="12.4"/><rect class="ls1 seg" x="579.6" y="1987.5" width="22.4" height="45.5"/></g>
+  <g><title>Oct 19 · up to 4 bots · 1.6 working on average (39% of slots) · 58 bot-hours unused · idle with nothing launchable 15.7 host-hours · paused 5.4 host-hours</title><rect class="unused" x="604.1" y="1893.0" width="22.4" height="84.9"/><rect class="ls2 seg" x="604.1" y="1977.9" width="22.4" height="9.6"/><rect class="ls1 seg" x="604.1" y="1987.5" width="22.4" height="45.5"/></g>
+  <g><title>Oct 20 · up to 4 bots · 1.6 working on average (39% of slots) · 58 bot-hours unused · idle with nothing launchable 10.4 host-hours · paused 7.7 host-hours</title><rect class="unused" x="628.5" y="1893.0" width="22.4" height="85.2"/><rect class="ls2 seg" x="628.5" y="1978.2" width="22.4" height="4.8"/><rect class="ls1 seg" x="628.5" y="1982.9" width="22.4" height="50.1"/></g>
+  <g><title>Oct 21 · up to 4 bots · 2.0 working on average (51% of slots) · 47 bot-hours unused · idle with nothing launchable 17.2 host-hours · paused 0.0 host-hours</title><rect class="unused" x="652.9" y="1893.0" width="22.4" height="68.9"/><rect class="ls2 seg" x="652.9" y="1961.9" width="22.4" height="15.2"/><rect class="ls1 seg" x="652.9" y="1977.1" width="22.4" height="55.9"/></g>
+  <g><title>Oct 22 · up to 5 bots · 2.8 working on average (56% of slots) · 52 bot-hours unused · idle with nothing launchable 14.8 host-hours · paused 0.0 host-hours</title><rect class="unused" x="677.3" y="1858.0" width="22.4" height="76.4"/><rect class="ls2 seg" x="677.3" y="1934.4" width="22.4" height="12.4"/><rect class="ls1 seg" x="677.3" y="1946.8" width="22.4" height="86.2"/></g>
+  <g><title>Oct 23 · up to 5 bots · 3.2 working on average (63% of slots) · 44 bot-hours unused · idle with nothing launchable 5.0 host-hours · paused 4.0 host-hours</title><rect class="unused" x="701.7" y="1858.0" width="22.4" height="64.6"/><rect class="ls2 seg" x="701.7" y="1922.6" width="22.4" height="27.4"/><rect class="ls1 seg" x="701.7" y="1950.0" width="22.4" height="83.0"/></g>
+  <g><title>Oct 24 · up to 5 bots · 2.6 working on average (52% of slots) · 57 bot-hours unused · idle with nothing launchable 8.0 host-hours · paused 2.2 host-hours</title><rect class="unused" x="726.1" y="1858.0" width="22.4" height="83.7"/><rect class="ls2 seg" x="726.1" y="1941.7" width="22.4" height="16.0"/><rect class="ls1 seg" x="726.1" y="1957.6" width="22.4" height="75.4"/></g>
+  <g><title>Oct 25 · up to 3 bots · 1.5 working on average (49% of slots) · 37 bot-hours unused · idle with nothing launchable 11.7 host-hours · paused 2.5 host-hours</title><rect class="unused" x="750.5" y="1928.0" width="22.4" height="54.0"/><rect class="ls2 seg" x="750.5" y="1982.0" width="22.4" height="8.6"/><rect class="ls1 seg" x="750.5" y="1990.6" width="22.4" height="42.4"/></g>
+  <g><title>Oct 26 · up to 4 bots · 0.9 working on average (22% of slots) · 75 bot-hours unused · idle with nothing launchable 5.9 host-hours · paused 15.7 host-hours</title><rect class="unused" x="774.9" y="1893.0" width="22.4" height="109.3"/><rect class="ls2 seg" x="774.9" y="2002.3" width="22.4" height="4.8"/><rect class="ls1 seg" x="774.9" y="2007.1" width="22.4" height="25.9"/></g>
+  <g><title>Oct 27 · up to 6 bots · 2.0 working on average (34% of slots) · 95 bot-hours unused · idle with nothing launchable 12.6 host-hours · paused 7.3 host-hours</title><rect class="unused" x="799.4" y="1823.0" width="22.4" height="138.8"/><rect class="ls2 seg" x="799.4" y="1961.8" width="22.4" height="11.4"/><rect class="ls1 seg" x="799.4" y="1973.2" width="22.4" height="59.8"/></g>
+  <g><title>Oct 28 · up to 6 bots · 2.3 working on average (38% of slots) · 89 bot-hours unused · idle with nothing launchable 14.6 host-hours · paused 2.8 host-hours</title><rect class="unused" x="823.8" y="1823.0" width="22.4" height="130.2"/><rect class="ls2 seg" x="823.8" y="1953.2" width="22.4" height="17.9"/><rect class="ls1 seg" x="823.8" y="1971.2" width="22.4" height="61.8"/></g>
+  <g><title>Oct 29 · up to 4 bots · 1.4 working on average (35% of slots) · 63 bot-hours unused · idle with nothing launchable 11.3 host-hours · paused 1.2 host-hours</title><rect class="unused" x="848.2" y="1893.0" width="22.4" height="91.3"/><rect class="ls2 seg" x="848.2" y="1984.3" width="22.4" height="9.1"/><rect class="ls1 seg" x="848.2" y="1993.3" width="22.4" height="39.7"/></g>
+  <polyline class="maxline" points="383.4,1893.0 407.8,1893.0 407.8,1893.0 432.2,1893.0 432.2,1893.0 456.6,1893.0 456.6,1893.0 481.0,1893.0 481.0,1893.0 505.4,1893.0 505.4,1893.0 529.8,1893.0 529.8,1893.0 554.2,1893.0 554.2,1893.0 578.6,1893.0 578.6,1928.0 603.1,1928.0 603.1,1893.0 627.5,1893.0 627.5,1893.0 651.9,1893.0 651.9,1893.0 676.3,1893.0 676.3,1858.0 700.7,1858.0 700.7,1858.0 725.1,1858.0 725.1,1858.0 749.5,1858.0 749.5,1928.0 773.9,1928.0 773.9,1893.0 798.4,1893.0 798.4,1823.0 822.8,1823.0 822.8,1823.0 847.2,1823.0 847.2,1893.0 871.6,1893.0"/>
+  </g>
+  <text class="meta" x="24" y="366">Limits: each minute gets the first thing that, if removed, would start another bot. Launches only: a full fleet shows code generation at max, whatever waits downstream.</text><text class="meta" x="24" y="381">Days are UTC; faded marks are today so far. The agy lane isn't counted in bots working; bots allowed is one reading a day.</text>
+</g>
+</svg>
