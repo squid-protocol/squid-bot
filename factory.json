@@ -19,83 +19,83 @@
    "idle_ticks": 0,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "unknown": 60
+      "unknown": 120
      },
      "01": {
-      "unknown": 60
+      "unknown": 120
      },
      "02": {
-      "unknown": 60
+      "unknown": 120
      },
      "03": {
-      "unknown": 60
+      "unknown": 120
      },
      "04": {
-      "unknown": 60
+      "unknown": 120
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
-      "unknown": 60
+      "unknown": 120
      },
      "08": {
-      "unknown": 60
+      "unknown": 120
      },
      "09": {
-      "unknown": 60
+      "unknown": 120
      },
      "10": {
-      "unknown": 60
+      "unknown": 120
      },
      "11": {
-      "unknown": 60
+      "unknown": 120
      },
      "12": {
-      "unknown": 60
+      "unknown": 120
      },
      "13": {
-      "unknown": 60
+      "unknown": 120
      },
      "14": {
-      "unknown": 60
+      "unknown": 120
      },
      "15": {
-      "unknown": 60
+      "unknown": 120
      },
      "16": {
-      "unknown": 60
+      "unknown": 120
      },
      "17": {
-      "unknown": 60
+      "unknown": 120
      },
      "18": {
-      "unknown": 60
+      "unknown": 120
      },
      "19": {
-      "unknown": 60
+      "unknown": 120
      },
      "20": {
-      "unknown": 60
+      "unknown": 120
      },
      "21": {
-      "unknown": 60
+      "unknown": 120
      },
      "22": {
-      "unknown": 60
+      "unknown": 120
      },
      "23": {
-      "unknown": 60
+      "unknown": 120
      }
     },
     "minutes": {
-     "unknown": 1440
+     "unknown": 2880
     }
    },
    "loop_runs": 0,
@@ -162,87 +162,88 @@
    "idle_ticks": 0,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "unknown": 60
+      "unknown": 120
      },
      "01": {
-      "unknown": 60
+      "unknown": 120
      },
      "02": {
-      "unknown": 60
+      "unknown": 120
      },
      "03": {
-      "unknown": 60
+      "unknown": 120
      },
      "04": {
-      "unknown": 60
+      "unknown": 120
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
-      "unknown": 60
+      "unknown": 120
      },
      "08": {
-      "unknown": 60
+      "unknown": 120
      },
      "09": {
-      "unknown": 60
+      "unknown": 120
      },
      "10": {
-      "unknown": 60
+      "unknown": 120
      },
      "11": {
-      "unknown": 60
+      "unknown": 120
      },
      "12": {
-      "unknown": 60
+      "unknown": 120
      },
      "13": {
-      "unknown": 60
+      "unknown": 120
      },
      "14": {
-      "unknown": 60
+      "unknown": 120
      },
      "15": {
-      "unknown": 60
+      "unknown": 120
      },
      "16": {
-      "unknown": 60
+      "unknown": 120
      },
      "17": {
-      "unknown": 60
+      "unknown": 120
      },
      "18": {
-      "unknown": 60
+      "unknown": 120
      },
      "19": {
-      "unknown": 60
+      "unknown": 120
      },
      "20": {
-      "unknown": 60
+      "unknown": 120
      },
      "21": {
-      "unknown": 60
+      "unknown": 120
      },
      "22": {
       "code-gen": 17,
       "tokens": 35,
-      "unknown": 8
+      "unknown": 68
      },
      "23": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      }
     },
     "minutes": {
      "code-gen": 17,
      "tokens": 95,
-     "unknown": 1328
+     "unknown": 2768
     }
    },
    "loop_runs": 3,
@@ -309,103 +310,112 @@
    "idle_ticks": 3,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "01": {
       "tokens": 25,
-      "unknown": 35
+      "unknown": 95
      },
      "02": {
-      "unknown": 60
+      "unknown": 120
      },
      "03": {
       "code-gen": 23,
-      "unknown": 37
+      "unknown": 97
      },
      "04": {
       "code-gen": 8,
-      "tokens": 52
+      "tokens": 52,
+      "unknown": 60
      },
      "05": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "06": {
       "tokens": 25,
-      "unknown": 35
+      "unknown": 95
      },
      "07": {
       "code-gen": 22,
-      "unknown": 38
+      "unknown": 98
      },
      "08": {
       "code-gen": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "09": {
       "tokens": 21,
-      "unknown": 39
+      "unknown": 99
      },
      "10": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "11": {
       "tokens": 35,
-      "unknown": 25
+      "unknown": 85
      },
      "12": {
-      "unknown": 60
+      "unknown": 120
      },
      "13": {
-      "unknown": 60
+      "unknown": 120
      },
      "14": {
       "code-gen": 8,
       "tokens": 45,
-      "unknown": 7
+      "unknown": 67
      },
      "15": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "16": {
       "tokens": 35,
-      "unknown": 25
+      "unknown": 85
      },
      "17": {
       "code-gen": 31,
-      "unknown": 29
+      "unknown": 89
      },
      "18": {
       "tokens": 39,
-      "unknown": 21
+      "unknown": 81
      },
      "19": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "20": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "21": {
       "box": 5,
       "tokens": 35,
-      "unknown": 20
+      "unknown": 80
      },
      "22": {
       "box": 8,
       "code-gen": 42,
-      "tokens": 10
+      "tokens": 10,
+      "unknown": 60
      },
      "23": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      }
     },
     "minutes": {
      "box": 13,
      "code-gen": 143,
      "tokens": 742,
-     "unknown": 542
+     "unknown": 1982
     }
    },
    "loop_runs": 14,
@@ -478,92 +488,97 @@
    "idle_ticks": 6,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "01": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "02": {
       "tokens": 35,
-      "unknown": 25
+      "unknown": 85
      },
      "03": {
       "code-gen": 18,
-      "unknown": 42
+      "unknown": 102
      },
      "04": {
       "code-gen": 13,
-      "unknown": 47
+      "unknown": 107
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
-      "unknown": 60
+      "unknown": 120
      },
      "08": {
-      "unknown": 60
+      "unknown": 120
      },
      "09": {
-      "unknown": 60
+      "unknown": 120
      },
      "10": {
-      "unknown": 60
+      "unknown": 120
      },
      "11": {
-      "unknown": 60
+      "unknown": 120
      },
      "12": {
-      "unknown": 60
+      "unknown": 120
      },
      "13": {
-      "unknown": 60
+      "unknown": 120
      },
      "14": {
-      "unknown": 60
+      "unknown": 120
      },
      "15": {
-      "unknown": 60
+      "unknown": 120
      },
      "16": {
       "box": 22,
-      "unknown": 38
+      "unknown": 98
      },
      "17": {
       "box": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "18": {
-      "unknown": 60
+      "unknown": 120
      },
      "19": {
-      "unknown": 60
+      "unknown": 120
      },
      "20": {
       "code-gen": 22,
-      "unknown": 38
+      "unknown": 98
      },
      "21": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "22": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "23": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      }
     },
     "minutes": {
      "box": 31,
      "code-gen": 233,
      "tokens": 155,
-     "unknown": 1021
+     "unknown": 2461
     }
    },
    "loop_runs": 15,
@@ -636,95 +651,101 @@
    "idle_ticks": 14,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "01": {
       "code-gen": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "02": {
       "code-gen": 23,
-      "unknown": 37
+      "unknown": 97
      },
      "03": {
       "code-gen": 8,
-      "unknown": 52
+      "unknown": 112
      },
      "04": {
-      "unknown": 60
+      "unknown": 120
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
-      "unknown": 60
+      "unknown": 120
      },
      "08": {
-      "unknown": 60
+      "unknown": 120
      },
      "09": {
-      "unknown": 60
+      "unknown": 120
      },
      "10": {
       "code-gen": 31,
-      "unknown": 29
+      "unknown": 89
      },
      "11": {
-      "unknown": 60
+      "unknown": 120
      },
      "12": {
       "box": 29,
-      "unknown": 31
+      "unknown": 91
      },
      "13": {
       "box": 33,
-      "code-gen": 27
+      "code-gen": 27,
+      "unknown": 60
      },
      "14": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "15": {
       "box": 57,
       "code-gen": 1,
-      "unknown": 2
+      "unknown": 62
      },
      "16": {
       "box": 20,
-      "code-gen": 40
+      "code-gen": 40,
+      "unknown": 60
      },
      "17": {
       "box": 42,
-      "unknown": 18
+      "unknown": 78
      },
      "18": {
       "code-gen": 31,
-      "unknown": 29
+      "unknown": 89
      },
      "19": {
       "ci": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "20": {
       "ci": 29,
-      "tokens": 31
+      "tokens": 31,
+      "unknown": 60
      },
      "21": {
       "code-gen": 30,
       "tokens": 5,
-      "unknown": 25
+      "unknown": 85
      },
      "22": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "23": {
       "code-gen": 41,
-      "unknown": 19
+      "unknown": 79
      }
     },
     "minutes": {
@@ -732,7 +753,7 @@
      "ci": 38,
      "code-gen": 421,
      "tokens": 36,
-     "unknown": 764
+     "unknown": 2204
     }
    },
    "loop_runs": 47,
@@ -807,103 +828,105 @@
    "idle_ticks": 39,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "01": {
       "code-gen": 30,
-      "tokens": 30
+      "tokens": 30,
+      "unknown": 60
      },
      "02": {
       "code-gen": 20,
       "tokens": 15,
-      "unknown": 25
+      "unknown": 85
      },
      "03": {
-      "unknown": 60
+      "unknown": 120
      },
      "04": {
-      "unknown": 60
+      "unknown": 120
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
-      "unknown": 60
+      "unknown": 120
      },
      "08": {
-      "unknown": 60
+      "unknown": 120
      },
      "09": {
-      "unknown": 60
+      "unknown": 120
      },
      "10": {
       "code-gen": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "11": {
       "code-gen": 52,
-      "unknown": 8
+      "unknown": 68
      },
      "12": {
       "code-gen": 59,
-      "unknown": 1
+      "unknown": 61
      },
      "13": {
       "code-gen": 52,
-      "unknown": 8
+      "unknown": 68
      },
      "14": {
-      "unknown": 60
+      "unknown": 120
      },
      "15": {
       "code-gen": 30,
-      "unknown": 30
+      "unknown": 90
      },
      "16": {
       "code-gen": 52,
-      "unknown": 8
+      "unknown": 68
      },
      "17": {
       "ci": 20,
       "code-gen": 30,
-      "unknown": 10
+      "unknown": 70
      },
      "18": {
       "ci": 11,
-      "unknown": 49
+      "unknown": 109
      },
      "19": {
-      "unknown": 60
+      "unknown": 120
      },
      "20": {
       "code-gen": 10,
-      "unknown": 50
+      "unknown": 110
      },
      "21": {
       "code-gen": 50,
-      "unknown": 10
+      "unknown": 70
      },
      "22": {
       "ci": 24,
       "code-gen": 1,
-      "unknown": 35
+      "unknown": 95
      },
      "23": {
       "ci": 14,
-      "unknown": 46
+      "unknown": 106
      }
     },
     "minutes": {
      "ci": 69,
      "code-gen": 455,
      "tokens": 45,
-     "unknown": 871
+     "unknown": 2311
     }
    },
    "loop_runs": 58,
@@ -984,101 +1007,110 @@
    "idle_ticks": 52,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "unknown": 60
+      "unknown": 120
      },
      "01": {
-      "unknown": 60
+      "unknown": 120
      },
      "02": {
-      "unknown": 60
+      "unknown": 120
      },
      "03": {
-      "unknown": 60
+      "unknown": 120
      },
      "04": {
-      "unknown": 60
+      "unknown": 120
      },
      "05": {
-      "unknown": 60
+      "unknown": 120
      },
      "06": {
-      "unknown": 60
+      "unknown": 120
      },
      "07": {
       "code-gen": 40,
-      "unknown": 20
+      "unknown": 80
      },
      "08": {
       "code-gen": 51,
-      "unknown": 9
+      "unknown": 69
      },
      "09": {
       "code-gen": 19,
-      "tokens": 41
+      "tokens": 41,
+      "unknown": 60
      },
      "10": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "11": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "12": {
       "code-gen": 19,
       "tokens": 15,
-      "unknown": 26
+      "unknown": 86
      },
      "13": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "14": {
       "ci": 13,
       "code-gen": 43,
-      "unknown": 4
+      "unknown": 64
      },
      "15": {
       "ci": 1,
-      "unknown": 59
+      "unknown": 119
      },
      "16": {
       "tokens": 9,
-      "unknown": 51
+      "unknown": 111
      },
      "17": {
       "code-gen": 14,
       "owner": 15,
       "tokens": 15,
-      "unknown": 16
+      "unknown": 76
      },
      "18": {
       "code-gen": 41,
       "no-work": 9,
-      "owner": 10
+      "owner": 10,
+      "unknown": 60
      },
      "19": {
       "code-gen": 16,
-      "no-work": 44
+      "no-work": 44,
+      "unknown": 60
      },
      "20": {
       "code-gen": 10,
-      "no-work": 50
+      "no-work": 50,
+      "unknown": 60
      },
      "21": {
       "code-gen": 38,
       "no-work": 21,
-      "tokens": 1
+      "tokens": 1,
+      "unknown": 60
      },
      "22": {
       "box": 7,
       "code-gen": 12,
       "tokens": 25,
-      "unknown": 16
+      "unknown": 76
      },
      "23": {
       "box": 32,
-      "owner": 28
+      "owner": 28,
+      "unknown": 60
      }
     },
     "minutes": {
@@ -1088,7 +1120,7 @@
      "no-work": 124,
      "owner": 53,
      "tokens": 226,
-     "unknown": 621
+     "unknown": 2061
     }
    },
    "loop_runs": 40,
@@ -1170,96 +1202,121 @@
    "idle_ticks": 31,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
       "box": 50,
-      "code-gen": 10
+      "code-gen": 10,
+      "unknown": 60
      },
      "01": {
       "code-gen": 21,
-      "owner": 39
+      "owner": 39,
+      "unknown": 60
      },
      "02": {
-      "owner": 60
+      "owner": 60,
+      "unknown": 60
      },
      "03": {
-      "owner": 60
+      "owner": 60,
+      "unknown": 60
      },
      "04": {
       "code-gen": 39,
-      "owner": 21
+      "owner": 21,
+      "unknown": 60
      },
      "05": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "06": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "07": {
       "box": 3,
-      "code-gen": 57
+      "code-gen": 57,
+      "unknown": 60
      },
      "08": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "09": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "10": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "11": {
       "box": 15,
-      "code-gen": 45
+      "code-gen": 45,
+      "unknown": 60
      },
      "12": {
       "box": 20,
-      "code-gen": 40
+      "code-gen": 40,
+      "unknown": 60
      },
      "13": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "14": {
       "ci": 15,
-      "code-gen": 45
+      "code-gen": 45,
+      "unknown": 60
      },
      "15": {
       "ci": 40,
-      "code-gen": 20
+      "code-gen": 20,
+      "unknown": 60
      },
      "16": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "17": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "18": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "19": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "20": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "21": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "22": {
       "ci": 25,
-      "code-gen": 35
+      "code-gen": 35,
+      "unknown": 60
      },
      "23": {
       "ci": 51,
-      "code-gen": 9
+      "code-gen": 9,
+      "unknown": 60
      }
     },
     "minutes": {
      "box": 88,
      "ci": 131,
      "code-gen": 1041,
-     "owner": 180
+     "owner": 180,
+     "unknown": 1440
     }
    },
    "loop_runs": 52,
@@ -1343,94 +1400,132 @@
    "idle_ticks": 22,
    "items_done": 0,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "01": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "02": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "03": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "04": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "05": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "06": {
       "ci": 36,
-      "code-gen": 24
+      "code-gen": 24,
+      "unknown": 60
      },
      "07": {
       "ci": 31,
       "code-gen": 21,
-      "unknown": 8
+      "unknown": 68
      },
      "08": {
       "code-gen": 56,
-      "unknown": 4
+      "unknown": 64
      },
      "09": {
       "ci": 31,
       "code-gen": 28,
-      "unknown": 1
+      "unknown": 61
      },
      "10": {
       "ci": 29,
-      "code-gen": 31
+      "code-gen": 31,
+      "unknown": 60
      },
      "11": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "12": {
-      "code-gen": 60
+      "code-gen": 60,
+      "unknown": 60
      },
      "13": {
+      "box": 18,
       "ci": 20,
-      "code-gen": 40
+      "code-gen": 40,
+      "unknown": 42
      },
      "14": {
-      "code-gen": 60
+      "box": 1,
+      "ci": 20,
+      "code-gen": 69,
+      "no-work": 30
      },
      "15": {
-      "code-gen": 50,
+      "box": 35,
+      "ci": 18,
+      "code-gen": 51,
+      "tokens": 6,
       "unknown": 10
      },
      "16": {
-      "code-gen": 60
+      "box": 18,
+      "code-gen": 102
      },
      "17": {
-      "code-gen": 60
+      "box": 31,
+      "code-gen": 89
      },
      "18": {
-      "code-gen": 60
+      "box": 49,
+      "code-gen": 71
      },
      "19": {
-      "code-gen": 60
+      "box": 58,
+      "code-gen": 60,
+      "unknown": 2
      },
      "20": {
-      "code-gen": 60
+      "box": 22,
+      "ci": 30,
+      "code-gen": 68
      },
      "21": {
-      "code-gen": 60
+      "box": 20,
+      "code-gen": 60,
+      "owner": 9,
+      "tokens": 19,
+      "unknown": 12
      },
      "22": {
-      "code-gen": 60
+      "box": 10,
+      "code-gen": 60,
+      "tokens": 15,
+      "unknown": 35
      },
      "23": {
-      "code-gen": 60
+      "box": 55,
+      "code-gen": 60,
+      "unknown": 5
      }
     },
     "minutes": {
-     "ci": 147,
-     "code-gen": 1270,
-     "unknown": 23
+     "box": 317,
+     "ci": 215,
+     "code-gen": 1370,
+     "no-work": 30,
+     "owner": 9,
+     "tokens": 40,
+     "unknown": 899
     }
    },
    "loop_runs": 75,
@@ -1512,115 +1607,151 @@
    "idle_ticks": 173,
    "items_done": 11,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
       "box": 10,
       "ci": 3,
+      "owner": 54,
       "tokens": 12,
-      "unknown": 35
+      "unknown": 41
      },
      "01": {
+      "owner": 60,
       "unknown": 60
      },
      "02": {
+      "box": 49,
       "ci": 4,
+      "owner": 11,
       "tokens": 16,
       "unknown": 40
      },
      "03": {
+      "box": 42,
       "ci": 12,
       "tokens": 25,
-      "unknown": 23
+      "unknown": 41
      },
      "04": {
-      "ci": 16,
+      "box": 33,
+      "ci": 26,
+      "code-gen": 16,
       "tokens": 33,
-      "unknown": 11
+      "unknown": 12
      },
      "05": {
-      "ci": 20,
+      "box": 29,
+      "ci": 49,
+      "code-gen": 2,
       "tokens": 40
      },
      "06": {
-      "ci": 3,
+      "box": 37,
+      "ci": 8,
       "tokens": 20,
-      "unknown": 37
+      "unknown": 55
      },
      "07": {
       "box": 40,
-      "unknown": 20
+      "no-work": 59,
+      "unknown": 21
      },
      "08": {
       "box": 4,
-      "unknown": 56
+      "no-work": 53,
+      "unknown": 63
      },
      "09": {
-      "unknown": 60
+      "box": 9,
+      "no-work": 32,
+      "unknown": 79
      },
      "10": {
-      "ci": 53,
+      "box": 22,
+      "ci": 61,
+      "no-work": 30,
       "unknown": 7
      },
      "11": {
-      "box": 9,
-      "ci": 9,
+      "box": 28,
+      "ci": 41,
       "tokens": 12,
-      "unknown": 30
+      "unknown": 39
      },
      "12": {
-      "box": 31,
+      "box": 71,
+      "code-gen": 16,
+      "owner": 4,
       "unknown": 29
      },
      "13": {
-      "box": 39,
-      "code-gen": 1,
+      "box": 86,
+      "code-gen": 14,
       "unknown": 20
      },
      "14": {
-      "box": 1,
-      "unknown": 59
+      "box": 5,
+      "unknown": 115
      },
      "15": {
+      "box": 21,
       "ci": 25,
+      "code-gen": 39,
       "tokens": 6,
       "unknown": 29
      },
      "16": {
-      "box": 20,
-      "ci": 40
+      "box": 72,
+      "ci": 40,
+      "unknown": 8
      },
      "17": {
       "ci": 1,
-      "unknown": 59
+      "tokens": 51,
+      "unknown": 68
      },
      "18": {
-      "box": 10,
-      "unknown": 50
+      "box": 24,
+      "ci": 9,
+      "tokens": 25,
+      "unknown": 62
      },
      "19": {
-      "ci": 35,
+      "box": 20,
+      "ci": 75,
       "tokens": 25
      },
      "20": {
-      "tokens": 60
+      "box": 5,
+      "ci": 5,
+      "tokens": 60,
+      "unknown": 50
      },
      "21": {
-      "tokens": 60
+      "box": 40,
+      "tokens": 60,
+      "unknown": 20
      },
      "22": {
-      "tokens": 60
+      "box": 57,
+      "code-gen": 2,
+      "tokens": 60,
+      "unknown": 1
      },
      "23": {
+      "box": 60,
       "tokens": 60
      }
     },
     "minutes": {
-     "box": 164,
-     "ci": 221,
-     "code-gen": 1,
-     "tokens": 429,
-     "unknown": 625
+     "box": 764,
+     "ci": 359,
+     "code-gen": 89,
+     "no-work": 174,
+     "owner": 129,
+     "tokens": 505,
+     "unknown": 860
     }
    },
    "loop_runs": 61,
@@ -1706,105 +1837,144 @@
    "idle_ticks": 128,
    "items_done": 14,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "tokens": 60
+      "box": 50,
+      "tokens": 60,
+      "unknown": 10
      },
      "01": {
-      "tokens": 60
+      "box": 15,
+      "code-gen": 1,
+      "tokens": 60,
+      "unknown": 44
      },
      "02": {
-      "tokens": 60
+      "box": 25,
+      "tokens": 60,
+      "unknown": 35
      },
      "03": {
-      "tokens": 60
+      "box": 28,
+      "tokens": 60,
+      "unknown": 32
      },
      "04": {
-      "tokens": 60
+      "box": 9,
+      "tokens": 96,
+      "unknown": 15
      },
      "05": {
-      "tokens": 60
+      "box": 9,
+      "tokens": 60,
+      "unknown": 51
      },
      "06": {
-      "tokens": 60
+      "box": 32,
+      "tokens": 60,
+      "unknown": 28
      },
      "07": {
+      "box": 33,
       "tokens": 5,
-      "unknown": 55
+      "unknown": 82
      },
      "08": {
+      "box": 44,
       "ci": 9,
       "code-gen": 3,
-      "unknown": 48
+      "unknown": 64
      },
      "09": {
-      "ci": 31,
-      "unknown": 29
+      "box": 33,
+      "ci": 33,
+      "code-gen": 1,
+      "no-work": 15,
+      "unknown": 38
      },
      "10": {
-      "ci": 9,
-      "code-gen": 21,
+      "box": 12,
+      "ci": 12,
+      "code-gen": 53,
+      "no-work": 13,
       "tokens": 30
      },
      "11": {
-      "code-gen": 60
+      "box": 24,
+      "ci": 30,
+      "code-gen": 60,
+      "tokens": 6
      },
      "12": {
-      "box": 39,
-      "ci": 12,
-      "code-gen": 9
+      "box": 84,
+      "ci": 21,
+      "code-gen": 9,
+      "tokens": 6
      },
      "13": {
-      "box": 21,
-      "ci": 19,
+      "box": 74,
+      "ci": 26,
       "code-gen": 20
      },
      "14": {
+      "box": 60,
       "ci": 43,
       "code-gen": 17
      },
      "15": {
-      "box": 4,
+      "box": 64,
       "ci": 13,
       "code-gen": 39,
       "tokens": 4
      },
      "16": {
+      "box": 60,
       "code-gen": 60
      },
      "17": {
+      "box": 60,
       "code-gen": 60
      },
      "18": {
+      "box": 60,
       "code-gen": 60
      },
      "19": {
+      "box": 60,
       "code-gen": 60
      },
      "20": {
-      "code-gen": 60
+      "box": 53,
+      "code-gen": 60,
+      "unknown": 7
      },
      "21": {
-      "box": 26,
-      "ci": 19,
-      "code-gen": 15
+      "box": 44,
+      "ci": 37,
+      "code-gen": 15,
+      "no-work": 15,
+      "unknown": 9
      },
      "22": {
-      "ci": 59,
-      "code-gen": 1
+      "box": 41,
+      "ci": 72,
+      "code-gen": 1,
+      "tokens": 6
      },
      "23": {
-      "ci": 58,
+      "box": 50,
+      "ci": 68,
       "code-gen": 2
      }
     },
     "minutes": {
-     "box": 90,
-     "ci": 272,
-     "code-gen": 487,
-     "tokens": 459,
-     "unknown": 132
+     "box": 1024,
+     "ci": 364,
+     "code-gen": 521,
+     "no-work": 43,
+     "tokens": 513,
+     "unknown": 415
     }
    },
    "loop_runs": 44,
@@ -1888,119 +2058,149 @@
    "idle_ticks": 220,
    "items_done": 32,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "ci": 1,
-      "code-gen": 59
+      "box": 29,
+      "ci": 2,
+      "code-gen": 59,
+      "unknown": 30
      },
      "01": {
-      "ci": 6,
-      "code-gen": 54
+      "box": 14,
+      "ci": 9,
+      "code-gen": 54,
+      "tokens": 6,
+      "unknown": 37
      },
      "02": {
-      "ci": 34,
-      "code-gen": 26
+      "ci": 55,
+      "code-gen": 26,
+      "unknown": 39
      },
      "03": {
-      "box": 11,
+      "box": 25,
       "ci": 16,
-      "code-gen": 33
+      "code-gen": 33,
+      "no-work": 3,
+      "unknown": 43
      },
      "04": {
+      "box": 22,
       "ci": 11,
-      "code-gen": 49
+      "code-gen": 49,
+      "unknown": 38
      },
      "05": {
-      "ci": 33,
+      "box": 45,
+      "ci": 47,
       "code-gen": 25,
-      "tokens": 2
+      "tokens": 2,
+      "unknown": 1
      },
      "06": {
+      "box": 22,
       "ci": 1,
-      "code-gen": 59
+      "code-gen": 59,
+      "no-work": 38
      },
      "07": {
-      "code-gen": 60
+      "box": 19,
+      "code-gen": 60,
+      "no-work": 41
      },
      "08": {
+      "box": 60,
       "ci": 5,
       "code-gen": 55
      },
      "09": {
-      "ci": 52,
-      "code-gen": 8
+      "box": 49,
+      "ci": 57,
+      "code-gen": 8,
+      "tokens": 6
      },
      "10": {
-      "ci": 50,
+      "ci": 110,
       "code-gen": 10
      },
      "11": {
-      "ci": 46,
+      "ci": 106,
       "code-gen": 14
      },
      "12": {
-      "box": 3,
-      "ci": 28,
+      "box": 27,
+      "ci": 64,
       "code-gen": 29
      },
      "13": {
-      "ci": 51,
-      "code-gen": 9
+      "box": 29,
+      "ci": 61,
+      "code-gen": 9,
+      "unknown": 21
      },
      "14": {
-      "ci": 40,
+      "box": 57,
+      "ci": 43,
       "code-gen": 20
      },
      "15": {
-      "box": 9,
+      "box": 69,
       "ci": 32,
       "code-gen": 19
      },
      "16": {
-      "box": 4,
-      "ci": 44,
+      "box": 34,
+      "ci": 74,
       "code-gen": 10,
       "tokens": 2
      },
      "17": {
-      "box": 38,
-      "ci": 22
+      "box": 83,
+      "ci": 37
      },
      "18": {
-      "ci": 55,
+      "box": 9,
+      "ci": 106,
       "code-gen": 5
      },
      "19": {
-      "code-gen": 60
+      "box": 20,
+      "ci": 30,
+      "code-gen": 60,
+      "unknown": 10
      },
      "20": {
-      "ci": 12,
-      "code-gen": 48
+      "box": 20,
+      "ci": 31,
+      "code-gen": 48,
+      "unknown": 21
      },
      "21": {
-      "box": 11,
-      "ci": 2,
+      "box": 52,
+      "ci": 21,
       "code-gen": 43,
       "tokens": 4
      },
      "22": {
       "box": 12,
-      "ci": 44,
+      "ci": 104,
       "code-gen": 3,
       "tokens": 1
      },
      "23": {
-      "box": 3,
-      "ci": 12,
+      "box": 22,
+      "ci": 53,
       "code-gen": 45
      }
     },
     "minutes": {
-     "box": 91,
-     "ci": 597,
+     "box": 719,
+     "ci": 1075,
      "code-gen": 743,
-     "tokens": 9
+     "no-work": 82,
+     "tokens": 21,
+     "unknown": 240
     }
    },
    "loop_runs": 92,
@@ -2082,112 +2282,136 @@
    "idle_ticks": 194,
    "items_done": 30,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "box": 4,
+      "box": 60,
       "tokens": 13,
-      "unknown": 43
+      "unknown": 47
      },
      "01": {
-      "box": 5,
-      "ci": 32,
+      "box": 16,
+      "ci": 71,
       "code-gen": 1,
-      "tokens": 22
+      "tokens": 32
      },
      "02": {
-      "box": 36,
+      "box": 86,
       "tokens": 6,
-      "unknown": 18
+      "unknown": 28
      },
      "03": {
-      "box": 2,
-      "unknown": 58
+      "box": 61,
+      "unknown": 59
      },
      "04": {
-      "box": 10,
+      "box": 70,
       "unknown": 50
      },
      "05": {
+      "box": 11,
       "code-gen": 1,
-      "unknown": 59
+      "unknown": 108
      },
      "06": {
-      "box": 9,
-      "unknown": 51
+      "box": 42,
+      "unknown": 78
      },
      "07": {
+      "box": 60,
       "unknown": 60
      },
      "08": {
+      "box": 60,
       "unknown": 60
      },
      "09": {
+      "box": 31,
       "code-gen": 4,
-      "unknown": 56
+      "no-work": 19,
+      "unknown": 66
      },
      "10": {
-      "unknown": 60
+      "box": 20,
+      "no-work": 38,
+      "unknown": 62
      },
      "11": {
-      "box": 8,
-      "code-gen": 1,
+      "box": 32,
+      "code-gen": 3,
+      "no-work": 34,
       "unknown": 51
      },
      "12": {
+      "no-work": 60,
       "unknown": 60
      },
      "13": {
+      "box": 7,
       "code-gen": 37,
+      "no-work": 53,
       "unknown": 23
      },
      "14": {
-      "box": 8,
-      "code-gen": 52
+      "box": 35,
+      "code-gen": 52,
+      "no-work": 33
      },
      "15": {
-      "box": 26,
-      "code-gen": 34
+      "box": 33,
+      "code-gen": 34,
+      "no-work": 53
      },
      "16": {
       "box": 22,
-      "code-gen": 38
+      "code-gen": 38,
+      "no-work": 60
      },
      "17": {
       "box": 3,
-      "code-gen": 57
+      "code-gen": 57,
+      "no-work": 60
      },
      "18": {
       "box": 34,
-      "code-gen": 26
+      "ci": 30,
+      "code-gen": 26,
+      "no-work": 2,
+      "owner": 19,
+      "unknown": 9
      },
      "19": {
       "box": 14,
-      "code-gen": 46
+      "code-gen": 46,
+      "owner": 60
      },
      "20": {
       "box": 21,
-      "code-gen": 39
+      "code-gen": 39,
+      "owner": 60
      },
      "21": {
-      "box": 31,
-      "code-gen": 29
+      "box": 43,
+      "code-gen": 56,
+      "owner": 21
      },
      "22": {
-      "box": 19,
-      "code-gen": 41
+      "box": 78,
+      "code-gen": 42
      },
      "23": {
-      "box": 19,
-      "code-gen": 41
+      "box": 55,
+      "code-gen": 65
      }
     },
     "minutes": {
-     "box": 271,
-     "ci": 32,
-     "code-gen": 447,
-     "tokens": 41,
-     "unknown": 649
+     "box": 894,
+     "ci": 101,
+     "code-gen": 501,
+     "no-work": 412,
+     "owner": 160,
+     "tokens": 51,
+     "unknown": 761
     }
    },
    "loop_runs": 71,
@@ -2272,132 +2496,155 @@
    "idle_ticks": 100,
    "items_done": 48,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "code-gen": 60
+      "box": 32,
+      "code-gen": 88
      },
      "01": {
-      "box": 5,
-      "code-gen": 55
+      "box": 44,
+      "code-gen": 76
      },
      "02": {
+      "box": 33,
       "ci": 2,
-      "code-gen": 47,
+      "code-gen": 73,
+      "tokens": 1,
       "unknown": 11
      },
      "03": {
+      "box": 1,
+      "ci": 1,
       "code-gen": 6,
-      "tokens": 53,
+      "tokens": 111,
       "unknown": 1
      },
      "04": {
       "box": 10,
-      "code-gen": 50
+      "code-gen": 50,
+      "tokens": 60
      },
      "05": {
       "box": 5,
       "ci": 16,
-      "code-gen": 39
+      "code-gen": 79,
+      "tokens": 5,
+      "unknown": 15
      },
      "06": {
+      "box": 44,
       "ci": 6,
-      "code-gen": 46,
+      "code-gen": 62,
       "tokens": 8
      },
      "07": {
-      "ci": 27,
-      "code-gen": 33
+      "box": 30,
+      "ci": 32,
+      "code-gen": 58
      },
      "08": {
-      "ci": 35,
-      "code-gen": 25
+      "box": 1,
+      "ci": 64,
+      "code-gen": 55
      },
      "09": {
-      "box": 4,
-      "ci": 25,
-      "code-gen": 31
+      "box": 7,
+      "ci": 35,
+      "code-gen": 40,
+      "tokens": 38
      },
      "10": {
-      "box": 10,
+      "box": 40,
       "ci": 38,
-      "code-gen": 12
+      "code-gen": 12,
+      "tokens": 5,
+      "unknown": 25
      },
      "11": {
-      "box": 4,
+      "box": 50,
       "ci": 17,
-      "code-gen": 37,
-      "tokens": 2
+      "code-gen": 41,
+      "tokens": 2,
+      "unknown": 10
      },
      "12": {
-      "box": 6,
-      "ci": 26,
+      "box": 46,
+      "ci": 46,
       "code-gen": 21,
       "tokens": 7
      },
      "13": {
-      "ci": 43,
+      "box": 58,
+      "ci": 45,
       "code-gen": 11,
       "unknown": 6
      },
      "14": {
+      "box": 56,
       "ci": 4,
-      "code-gen": 47,
+      "code-gen": 51,
       "tokens": 9
      },
      "15": {
-      "box": 6,
-      "code-gen": 17,
+      "box": 39,
+      "code-gen": 44,
       "tokens": 31,
       "unknown": 6
      },
      "16": {
-      "box": 11,
+      "box": 50,
       "ci": 4,
-      "code-gen": 45
+      "code-gen": 66
      },
      "17": {
-      "code-gen": 60
+      "box": 1,
+      "code-gen": 119
      },
      "18": {
-      "box": 3,
+      "box": 14,
       "ci": 9,
-      "code-gen": 5,
+      "code-gen": 54,
       "owner": 4,
       "tokens": 39
      },
      "19": {
+      "box": 22,
       "ci": 8,
-      "code-gen": 21,
+      "code-gen": 59,
       "owner": 5,
       "tokens": 26
      },
      "20": {
+      "box": 38,
       "ci": 3,
-      "code-gen": 11,
+      "code-gen": 33,
       "tokens": 42,
       "unknown": 4
      },
      "21": {
       "box": 30,
       "ci": 12,
-      "code-gen": 18
+      "code-gen": 78
      },
      "22": {
-      "box": 3,
+      "box": 5,
+      "code-gen": 58,
       "unknown": 57
      },
      "23": {
+      "box": 52,
+      "code-gen": 8,
       "unknown": 60
      }
     },
     "minutes": {
-     "box": 97,
-     "ci": 275,
-     "code-gen": 697,
+     "box": 708,
+     "ci": 342,
+     "code-gen": 1242,
      "owner": 9,
-     "tokens": 217,
-     "unknown": 145
+     "tokens": 384,
+     "unknown": 195
     }
    },
    "loop_runs": 97,
@@ -2485,131 +2732,150 @@
    "idle_ticks": 161,
    "items_done": 47,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "box": 26,
-      "unknown": 34
+      "box": 47,
+      "code-gen": 13,
+      "unknown": 60
      },
      "01": {
-      "box": 5,
-      "code-gen": 39,
+      "box": 36,
+      "code-gen": 68,
       "unknown": 16
      },
      "02": {
-      "box": 28,
+      "box": 71,
       "ci": 1,
-      "code-gen": 31
+      "code-gen": 43,
+      "unknown": 5
      },
      "03": {
-      "box": 6,
+      "box": 66,
       "ci": 5,
       "code-gen": 48,
       "tokens": 1
      },
      "04": {
-      "ci": 52,
-      "code-gen": 8
+      "box": 1,
+      "ci": 92,
+      "code-gen": 27
      },
      "05": {
-      "ci": 27,
-      "code-gen": 18,
-      "tokens": 15
+      "box": 32,
+      "ci": 35,
+      "code-gen": 32,
+      "tokens": 21
      },
      "06": {
-      "box": 3,
+      "box": 55,
       "ci": 10,
       "code-gen": 16,
       "owner": 6,
-      "tokens": 25
+      "tokens": 30,
+      "unknown": 3
      },
      "07": {
+      "box": 58,
       "ci": 4,
       "code-gen": 54,
-      "tokens": 2
+      "tokens": 2,
+      "unknown": 2
      },
      "08": {
-      "ci": 50,
-      "code-gen": 5,
+      "box": 45,
+      "ci": 61,
+      "code-gen": 9,
       "owner": 5
      },
      "09": {
-      "ci": 59,
+      "box": 32,
+      "ci": 87,
       "code-gen": 1
      },
      "10": {
-      "ci": 50,
-      "code-gen": 10
+      "box": 14,
+      "ci": 70,
+      "code-gen": 36
      },
      "11": {
-      "ci": 53,
-      "code-gen": 7
+      "box": 7,
+      "ci": 84,
+      "code-gen": 29
      },
      "12": {
-      "ci": 20,
-      "code-gen": 40
-     },
-     "13": {
-      "ci": 29,
-      "code-gen": 31
-     },
-     "14": {
-      "ci": 16,
+      "box": 7,
+      "ci": 69,
       "code-gen": 44
      },
+     "13": {
+      "ci": 53,
+      "code-gen": 67
+     },
+     "14": {
+      "box": 52,
+      "ci": 16,
+      "code-gen": 52
+     },
      "15": {
-      "box": 11,
-      "ci": 38,
+      "box": 61,
+      "ci": 48,
       "code-gen": 3,
       "tokens": 8
      },
      "16": {
+      "box": 20,
       "ci": 30,
-      "code-gen": 30
+      "code-gen": 70
      },
      "17": {
-      "ci": 39,
-      "code-gen": 21
+      "box": 4,
+      "ci": 74,
+      "code-gen": 42
      },
      "18": {
-      "ci": 11,
-      "code-gen": 46,
+      "box": 3,
+      "ci": 18,
+      "code-gen": 96,
       "tokens": 3
      },
      "19": {
+      "box": 11,
       "ci": 28,
-      "code-gen": 31,
-      "tokens": 1
+      "code-gen": 70,
+      "tokens": 11
      },
      "20": {
       "box": 6,
       "ci": 49,
-      "code-gen": 5
+      "code-gen": 5,
+      "tokens": 60
      },
      "21": {
       "ci": 2,
-      "code-gen": 8,
-      "tokens": 47,
-      "unknown": 3
+      "code-gen": 57,
+      "tokens": 52,
+      "unknown": 9
      },
      "22": {
-      "ci": 39,
-      "code-gen": 6,
+      "box": 14,
+      "ci": 68,
+      "code-gen": 23,
       "tokens": 15
      },
      "23": {
-      "ci": 49,
+      "ci": 109,
       "code-gen": 7,
       "tokens": 4
      }
     },
     "minutes": {
-     "box": 85,
-     "ci": 661,
-     "code-gen": 509,
+     "box": 642,
+     "ci": 1013,
+     "code-gen": 912,
      "owner": 11,
-     "tokens": 121,
-     "unknown": 53
+     "tokens": 207,
+     "unknown": 95
     }
    },
    "loop_runs": 133,
@@ -2690,101 +2956,145 @@
    "idle_ticks": 107,
    "items_done": 11,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
+      "box": 9,
+      "ci": 51,
       "code-gen": 60
      },
      "01": {
+      "box": 1,
+      "ci": 59,
       "code-gen": 60
      },
      "02": {
+      "ci": 60,
       "code-gen": 60
      },
      "03": {
-      "ci": 9,
+      "box": 3,
+      "ci": 66,
       "code-gen": 51
      },
      "04": {
-      "ci": 6,
+      "box": 59,
+      "ci": 7,
       "code-gen": 54
      },
      "05": {
+      "box": 13,
+      "ci": 47,
       "code-gen": 60
      },
      "06": {
+      "box": 60,
       "code-gen": 60
      },
      "07": {
+      "box": 50,
+      "ci": 10,
       "code-gen": 60
      },
      "08": {
+      "box": 12,
       "ci": 3,
-      "code-gen": 57
+      "code-gen": 57,
+      "unknown": 48
      },
      "09": {
       "ci": 35,
-      "code-gen": 25
+      "code-gen": 25,
+      "unknown": 60
      },
      "10": {
       "ci": 8,
-      "code-gen": 52
+      "code-gen": 52,
+      "unknown": 60
      },
      "11": {
       "ci": 20,
-      "code-gen": 40
+      "code-gen": 40,
+      "unknown": 60
      },
      "12": {
       "ci": 22,
-      "code-gen": 38
+      "code-gen": 38,
+      "unknown": 60
      },
      "13": {
       "ci": 20,
-      "code-gen": 40
+      "code-gen": 40,
+      "unknown": 60
      },
      "14": {
-      "code-gen": 60
+      "code-gen": 60,
+      "owner": 26,
+      "unknown": 34
      },
      "15": {
-      "code-gen": 60
+      "ci": 11,
+      "code-gen": 60,
+      "owner": 15,
+      "unknown": 34
      },
      "16": {
-      "ci": 51,
+      "box": 18,
+      "ci": 93,
       "code-gen": 9
      },
      "17": {
-      "ci": 13,
-      "code-gen": 47
+      "box": 32,
+      "ci": 33,
+      "code-gen": 48,
+      "tokens": 3,
+      "unknown": 4
      },
      "18": {
-      "ci": 30,
-      "code-gen": 30
+      "box": 7,
+      "ci": 33,
+      "code-gen": 30,
+      "owner": 11,
+      "tokens": 25,
+      "unknown": 14
      },
      "19": {
+      "box": 27,
       "ci": 28,
-      "code-gen": 32
+      "code-gen": 32,
+      "owner": 33
      },
      "20": {
-      "box": 10,
+      "box": 16,
       "ci": 39,
-      "code-gen": 11
+      "code-gen": 11,
+      "owner": 54
      },
      "21": {
       "ci": 50,
-      "code-gen": 10
+      "code-gen": 10,
+      "owner": 20,
+      "tokens": 40
      },
      "22": {
       "ci": 22,
-      "code-gen": 38
+      "code-gen": 38,
+      "tokens": 60
      },
      "23": {
-      "code-gen": 60
+      "box": 9,
+      "code-gen": 60,
+      "tokens": 25,
+      "unknown": 26
      }
     },
     "minutes": {
-     "box": 10,
-     "ci": 356,
-     "code-gen": 1074
+     "box": 316,
+     "ci": 717,
+     "code-gen": 1075,
+     "owner": 159,
+     "tokens": 153,
+     "unknown": 460
     }
    },
    "loop_runs": 60,
@@ -2866,91 +3176,131 @@
    "idle_ticks": 51,
    "items_done": 8,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "ci": 47,
+      "ci": 107,
       "code-gen": 13
      },
      "01": {
-      "ci": 3,
-      "code-gen": 57
+      "box": 42,
+      "ci": 14,
+      "code-gen": 57,
+      "owner": 7
      },
      "02": {
-      "code-gen": 60
+      "box": 12,
+      "ci": 34,
+      "code-gen": 60,
+      "owner": 13,
+      "unknown": 1
      },
      "03": {
+      "box": 54,
       "ci": 30,
-      "code-gen": 30
+      "code-gen": 30,
+      "owner": 6
      },
      "04": {
-      "code-gen": 60
+      "box": 12,
+      "code-gen": 60,
+      "owner": 48
      },
      "05": {
-      "code-gen": 60
+      "code-gen": 60,
+      "owner": 60
      },
      "06": {
-      "code-gen": 60
+      "code-gen": 60,
+      "owner": 60
      },
      "07": {
       "code-gen": 49,
-      "no-work": 11
+      "no-work": 11,
+      "owner": 22,
+      "unknown": 38
      },
      "08": {
       "code-gen": 44,
-      "tokens": 16
+      "tokens": 16,
+      "unknown": 60
      },
      "09": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "10": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "11": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "12": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "13": {
-      "tokens": 60
+      "tokens": 60,
+      "unknown": 60
      },
      "14": {
-      "tokens": 60
+      "box": 16,
+      "tokens": 60,
+      "unknown": 44
      },
      "15": {
-      "tokens": 60
+      "box": 53,
+      "owner": 2,
+      "tokens": 62,
+      "unknown": 3
      },
      "16": {
-      "tokens": 60
+      "box": 30,
+      "tokens": 85,
+      "unknown": 5
      },
      "17": {
+      "box": 60,
       "tokens": 60
      },
      "18": {
+      "box": 60,
       "tokens": 60
      },
      "19": {
+      "box": 60,
       "tokens": 60
      },
      "20": {
+      "box": 60,
       "tokens": 60
      },
      "21": {
+      "box": 36,
+      "owner": 24,
       "tokens": 60
      },
      "22": {
+      "box": 47,
+      "owner": 13,
       "tokens": 60
      },
      "23": {
+      "box": 57,
+      "owner": 3,
       "tokens": 60
      }
     },
     "minutes": {
-     "ci": 80,
+     "box": 599,
+     "ci": 185,
      "code-gen": 433,
      "no-work": 11,
-     "tokens": 916
+     "owner": 258,
+     "tokens": 943,
+     "unknown": 451
     }
    },
    "loop_runs": 26,
@@ -3033,112 +3383,138 @@
    "idle_ticks": 164,
    "items_done": 10,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
+      "box": 41,
+      "owner": 19,
       "tokens": 60
      },
      "01": {
+      "box": 16,
+      "owner": 44,
       "tokens": 60
      },
      "02": {
+      "owner": 60,
       "tokens": 60
      },
      "03": {
+      "box": 59,
+      "owner": 1,
       "tokens": 60
      },
      "04": {
+      "box": 60,
       "tokens": 60
      },
      "05": {
+      "box": 60,
       "tokens": 60
      },
      "06": {
+      "box": 60,
       "tokens": 60
      },
      "07": {
-      "box": 19,
+      "box": 70,
+      "owner": 9,
       "tokens": 5,
       "unknown": 36
      },
      "08": {
+      "box": 31,
+      "owner": 29,
       "unknown": 60
      },
      "09": {
+      "box": 49,
       "ci": 18,
       "no-work": 6,
+      "owner": 11,
       "unknown": 36
      },
      "10": {
-      "box": 17,
+      "box": 38,
       "code-gen": 38,
-      "owner": 4,
+      "owner": 43,
       "unknown": 1
      },
      "11": {
+      "box": 30,
       "ci": 7,
       "code-gen": 42,
-      "owner": 11
+      "owner": 41
      },
      "12": {
+      "box": 40,
       "code-gen": 8,
-      "owner": 52
+      "owner": 72
      },
      "13": {
-      "owner": 59,
+      "box": 30,
+      "owner": 89,
       "unknown": 1
      },
      "14": {
-      "box": 10,
+      "box": 70,
       "code-gen": 15,
       "owner": 35
      },
      "15": {
+      "box": 56,
       "code-gen": 46,
-      "owner": 14
+      "owner": 18
      },
      "16": {
-      "box": 16,
+      "box": 25,
       "code-gen": 10,
-      "owner": 34
+      "owner": 85
      },
      "17": {
-      "box": 11,
+      "box": 21,
       "code-gen": 5,
-      "owner": 44
+      "owner": 94
      },
      "18": {
-      "owner": 60
+      "box": 7,
+      "owner": 113
      },
      "19": {
+      "box": 20,
       "code-gen": 15,
-      "owner": 45
+      "owner": 85
      },
      "20": {
+      "box": 60,
       "owner": 60
      },
      "21": {
+      "box": 60,
       "owner": 60
      },
      "22": {
-      "code-gen": 40,
-      "owner": 20
+      "box": 26,
+      "code-gen": 50,
+      "owner": 20,
+      "tokens": 13,
+      "unknown": 11
      },
      "23": {
-      "box": 5,
-      "ci": 12,
+      "box": 18,
+      "ci": 59,
       "code-gen": 17,
       "owner": 26
      }
     },
     "minutes": {
-     "box": 78,
-     "ci": 37,
-     "code-gen": 236,
+     "box": 947,
+     "ci": 84,
+     "code-gen": 246,
      "no-work": 6,
-     "owner": 524,
-     "tokens": 425,
-     "unknown": 134
+     "owner": 1014,
+     "tokens": 438,
+     "unknown": 145
     }
    },
    "loop_runs": 55,
@@ -3221,126 +3597,160 @@
    "idle_ticks": 200,
    "items_done": 16,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "box": 12,
-      "ci": 43,
-      "code-gen": 5
+      "box": 26,
+      "ci": 82,
+      "code-gen": 5,
+      "owner": 7
      },
      "01": {
-      "ci": 9,
+      "box": 13,
+      "ci": 56,
       "tokens": 51
      },
      "02": {
+      "box": 10,
+      "ci": 19,
+      "code-gen": 29,
       "owner": 23,
-      "tokens": 37
+      "tokens": 37,
+      "unknown": 2
      },
      "03": {
       "ci": 4,
+      "code-gen": 15,
       "owner": 49,
-      "tokens": 7
+      "tokens": 47,
+      "unknown": 5
      },
      "04": {
-      "code-gen": 17,
-      "owner": 43
+      "box": 9,
+      "code-gen": 54,
+      "owner": 43,
+      "unknown": 14
      },
      "05": {
-      "owner": 60
+      "box": 31,
+      "code-gen": 19,
+      "owner": 70
      },
      "06": {
+      "box": 39,
+      "code-gen": 21,
       "owner": 60
      },
      "07": {
-      "owner": 60
+      "box": 14,
+      "owner": 95,
+      "tokens": 11
      },
      "08": {
-      "owner": 60
+      "owner": 60,
+      "tokens": 55,
+      "unknown": 5
      },
      "09": {
-      "owner": 60
+      "box": 29,
+      "code-gen": 10,
+      "owner": 71,
+      "unknown": 10
      },
      "10": {
+      "box": 60,
       "ci": 24,
       "code-gen": 17,
       "owner": 19
      },
      "11": {
-      "box": 6,
-      "code-gen": 24,
-      "owner": 30
+      "box": 51,
+      "code-gen": 34,
+      "owner": 35
      },
      "12": {
+      "box": 50,
       "ci": 9,
-      "code-gen": 7,
+      "code-gen": 17,
       "owner": 44
      },
      "13": {
-      "box": 4,
+      "box": 54,
+      "ci": 10,
       "code-gen": 1,
       "owner": 55
      },
      "14": {
+      "box": 41,
+      "ci": 19,
       "code-gen": 1,
       "owner": 59
      },
      "15": {
-      "ci": 15,
+      "box": 17,
+      "ci": 44,
       "owner": 17,
-      "tokens": 28
+      "tokens": 42
      },
      "16": {
-      "box": 11,
-      "ci": 5,
+      "box": 44,
+      "ci": 22,
+      "code-gen": 10,
       "owner": 44
      },
      "17": {
-      "box": 9,
-      "ci": 26,
+      "box": 39,
+      "ci": 47,
       "code-gen": 4,
-      "owner": 14,
+      "owner": 18,
+      "tokens": 5,
       "unknown": 7
      },
      "18": {
       "ci": 41,
       "code-gen": 6,
-      "owner": 13
+      "owner": 13,
+      "tokens": 55,
+      "unknown": 5
      },
      "19": {
-      "box": 8,
-      "ci": 11,
+      "box": 50,
+      "ci": 28,
       "code-gen": 19,
-      "owner": 22
+      "owner": 22,
+      "unknown": 1
      },
      "20": {
-      "box": 6,
-      "ci": 32,
+      "box": 61,
+      "ci": 37,
       "code-gen": 12,
       "owner": 10
      },
      "21": {
+      "box": 56,
       "ci": 39,
       "code-gen": 19,
-      "owner": 2
+      "owner": 6
      },
      "22": {
-      "box": 5,
+      "box": 57,
       "code-gen": 20,
-      "owner": 35
+      "owner": 43
      },
      "23": {
+      "box": 22,
       "ci": 3,
       "code-gen": 8,
-      "owner": 49
+      "owner": 87
      }
     },
     "minutes": {
-     "box": 61,
-     "ci": 261,
-     "code-gen": 160,
-     "owner": 828,
-     "tokens": 123,
-     "unknown": 7
+     "box": 773,
+     "ci": 484,
+     "code-gen": 321,
+     "owner": 950,
+     "tokens": 303,
+     "unknown": 49
     }
    },
    "loop_runs": 67,
@@ -3424,117 +3834,150 @@
    "idle_ticks": 147,
    "items_done": 10,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "code-gen": 5,
-      "owner": 54,
+      "box": 9,
+      "code-gen": 55,
+      "owner": 55,
       "unknown": 1
      },
      "01": {
-      "owner": 30,
+      "box": 13,
+      "code-gen": 8,
+      "owner": 69,
       "unknown": 30
      },
      "02": {
-      "code-gen": 19,
-      "owner": 20,
+      "code-gen": 49,
+      "owner": 50,
       "unknown": 21
      },
      "03": {
-      "owner": 60
+      "code-gen": 42,
+      "owner": 60,
+      "tokens": 18
      },
      "04": {
-      "owner": 60
+      "owner": 60,
+      "tokens": 55,
+      "unknown": 5
      },
      "05": {
-      "owner": 60
+      "code-gen": 28,
+      "owner": 60,
+      "unknown": 32
      },
      "06": {
+      "code-gen": 60,
       "owner": 60
      },
      "07": {
+      "code-gen": 11,
       "owner": 54,
-      "unknown": 6
+      "unknown": 55
      },
      "08": {
       "owner": 59,
-      "unknown": 1
+      "unknown": 61
      },
      "09": {
-      "owner": 60
+      "owner": 60,
+      "unknown": 60
      },
      "10": {
       "ci": 3,
-      "code-gen": 2,
-      "owner": 55
+      "code-gen": 33,
+      "owner": 55,
+      "unknown": 29
      },
      "11": {
-      "ci": 31,
-      "owner": 28,
-      "unknown": 1
+      "box": 15,
+      "ci": 44,
+      "code-gen": 26,
+      "owner": 30,
+      "unknown": 5
      },
      "12": {
+      "box": 16,
       "ci": 29,
       "code-gen": 14,
-      "owner": 17
+      "owner": 17,
+      "unknown": 44
      },
      "13": {
       "box": 4,
       "ci": 42,
-      "code-gen": 14
+      "code-gen": 14,
+      "unknown": 60
      },
      "14": {
       "box": 1,
-      "ci": 59
+      "ci": 59,
+      "code-gen": 38,
+      "unknown": 22
      },
      "15": {
       "box": 7,
       "ci": 25,
+      "code-gen": 60,
       "owner": 9,
       "unknown": 19
      },
      "16": {
       "box": 12,
-      "ci": 48
+      "ci": 48,
+      "code-gen": 60
      },
      "17": {
-      "ci": 42,
+      "box": 12,
+      "ci": 54,
+      "code-gen": 36,
       "owner": 18
      },
      "18": {
       "ci": 11,
-      "owner": 44,
+      "code-gen": 51,
+      "owner": 53,
       "unknown": 5
      },
      "19": {
-      "owner": 60
+      "code-gen": 43,
+      "owner": 77
      },
      "20": {
+      "box": 9,
+      "code-gen": 51,
       "owner": 60
      },
      "21": {
-      "ci": 9,
-      "code-gen": 24,
+      "box": 30,
+      "ci": 15,
+      "code-gen": 48,
       "owner": 20,
       "unknown": 7
      },
      "22": {
-      "box": 5,
-      "ci": 12,
-      "code-gen": 9,
-      "owner": 34
+      "box": 11,
+      "ci": 28,
+      "code-gen": 38,
+      "owner": 40,
+      "tokens": 3
      },
      "23": {
-      "ci": 59,
-      "owner": 1
+      "ci": 98,
+      "code-gen": 11,
+      "owner": 4,
+      "unknown": 7
      }
     },
     "minutes": {
-     "box": 29,
-     "ci": 370,
-     "code-gen": 87,
-     "owner": 863,
-     "unknown": 91
+     "box": 139,
+     "ci": 456,
+     "code-gen": 776,
+     "owner": 970,
+     "tokens": 76,
+     "unknown": 463
     }
    },
    "loop_runs": 48,
@@ -7292,6 +7735,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7364,6 +7887,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7436,6 +8039,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7508,6 +8191,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7580,6 +8343,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7652,6 +8495,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7724,6 +8647,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7796,6 +8799,86 @@
     "idle_hours": 0.0,
     "idle_ticks": 0,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "unknown": 60
+      },
+      "15": {
+       "unknown": 60
+      },
+      "16": {
+       "unknown": 60
+      },
+      "17": {
+       "unknown": 60
+      },
+      "18": {
+       "unknown": 60
+      },
+      "19": {
+       "unknown": 60
+      },
+      "20": {
+       "unknown": 60
+      },
+      "21": {
+       "unknown": 60
+      },
+      "22": {
+       "unknown": 60
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "unknown": 1440
+     }
+    },
     "loop_runs": 0,
     "loops_per_merged_pr": null,
     "max_workers": 2,
@@ -7872,6 +8955,111 @@
     "idle_hours": 1.53,
     "idle_ticks": 14,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "unknown": 60
+      },
+      "05": {
+       "unknown": 60
+      },
+      "06": {
+       "unknown": 60
+      },
+      "07": {
+       "unknown": 60
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "box": 18,
+       "unknown": 42
+      },
+      "14": {
+       "box": 1,
+       "ci": 20,
+       "code-gen": 9,
+       "no-work": 30
+      },
+      "15": {
+       "box": 35,
+       "ci": 18,
+       "code-gen": 1,
+       "tokens": 6
+      },
+      "16": {
+       "box": 18,
+       "code-gen": 42
+      },
+      "17": {
+       "box": 31,
+       "code-gen": 29
+      },
+      "18": {
+       "box": 49,
+       "code-gen": 11
+      },
+      "19": {
+       "box": 58,
+       "unknown": 2
+      },
+      "20": {
+       "box": 22,
+       "ci": 30,
+       "code-gen": 8
+      },
+      "21": {
+       "box": 20,
+       "owner": 9,
+       "tokens": 19,
+       "unknown": 12
+      },
+      "22": {
+       "box": 10,
+       "tokens": 15,
+       "unknown": 35
+      },
+      "23": {
+       "box": 55,
+       "unknown": 5
+      }
+     },
+     "minutes": {
+      "box": 317,
+      "ci": 68,
+      "code-gen": 100,
+      "no-work": 30,
+      "owner": 9,
+      "tokens": 40,
+      "unknown": 876
+     }
+    },
     "loop_runs": 24,
     "loops_per_merged_pr": 1.33,
     "max_workers": 2,
@@ -7957,6 +9145,126 @@
     "idle_hours": 4.63,
     "idle_ticks": 37,
     "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "owner": 54,
+       "unknown": 6
+      },
+      "01": {
+       "owner": 60
+      },
+      "02": {
+       "box": 49,
+       "owner": 11
+      },
+      "03": {
+       "box": 42,
+       "unknown": 18
+      },
+      "04": {
+       "box": 33,
+       "ci": 10,
+       "code-gen": 16,
+       "unknown": 1
+      },
+      "05": {
+       "box": 29,
+       "ci": 29,
+       "code-gen": 2
+      },
+      "06": {
+       "box": 37,
+       "ci": 5,
+       "unknown": 18
+      },
+      "07": {
+       "no-work": 59,
+       "unknown": 1
+      },
+      "08": {
+       "no-work": 53,
+       "unknown": 7
+      },
+      "09": {
+       "box": 9,
+       "no-work": 32,
+       "unknown": 19
+      },
+      "10": {
+       "box": 22,
+       "ci": 8,
+       "no-work": 30
+      },
+      "11": {
+       "box": 19,
+       "ci": 32,
+       "unknown": 9
+      },
+      "12": {
+       "box": 40,
+       "code-gen": 16,
+       "owner": 4
+      },
+      "13": {
+       "box": 47,
+       "code-gen": 13
+      },
+      "14": {
+       "box": 4,
+       "unknown": 56
+      },
+      "15": {
+       "box": 21,
+       "code-gen": 39
+      },
+      "16": {
+       "box": 52,
+       "unknown": 8
+      },
+      "17": {
+       "tokens": 51,
+       "unknown": 9
+      },
+      "18": {
+       "box": 14,
+       "ci": 9,
+       "tokens": 25,
+       "unknown": 12
+      },
+      "19": {
+       "box": 20,
+       "ci": 40
+      },
+      "20": {
+       "box": 5,
+       "ci": 5,
+       "unknown": 50
+      },
+      "21": {
+       "box": 40,
+       "unknown": 20
+      },
+      "22": {
+       "box": 57,
+       "code-gen": 2,
+       "unknown": 1
+      },
+      "23": {
+       "box": 60
+      }
+     },
+     "minutes": {
+      "box": 600,
+      "ci": 138,
+      "code-gen": 88,
+      "no-work": 174,
+      "owner": 129,
+      "tokens": 76,
+      "unknown": 235
+     }
+    },
     "loop_runs": 26,
     "loops_per_merged_pr": 0.72,
     "max_workers": 2,
@@ -8045,6 +9353,121 @@
     "idle_hours": 5.15,
     "idle_ticks": 58,
     "items_done": 3,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 50,
+       "unknown": 10
+      },
+      "01": {
+       "box": 15,
+       "code-gen": 1,
+       "unknown": 44
+      },
+      "02": {
+       "box": 25,
+       "unknown": 35
+      },
+      "03": {
+       "box": 28,
+       "unknown": 32
+      },
+      "04": {
+       "box": 9,
+       "tokens": 36,
+       "unknown": 15
+      },
+      "05": {
+       "box": 9,
+       "unknown": 51
+      },
+      "06": {
+       "box": 32,
+       "unknown": 28
+      },
+      "07": {
+       "box": 33,
+       "unknown": 27
+      },
+      "08": {
+       "box": 44,
+       "unknown": 16
+      },
+      "09": {
+       "box": 33,
+       "ci": 2,
+       "code-gen": 1,
+       "no-work": 15,
+       "unknown": 9
+      },
+      "10": {
+       "box": 12,
+       "ci": 3,
+       "code-gen": 32,
+       "no-work": 13
+      },
+      "11": {
+       "box": 24,
+       "ci": 30,
+       "tokens": 6
+      },
+      "12": {
+       "box": 45,
+       "ci": 9,
+       "tokens": 6
+      },
+      "13": {
+       "box": 53,
+       "ci": 7
+      },
+      "14": {
+       "box": 60
+      },
+      "15": {
+       "box": 60
+      },
+      "16": {
+       "box": 60
+      },
+      "17": {
+       "box": 60
+      },
+      "18": {
+       "box": 60
+      },
+      "19": {
+       "box": 60
+      },
+      "20": {
+       "box": 53,
+       "unknown": 7
+      },
+      "21": {
+       "box": 18,
+       "ci": 18,
+       "no-work": 15,
+       "unknown": 9
+      },
+      "22": {
+       "box": 41,
+       "ci": 13,
+       "tokens": 6
+      },
+      "23": {
+       "box": 50,
+       "ci": 10
+      }
+     },
+     "minutes": {
+      "box": 934,
+      "ci": 92,
+      "code-gen": 34,
+      "no-work": 43,
+      "tokens": 54,
+      "unknown": 283
+     }
+    },
     "loop_runs": 13,
     "loops_per_merged_pr": 0.43,
     "max_workers": 2,
@@ -8126,6 +9549,118 @@
     "idle_hours": 9.32,
     "idle_ticks": 90,
     "items_done": 9,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 29,
+       "ci": 1,
+       "unknown": 30
+      },
+      "01": {
+       "box": 14,
+       "ci": 3,
+       "tokens": 6,
+       "unknown": 37
+      },
+      "02": {
+       "ci": 21,
+       "unknown": 39
+      },
+      "03": {
+       "box": 14,
+       "no-work": 3,
+       "unknown": 43
+      },
+      "04": {
+       "box": 22,
+       "unknown": 38
+      },
+      "05": {
+       "box": 45,
+       "ci": 14,
+       "unknown": 1
+      },
+      "06": {
+       "box": 22,
+       "no-work": 38
+      },
+      "07": {
+       "box": 19,
+       "no-work": 41
+      },
+      "08": {
+       "box": 60
+      },
+      "09": {
+       "box": 49,
+       "ci": 5,
+       "tokens": 6
+      },
+      "10": {
+       "ci": 60
+      },
+      "11": {
+       "ci": 60
+      },
+      "12": {
+       "box": 24,
+       "ci": 36
+      },
+      "13": {
+       "box": 29,
+       "ci": 10,
+       "unknown": 21
+      },
+      "14": {
+       "box": 57,
+       "ci": 3
+      },
+      "15": {
+       "box": 60
+      },
+      "16": {
+       "box": 30,
+       "ci": 30
+      },
+      "17": {
+       "box": 45,
+       "ci": 15
+      },
+      "18": {
+       "box": 9,
+       "ci": 51
+      },
+      "19": {
+       "box": 20,
+       "ci": 30,
+       "unknown": 10
+      },
+      "20": {
+       "box": 20,
+       "ci": 19,
+       "unknown": 21
+      },
+      "21": {
+       "box": 41,
+       "ci": 19
+      },
+      "22": {
+       "ci": 60
+      },
+      "23": {
+       "box": 19,
+       "ci": 41
+      }
+     },
+     "minutes": {
+      "box": 628,
+      "ci": 478,
+      "no-work": 82,
+      "tokens": 12,
+      "unknown": 240
+     }
+    },
     "loop_runs": 17,
     "loops_per_merged_pr": 0.61,
     "max_workers": 2,
@@ -8207,6 +9742,115 @@
     "idle_hours": 6.88,
     "idle_ticks": 62,
     "items_done": 5,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 56,
+       "unknown": 4
+      },
+      "01": {
+       "box": 11,
+       "ci": 39,
+       "tokens": 10
+      },
+      "02": {
+       "box": 50,
+       "unknown": 10
+      },
+      "03": {
+       "box": 59,
+       "unknown": 1
+      },
+      "04": {
+       "box": 60
+      },
+      "05": {
+       "box": 11,
+       "unknown": 49
+      },
+      "06": {
+       "box": 33,
+       "unknown": 27
+      },
+      "07": {
+       "box": 60
+      },
+      "08": {
+       "box": 60
+      },
+      "09": {
+       "box": 31,
+       "no-work": 19,
+       "unknown": 10
+      },
+      "10": {
+       "box": 20,
+       "no-work": 38,
+       "unknown": 2
+      },
+      "11": {
+       "box": 24,
+       "code-gen": 2,
+       "no-work": 34
+      },
+      "12": {
+       "no-work": 60
+      },
+      "13": {
+       "box": 7,
+       "no-work": 53
+      },
+      "14": {
+       "box": 27,
+       "no-work": 33
+      },
+      "15": {
+       "box": 7,
+       "no-work": 53
+      },
+      "16": {
+       "no-work": 60
+      },
+      "17": {
+       "no-work": 60
+      },
+      "18": {
+       "ci": 30,
+       "no-work": 2,
+       "owner": 19,
+       "unknown": 9
+      },
+      "19": {
+       "owner": 60
+      },
+      "20": {
+       "owner": 60
+      },
+      "21": {
+       "box": 12,
+       "code-gen": 27,
+       "owner": 21
+      },
+      "22": {
+       "box": 59,
+       "code-gen": 1
+      },
+      "23": {
+       "box": 36,
+       "code-gen": 24
+      }
+     },
+     "minutes": {
+      "box": 623,
+      "ci": 69,
+      "code-gen": 54,
+      "no-work": 412,
+      "owner": 160,
+      "tokens": 10,
+      "unknown": 112
+     }
+    },
     "loop_runs": 11,
     "loops_per_merged_pr": 0.38,
     "max_workers": 2,
@@ -8289,6 +9933,121 @@
     "idle_hours": 0.68,
     "idle_ticks": 9,
     "items_done": 21,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 32,
+       "code-gen": 28
+      },
+      "01": {
+       "box": 39,
+       "code-gen": 21
+      },
+      "02": {
+       "box": 33,
+       "code-gen": 26,
+       "tokens": 1
+      },
+      "03": {
+       "box": 1,
+       "ci": 1,
+       "tokens": 58
+      },
+      "04": {
+       "tokens": 60
+      },
+      "05": {
+       "code-gen": 40,
+       "tokens": 5,
+       "unknown": 15
+      },
+      "06": {
+       "box": 44,
+       "code-gen": 16
+      },
+      "07": {
+       "box": 30,
+       "ci": 5,
+       "code-gen": 25
+      },
+      "08": {
+       "box": 1,
+       "ci": 29,
+       "code-gen": 30
+      },
+      "09": {
+       "box": 3,
+       "ci": 10,
+       "code-gen": 9,
+       "tokens": 38
+      },
+      "10": {
+       "box": 30,
+       "tokens": 5,
+       "unknown": 25
+      },
+      "11": {
+       "box": 46,
+       "code-gen": 4,
+       "unknown": 10
+      },
+      "12": {
+       "box": 40,
+       "ci": 20
+      },
+      "13": {
+       "box": 58,
+       "ci": 2
+      },
+      "14": {
+       "box": 56,
+       "code-gen": 4
+      },
+      "15": {
+       "box": 33,
+       "code-gen": 27
+      },
+      "16": {
+       "box": 39,
+       "code-gen": 21
+      },
+      "17": {
+       "box": 1,
+       "code-gen": 59
+      },
+      "18": {
+       "box": 11,
+       "code-gen": 49
+      },
+      "19": {
+       "box": 22,
+       "code-gen": 38
+      },
+      "20": {
+       "box": 38,
+       "code-gen": 22
+      },
+      "21": {
+       "code-gen": 60
+      },
+      "22": {
+       "box": 2,
+       "code-gen": 58
+      },
+      "23": {
+       "box": 52,
+       "code-gen": 8
+      }
+     },
+     "minutes": {
+      "box": 611,
+      "ci": 67,
+      "code-gen": 545,
+      "tokens": 167,
+      "unknown": 50
+     }
+    },
     "loop_runs": 20,
     "loops_per_merged_pr": 0.36,
     "max_workers": 2,
@@ -8384,6 +10143,126 @@
     "idle_hours": 3.23,
     "idle_ticks": 33,
     "items_done": 11,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 21,
+       "code-gen": 13,
+       "unknown": 26
+      },
+      "01": {
+       "box": 31,
+       "code-gen": 29
+      },
+      "02": {
+       "box": 43,
+       "code-gen": 12,
+       "unknown": 5
+      },
+      "03": {
+       "box": 60
+      },
+      "04": {
+       "box": 1,
+       "ci": 40,
+       "code-gen": 19
+      },
+      "05": {
+       "box": 32,
+       "ci": 8,
+       "code-gen": 14,
+       "tokens": 6
+      },
+      "06": {
+       "box": 52,
+       "tokens": 5,
+       "unknown": 3
+      },
+      "07": {
+       "box": 58,
+       "unknown": 2
+      },
+      "08": {
+       "box": 45,
+       "ci": 11,
+       "code-gen": 4
+      },
+      "09": {
+       "box": 32,
+       "ci": 28
+      },
+      "10": {
+       "box": 14,
+       "ci": 20,
+       "code-gen": 26
+      },
+      "11": {
+       "box": 7,
+       "ci": 31,
+       "code-gen": 22
+      },
+      "12": {
+       "box": 7,
+       "ci": 49,
+       "code-gen": 4
+      },
+      "13": {
+       "ci": 24,
+       "code-gen": 36
+      },
+      "14": {
+       "box": 52,
+       "code-gen": 8
+      },
+      "15": {
+       "box": 50,
+       "ci": 10
+      },
+      "16": {
+       "box": 20,
+       "code-gen": 40
+      },
+      "17": {
+       "box": 4,
+       "ci": 35,
+       "code-gen": 21
+      },
+      "18": {
+       "box": 3,
+       "ci": 7,
+       "code-gen": 50
+      },
+      "19": {
+       "box": 11,
+       "code-gen": 39,
+       "tokens": 10
+      },
+      "20": {
+       "tokens": 60
+      },
+      "21": {
+       "code-gen": 49,
+       "tokens": 5,
+       "unknown": 6
+      },
+      "22": {
+       "box": 14,
+       "ci": 29,
+       "code-gen": 17
+      },
+      "23": {
+       "ci": 60
+      }
+     },
+     "minutes": {
+      "box": 557,
+      "ci": 352,
+      "code-gen": 403,
+      "tokens": 86,
+      "unknown": 42
+     }
+    },
     "loop_runs": 32,
     "loops_per_merged_pr": 0.53,
     "max_workers": 2,
@@ -8488,6 +10367,115 @@
     "idle_hours": 6.83,
     "idle_ticks": 60,
     "items_done": 2,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 9,
+       "ci": 51
+      },
+      "01": {
+       "box": 1,
+       "ci": 59
+      },
+      "02": {
+       "ci": 60
+      },
+      "03": {
+       "box": 3,
+       "ci": 57
+      },
+      "04": {
+       "box": 59,
+       "ci": 1
+      },
+      "05": {
+       "box": 13,
+       "ci": 47
+      },
+      "06": {
+       "box": 60
+      },
+      "07": {
+       "box": 50,
+       "ci": 10
+      },
+      "08": {
+       "box": 12,
+       "unknown": 48
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "owner": 26,
+       "unknown": 34
+      },
+      "15": {
+       "ci": 11,
+       "owner": 15,
+       "unknown": 34
+      },
+      "16": {
+       "box": 18,
+       "ci": 42
+      },
+      "17": {
+       "box": 32,
+       "ci": 20,
+       "code-gen": 1,
+       "tokens": 3,
+       "unknown": 4
+      },
+      "18": {
+       "box": 7,
+       "ci": 3,
+       "owner": 11,
+       "tokens": 25,
+       "unknown": 14
+      },
+      "19": {
+       "box": 27,
+       "owner": 33
+      },
+      "20": {
+       "box": 6,
+       "owner": 54
+      },
+      "21": {
+       "owner": 20,
+       "tokens": 40
+      },
+      "22": {
+       "tokens": 60
+      },
+      "23": {
+       "box": 9,
+       "tokens": 25,
+       "unknown": 26
+      }
+     },
+     "minutes": {
+      "box": 306,
+      "ci": 361,
+      "code-gen": 1,
+      "owner": 159,
+      "tokens": 153,
+      "unknown": 460
+     }
+    },
     "loop_runs": 15,
     "loops_per_merged_pr": 0.68,
     "max_workers": 2,
@@ -8603,6 +10591,107 @@
     "idle_hours": 4.8,
     "idle_ticks": 40,
     "items_done": 6,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "ci": 60
+      },
+      "01": {
+       "box": 42,
+       "ci": 11,
+       "owner": 7
+      },
+      "02": {
+       "box": 12,
+       "ci": 34,
+       "owner": 13,
+       "unknown": 1
+      },
+      "03": {
+       "box": 54,
+       "owner": 6
+      },
+      "04": {
+       "box": 12,
+       "owner": 48
+      },
+      "05": {
+       "owner": 60
+      },
+      "06": {
+       "owner": 60
+      },
+      "07": {
+       "owner": 22,
+       "unknown": 38
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "unknown": 60
+      },
+      "11": {
+       "unknown": 60
+      },
+      "12": {
+       "unknown": 60
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "box": 16,
+       "unknown": 44
+      },
+      "15": {
+       "box": 53,
+       "owner": 2,
+       "tokens": 2,
+       "unknown": 3
+      },
+      "16": {
+       "box": 30,
+       "tokens": 25,
+       "unknown": 5
+      },
+      "17": {
+       "box": 60
+      },
+      "18": {
+       "box": 60
+      },
+      "19": {
+       "box": 60
+      },
+      "20": {
+       "box": 60
+      },
+      "21": {
+       "box": 36,
+       "owner": 24
+      },
+      "22": {
+       "box": 47,
+       "owner": 13
+      },
+      "23": {
+       "box": 57,
+       "owner": 3
+      }
+     },
+     "minutes": {
+      "box": 599,
+      "ci": 105,
+      "owner": 258,
+      "tokens": 27,
+      "unknown": 451
+     }
+    },
     "loop_runs": 22,
     "loops_per_merged_pr": 0.79,
     "max_workers": 3,
@@ -8722,6 +10811,110 @@
     "idle_hours": 6.72,
     "idle_ticks": 62,
     "items_done": 4,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 41,
+       "owner": 19
+      },
+      "01": {
+       "box": 16,
+       "owner": 44
+      },
+      "02": {
+       "owner": 60
+      },
+      "03": {
+       "box": 59,
+       "owner": 1
+      },
+      "04": {
+       "box": 60
+      },
+      "05": {
+       "box": 60
+      },
+      "06": {
+       "box": 60
+      },
+      "07": {
+       "box": 51,
+       "owner": 9
+      },
+      "08": {
+       "box": 31,
+       "owner": 29
+      },
+      "09": {
+       "box": 49,
+       "owner": 11
+      },
+      "10": {
+       "box": 21,
+       "owner": 39
+      },
+      "11": {
+       "box": 30,
+       "owner": 30
+      },
+      "12": {
+       "box": 40,
+       "owner": 20
+      },
+      "13": {
+       "box": 30,
+       "owner": 30
+      },
+      "14": {
+       "box": 60
+      },
+      "15": {
+       "box": 56,
+       "owner": 4
+      },
+      "16": {
+       "box": 9,
+       "owner": 51
+      },
+      "17": {
+       "box": 10,
+       "owner": 50
+      },
+      "18": {
+       "box": 7,
+       "owner": 53
+      },
+      "19": {
+       "box": 20,
+       "owner": 40
+      },
+      "20": {
+       "box": 60
+      },
+      "21": {
+       "box": 60
+      },
+      "22": {
+       "box": 26,
+       "code-gen": 10,
+       "tokens": 13,
+       "unknown": 11
+      },
+      "23": {
+       "box": 13,
+       "ci": 47
+      }
+     },
+     "minutes": {
+      "box": 869,
+      "ci": 47,
+      "code-gen": 10,
+      "owner": 490,
+      "tokens": 13,
+      "unknown": 11
+     }
+    },
     "loop_runs": 29,
     "loops_per_merged_pr": 0.94,
     "max_workers": 3,
@@ -8839,6 +11032,129 @@
     "idle_hours": 3.75,
     "idle_ticks": 40,
     "items_done": 7,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 14,
+       "ci": 39,
+       "owner": 7
+      },
+      "01": {
+       "box": 13,
+       "ci": 47
+      },
+      "02": {
+       "box": 10,
+       "ci": 19,
+       "code-gen": 29,
+       "unknown": 2
+      },
+      "03": {
+       "code-gen": 15,
+       "tokens": 40,
+       "unknown": 5
+      },
+      "04": {
+       "box": 9,
+       "code-gen": 37,
+       "unknown": 14
+      },
+      "05": {
+       "box": 31,
+       "code-gen": 19,
+       "owner": 10
+      },
+      "06": {
+       "box": 39,
+       "code-gen": 21
+      },
+      "07": {
+       "box": 14,
+       "owner": 35,
+       "tokens": 11
+      },
+      "08": {
+       "tokens": 55,
+       "unknown": 5
+      },
+      "09": {
+       "box": 29,
+       "code-gen": 10,
+       "owner": 11,
+       "unknown": 10
+      },
+      "10": {
+       "box": 60
+      },
+      "11": {
+       "box": 45,
+       "code-gen": 10,
+       "owner": 5
+      },
+      "12": {
+       "box": 50,
+       "code-gen": 10
+      },
+      "13": {
+       "box": 50,
+       "ci": 10
+      },
+      "14": {
+       "box": 41,
+       "ci": 19
+      },
+      "15": {
+       "box": 17,
+       "ci": 29,
+       "tokens": 14
+      },
+      "16": {
+       "box": 33,
+       "ci": 17,
+       "code-gen": 10
+      },
+      "17": {
+       "box": 30,
+       "ci": 21,
+       "owner": 4,
+       "tokens": 5
+      },
+      "18": {
+       "tokens": 55,
+       "unknown": 5
+      },
+      "19": {
+       "box": 42,
+       "ci": 17,
+       "unknown": 1
+      },
+      "20": {
+       "box": 55,
+       "ci": 5
+      },
+      "21": {
+       "box": 56,
+       "owner": 4
+      },
+      "22": {
+       "box": 52,
+       "owner": 8
+      },
+      "23": {
+       "box": 22,
+       "owner": 38
+      }
+     },
+     "minutes": {
+      "box": 712,
+      "ci": 223,
+      "code-gen": 161,
+      "owner": 122,
+      "tokens": 180,
+      "unknown": 42
+     }
+    },
     "loop_runs": 28,
     "loops_per_merged_pr": 0.68,
     "max_workers": 3,
@@ -8955,6 +11271,121 @@
     "idle_hours": 1.88,
     "idle_ticks": 16,
     "items_done": 5,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 9,
+       "code-gen": 50,
+       "owner": 1
+      },
+      "01": {
+       "box": 13,
+       "code-gen": 8,
+       "owner": 39
+      },
+      "02": {
+       "code-gen": 30,
+       "owner": 30
+      },
+      "03": {
+       "code-gen": 42,
+       "tokens": 18
+      },
+      "04": {
+       "tokens": 55,
+       "unknown": 5
+      },
+      "05": {
+       "code-gen": 28,
+       "unknown": 32
+      },
+      "06": {
+       "code-gen": 60
+      },
+      "07": {
+       "code-gen": 11,
+       "unknown": 49
+      },
+      "08": {
+       "unknown": 60
+      },
+      "09": {
+       "unknown": 60
+      },
+      "10": {
+       "code-gen": 31,
+       "unknown": 29
+      },
+      "11": {
+       "box": 15,
+       "ci": 13,
+       "code-gen": 26,
+       "owner": 2,
+       "unknown": 4
+      },
+      "12": {
+       "box": 16,
+       "unknown": 44
+      },
+      "13": {
+       "unknown": 60
+      },
+      "14": {
+       "code-gen": 38,
+       "unknown": 22
+      },
+      "15": {
+       "code-gen": 60
+      },
+      "16": {
+       "code-gen": 60
+      },
+      "17": {
+       "box": 12,
+       "ci": 12,
+       "code-gen": 36
+      },
+      "18": {
+       "code-gen": 51,
+       "owner": 9
+      },
+      "19": {
+       "code-gen": 43,
+       "owner": 17
+      },
+      "20": {
+       "box": 9,
+       "code-gen": 51
+      },
+      "21": {
+       "box": 30,
+       "ci": 6,
+       "code-gen": 24
+      },
+      "22": {
+       "box": 6,
+       "ci": 16,
+       "code-gen": 29,
+       "owner": 6,
+       "tokens": 3
+      },
+      "23": {
+       "ci": 39,
+       "code-gen": 11,
+       "owner": 3,
+       "unknown": 7
+      }
+     },
+     "minutes": {
+      "box": 110,
+      "ci": 86,
+      "code-gen": 689,
+      "owner": 107,
+      "tokens": 76,
+      "unknown": 372
+     }
+    },
     "loop_runs": 21,
     "loops_per_merged_pr": 0.68,
     "max_workers": 1,
@@ -9008,5 +11439,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-10-30T00:02Z"
+ "updated": "2026-10-30T00:01Z"
 }
