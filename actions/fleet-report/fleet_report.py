@@ -32,6 +32,7 @@ import os
 import random
 import re
 import subprocess
+import statistics
 import sys
 import time
 from collections import Counter
@@ -51,6 +52,10 @@ DETAIL_BACKFILL = 4  # older days missing the sampled detail, filled a few per r
 # occupancy sampler runs, runner hours from time-sampled running jobs, which cannot exceed the pool.
 EST_METHOD = "ratio-v2"
 OCC_FILE = "occupancy.jsonl"  # one reading per line, appended by --occupancy-sample (the occupancy workflow)
+# Readings from before the sampler covered a day, read as well as OCC_FILE and never written here: an orchestrator's own
+# per-tick job counts (owner 2026-10-30; within 0.13 jobs of the sampler on average over 299 paired readings).
+OCC_BACKFILL_FILE = "occupancy_backfill.jsonl"
+WAITING_RUNS = 10  # a queue this long means work is waiting, so a free runner should be in use
 OCC_MAX_GAP_MIN = 45  # readings further apart than this leave the gap uncovered
 OCC_MIN_COVERAGE = 0.75  # a day's occupancy figure is used when its readings cover this share of the day
 OCC_KEEP_DAYS = 35
@@ -655,6 +660,27 @@ def org_runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     return min(occ["runner_min"], pool * 1440) if pool else occ["runner_min"]
 
 
+def busy_while_waiting(readings: list[dict], day: str, pool: int | None) -> dict | None:
+    """How many runners were in use while WAITING_RUNS or more runs waited: the median, and the share of those readings
+    at the pool's limit. A ceiling under the limit shows up here, however long the queue gets."""
+    busy = [float(r["running"]) for r in readings if str(r.get("t", "")).startswith(day)
+            and r.get("running") is not None and (r.get("queued_runs") or 0) >= WAITING_RUNS]
+    if not busy:
+        return None
+    return {"median": statistics.median(busy), "readings": len(busy), "peak": max(busy),
+            "at_limit": round(sum(b >= pool for b in busy) / len(busy), 3) if pool else None}
+
+
+def runner_method(detail: dict) -> tuple[str, str]:
+    """(css, words) for how a day's CI hours were found: measured, sampled, or the old fixed sample."""
+    occ = detail.get("occupancy_org") or detail.get("occupancy") or {}
+    if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
+        return "hmeasured", f"measured ({occ['coverage']:.0%} of the day)"
+    if detail.get("est_method") == EST_METHOD:
+        return "hsampled", "sampled estimate"
+    return "hold", "old small sample, least reliable"
+
+
 def runner_source(detail: dict) -> str:
     occ = detail.get("occupancy") or {}
     if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
@@ -980,7 +1006,8 @@ STYLE = """
   .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
-  .hours { fill: var(--ink2); opacity: 0.55; } .hoursorg { fill: var(--s1); }
+  .hours { fill: var(--ink2); opacity: 0.55; } .hmeasured { fill: var(--ink2); opacity: 0.95; }
+  .hsampled { fill: var(--ink2); opacity: 0.5; } .hold { fill: var(--ink2); opacity: 0.22; }
   .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
   .ls1 { fill: var(--s1); } .ls2 { fill: var(--s2); } .ls3 { fill: var(--s3); } .ls4 { fill: var(--s4); } .ls5 { fill: var(--s5); }
   .ls6 { fill: var(--s6); } .lunk { fill: var(--neutral); } .unused { fill: var(--unused); } .inkkey { fill: var(--ink); }
@@ -1573,8 +1600,30 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
                        f'<rect class="ls1 seg" x="{x:.1f}" y="{y_at(new):.1f}" width="{bar_w:.1f}" height="{top + chart_h - y_at(new):.1f}"/></g>')
         out.append(f'<polyline class="maxline" points="{" ".join(line)}"/>')
         y = top + chart_h + 70
+    waits = [(i, d, row["detail"]["busy_while_waiting"]) for i, (d, row) in enumerate(rows)
+             if view == "limits" and (row.get("detail") or {}).get("busy_while_waiting")]
+    if waits:
+        top, chart_h = y, 170
+        pool_size = cfg.runner_pool or 0
+        wait_axis = _nice_axis(max([pool_size] + [w["peak"] for _, _, w in waits]))
+        frame(top, chart_h, wait_axis, f"{panel} · Runners in use while work waits — median, when {WAITING_RUNS}+ runs are queued",
+              lambda v: f"{v:g}", "A long queue should fill the pool. A line that stays under the limit however long the queue "
+              "gets means something other than free runners is holding jobs back")
+        panel += 1
+        for i, day, w in waits:
+            h = chart_h * w["median"] / wait_axis[0]
+            limit_note = f" · at the limit {w['at_limit']:.0%} of the time" if w.get("at_limit") is not None else ""
+            tip = f"{_fmt_day(day)} · median {w['median']:g} running, peak {w['peak']:g}{limit_note} · {w['readings']} readings"
+            fade = ' class="partial"' if day == today_s else ""
+            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="ls1" '
+                       f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
+        if pool_size:
+            yl = top + chart_h - chart_h * pool_size / wait_axis[0]
+            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
+                       f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">runner limit {pool_size}</text>')
+        y = top + chart_h + 70
     if view == "limits":
-        if not limit_days and not bots:
+        if not limit_days and not bots and not waits:
             return None
         shift, foot = 116 - sheet_y, y + 116 - sheet_y - 30
         done = [d for _, d, _ in limit_days if d != today_s]
@@ -1619,22 +1668,26 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day"
               + ("" if any_org else " (est., sampled)"), lambda v: f"{v:g}")
         panel += 1
-        if any_org:
-            legend(top - 30, [("all repos, measured", "hoursorg"), (f"{repo_name} only (est.)", "hours")])
+        methods = [(css, words.split(" (")[0]) for css, words in map(runner_method, details)]
+        keys = (("hmeasured", "measured"), ("hsampled", "sampled estimate"), ("hold", "old small sample"))
+        shown_keys = [(label, css) for css, label in keys if any(c == css for c, _ in methods)]
+        if len(shown_keys) > 1:
+            legend(top - 30, shown_keys)
         for i, ((day, row), v) in enumerate(zip(rows, hours)):
             if v is None:
                 continue
             h = chart_h * min(v, hours_max) / hours_max
             split = runner_split([row], "sampled_min_by_origin")
             org = org_hours[i] is not None
-            whose = f"all repos, measured · {repo_name} {repo_hours[i] or 0:,.0f} h" if org else "(est.)"
+            css, words = runner_method(details[i])
+            whose = f"all repos, {words} · {repo_name} {repo_hours[i] or 0:,.0f} h" if org else words
             tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours {whose}{' (today so far)' if day == today_s else ''} · "
                    f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
             raw = runner_minutes(details[i])
             if not org and pool and raw > pool * 1440:
                 tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
-            fade = ' class="partial"' if day == today_s else ""
-            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="{"hoursorg" if org else "hours"}" '
+            fade = ' class="partial"' if day == today_s and css != "hmeasured" else ""  # a faded dark bar reads as an estimate
+            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="{css}" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
             if v > hours_max:
                 out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
@@ -2410,12 +2463,14 @@ def main(argv: list[str] | None = None) -> int:
         # a run that starts before midnight UTC finishes after it: draw "today" as of the finish (the "updated" stamp),
         # so the day that just ended isn't labelled "today so far"
         today = datetime.now(timezone.utc).date()
-    readings = read_occupancy(occ_file)
+    readings = read_occupancy(occ_file) + read_occupancy(a.out / OCC_BACKFILL_FILE)
     for d, row in data.get("days", {}).items():  # occupancy is attached at render time: no API, always current
         if readings and "detail" in row and (occ := occupancy_day(readings, d, repo=cfg.repo)):
             row["detail"]["occupancy"] = occ  # this repository's runner time
             if any(r.get("scope") == "org" for r in readings) and (pool := occupancy_day(readings, d)):
                 row["detail"]["occupancy_org"] = pool  # every repository's: the pool's real load
+            if busy := busy_while_waiting(readings, d, cfg.runner_pool):
+                row["detail"]["busy_while_waiting"] = busy
     factory_file = a.out / "factory.json"  # an orchestrator's own numbers, published to the same branch (optional)
     if factory_file.exists():
         try:
