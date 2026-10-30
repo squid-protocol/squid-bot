@@ -284,12 +284,57 @@ def test_dollar_panels_add_up_from_the_bots_start():
                                 "2026-10-08": {"usd": 30.0, "churn_merged": 10}, "2026-10-09": {"usd": 20.0, "churn_merged": 15}}}
     svg = dashboard.render(data, 30, TODAY, BOT)
     ET.fromstring(svg)
-    assert "2 · CI hours" in svg and "Repo clones" not in svg
-    # 5 · dollars spent since the start, and 6 · per merged PR with the overall average ($50 / 25 PRs)
-    assert "5 · Spend — promoter-bot cost in dollars, cumulative since Oct 8" in svg and ">$50 total</text>" in svg
+    assert "Repo clones" not in svg
+    # 2 · dollars spent since the start, and 3 · per merged PR with the overall average ($50 / 25 PRs)
+    assert "2 · Spend — promoter-bot cost in dollars, cumulative since Oct 8" in svg and ">$50 total</text>" in svg
     assert "25 merged promoter-bot PRs for $50" in svg
-    assert "6 · Cost per PR" in svg and "$3.00 per merged PR ($30.00 for 10)" in svg and "avg $2.00 per PR since Oct 8" in svg
-    assert "7 · Efficiency" in svg
+    assert "3 · Cost per PR" in svg and "$3.00 per merged PR ($30.00 for 10)" in svg and "avg $2.00 per PR since Oct 8" in svg
+    # what it cost comes before how close the limits are
+    assert "4 · CI hours" in svg and "7 · Efficiency" in svg
+
+
+def test_ci_hours_marks_the_pool_ceiling_with_a_dotted_line():
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 100 * 60}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    ET.fromstring(svg)
+    assert "runner max 480 h/day (20 runners)" in svg and 'class="avg"' in svg
+    assert ">500</text>" in svg  # the axis stretches to keep the line in view, far above these 100 h days
+    plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "runner max" not in plain and 'class="avg"' not in plain  # no pool: no line
+
+
+def test_ci_hours_shows_the_whole_org_where_its_readings_cover_the_day():
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 100 * 60}
+    covered, thin = (TODAY - timedelta(days=2)).isoformat(), (TODAY - timedelta(days=3)).isoformat()
+    data["days"][covered]["detail"]["occupancy_org"] = {"runner_min": 300 * 60, "coverage": 1.0}
+    data["days"][thin]["detail"]["occupancy_org"] = {"runner_min": 200 * 60, "coverage": 0.5}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    ET.fromstring(svg)
+    assert "300 runner hours all repos, measured · repo 100 h" in svg
+    assert 'class="hoursorg"' in svg and svg.count('<path class="hoursorg"') == 1  # the thin day stays this repo's estimate
+    assert "all repos, measured</text>" in svg and "repo only (est.)</text>" in svg  # the legend names both
+    assert dashboard.org_runner_minutes(data["days"][covered]["detail"], 4) == 4 * 1440  # capped at the pool
+    assert dashboard.org_runner_minutes(data["days"][thin]["detail"]) is None
+    for d in data["days"].values():
+        d["detail"].pop("occupancy_org", None)
+    plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    assert "hoursorg\"" not in plain.split("</style>")[1] and "(est., sampled)" in plain  # no org readings: as before
+
+
+def test_section_headings_group_the_panels_and_drop_out_when_empty():
+    data = _with_bot()
+    svg = dashboard.render(data, 30, TODAY, BOT)
+    ET.fromstring(svg)
+    assert "WHAT CAME OUT?" in svg and "HOW CLOSE ARE THE LIMITS?" in svg
+    assert "WAS IT GOOD?" not in svg and "WHAT DID IT COST?" not in svg  # no factory.json: nothing under them
+    data["factory"] = {"days": {"2026-10-08": {"usd": 30.0, "churn_merged": 10}, "2026-10-09": {"usd": 20.0, "churn_merged": 15}}}
+    svg = dashboard.render(data, 30, TODAY, BOT)
+    assert svg.index("WHAT CAME OUT?") < svg.index("1 · Delivery") < svg.index("WHAT DID IT COST?") < svg.index("2 · Spend")
+    assert svg.index("3 · Cost per PR") < svg.index("HOW CLOSE ARE THE LIMITS?") < svg.index("4 · CI hours")
 
 
 def test_axes_use_the_tightest_round_step():

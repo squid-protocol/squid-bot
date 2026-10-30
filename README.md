@@ -37,25 +37,29 @@ The system itself is still being tuned. The owner adjusts the rules (PR size cap
 
 ## 📊 Live Fleet Dashboard
 
-![GitGalaxy promoter-bot fleet over time: delivery, CI hours, queue wait, CI load, spend, cost per PR, efficiency, issues, first-pass rate, change failure, cost per resolved issue and GitHub writes](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
+![GitGalaxy promoter-bot fleet over time: delivery, issues, first-pass rate, change failure, spend, cost per PR, cost per resolved issue, org-wide CI hours against the runner limit, queue wait, CI load, efficiency and GitHub writes](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
 Live numbers from the GitHub API for GitGalaxy, refreshed three times a day. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json) and the fleet's own [`factory.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/factory.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, twelve panels run over time, with lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live:
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, twelve panels run over time under four headings, with lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live:
 
 | | Panel | What it shows |
 |---|---|---|
+| | **What came out?** | |
 | 1 | Delivery | Merged PRs per day, by origin (promoter-bot, other agents, people, automation) |
-| 2 | CI hours | Runner hours per day |
-| 3 | Speed | Job queue wait, p90 |
-| 4 | CI load | Runner hours per merged PR |
+| 2 | Issues | Opened and closed each day, by who |
+| | **Was it good?** | |
+| 3 | First-pass rate | promoter-bot PRs merged with no send-back or fix |
+| 4 | Change failure | Times `main` went red, per merged PR |
+| | **What did it cost?** | |
 | 5 | Spend | promoter-bot's dollars, cumulative |
 | 6 | Cost per PR | Dollars per merged promoter-bot PR, each day |
-| 7 | Efficiency | Run minutes saved by early cancellation vs runs failed |
-| 8 | Issues | Opened and closed each day, by who |
-| 9 | First-pass rate | promoter-bot PRs merged with no send-back or fix |
-| 10 | Change failure | Times `main` went red, per merged PR |
-| 11 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
+| 7 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
+| | **How close are the limits?** | |
+| 8 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. Days before the org readings show GitGalaxy's estimate, in gray |
+| 9 | Speed | Job queue wait, p90 |
+| 10 | CI load | Runner hours per merged PR |
+| 11 | Efficiency | Run minutes saved by early cancellation vs runs failed |
 | 12 | GitHub writes | Busiest hour per account, against the API limit |
 
 ### PR quality by size: are small PRs worth it?
