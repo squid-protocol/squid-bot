@@ -1057,9 +1057,11 @@ def _origin_parts(row: dict) -> dict[str, float]:
     return parts
 
 
-def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str:
+def render(data: dict, days: int, today: date, cfg: Config | None = None, view: str = "dashboard") -> str | None:
     """The dashboard: one UTC day per mark. When a bot is configured (or found), a line marks the day it started
-    through every panel. The cards show the last finished day against the day before it."""
+    through every panel. The cards show the last finished day against the day before it. view="limits" returns the
+    limit and bot panels as their own sheet instead (limits.svg, None without data): they tell one story, and the
+    dashboard was getting long (owner 2026-10-30)."""
     cfg = cfg or Config(repo=data["repo"])
     rows = window_rows(data, shown_days(data, cfg, days, today), today)
     if not rows:
@@ -1499,7 +1501,11 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     # The limit in force: hours of each day, per host (hosts' minutes add up, so a day stays 24 h with two), then the main
     # limit of each hour, then how many bots were allowed against how many worked
-    limit_days = [(i, d, fac_days[d]["limits"]) for i, (d, _) in enumerate(rows) if (fac_days.get(d) or {}).get("limits")]
+    limit_days = [(i, d, fac_days[d]["limits"]) for i, (d, _) in enumerate(rows)
+                  if view == "limits" and (fac_days.get(d) or {}).get("limits")]
+    sheet_at, sheet_y = len(out), y
+    if view == "limits":
+        panel = 1
     if limit_days:
         top, chart_h = y, 240
         frame(top, chart_h, (24.0, 6.0), f"{panel} · Limit each day — hours per host each limit was the one in force",
@@ -1541,7 +1547,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + len(limit_days) * cell + 56
 
     bots = [(i, d, fac_days[d]) for i, (d, _) in enumerate(rows)
-            if d != today_s and (fac_days.get(d) or {}).get("max_workers") and fac_days[d].get("worker_hours")]
+            if view == "limits" and d != today_s and (fac_days.get(d) or {}).get("max_workers")
+            and fac_days[d].get("worker_hours")]
     if bots:
         top, chart_h = y, 210
         bots_axis = _nice_axis(max(r["max_workers"] for _, _, r in bots))
@@ -1566,6 +1573,30 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                        f'<rect class="ls1 seg" x="{x:.1f}" y="{y_at(new):.1f}" width="{bar_w:.1f}" height="{top + chart_h - y_at(new):.1f}"/></g>')
         out.append(f'<polyline class="maxline" points="{" ".join(line)}"/>')
         y = top + chart_h + 70
+    if view == "limits":
+        if not limit_days and not bots:
+            return None
+        shift, foot = 116 - sheet_y, y + 116 - sheet_y - 30
+        done = [d for _, d, _ in limit_days if d != today_s]
+        lead = "The fleet's limit in force each day, and how much of its capacity it used."
+        if done:
+            lim = next(x for _, d, x in limit_days if d == done[-1])
+            minutes, hosts = limit_counts(lim["minutes"]), lim.get("hosts") or 1
+            key, top_min = max(((k, minutes.get(k, 0)) for k, _, _ in LIMITS if k != "unknown"), key=lambda kv: kv[1])
+            label = next(la for k, la, _ in LIMITS if k == key)
+            lead = f"{_fmt_day(done[-1])}, the last finished day: the main limit was {label}, {top_min / 60 / hosts:.1f} h per host."
+        head = (f'<text class="h1" x="{pad}" y="34">{escape(cfg.heading)}: what limits the fleet</text>'
+                f'<text class="lead" x="{pad}" y="54">{escape(lead)}</text>')
+        notes = ["Limits: each minute gets the first thing that, if removed, would start another bot. Launches only: a full fleet "
+                 "shows code generation at max, whatever waits downstream.",
+                 "Days are UTC; faded marks are today so far. The agy lane isn't counted in bots working; bots allowed is one reading a day."]
+        tail = "".join(f'<text class="meta" x="{pad}" y="{foot + 15 * i}">{escape(n)}</text>' for i, n in enumerate(notes))
+        h = foot + 34
+        return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {h}" width="{width}" height="{h}" role="img" '
+                f'aria-label="{escape(cfg.heading)}: the limit in force each day and hour, and bots allowed against bots working">\n'
+                f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" '
+                f'height="{h - 1}" rx="10"/>\n  {head}\n  <g transform="translate(0 {shift})">\n  '
+                + "\n  ".join(out[sheet_at:]) + f'\n  </g>\n  {tail}\n</g>\n</svg>\n')
 
     # CI hours: every repo's runner hours each day where org readings cover it (the pool is shared), else this repo's
     # own figure, in a second color (owner 2026-10-30); the tip splits this repo's by origin. With a pool, a dotted line
@@ -1751,10 +1782,6 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
                         + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
                           "minutes saved is estimated.") + '</text>')
-    if limit_days:
-        y += 15
-        out.append(f'<text class="meta" x="{pad}" y="{y + 15}">Limits: each minute gets the first thing that, if removed, '
-                   'would start another bot. Launches only: a full fleet shows code generation at max, whatever waits downstream.</text>')
     height = y + 34
     body = "\n  ".join(out)
     merged_total = sum(row["merged"] for _, row in rows)
@@ -2399,6 +2426,9 @@ def main(argv: list[str] | None = None) -> int:
     goals_svg = render_goals(data, today, cfg)
     if goals_svg:
         (a.out / "goals.svg").write_text(goals_svg, encoding="utf-8")
+    limits_svg = render(data, a.days, today, cfg, view="limits")
+    if limits_svg:
+        (a.out / "limits.svg").write_text(limits_svg, encoding="utf-8")
     quality_svg = render_quality(data, today, cfg)
     if quality_svg:
         (a.out / "quality.svg").write_text(quality_svg, encoding="utf-8")

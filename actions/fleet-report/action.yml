@@ -18,7 +18,7 @@ inputs:
       (needs `permissions: contents: write` to publish).
     default: ${{ github.token }}
   branch:
-    description: Branch of this repository to publish dashboard.svg, quality.svg and metrics.json to. Empty = don't publish.
+    description: Branch of this repository to publish dashboard.svg, limits.svg, quality.svg and metrics.json to. Empty = don't publish.
     default: dashboard
   days:
     description: Days shown on the dashboard.
@@ -170,7 +170,7 @@ runs:
         # each mode commits only the files it wrote: the occupancy sampler must never put back an older metrics.json
         FILES: ${{ inputs.occupancy-sample == 'true' && 'occupancy.jsonl' || 'dashboard.svg metrics.json' }}
         # drawn only when the orchestrator's factory.json has the data for them
-        OPTIONAL: ${{ inputs.occupancy-sample == 'true' && '' || 'quality.svg goals.svg' }}
+        OPTIONAL: ${{ inputs.occupancy-sample == 'true' && '' || 'limits.svg quality.svg goals.svg' }}
       run: |
         for f in $FILES; do [ -f "$f" ] || exit 0; done
         for f in $OPTIONAL; do [ -f "$f" ] && FILES="$FILES $f"; done
