@@ -333,17 +333,19 @@ def test_limit_panels_show_each_days_limits_per_host():
               "limits": {"hosts": 2, "minutes": {"code-gen": 1440, "owner": 1080, "unknown": 360},
                          "hours": {"00": {"code-gen": 40, "owner": 80}, "01": {"unknown": 120}}}},
         older: {"limits": {"hosts": 1, "minutes": {"ci": 1440}, "hours": {"00": {"ci": 60}}}}}}
-    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    board = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "Limit each day" not in board and "Bots allowed" not in board  # their own sheet: limits.svg
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"), view="limits")
     ET.fromstring(svg)
-    assert "Limit each day" in svg and "Limit each hour" in svg and "Bots allowed vs working" in svg
+    assert "1 · Limit each day" in svg and "2 · Limit each hour" in svg and "3 · Bots allowed vs working" in svg
+    assert "· Efficiency" not in svg and "MERGED PRs" not in svg  # only these panels
+    assert "the main limit was Code generation at max, 12.0 h per host" in svg  # the lead names the last finished day
     assert "Code generation at max 12.0 h, No ready work 9.0 h, Unknown 3.0 h" in svg  # two hosts' minutes, per host
     assert f"{dashboard._fmt_day(day)} 00:00 UTC: No ready work" in svg  # the hour's main limit
     assert "Waiting on owner" not in svg  # owner minutes fold into no ready work
-    assert svg.index("Limit each day") < svg.index("Bots allowed vs working") < svg.index("· Efficiency")
     assert "up to 4 bots · 1.5 working on average (38% of slots) · 60 bot-hours unused" in svg
     assert 'class="biglbl"' in svg and "Limits: each minute gets" in svg
-    plain = dashboard.render(_data(10), 10, TODAY, dashboard.Config(repo="owner/repo"))
-    assert "Limit each day" not in plain and "Bots allowed" not in plain and "Limits: each" not in plain
+    assert dashboard.render(_data(10), 10, TODAY, dashboard.Config(repo="owner/repo"), view="limits") is None  # no data
 
 
 def test_section_headings_group_the_panels_and_drop_out_when_empty():

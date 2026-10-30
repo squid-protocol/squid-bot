@@ -37,11 +37,11 @@ The system itself is still being tuned. The owner adjusts the rules (PR size cap
 
 ## 📊 Live Fleet Dashboard
 
-![GitGalaxy promoter-bot fleet over time: delivery, issues, first-pass rate, change failure, spend, cost per PR, cost per resolved issue, the limit in force each day and hour, bots allowed against bots working, org-wide CI hours against the runner limit, queue wait, CI load, efficiency and GitHub writes](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
+![GitGalaxy promoter-bot fleet over time: delivery, issues, first-pass rate, change failure, spend, cost per PR, cost per resolved issue, org-wide CI hours against the runner limit, queue wait, CI load, efficiency and GitHub writes](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/dashboard.svg)
 
 Live numbers from the GitHub API for GitGalaxy, refreshed three times a day. Raw data: [`metrics.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/metrics.json) and the fleet's own [`factory.json`](https://github.com/squid-protocol/squid-bot/blob/dashboard/factory.json).
 
-It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, fifteen panels run over time under four headings, with lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live:
+It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The cards on top show the last finished UTC day against the day before it. Below them, twelve panels run over time under four headings, with lines where integrase-bot (Oct 10) and promoter-bot (Oct 11) went live:
 
 | | Panel | What it shows |
 |---|---|---|
@@ -56,14 +56,25 @@ It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The
 | 6 | Cost per PR | Dollars per merged promoter-bot PR, each day |
 | 7 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
 | | **How close are the limits?** | |
-| 8 | Limit each day | Hours per host under each limit: code generation at max, CI, box, tokens, no ready work. Each minute gets the first thing that, if removed, would start another bot |
-| 9 | Limit each hour | The same limits as a timeline: one row a day, one cell an hour |
-| 10 | Bots allowed vs working | The most bots allowed against the average working, split into new work and fix loops |
-| 11 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. Days before the org readings show GitGalaxy's estimate, in gray |
-| 12 | Speed | Job queue wait, p90 |
-| 13 | CI load | Runner hours per merged PR |
-| 14 | Efficiency | Run minutes saved by early cancellation vs runs failed |
-| 15 | GitHub writes | Busiest hour per account, against the API limit |
+| 8 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. Days before the org readings show GitGalaxy's estimate, in gray |
+| 9 | Speed | Job queue wait, p90 |
+| 10 | CI load | Runner hours per merged PR |
+| 11 | Efficiency | Run minutes saved by early cancellation vs runs failed |
+| 12 | GitHub writes | Busiest hour per account, against the API limit |
+
+### What's limiting the fleet?
+
+![GitGalaxy fleet limits: the limit in force each day and each hour, and bots allowed against bots working](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/limits.svg)
+
+A fleet is always held back by something, and it isn't always the same thing. Several limits can apply at once, so each minute gets exactly one: the first thing that, if removed, would start another bot. In order, that's a token pause, every slot busy (code generation at max), a pace hold, the host, CI, then no ready work.
+
+| | Panel | What it shows |
+|---|---|---|
+| 1 | Limit each day | Hours per host under each limit |
+| 2 | Limit each hour | The same limits as a timeline: one row a day, one cell an hour |
+| 3 | Bots allowed vs working | The most bots allowed against the average working, split into new work and fix loops. The gap is unused capacity |
+
+From Oct 23 to Oct 29 the fleet used 42% of its allowed bot-hours, so more bots wouldn't have helped: on the host we traced, the limit moved from code generation to CI and tokens, then to running out of startable work. This only sees launches, so a full fleet shows code generation at max even if merges are waiting behind CI.
 
 ### PR quality by size: are small PRs worth it?
 
@@ -153,48 +164,7 @@ That is gene editing, and the way labs do it safely is a good model for doing it
 
 ## 🏛️ How the Pieces Fit
 
-```mermaid
-flowchart TD
-    subgraph INIT["1. Initiation (promoter-bot)"]
-        PB["promoter-bot\n(Inducible Promoter: what, when, how many)"]
-        BS["box-status\n(Editor-Toxicity Sensor: PSI)"]
-        LK["exclusive-lock.sh\n(One Culture per Shared Resource)"]
-    end
-
-    subgraph EDIT["2. Editing (isolated worktrees)"]
-        A1["Agent 1\n(Worktree A)"]
-        A2["Agent 2\n(Worktree B)"]
-        A3["Agent 3\n(Worktree C)"]
-        HR["heavy-run.sh\n(Fair Core Share)"]
-    end
-
-    subgraph SCREEN["3. Screening & Integration (integrase-bot)"]
-        GH["shepherd_gh\n(Reads the True PR State)"]
-        INT["integrase-bot daemon\n(Release Drafts, Integrate When Green)"]
-        DIG["ci_digest\n(Genotype the Failed Clone)"]
-    end
-
-    subgraph MEM["4. Memory (the CRISPR array)"]
-        HO["handoff-*.md, lessons-inbox,\nledger, flake-history"]
-    end
-
-    subgraph SIGN["5. Sign-off (comms-bot)"]
-        CB["comms-bot\n(Questions Out, Decisions In)"]
-        OWN["Owner's Phone\n(Private Channel)"]
-    end
-
-    BS -->|"GREEN / YELLOW / RED"| PB
-    PB -->|"Start an Edit"| EDIT
-    EDIT -->|"Heavy Jobs"| HR
-    EDIT -->|"Edited Clone\n(Draft PR)"| GH
-    GH -->|"Release Draft;\nIntegrate When Green"| INT
-    GH -->|"Check Failed"| DIG
-    DIG -->|"Exact Local Repro"| EDIT
-    EDIT -.->|"Session Ends /\nHandoff"| HO
-    PB -->|"Owner Question"| CB
-    CB <-->|"Buttons / Replies"| OWN
-    CB -->|"Owner Decision"| PB
-```
+![The squid-bot loop: issues and owner goals feed promoter-bot, which starts agents in isolated worktrees; draft PRs go through shepherd_gh, failures go to ci_digest and back to the agent with an exact repro, green PRs go through integrase-bot to updated main, and the merge frees a slot for the next slice](docs/images/fleet-loop.svg)
 
 ---
 

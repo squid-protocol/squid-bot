@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 748" width="1040" height="748" role="img" aria-labelledby="t d">
+<title id="t">squid-bot: from issue to verified main</title>
+<desc id="d">Issues submitted and owner goals feed promoter-bot, which starts agents in isolated worktrees when box-status allows. Agents open draft PRs. shepherd_gh reads their state: a failed check goes to ci_digest, which sends an exact local repro back to the agent; a green PR goes to integrase-bot, which updates main. A merge frees a slot for the next slice. Sessions hand off to memory, and comms-bot carries owner questions and decisions.</desc>
+<style>
+  svg { --bg:#fcfcfb; --tile:#f4f3f0; --ink:#0b0b0b; --ink2:#52514e; --muted:#7a7874; --line:#d9d7d0; --arrow:#6b6a65;
+    --c1:#2a78d6; --c2:#1baf7a; --c3:#6250d6; --c4:#a8a69e; --c5:#d55181; --ok:#0a7d3c; --oktext:#ffffff; --start:#e8eefa; --startline:#2a78d6; }
+  @media (prefers-color-scheme: dark) { svg { --bg:#0d1117; --tile:#1b2028; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --line:#30363d; --arrow:#9a9892;
+    --c1:#3987e5; --c2:#199e70; --c3:#9085e9; --c4:#6e6d68; --c5:#e87ba4; --ok:#1a8f4d; --oktext:#ffffff; --start:#16243a; --startline:#3987e5; } }
+  text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: var(--ink); }
+  .bg { fill: var(--bg); } .panel { fill: none; stroke: var(--line); stroke-width: 1; }
+  .bar { fill: none; stroke-width: 3; stroke-linecap: round; } .c1 { stroke: var(--c1); } .c2 { stroke: var(--c2); } .c3 { stroke: var(--c3); } .c4 { stroke: var(--c4); } .c5 { stroke: var(--c5); }
+  .node { fill: var(--tile); stroke: var(--line); } .start { fill: var(--start); stroke: var(--startline); } .end { fill: var(--ok); stroke: none; }
+  .h1 { font-size: 24px; font-weight: 700; } .sub { font-size: 14px; fill: var(--ink2); }
+  .ph { font-size: 14.5px; font-weight: 700; } .ps { font-size: 12px; fill: var(--muted); }
+  .tm { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; font-weight: 600; }
+  .tt { font-size: 14px; font-weight: 700; } .td { font-size: 12px; fill: var(--ink2); }
+  .end + .tt, .end + .tt + .td { fill: var(--oktext); } .end + .tt { font-size: 19px; } .end + .tt + .td { font-size: 13px; }
+  .a { fill: none; stroke: var(--arrow); stroke-width: 1.6; } .back { stroke: var(--c3); } .dash { stroke-dasharray: 5 4; }
+  .h { fill: var(--arrow); }
+  .l { font-size: 12px; fill: var(--ink2); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+</style>
+<defs>
+  <marker id="h" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="h" d="M0,0 L8,4 L0,8 Z"/></marker>
+  <marker id="hs" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="h" d="M8,0 L0,4 L8,8 Z"/></marker>
+</defs>
+<rect class="bg" width="1040" height="748" rx="12"/>
+<text class="h1" x="378" y="56" text-anchor="start">From issue to verified main</text>
+<text class="sub" x="378" y="80" text-anchor="start">Every slice of work takes this path, around the clock. Only green PRs reach main.</text>
+<rect class="start" x="34" y="28" width="132" height="68" rx="8"/>
+<text class="tt" x="100.0" y="59.0" text-anchor="middle">Issues submitted</text>
+<text class="td" x="100.0" y="77.0" text-anchor="middle">bugs, gaps, features</text>
+<rect class="start" x="182" y="28" width="132" height="68" rx="8"/>
+<text class="tt" x="248.0" y="59.0" text-anchor="middle">Owner sets goals</text>
+<text class="td" x="248.0" y="77.0" text-anchor="middle">ordered issue sets</text>
+<path class="a" d="M100,96 V133" marker-end="url(#h)"/>
+<path class="a" d="M248,96 V133" marker-end="url(#h)"/>
+<rect class="panel" x="34" y="136" width="280" height="364" rx="12"/>
+<path class="bar c1" d="M46,136 H302" />
+<text class="ph" x="50" y="164" text-anchor="start">1  Initiation</text>
+<text class="ps" x="298" y="164" text-anchor="end">promoter-bot</text>
+<rect class="panel" x="378" y="136" width="280" height="364" rx="12"/>
+<path class="bar c2" d="M390,136 H646" />
+<text class="ph" x="394" y="164" text-anchor="start">2  Editing</text>
+<text class="ps" x="642" y="164" text-anchor="end">isolated worktrees</text>
+<rect class="panel" x="722" y="136" width="280" height="364" rx="12"/>
+<path class="bar c3" d="M734,136 H990" />
+<text class="ph" x="738" y="164" text-anchor="start">3  Screening</text>
+<text class="ps" x="986" y="164" text-anchor="end">integrase-bot</text>
+<rect class="panel" x="34" y="540" width="280" height="150" rx="12"/>
+<path class="bar c5" d="M46,540 H302" />
+<text class="ph" x="50" y="568" text-anchor="start">Sign-off</text>
+<text class="ps" x="298" y="568" text-anchor="end">comms-bot</text>
+<rect class="panel" x="378" y="540" width="280" height="150" rx="12"/>
+<path class="bar c4" d="M390,540 H646" />
+<text class="ph" x="394" y="568" text-anchor="start">Memory</text>
+<text class="ps" x="642" y="568" text-anchor="end">the CRISPR array</text>
+<rect class="node" x="50" y="186" width="248" height="80" rx="8"/>
+<text class="tm" x="174.0" y="215.0" text-anchor="middle">promoter-bot</text>
+<text class="td" x="174.0" y="233.0" text-anchor="middle">Decides what, when, how many</text>
+<text class="td" x="174.0" y="249.0" text-anchor="middle">inducible promoter</text>
+<rect class="node" x="108" y="316" width="190" height="80" rx="8"/>
+<text class="tm" x="203.0" y="345.0" text-anchor="middle">box-status</text>
+<text class="td" x="203.0" y="363.0" text-anchor="middle">Senses host pressure</text>
+<text class="td" x="203.0" y="379.0" text-anchor="middle">editor-toxicity sensor</text>
+<rect class="node" x="108" y="412" width="190" height="72" rx="8"/>
+<text class="tm" x="203.0" y="445.0" text-anchor="middle">exclusive-lock.sh</text>
+<text class="td" x="203.0" y="463.0" text-anchor="middle">One job per shared resource</text>
+<path class="a" d="M203,316 V269" marker-end="url(#h)"/>
+<text class="l" x="211" y="296" text-anchor="start">GREEN / YELLOW / RED</text>
+<rect class="node" x="394" y="186" width="80" height="80" rx="8"/>
+<text class="tt" x="434.0" y="223.0" text-anchor="middle">Agent 1</text>
+<text class="td" x="434.0" y="241.0" text-anchor="middle">Worktree A</text>
+<rect class="node" x="478" y="186" width="80" height="80" rx="8"/>
+<text class="tt" x="518.0" y="223.0" text-anchor="middle">Agent 2</text>
+<text class="td" x="518.0" y="241.0" text-anchor="middle">Worktree B</text>
+<rect class="node" x="562" y="186" width="80" height="80" rx="8"/>
+<text class="tt" x="602.0" y="223.0" text-anchor="middle">Agent 3</text>
+<text class="td" x="602.0" y="241.0" text-anchor="middle">Worktree C</text>
+<rect class="node" x="394" y="340" width="190" height="80" rx="8"/>
+<text class="tm" x="489.0" y="369.0" text-anchor="middle">heavy-run.sh</text>
+<text class="td" x="489.0" y="387.0" text-anchor="middle">Fair core share</text>
+<text class="td" x="489.0" y="403.0" text-anchor="middle">sharing the incubator</text>
+<path class="a" d="M489,266 V337" marker-end="url(#h)"/>
+<text class="l" x="497" y="306" text-anchor="start">Heavy jobs</text>
+<rect class="node" x="738" y="186" width="248" height="80" rx="8"/>
+<text class="tm" x="862.0" y="223.0" text-anchor="middle">shepherd_gh</text>
+<text class="td" x="862.0" y="241.0" text-anchor="middle">Reads the true PR state</text>
+<rect class="node" x="738" y="316" width="190" height="80" rx="8"/>
+<text class="tm" x="833.0" y="345.0" text-anchor="middle">ci_digest</text>
+<text class="td" x="833.0" y="363.0" text-anchor="middle">Genotypes the failed clone</text>
+<text class="td" x="833.0" y="379.0" text-anchor="middle">exact local repro</text>
+<rect class="node" x="738" y="412" width="248" height="72" rx="8"/>
+<text class="tm" x="862.0" y="445.0" text-anchor="middle">integrase-bot daemon</text>
+<text class="td" x="862.0" y="463.0" text-anchor="middle">Releases drafts, merges when green</text>
+<path class="a" d="M833,266 V313" marker-end="url(#h)"/>
+<text class="l" x="841" y="296" text-anchor="start">Check failed</text>
+<path class="a" d="M957,266 V409" marker-end="url(#h)"/>
+<text class="l" x="957" y="346" text-anchor="middle">Green</text>
+<path class="a" d="M298,226 H391" marker-end="url(#h)"/>
+<text class="l" x="346.0" y="216" text-anchor="middle">Start an edit</text>
+<path class="a" d="M642,206 H735" marker-end="url(#h)"/>
+<text class="l" x="690.0" y="196" text-anchor="middle">Draft PR</text>
+<path class="a back" d="M738,356 H690 V246 H645" marker-end="url(#h)"/>
+<text class="l" x="696" y="282" text-anchor="start">Exact</text>
+<text class="l" x="696" y="297" text-anchor="start">local repro</text>
+<rect class="node" x="394" y="586" width="248" height="88" rx="8"/>
+<text class="tm" x="518.0" y="619.0" text-anchor="middle">handoff-*.md, lessons-inbox</text>
+<text class="td" x="518.0" y="637.0" text-anchor="middle">ledger, flake history</text>
+<text class="td" x="518.0" y="653.0" text-anchor="middle">what the next agent inherits</text>
+<path class="a dash" d="M613,266 V537" marker-end="url(#h)"/>
+<text class="l" x="605" y="523" text-anchor="end">Session ends: handoff</text>
+<rect class="node" x="50" y="586" width="116" height="88" rx="8"/>
+<text class="tm" x="108.0" y="619.0" text-anchor="middle">comms-bot</text>
+<text class="td" x="108.0" y="637.0" text-anchor="middle">Questions out,</text>
+<text class="td" x="108.0" y="653.0" text-anchor="middle">decisions in</text>
+<rect class="node" x="198" y="586" width="100" height="88" rx="8"/>
+<text class="tt" x="248.0" y="619.0" text-anchor="middle">Owner&#x27;s</text>
+<text class="td" x="248.0" y="637.0" text-anchor="middle">phone</text>
+<text class="td" x="248.0" y="653.0" text-anchor="middle">private channel</text>
+<path class="a" d="M166,630 H195" marker-end="url(#h)" marker-start="url(#hs)"/>
+<path class="a" d="M79,269 V537" marker-end="url(#h)" marker-start="url(#hs)"/>
+<text class="l" x="87" y="523" text-anchor="start">Owner questions and decisions</text>
+<path class="a" d="M862,484 V537" marker-end="url(#h)"/>
+<text class="l" x="870" y="523" text-anchor="start">Integrate</text>
+<rect class="end" x="722" y="540" width="280" height="92" rx="8"/>
+<text class="tt" x="862.0" y="583.0" text-anchor="middle">Updated main</text>
+<text class="td" x="862.0" y="601.0" text-anchor="middle">Verified change, squash-merged</text>
+<path class="a dash" d="M862,632 V722 H16 V226 H47" marker-end="url(#h)"/>
+<text class="l" x="520" y="714" text-anchor="middle">Merged: the slot is free and the next slice starts</text>
+</svg>
