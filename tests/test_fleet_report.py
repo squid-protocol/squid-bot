@@ -325,6 +325,26 @@ def test_ci_hours_shows_the_whole_org_where_its_readings_cover_the_day():
     assert "hoursorg\"" not in plain.split("</style>")[1] and "(est., sampled)" in plain  # no org readings: as before
 
 
+def test_limit_panels_show_each_days_limits_per_host():
+    data = _data(10)
+    day, older = (TODAY - timedelta(days=2)).isoformat(), (TODAY - timedelta(days=3)).isoformat()
+    data["factory"] = {"days": {
+        day: {"max_workers": 4, "worker_hours": {"new_work": 24.0, "pr_fix": 12.0}, "idle_hours": 3.0, "paused_hours": 1.0,
+              "limits": {"hosts": 2, "minutes": {"code-gen": 1440, "owner": 1080, "unknown": 360},
+                         "hours": {"00": {"code-gen": 40, "owner": 80}, "01": {"unknown": 120}}}},
+        older: {"limits": {"hosts": 1, "minutes": {"ci": 1440}, "hours": {"00": {"ci": 60}}}}}}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    assert "Limit each day" in svg and "Limit each hour" in svg and "Bots allowed vs working" in svg
+    assert "Code generation at max 12.0 h, Waiting on owner 9.0 h, Unknown 3.0 h" in svg  # two hosts' minutes, per host
+    assert f"{dashboard._fmt_day(day)} 00:00 UTC: Waiting on owner" in svg  # the hour's main limit
+    assert svg.index("Limit each day") < svg.index("Bots allowed vs working") < svg.index("· Efficiency")
+    assert "up to 4 bots · 1.5 working on average (38% of slots) · 60 bot-hours unused" in svg
+    assert 'class="biglbl"' in svg and "Limits: each minute gets" in svg
+    plain = dashboard.render(_data(10), 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "Limit each day" not in plain and "Bots allowed" not in plain and "Limits: each" not in plain
+
+
 def test_section_headings_group_the_panels_and_drop_out_when_empty():
     data = _with_bot()
     svg = dashboard.render(data, 30, TODAY, BOT)

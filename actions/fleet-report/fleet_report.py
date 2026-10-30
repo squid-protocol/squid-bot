@@ -954,10 +954,12 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
 STYLE = """
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+          --s4:#eda100; --s5:#e87ba4; --s6:#008300; --unused:#e5e4de;
           --neutral:#c3c2b7; --failed:#d03b3b; --good:#0ca30c; }
   @media (prefers-color-scheme: dark) {
     .root { --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
             --axis:#383835; --border:rgba(255,255,255,0.10); --tile:#232322; --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+            --s4:#c98500; --s5:#d55181; --s6:#008300; --unused:#2f2f2c;
             --neutral:#5c5c58; }
   }
   text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
@@ -980,6 +982,10 @@ STYLE = """
   .seg { stroke: var(--surface); stroke-width: 1; }
   .hours { fill: var(--ink2); opacity: 0.55; } .hoursorg { fill: var(--s1); }
   .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
+  .ls1 { fill: var(--s1); } .ls2 { fill: var(--s2); } .ls3 { fill: var(--s3); } .ls4 { fill: var(--s4); } .ls5 { fill: var(--s5); }
+  .ls6 { fill: var(--s6); } .lunk { fill: var(--neutral); } .unused { fill: var(--unused); } .inkkey { fill: var(--ink); }
+  .maxline { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .biglbl { font-size: 13px; font-weight: 600; }
   .bot { fill: var(--s1); } .agent { fill: var(--s2); } .other { fill: var(--s3); } .automation, .unknown { fill: var(--neutral); }
   .failed { fill: var(--failed); } .saved { fill: var(--good); }
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
@@ -996,6 +1002,12 @@ STYLE = """
   .daily { fill: var(--surface); stroke: var(--ink2); stroke-width: 1.5; }
   .noissue { font-size: 10.5px; font-weight: 650; fill: var(--failed); }
 """
+
+
+# factory.json `limits` (owner 2026-10-30): the limit in force each minute, the first thing that, if removed, would
+# start another worker. (key, label, css), in stacking order.
+LIMITS = (("code-gen", "Code generation at max", "ls1"), ("ci", "CI", "ls2"), ("box", "Box", "ls3"), ("tokens", "Tokens", "ls4"),
+          ("owner", "Waiting on owner", "ls5"), ("no-work", "No ready work", "ls6"), ("unknown", "Unknown", "lunk"))
 
 
 def _nice_axis(v: float) -> tuple[float, float]:
@@ -1471,6 +1483,82 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
 
     section("How close are the limits?")
 
+    def big_legend(y: int, items: list[tuple[str, str]]) -> None:
+        """A color key in a row of its own under the title, larger than `legend`: these colors carry the whole panel."""
+        x = float(left)
+        for label, css in items:
+            out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 10}" width="12" height="12" rx="2"/>')
+            out.append(f'<text class="biglbl" x="{x + 17:.1f}" y="{y}">{escape(label)}</text>')
+            x += 17 + 7.4 * len(label) + 20
+
+    # The limit in force: hours of each day, per host (hosts' minutes add up, so a day stays 24 h with two), then the main
+    # limit of each hour, then how many bots were allowed against how many worked
+    limit_days = [(i, d, fac_days[d]["limits"]) for i, (d, _) in enumerate(rows) if (fac_days.get(d) or {}).get("limits")]
+    if limit_days:
+        top, chart_h = y, 240
+        frame(top, chart_h, (24.0, 6.0), f"{panel} · Limit each day — hours per host each limit was the one in force",
+              lambda v: f"{v:g} h", "Each minute gets the first thing that, if removed, would start another bot. It only "
+              "sees launches: with every slot full it says code generation, even if merges are stuck behind CI")
+        panel += 1
+        big_legend(top - 9, [(label, css) for _, label, css in LIMITS])
+        for i, day, lim in limit_days:
+            hosts, base = lim.get("hosts") or 1, top + chart_h
+            spans = [(label, css, lim["minutes"].get(key, 0) / 60 / hosts) for key, label, css in LIMITS]
+            spans = [s for s in spans if s[2] >= 0.05]
+            parts = []
+            for _, css, v in spans:
+                h = chart_h * v / 24
+                base -= h
+                parts.append(f'<rect class="{css} seg" x="{x_left(i) + (slot - bar_w) / 2:.1f}" y="{base:.1f}" '
+                             f'width="{bar_w:.1f}" height="{h:.1f}"/>')
+            tip = f"{_fmt_day(day)}{' (today so far)' if day == today_s else ''} · {hosts} host(s) · " + ", ".join(
+                f"{label} {v:.1f} h" for label, _, v in spans)
+            fade = ' class="partial"' if day == today_s else ""
+            out.append(f'<g{fade}><title>{escape(tip)}</title>{"".join(parts)}</g>')
+        y = top + chart_h + 70
+
+        top, cell, cell_w = y, 15, (right - left) / 24
+        out.append(f'<text class="h2" x="{pad}" y="{top - 30}">{panel} · Limit each hour — the main limit, by UTC hour</text>')
+        panel += 1
+        for hour in range(0, 24, 3):
+            out.append(f'<text class="tick" x="{left + hour * cell_w:.1f}" y="{top - 6}">{hour:02d}:00</text>')
+        for row, (_, day, lim) in enumerate(limit_days):
+            cy = top + row * cell
+            out.append(f'<text class="tick" x="{left - 8}" y="{cy + 11}" text-anchor="end">{_fmt_day(day)}</text>')
+            for hour, counts in lim.get("hours", {}).items():
+                key = max(counts, key=counts.get)
+                label, css = next(((la, c) for k, la, c in LIMITS if k == key), ("Unknown", "lunk"))
+                out.append(f'<rect class="{css}" x="{left + int(hour) * cell_w:.1f}" y="{cy}" width="{cell_w - 1.5:.1f}" '
+                           f'height="{cell - 1.5}" rx="2"><title>{_fmt_day(day)} {hour}:00 UTC: {escape(label)}</title></rect>')
+        y = top + len(limit_days) * cell + 56
+
+    bots = [(i, d, fac_days[d]) for i, (d, _) in enumerate(rows)
+            if d != today_s and (fac_days.get(d) or {}).get("max_workers") and fac_days[d].get("worker_hours")]
+    if bots:
+        top, chart_h = y, 210
+        bots_axis = _nice_axis(max(r["max_workers"] for _, _, r in bots))
+        frame(top, chart_h, bots_axis, f"{panel} · Bots allowed vs working — average working each day, all hosts",
+              lambda v: f"{v:g}", "The agy lane isn't counted in bots working. Bots allowed is one reading per day")
+        panel += 1
+        big_legend(top - 9, [("Bots allowed", "inkkey"), ("Working: new work", "ls1"), ("Working: fix loops", "ls2"),
+                             ("Unused", "unused")])
+        line = []
+        for i, day, r in bots:
+            hours_by = r["worker_hours"]
+            new, fix = hours_by.get("new_work", 0) / 24, sum(v for k, v in hours_by.items() if k != "new_work") / 24
+            allowed, x, y_at = r["max_workers"], x_left(i) + (slot - bar_w) / 2, lambda v: top + chart_h - chart_h * v / bots_axis[0]
+            line += [f"{x_left(i):.1f},{y_at(allowed):.1f}", f"{x_left(i) + slot:.1f},{y_at(allowed):.1f}"]
+            tip = (f"{_fmt_day(day)} · up to {allowed} bots · {new + fix:.1f} working on average "
+                   f"({(new + fix) / allowed:.0%} of slots) · {(allowed - new - fix) * 24:.0f} bot-hours unused · idle with "
+                   f"nothing launchable {r.get('idle_hours', 0):.1f} host-hours · paused {r.get('paused_hours', 0):.1f} host-hours")
+            out.append(f'<g><title>{escape(tip)}</title>'
+                       f'<rect class="unused" x="{x:.1f}" y="{y_at(allowed):.1f}" width="{bar_w:.1f}" '
+                       f'height="{max(0.0, y_at(new + fix) - y_at(allowed)):.1f}"/>'
+                       f'<rect class="ls2 seg" x="{x:.1f}" y="{y_at(new + fix):.1f}" width="{bar_w:.1f}" height="{y_at(new) - y_at(new + fix):.1f}"/>'
+                       f'<rect class="ls1 seg" x="{x:.1f}" y="{y_at(new):.1f}" width="{bar_w:.1f}" height="{top + chart_h - y_at(new):.1f}"/></g>')
+        out.append(f'<polyline class="maxline" points="{" ".join(line)}"/>')
+        y = top + chart_h + 70
+
     # CI hours: every repo's runner hours each day where org readings cover it (the pool is shared), else this repo's
     # own figure, in a second color (owner 2026-10-30); the tip splits this repo's by origin. With a pool, a dotted line
     # marks what its runners can do in a day, and sits above the queue wait it explains
@@ -1655,6 +1743,10 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                + escape((f"{cfg.bot_name} = PRs from {prefixes} branches. " if prefixes else "")
                         + "Other agents = agent branch prefixes or PR-body markers. Failed % is per workflow run, not per PR; "
                           "minutes saved is estimated.") + '</text>')
+    if limit_days:
+        y += 15
+        out.append(f'<text class="meta" x="{pad}" y="{y + 15}">Limits: each minute gets the first thing that, if removed, '
+                   'would start another bot. Launches only: a full fleet shows code generation at max, whatever waits downstream.</text>')
     height = y + 34
     body = "\n  ".join(out)
     merged_total = sum(row["merged"] for _, row in rows)
