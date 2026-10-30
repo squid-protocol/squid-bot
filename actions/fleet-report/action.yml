@@ -64,7 +64,7 @@ inputs:
     description: Deprecated (the old fixed per-day sample); when set it is read as sample-min.
     default: ""
   runner-pool:
-    description: Concurrent runners available (e.g. 20). A day's runner time above pool x 24 h is reported as an estimate fault.
+    description: Concurrent runners available (e.g. 20). A dotted line on the CI hours chart marks pool x 24 h, and a day's runner time above it is reported as an estimate fault.
     default: ""
   occupancy-scope:
     description: >-

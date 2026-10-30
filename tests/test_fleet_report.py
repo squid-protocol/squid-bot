@@ -284,12 +284,25 @@ def test_dollar_panels_add_up_from_the_bots_start():
                                 "2026-10-08": {"usd": 30.0, "churn_merged": 10}, "2026-10-09": {"usd": 20.0, "churn_merged": 15}}}
     svg = dashboard.render(data, 30, TODAY, BOT)
     ET.fromstring(svg)
-    assert "2 · CI hours" in svg and "Repo clones" not in svg
-    # 5 · dollars spent since the start, and 6 · per merged PR with the overall average ($50 / 25 PRs)
-    assert "5 · Spend — promoter-bot cost in dollars, cumulative since Oct 8" in svg and ">$50 total</text>" in svg
+    assert "Repo clones" not in svg
+    # 2 · dollars spent since the start, and 3 · per merged PR with the overall average ($50 / 25 PRs)
+    assert "2 · Spend — promoter-bot cost in dollars, cumulative since Oct 8" in svg and ">$50 total</text>" in svg
     assert "25 merged promoter-bot PRs for $50" in svg
-    assert "6 · Cost per PR" in svg and "$3.00 per merged PR ($30.00 for 10)" in svg and "avg $2.00 per PR since Oct 8" in svg
-    assert "7 · Efficiency" in svg
+    assert "3 · Cost per PR" in svg and "$3.00 per merged PR ($30.00 for 10)" in svg and "avg $2.00 per PR since Oct 8" in svg
+    # what it cost comes before how close the limits are
+    assert "4 · CI hours" in svg and "7 · Efficiency" in svg
+
+
+def test_ci_hours_marks_the_pool_ceiling_with_a_dotted_line():
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 100 * 60}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    ET.fromstring(svg)
+    assert "runner max 480 h/day (20 runners)" in svg and 'class="avg"' in svg
+    assert ">500</text>" in svg  # the axis stretches to keep the line in view, far above these 100 h days
+    plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo"))
+    assert "runner max" not in plain and 'class="avg"' not in plain  # no pool: no line
 
 
 def test_axes_use_the_tightest_round_step():

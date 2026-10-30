@@ -1186,6 +1186,10 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 8}" width="9" height="9" rx="2"/>')
             out.append(f'<text class="lbl" x="{x + 13:.1f}" y="{y}">{escape(label)}</text>')
 
+    # The panels run as a story (owner 2026-10-30): what came out (delivery, issues), was it good (first pass, change
+    # failure), what did it cost (spend, per PR, per issue), and how close the limits are (CI hours, queue wait, CI load,
+    # efficiency, GitHub API and writes). A panel with no data drops out and the rest renumber.
+
     # 1 · Delivery: merged PRs each day, by origin
     y = card_y + card_h + 18 + 62
     top, chart_h = y, 195
@@ -1246,146 +1250,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
             out.append(f'<text class="avgl" x="{right}" y="{top - 30}" text-anchor="end">{escape(note)}</text>')
         return top + chart_h + 70
 
-    # 2 · CI hours: runner hours each day (est. from the sampled runs); the tip splits them by origin
-    details = [row.get("detail", {}) for _, row in rows]
-    pool = cfg.runner_pool
-    hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
-    known = sorted(v for v in hours if v)
-    if known:
-        top, chart_h = y, 150
-        # a few days' estimates overshoot (a small sample of long runs x thousands of runs): fit the axis to 3x the
-        # median day and mark the days above it, so they don't flatten the rest
-        hours_axis = _nice_axis(min(known[-1], 3 * known[len(known) // 2]))
-        hours_max = hours_axis[0]
-        frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day (est., sampled)", lambda v: f"{v:g}")
-        panel += 1
-        for i, ((day, row), v) in enumerate(zip(rows, hours)):
-            if v is None:
-                continue
-            h = chart_h * min(v, hours_max) / hours_max
-            split = runner_split([row], "sampled_min_by_origin")
-            tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours (est.){' (today so far)' if day == today_s else ''} · "
-                   f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
-            raw = runner_minutes(details[i])
-            if pool and raw > pool * 1440:
-                tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
-            fade = ' class="partial"' if day == today_s else ""
-            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="hours" '
-                       f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
-            if v > hours_max:
-                out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
-        y = top + chart_h + 70
-
-    # Queue wait and CI cost per merged PR (sampled)
-    wait_values = [detail.get("wait_p90") for detail in details]
-    runner_values = [runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
-                     and row["merged"] else None for (_, row), detail in zip(rows, details)]
-    if any(v is not None for v in wait_values + runner_values):
-        top, chart_h = y, 120
-        wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
-        wait_max = wait_axis[0]
-        frame(top, chart_h, wait_axis, f"{panel} · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
-        panel += 1
-        for i, (day, row) in enumerate(rows):
-            changes = row.get("detail", {}).get("ci_changes")
-            if changes:
-                prs = ", ".join(f'#{change["pr"]}' for change in changes[:6])
-                out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
-                           f'<path class="markd" d="M{x_mid(i):.1f},{top - 9} l3,3 l-3,3 l-3,-3 Z"/></g>')
-        line_series(top, chart_h, wait_values, wait_max, lambda v: f"{v:.1f}",
-                    f"minutes · {cfg.sample_fraction:.0%} of each day's runs sampled")
-        legend(top - 30, [("CI change merged", "markd")])
-        y = top + chart_h + 70
-        top = y
-        runner_axis = (_nice_axis(cfg.cost_max) if cfg.cost_max
-                       else _nice_axis(max((v for v in runner_values if v is not None), default=1.0)))
-        runner_max = runner_axis[0]
-        frame(top, chart_h, runner_axis, f"{panel} · CI load — runner hours per merged PR (est., sampled)", lambda v: f"{v:g}")
-        panel += 1
-        cost_tips = [f"{v:.2f} runner hours / merged PR" + (f" (above the {runner_max:g} h axis)" if v > runner_max else "")
-                     if v is not None else "" for v in runner_values]
-        line_series(top, chart_h, [None if v is None else min(v, runner_max) for v in runner_values], runner_max,
-                    tips=cost_tips)
-        for i, v in enumerate(runner_values):
-            if v is not None and v > runner_max:
-                out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:.0f} h</text>')
-        y = top + chart_h + 70
-    else:
-        out.append(f'<text class="h2" x="{pad}" y="{y - 30}">{panel} · Speed and cost</text>')
-        panel += 1
-        out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
-        y += 20
-
-    # The bot's own spend in dollars (factory.json: what its agent sessions cost, all hosts) and per merged bot PR
-    fdays = {d: r for d, r in ((data.get("factory") or {}).get("days") or {}).items()
-             if start and d >= start and r.get("usd") is not None}
-    if start_i is not None and fdays:
-        usd = {d: float(r["usd"]) for d, r in fdays.items()}
-        prs = {d: r.get("churn_merged") or 0 for d, r in fdays.items()}
-        spent, made = sum(usd.values()), sum(prs.values())
-        y = running_total(
-            y, usd, f"{panel} · Spend — {cfg.bot_name} cost in dollars, cumulative since {_fmt_day(start)}",
-            lambda v: f"${v:,.0f}", lambda t: f"${t:,.0f} total",
-            lambda d, n, t: f"${n:,.2f} this day ({prs[d]} merged PRs) · ${t:,.2f} since {_fmt_day(start)}"
-                            + (" (today so far)" if d == today_s else ""),
-            f"{made:,} merged {cfg.bot_name} PRs for ${spent:,.0f}")
-        panel += 1
-        per_pr = [usd[d] / prs[d] if prs.get(d) else None for d, _ in rows]
-        top, chart_h = y, 120
-        pr_axis = _nice_axis(max((v for v in per_pr if v is not None), default=1.0))
-        frame(top, chart_h, pr_axis, f"{panel} · Cost per PR — {cfg.bot_name} dollars per merged PR, each day",
-              lambda v: f"${v:g}")
-        panel += 1
-        line_series(top, chart_h, per_pr, pr_axis[0],
-                    tips=[f"${v:.2f} per merged PR (${usd[d]:,.2f} for {prs[d]})" if v is not None else ""
-                          for (d, _), v in zip(rows, per_pr)], cls="cum")
-        if made:
-            avg = spent / made
-            spots = [index[d] for d in sorted(fdays) if d in index]
-            ya = top + chart_h - chart_h * avg / pr_axis[0]
-            out.append(f'<line class="avg" x1="{x_left(spots[0]):.1f}" x2="{x_left(spots[-1]) + slot:.1f}" '
-                       f'y1="{ya:.1f}" y2="{ya:.1f}"/>')
-            out.append(f'<text class="avgl" x="{x_left(spots[-1]) + slot:.1f}" y="{ya - 6:.1f}" text-anchor="end">'
-                       f'{escape(f"avg ${avg:.2f} per PR since {_fmt_day(start)}")}</text>')
-        y = top + chart_h + 70
-
-    # 4 · Efficiency: share of run minutes early cancellation saved (est.) and share of runs that failed
-    proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
-    reruns = rerun_split(finished(rows, today)[-7:])
-    if reruns:
-        total, passed, failed = sum(item[1] for item in reruns), sum(item[2] for item in reruns), sum(item[3] for item in reruns)
-        proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
-                            f"({passed} passed, {failed} failed again; {total} total)")
-        proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
-    saved_values, saved_tips, failed_values, failed_tips = [], [], [], []
-    for _, row in rows:
-        c = row.get("detail", {}).get("cancel_savings")
-        share = saved_share(c) if c else None
-        saved_values.append(None if share is None else 100 * share)
-        if share is None:
-            saved_tips.append("")
-        else:
-            unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
-            saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
-                              f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
-        ok, bad = judged_runs(row)
-        judged = ok + bad
-        bot_note = " · the bot's own workflows left out" if (row.get("detail") or {}).get("bot_outcomes") else ""
-        failed_values.append(100 * bad / judged if judged else None)
-        failed_tips.append(f'{100 * bad / judged:.1f}% of runs failed ({bad:,} of {judged:,} CI runs that '
-                           f'passed or failed{bot_note})' if judged else "")
-    top, chart_h = y, 120
-    pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
-    frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
-          lambda v: f"{v:g}%", ". ".join(proof_detail))
-    line_series(top, chart_h, saved_values, pct_axis[0], tips=saved_tips, cls="saved")
-    line_series(top, chart_h, failed_values, pct_axis[0], tips=failed_tips, cls="failedl")
-    legend(top - 30, [("minutes saved (est.)", "saved"), ("runs failed", "failed")])
-    y = top + chart_h + 44
-
     # Issues: opened (arrows up, stacked by who opened them) and closed as completed (arrows down), one pair a day
-    panel += 1  # after Efficiency
-    y += 26  # Efficiency left room for the footer only
     sc_days = (data.get("scorecard") or {}).get("days") or {}
     fac_days = (data.get("factory") or {}).get("days") or {}
     if any(d in sc_days for d, _ in rows):
@@ -1519,6 +1384,39 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
         y = top + chart_h + 70
         panel += 1
 
+    # The bot's own spend in dollars (factory.json: what its agent sessions cost, all hosts) and per merged bot PR
+    fdays = {d: r for d, r in ((data.get("factory") or {}).get("days") or {}).items()
+             if start and d >= start and r.get("usd") is not None}
+    if start_i is not None and fdays:
+        usd = {d: float(r["usd"]) for d, r in fdays.items()}
+        prs = {d: r.get("churn_merged") or 0 for d, r in fdays.items()}
+        spent, made = sum(usd.values()), sum(prs.values())
+        y = running_total(
+            y, usd, f"{panel} · Spend — {cfg.bot_name} cost in dollars, cumulative since {_fmt_day(start)}",
+            lambda v: f"${v:,.0f}", lambda t: f"${t:,.0f} total",
+            lambda d, n, t: f"${n:,.2f} this day ({prs[d]} merged PRs) · ${t:,.2f} since {_fmt_day(start)}"
+                            + (" (today so far)" if d == today_s else ""),
+            f"{made:,} merged {cfg.bot_name} PRs for ${spent:,.0f}")
+        panel += 1
+        per_pr = [usd[d] / prs[d] if prs.get(d) else None for d, _ in rows]
+        top, chart_h = y, 120
+        pr_axis = _nice_axis(max((v for v in per_pr if v is not None), default=1.0))
+        frame(top, chart_h, pr_axis, f"{panel} · Cost per PR — {cfg.bot_name} dollars per merged PR, each day",
+              lambda v: f"${v:g}")
+        panel += 1
+        line_series(top, chart_h, per_pr, pr_axis[0],
+                    tips=[f"${v:.2f} per merged PR (${usd[d]:,.2f} for {prs[d]})" if v is not None else ""
+                          for (d, _), v in zip(rows, per_pr)], cls="cum")
+        if made:
+            avg = spent / made
+            spots = [index[d] for d in sorted(fdays) if d in index]
+            ya = top + chart_h - chart_h * avg / pr_axis[0]
+            out.append(f'<line class="avg" x1="{x_left(spots[0]):.1f}" x2="{x_left(spots[-1]) + slot:.1f}" '
+                       f'y1="{ya:.1f}" y2="{ya:.1f}"/>')
+            out.append(f'<text class="avgl" x="{x_left(spots[-1]) + slot:.1f}" y="{ya - 6:.1f}" text-anchor="end">'
+                       f'{escape(f"avg ${avg:.2f} per PR since {_fmt_day(start)}")}</text>')
+        y = top + chart_h + 70
+
     # Cost per resolved issue: the bot's dollars over the issues it did the work on (merged bot PRs), each day as a dot
     # and the average of the days so far (up to 7) as the line, from the first day with a bot-resolved issue: day 1 is
     # one day's figure, day 2 the average of two, and so on (owner 2026-10-24: no zero-filled days, no false trend).
@@ -1541,6 +1439,118 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
                            for i, v in enumerate(roll)], "cum")
         y = top + chart_h + 70
         panel += 1
+
+    # CI hours: runner hours each day (est. from the sampled runs); the tip splits them by origin. With a pool, a dotted
+    # line marks what its runners can do in a day (owner 2026-10-30), and sits above the queue wait it explains
+    details = [row.get("detail", {}) for _, row in rows]
+    pool = cfg.runner_pool
+    hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
+    known = sorted(v for v in hours if v)
+    if known:
+        top, chart_h = y, 150
+        # a few days' estimates overshoot (a small sample of long runs x thousands of runs): fit the axis to 3x the
+        # median day and mark the days above it, so they don't flatten the rest; the pool's ceiling stays in view
+        ceiling = pool * 24 if pool else 0
+        hours_axis = _nice_axis(max(min(known[-1], 3 * known[len(known) // 2]), ceiling))
+        hours_max = hours_axis[0]
+        frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day (est., sampled)", lambda v: f"{v:g}")
+        panel += 1
+        for i, ((day, row), v) in enumerate(zip(rows, hours)):
+            if v is None:
+                continue
+            h = chart_h * min(v, hours_max) / hours_max
+            split = runner_split([row], "sampled_min_by_origin")
+            tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours (est.){' (today so far)' if day == today_s else ''} · "
+                   f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
+            raw = runner_minutes(details[i])
+            if pool and raw > pool * 1440:
+                tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
+            fade = ' class="partial"' if day == today_s else ""
+            out.append(f'<g{fade}><title>{escape(tip)}</title><path class="hours" '
+                       f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
+            if v > hours_max:
+                out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
+        if ceiling:
+            yl = top + chart_h - chart_h * ceiling / hours_max
+            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
+                       f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">'
+                       f'runner max {ceiling:,} h/day ({pool} runners)</text>')
+        y = top + chart_h + 70
+
+    # Queue wait and CI cost per merged PR (sampled)
+    wait_values = [detail.get("wait_p90") for detail in details]
+    runner_values = [runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
+                     and row["merged"] else None for (_, row), detail in zip(rows, details)]
+    if any(v is not None for v in wait_values + runner_values):
+        top, chart_h = y, 120
+        wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
+        wait_max = wait_axis[0]
+        frame(top, chart_h, wait_axis, f"{panel} · Speed — job queue wait (p90) per day, sampled (minutes)", lambda v: f"{v:g}")
+        panel += 1
+        for i, (day, row) in enumerate(rows):
+            changes = row.get("detail", {}).get("ci_changes")
+            if changes:
+                prs = ", ".join(f'#{change["pr"]}' for change in changes[:6])
+                out.append(f'<g><title>{_fmt_day(day)}: CI change(s) merged {escape(prs)}</title>'
+                           f'<path class="markd" d="M{x_mid(i):.1f},{top - 9} l3,3 l-3,3 l-3,-3 Z"/></g>')
+        line_series(top, chart_h, wait_values, wait_max, lambda v: f"{v:.1f}",
+                    f"minutes · {cfg.sample_fraction:.0%} of each day's runs sampled")
+        legend(top - 30, [("CI change merged", "markd")])
+        y = top + chart_h + 70
+        top = y
+        runner_axis = (_nice_axis(cfg.cost_max) if cfg.cost_max
+                       else _nice_axis(max((v for v in runner_values if v is not None), default=1.0)))
+        runner_max = runner_axis[0]
+        frame(top, chart_h, runner_axis, f"{panel} · CI load — runner hours per merged PR (est., sampled)", lambda v: f"{v:g}")
+        panel += 1
+        cost_tips = [f"{v:.2f} runner hours / merged PR" + (f" (above the {runner_max:g} h axis)" if v > runner_max else "")
+                     if v is not None else "" for v in runner_values]
+        line_series(top, chart_h, [None if v is None else min(v, runner_max) for v in runner_values], runner_max,
+                    tips=cost_tips)
+        for i, v in enumerate(runner_values):
+            if v is not None and v > runner_max:
+                out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:.0f} h</text>')
+        y = top + chart_h + 70
+    else:
+        out.append(f'<text class="h2" x="{pad}" y="{y - 30}">{panel} · Speed and cost</text>')
+        panel += 1
+        out.append(f'<text class="meta" x="{pad}" y="{y - 12}">No sampled CI capacity history yet.</text>')
+        y += 20
+
+    # Efficiency: share of run minutes early cancellation saved (est.) and share of runs that failed
+    proof_detail = ["CI workflow-run outcomes; not a per-PR quality score"]
+    reruns = rerun_split(finished(rows, today)[-7:])
+    if reruns:
+        total, passed, failed = sum(item[1] for item in reruns), sum(item[2] for item in reruns), sum(item[3] for item in reruns)
+        proof_detail.append(f"Reruns that passed: {_fmt(passed / (passed + failed) if passed + failed else None, 'pct')} "
+                            f"({passed} passed, {failed} failed again; {total} total)")
+        proof_detail.extend(f"{name}: {count} reruns, {ok} passed, {again} failed again" for name, count, ok, again in reruns[:12])
+    saved_values, saved_tips, failed_values, failed_tips = [], [], [], []
+    for _, row in rows:
+        c = row.get("detail", {}).get("cancel_savings")
+        share = saved_share(c) if c else None
+        saved_values.append(None if share is None else 100 * share)
+        if share is None:
+            saved_tips.append("")
+        else:
+            unpriced = f', {c["unpriced"]} not priced' if c["unpriced"] else ""
+            saved_tips.append(f'{share * 100:.1f}% of run minutes saved by early cancellation (est. {c["saved_min_est"]:,} '
+                              f'of {c["wall_min"] + c["saved_min_est"]:,} min; {c["cancelled"]} runs cancelled{unpriced})')
+        ok, bad = judged_runs(row)
+        judged = ok + bad
+        bot_note = " · the bot's own workflows left out" if (row.get("detail") or {}).get("bot_outcomes") else ""
+        failed_values.append(100 * bad / judged if judged else None)
+        failed_tips.append(f'{100 * bad / judged:.1f}% of runs failed ({bad:,} of {judged:,} CI runs that '
+                           f'passed or failed{bot_note})' if judged else "")
+    top, chart_h = y, 120
+    pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
+    frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
+          lambda v: f"{v:g}%", ". ".join(proof_detail))
+    line_series(top, chart_h, saved_values, pct_axis[0], tips=saved_tips, cls="saved")
+    line_series(top, chart_h, failed_values, pct_axis[0], tips=failed_tips, cls="failedl")
+    legend(top - 30, [("minutes saved (est.)", "saved"), ("runs failed", "failed")])
+    y = top + chart_h + 70
+    panel += 1
 
     # GitHub API: the shared token's busiest hour each day, against its limit (owner 2026-10-24: the quota ran out and
     # the merge bot, which shares it, stopped merging). From the orchestrator's own quota readings (factory.json "api").
@@ -1607,7 +1617,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None) -> str
     body = "\n  ".join(out)
     merged_total = sum(row["merged"] for _, row in rows)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
-            f'role="img" aria-label="{escape(cfg.heading)}: delivery, speed, cost and CI waste per day'
+            f'role="img" aria-label="{escape(cfg.heading)}: delivery, quality, cost and CI capacity per day'
             f'{f", before and with {escape(cfg.bot_name)}" if start else ""}; '
             f'{merged_total:,} merged PRs in the selected period">\n'
             f'<style>{STYLE}</style>\n<g class="root">\n  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" '
