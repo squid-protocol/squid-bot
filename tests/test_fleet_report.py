@@ -3,7 +3,7 @@
 import re
 import sys
 import xml.etree.ElementTree as ET
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "actions" / "fleet-report"))
@@ -88,8 +88,8 @@ def test_ci_hours_bars_split_by_origin_in_the_tip():
                                      "sampled_min_by_origin": {"bot": 30.0, "main": 10.0}}
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
-    assert "Oct 13 · 20 runner hours (est.) · 1,840 runs · bot 75%, main 25%" in svg
-    assert "▲" not in svg and "runner hours (est.) (today so far)" in svg  # today drawn faded, like every chart
+    assert "Oct 13 · 20 runner hours old small sample, least reliable · 1,840 runs · bot 75%, main 25%" in svg
+    assert "▲" not in svg and "least reliable (today so far)" in svg  # today drawn faded, like every chart
 
 
 CFG = dashboard.Config(repo="owner/repo", agent_prefixes=["churn/", "claude/"])
@@ -314,15 +314,15 @@ def test_ci_hours_shows_the_whole_org_where_its_readings_cover_the_day():
     data["days"][thin]["detail"]["occupancy_org"] = {"runner_min": 200 * 60, "coverage": 0.5}
     svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
     ET.fromstring(svg)
-    assert "300 runner hours all repos, measured · repo 100 h" in svg
-    assert 'class="hoursorg"' in svg and svg.count('<path class="hoursorg"') == 1  # the thin day stays this repo's estimate
-    assert "all repos, measured</text>" in svg and "repo only (est.)</text>" in svg  # the legend names both
+    assert "300 runner hours all repos, measured (100% of the day) · repo 100 h" in svg
+    assert svg.count('<path class="hmeasured"') == 1  # the thin day stays an estimate, in a lighter grey
+    assert "measured</text>" in svg and "old small sample</text>" in svg  # the legend names each method on the chart
     assert dashboard.org_runner_minutes(data["days"][covered]["detail"], 4) == 4 * 1440  # capped at the pool
     assert dashboard.org_runner_minutes(data["days"][thin]["detail"]) is None
     for d in data["days"].values():
         d["detail"].pop("occupancy_org", None)
     plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
-    assert "hoursorg\"" not in plain.split("</style>")[1] and "(est., sampled)" in plain  # no org readings: as before
+    assert "hmeasured\"" not in plain.split("</style>")[1] and "(est., sampled)" in plain  # no org readings: as before
 
 
 def test_limit_panels_show_each_days_limits_per_host():
@@ -346,6 +346,47 @@ def test_limit_panels_show_each_days_limits_per_host():
     assert "up to 4 bots · 1.5 working on average (38% of slots) · 60 bot-hours unused" in svg
     assert 'class="biglbl"' in svg and "Limits: each minute gets" in svg
     assert dashboard.render(_data(10), 10, TODAY, dashboard.Config(repo="owner/repo"), view="limits") is None  # no data
+
+
+def test_each_days_bar_names_how_it_was_measured():
+    assert dashboard.runner_method({"occupancy": {"runner_min": 60, "coverage": 0.9}})[0] == "hmeasured"
+    assert dashboard.runner_method({"occupancy": {"runner_min": 60, "coverage": 0.5}, "est_method": dashboard.EST_METHOD})[0] == "hsampled"
+    assert dashboard.runner_method({"runner_min_est": 60})[0] == "hold"  # thin coverage or an old fixed sample: not measured
+
+
+def test_busy_while_waiting_reads_only_the_times_work_waited():
+    day = "2026-10-20"
+    readings = [{"t": f"{day}T0{i}:00:00Z", "running": n, "queued_runs": q}
+                for i, (n, q) in enumerate([(14, 12), (20, 40), (10, 11), (3, 0)])]
+    busy = dashboard.busy_while_waiting(readings, day, 20)
+    assert busy == {"median": 14.0, "readings": 3, "peak": 20.0, "at_limit": 0.333}  # the quiet reading doesn't count
+    assert dashboard.busy_while_waiting(readings[3:], day, 20) is None
+    assert dashboard.busy_while_waiting(readings, "2026-10-21", 20) is None
+
+
+def test_the_waiting_panel_shows_the_ceiling_against_the_limit():
+    data = _data(10)
+    day = (TODAY - timedelta(days=2)).isoformat()
+    data["days"][day]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0,
+                                   "busy_while_waiting": {"median": 14.0, "readings": 40, "peak": 20.0, "at_limit": 0.02}}
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20), view="limits")
+    ET.fromstring(svg)
+    assert "Runners in use while work waits" in svg and "runner limit 20" in svg
+    assert "median 14 running, peak 20 · at the limit 2% of the time · 40 readings" in svg
+
+
+def test_the_backfill_file_reaches_the_charts(tmp_path, monkeypatch):
+    now = datetime.now(timezone.utc).date()
+    rows = list(_data(10)["days"].values())
+    days = {(now - timedelta(days=i + 1)).isoformat(): {**row, "detail": {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0}}
+            for i, row in enumerate(rows)}
+    (tmp_path / "metrics.json").write_text(json.dumps({"repo": "owner/repo", "updated": f"{now}T00:00:00Z", "days": days}))
+    day = (now - timedelta(days=2)).isoformat()
+    reading = {"t": f"{day}T06:00:00Z", "running": 14, "queued_runs": 30, "scope": "repo", "source": "churn-tick"}
+    (tmp_path / dashboard.OCC_BACKFILL_FILE).write_text(json.dumps(reading) + "\n")
+    monkeypatch.setattr(sys, "argv", ["fleet_report.py", "--repo", "owner/repo", "--render-only", "--out", str(tmp_path), "--runner-pool", "20"])
+    assert dashboard.main() == 0
+    assert "median 14 running" in (tmp_path / "limits.svg").read_text(encoding="utf-8")
 
 
 def test_section_headings_group_the_panels_and_drop_out_when_empty():
