@@ -400,6 +400,8 @@ def measure_run(repo: str, run_id: int) -> dict:
     """One run's runner minutes and its jobs' queue waits (one API call)."""
     minutes, waits = 0.0, []
     for j in gh_json(f"repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")["jobs"]:
+        if j.get("conclusion") == "cancelled" and not j.get("runner_id"):
+            continue  # cancelled while it waited: GitHub still gives it a start and an end, but it never held a runner
         if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
             m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
             if m > 0.05:  # a job that never really ran held no runner

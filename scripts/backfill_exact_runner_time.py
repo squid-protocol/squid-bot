@@ -13,12 +13,14 @@ every attempt included), about 1 point each, so measuring a 10,000-run day costs
 Resumable: every fetched window and batch is appended under --state; a restart skips what is there.
 
     python3 backfill_exact_runner_time.py fetch --owner squid-protocol --since 2026-09-14 --until 2026-10-31T12:30:00Z
+    python3 backfill_exact_runner_time.py cancelled
     python3 backfill_exact_runner_time.py summarize --pool 20 [--readings occupancy.jsonl ...] [--metrics metrics.json]
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import subprocess
 import sys
@@ -197,16 +199,78 @@ def fetch(a) -> int:
     return 0
 
 
+def run_node_id(repo_id: int, run_id: int) -> str:
+    """A WorkflowRun's GraphQL node id: "WFR_" + base64url(msgpack([2, repo id, run id])), unpadded (checked
+    2026-10-31 against the REST node_id; callers check the databaseId that comes back)."""
+    def uint(n: int) -> bytes:
+        return bytes([n]) if n < 128 else (b"\xce" + n.to_bytes(4, "big") if n < 2 ** 32 else b"\xcf" + n.to_bytes(8, "big"))
+    return "WFR_" + base64.urlsafe_b64encode(b"\x93\x02" + uint(repo_id) + uint(run_id)).decode().rstrip("=")
+
+
+STEPS = """query($ids:[ID!]!) { rateLimit { cost remaining resetAt }
+  nodes(ids:$ids) { ... on WorkflowRun { databaseId checkSuite { checkRuns(first:100, filterBy:{checkType:ALL}) {
+    nodes { databaseId conclusion steps(first:1) { totalCount } } } } } } }"""
+
+
+def cancelled(a) -> int:
+    """A job cancelled while it waited for a runner still gets a start (its creation) and an end (the cancel): on
+    2026-10-05 54 of the 60 jobs "running" at the peak minute were such. GitHub's REST job has no runner_id for them;
+    GraphQL has no runner, but such a job ran no step (40 checked against REST 2026-10-31: 19 without a runner, all 0
+    steps; 21 with one, all with steps). Records each cancelled job's step count in cancelled_steps.jsonl. Small
+    batches: steps on 50 runs a query gets a 502."""
+    st = Path(a.state).expanduser()
+    b = Budget(900, 1500, a.gql_floor)
+    out_f = st / "cancelled_steps.jsonl"
+    have = {json.loads(x)["job"] for x in out_f.open()} if out_f.exists() else set()
+    runs, nodes = defaultdict(set), {}
+    for line in (st / "jobs.jsonl").open():
+        j = json.loads(line)
+        if j["conclusion"] == "CANCELLED" and j["job"] not in have:
+            runs[(j["repo"], j["run"])].add(j["job"])
+    log(f"{sum(map(len, runs.values()))} cancelled jobs in {len(runs)} runs to check")
+    repo_ids = {}
+    for repo in {r for r, _ in runs}:
+        b.rest()
+        repo_ids[repo] = json.loads(gh(["api", f"repos/{repo}"]))["id"]
+    nodes = {(repo, run): run_node_id(repo_ids[repo], run) for repo, run in runs}
+    keys = list(runs)
+    for i in range(0, len(keys), a.batch):
+        chunk = keys[i:i + a.batch]
+        data = graphql(STEPS, b, ids=[nodes[k] for k in chunk])
+        rows = []
+        for k, n in zip(chunk, data["nodes"]):
+            if n and n.get("databaseId") != k[1]:  # a node id built wrong: never take another run's jobs
+                raise RuntimeError(f"node id for run {k} came back as run {n.get('databaseId')}")
+            for c in ((n or {}).get("checkSuite") or {}).get("checkRuns", {}).get("nodes", []):
+                if c["conclusion"] == "CANCELLED":
+                    rows.append({"job": c["databaseId"], "steps": c["steps"]["totalCount"]})
+        with out_f.open("a") as f:
+            f.writelines(json.dumps(r) + "\n" for r in rows)
+        if i % (a.batch * 50) == 0:
+            log(f"steps {i}/{len(keys)} runs")
+    log("cancelled complete")
+    return 0
+
+
 def summarize(a) -> int:
     """Per UTC day: exact runner minutes (whole pool and per repo), peak and minutes at the pool's limit, against the
     stored estimate and against what the old readings said at their own times."""
     st = Path(a.state).expanduser()
     seen, per_min = set(), defaultdict(lambda: defaultdict(int))  # minute -> repo -> jobs on a runner
+    steps_f = st / "cancelled_steps.jsonl"
+    steps = {r["job"]: r["steps"] for r in map(json.loads, steps_f.open())} if steps_f.exists() else {}
+    unknown = dropped = 0
     for line in (st / "jobs.jsonl").open():
         j = json.loads(line)
         if j["job"] in seen or not j["start"] or not j["end"] or j["conclusion"] == "SKIPPED":
             continue
         seen.add(j["job"])
+        if j["conclusion"] == "CANCELLED":  # cancelled while waiting: it never held a runner (see `cancelled`)
+            if j["job"] not in steps:
+                unknown += 1
+            elif not steps[j["job"]]:
+                dropped += 1
+                continue
         s, e = iso(j["start"]), iso(j["end"])
         if (e - s).total_seconds() < 3:  # never really held a runner (same cut as measure_run's 0.05 min)
             continue
@@ -216,6 +280,8 @@ def summarize(a) -> int:
             t2 = t + timedelta(minutes=1)
             per_min[t][j["repo"]] += (min(e, t2) - max(s, t)).total_seconds() / 60
             t = t2
+    print(f"{dropped} cancelled jobs never held a runner, left out; {unknown} cancelled jobs not checked "
+          f"(counted: run `cancelled` first)", file=sys.stderr)
     windows = [json.loads(x) for x in (st / "windows.jsonl").open()]
     days_done = defaultdict(set)
     for w in windows:
@@ -299,6 +365,9 @@ def main() -> int:
     f.add_argument("--rest-per-hour", type=int, default=900)
     f.add_argument("--rest-floor", type=int, default=1500)
     f.add_argument("--gql-floor", type=int, default=1500)
+    c = sub.add_parser("cancelled", help="step counts of cancelled jobs: the ones with none never held a runner")
+    c.add_argument("--batch", type=int, default=5)
+    c.add_argument("--gql-floor", type=int, default=1500)
     s = sub.add_parser("summarize")
     s.add_argument("--pool", type=int, default=20)
     s.add_argument("--repo", default="squid-protocol/gitgalaxy")
@@ -307,7 +376,7 @@ def main() -> int:
     s.add_argument("--minutes-since", default="2026-10-24", help="keep per-minute counts from this day (readings era)")
     s.add_argument("--write", help="where to write runner_exact.json (default: in --state)")
     a = p.parse_args()
-    return fetch(a) if a.cmd == "fetch" else summarize(a)
+    return {"fetch": fetch, "cancelled": cancelled, "summarize": summarize}[a.cmd](a)
 
 
 if __name__ == "__main__":

@@ -402,6 +402,19 @@ def test_job_times_correct_the_readings_taken_before_the_fix():
     assert dashboard.correct_readings(readings, {}) == readings
 
 
+def test_a_job_cancelled_while_it_waited_holds_no_runner_time(monkeypatch):
+    """2026-10-31: a job cancelled before a runner took it still has a start and an end (54 of 60 jobs "running" at
+    2026-10-05's peak minute); without a runner_id it is no runner time."""
+    jobs = [{"created_at": "2026-10-05T20:25:18Z", "started_at": "2026-10-05T20:25:18Z",
+             "completed_at": "2026-10-05T20:40:18Z", "conclusion": "cancelled", "runner_id": 0},
+            {"created_at": "2026-10-05T20:10:00Z", "started_at": "2026-10-05T20:15:00Z",
+             "completed_at": "2026-10-05T20:25:00Z", "conclusion": "cancelled", "runner_id": 1000094356},
+            {"created_at": "2026-10-05T20:00:00Z", "started_at": "2026-10-05T20:00:00Z",
+             "completed_at": "2026-10-05T20:05:00Z", "conclusion": "success", "runner_id": 7}]
+    monkeypatch.setattr(dashboard, "gh_json", lambda path: {"jobs": jobs})
+    assert dashboard.measure_run("o/r", 1) == {"m": 15.0, "w": [5.0, 0.0]}
+
+
 def test_busy_while_waiting_reads_only_the_times_work_waited():
     day = "2026-10-20"
     readings = [{"t": f"{day}T0{i}:00:00Z", "running": n, "queued_runs": q}
