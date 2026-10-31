@@ -364,7 +364,7 @@ def test_job_times_beat_readings_and_samples_and_cover_every_repo():
     detail = {"exact": ex, "occupancy": {"runner_min": 60, "coverage": 1.0},
               "occupancy_org": {"runner_min": 90, "coverage": 1.0}, "runner_min_est": 30, "est_method": dashboard.EST_METHOD}
     assert dashboard.runner_minutes(detail) == 350 * 60 and dashboard.org_runner_minutes(detail) == 400 * 60
-    # measured, so never capped: on 2026-10-13 65 hosted jobs ran at once on a "20-runner" account
+    # measured, so never capped: over the pool is reported, not hidden
     assert dashboard.org_runner_minutes(detail, 10) == 400 * 60 and dashboard.runner_minutes(detail, 10) == 350 * 60
     assert dashboard.over_ceiling(detail, 10)
     assert dashboard.runner_method(detail) == ("hexact", "measured (job times)")
@@ -412,7 +412,10 @@ def test_a_job_cancelled_while_it_waited_holds_no_runner_time(monkeypatch):
             {"created_at": "2026-10-05T20:10:00Z", "started_at": "2026-10-05T20:15:00Z",
              "completed_at": "2026-10-05T20:25:00Z", "conclusion": "cancelled", "runner_id": 1000094356},
             {"created_at": "2026-10-05T20:00:00Z", "started_at": "2026-10-05T20:00:00Z",
-             "completed_at": "2026-10-05T20:05:00Z", "conclusion": "success", "runner_id": 7}]
+             "completed_at": "2026-10-05T20:05:00Z", "conclusion": "success", "runner_id": 7},
+            # 2026-10-07: failed while it waited, 8 minutes, no runner
+            {"created_at": "2026-10-07T16:51:38Z", "started_at": "2026-10-07T16:51:38Z",
+             "completed_at": "2026-10-07T16:59:33Z", "conclusion": "failure", "runner_id": 0}]
     monkeypatch.setattr(dashboard, "gh_json", lambda path: {"jobs": jobs})
     assert dashboard.measure_run("o/r", 1) == {"m": 15.0, "w": [5.0, 0.0]}
 
