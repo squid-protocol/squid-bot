@@ -20,11 +20,14 @@ def test_summarize_writes_what_the_report_reads(tmp_path):
         {"repo": "o/gg", "run": 4, "job": 41, "start": "2026-10-28T11:00:00Z", "end": "2026-10-28T11:00:01Z", "conclusion": "SUCCESS"},
         {"repo": "o/x", "run": 6, "job": 61, "start": "2026-10-28T11:00:00Z", "end": "2026-10-28T12:00:00Z", "conclusion": "CANCELLED"},
         {"repo": "o/x", "run": 7, "job": 71, "start": "2026-10-28T11:00:00Z", "end": "2026-10-28T11:30:00Z", "conclusion": "CANCELLED"},
+        # a rerun copy of job 11 (same run, name, start and end; new id), and a job that failed while it waited
+        {"repo": "o/gg", "run": 1, "job": 12, "start": "2026-10-28T10:00:00Z", "end": "2026-10-28T12:00:00Z", "conclusion": "SUCCESS"},
+        {"repo": "o/x", "run": 8, "job": 81, "start": "2026-10-28T11:00:00Z", "end": "2026-10-28T11:08:00Z", "conclusion": "FAILURE"},
         {"repo": "o/gg", "run": 5, "job": 51, "start": "2026-10-27T23:30:00Z", "end": "2026-10-28T00:30:00Z", "conclusion": "SUCCESS"},
     ]
     (tmp_path / "windows.jsonl").write_text("".join(json.dumps(x) + "\n" for x in w))
     # job 61 was cancelled while it waited (no step ran), job 71 after running: only 71 held a runner
-    (tmp_path / "cancelled_steps.jsonl").write_text('{"job": 61, "steps": 0}\n{"job": 71, "steps": 3}\n')
+    (tmp_path / "cancelled_steps.jsonl").write_text('{"job": 61, "steps": 0}\n{"job": 71, "steps": 3}\n{"job": 81, "steps": 0}\n')
     (tmp_path / "jobs.jsonl").write_text("".join(json.dumps(x) + "\n" for x in jobs))
     out = tmp_path / "runner_exact.json"
     subprocess.run([sys.executable, str(ROOT / "scripts" / "backfill_exact_runner_time.py"), "--state", str(tmp_path),

@@ -400,8 +400,8 @@ def measure_run(repo: str, run_id: int) -> dict:
     """One run's runner minutes and its jobs' queue waits (one API call)."""
     minutes, waits = 0.0, []
     for j in gh_json(f"repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")["jobs"]:
-        if j.get("conclusion") == "cancelled" and not j.get("runner_id"):
-            continue  # cancelled while it waited: GitHub still gives it a start and an end, but it never held a runner
+        if j.get("conclusion") not in ("success", "skipped") and not j.get("runner_id"):
+            continue  # cancelled or failed while it waited: GitHub still gives it a start and an end, but no runner
         if j.get("started_at") and j.get("completed_at") and j.get("conclusion") != "skipped":
             m = (_iso(j["completed_at"]) - _iso(j["started_at"])).total_seconds() / 60
             if m > 0.05:  # a job that never really ran held no runner
@@ -720,7 +720,7 @@ def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
         m = occ["runner_min"]
     else:
         m = detail.get("runner_min_est")
-    if exact.get("runner_min") is not None:  # measured: over the pool means more runners than `pool`, never capped
+    if exact.get("runner_min") is not None:  # measured, never capped: over the pool would be a counting fault to see
         return m
     return min(m, pool * 1440) if pool and m is not None else m
 
@@ -730,7 +730,8 @@ def org_runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     day (there's no org figure before the sampler started, and the run sample only reads this repo). Job times measure
     every repo, so a measured day has one however old."""
     if (exact := detail.get("exact") or {}).get("org_runner_min") is not None:
-        # measured, so never capped: 2026-10-05..13 ran up to 65 hosted jobs at once on a "20-runner" account
+        # measured, so never capped: with rerun copies and runnerless jobs left out, every day 2026-09-15..10-30 peaks at
+        # exactly 20, so a day over the pool points at the counting, not at a bigger pool
         return exact["org_runner_min"]
     occ = detail.get("occupancy_org") or {}
     if occ.get("runner_min") is None or occ.get("coverage", 0) < OCC_MIN_COVERAGE:
@@ -1050,8 +1051,8 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
         det = r.get("detail", {})
         if over_ceiling(det, pool) and (ex := det.get("exact") or {}).get("org_runner_min") is not None:
             out.append(f"{day}: measured runner time {ex['org_runner_min'] / 60:.0f} h (job times, peak "
-                       f"{ex.get('peak')} jobs at once) is over the pool's {pool * 24} h: more than {pool} runners ran "
-                       "that day, so runner-pool is not that day's limit.")
+                       f"{ex.get('peak')} jobs at once) is over the pool's {pool * 24} h: check runner-pool, or jobs counted "
+                       "that never held a runner (rerun copies, jobs cancelled or failed while waiting).")
         elif over_ceiling(det, pool):
             out.append(f"{day}: runner time {runner_minutes(det) / 60:.0f} h is over the pool's {pool * 24} h "
                        f"({runner_source(det)}): treat it as an estimate fault.")
