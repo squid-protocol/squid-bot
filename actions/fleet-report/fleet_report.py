@@ -720,6 +720,8 @@ def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
         m = occ["runner_min"]
     else:
         m = detail.get("runner_min_est")
+    if exact.get("runner_min") is not None:  # measured: over the pool means more runners than `pool`, never capped
+        return m
     return min(m, pool * 1440) if pool and m is not None else m
 
 
@@ -728,7 +730,8 @@ def org_runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     day (there's no org figure before the sampler started, and the run sample only reads this repo). Job times measure
     every repo, so a measured day has one however old."""
     if (exact := detail.get("exact") or {}).get("org_runner_min") is not None:
-        return min(exact["org_runner_min"], pool * 1440) if pool else exact["org_runner_min"]
+        # measured, so never capped: 2026-10-05..13 ran up to 65 hosted jobs at once on a "20-runner" account
+        return exact["org_runner_min"]
     occ = detail.get("occupancy_org") or {}
     if occ.get("runner_min") is None or occ.get("coverage", 0) < OCC_MIN_COVERAGE:
         return None
@@ -1045,7 +1048,11 @@ def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None,
     out = []
     for day, r in dated:  # an estimate the runners could not have produced is an estimator fault, not a busy day
         det = r.get("detail", {})
-        if over_ceiling(det, pool):
+        if over_ceiling(det, pool) and (ex := det.get("exact") or {}).get("org_runner_min") is not None:
+            out.append(f"{day}: measured runner time {ex['org_runner_min'] / 60:.0f} h (job times, peak "
+                       f"{ex.get('peak')} jobs at once) is over the pool's {pool * 24} h: more than {pool} runners ran "
+                       "that day, so runner-pool is not that day's limit.")
+        elif over_ceiling(det, pool):
             out.append(f"{day}: runner time {runner_minutes(det) / 60:.0f} h is over the pool's {pool * 24} h "
                        f"({runner_source(det)}): treat it as an estimate fault.")
     if max_wait_p90 is not None and cur.get("wait_p90") is not None and cur["wait_p90"] > max_wait_p90:

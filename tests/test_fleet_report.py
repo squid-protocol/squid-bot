@@ -364,7 +364,9 @@ def test_job_times_beat_readings_and_samples_and_cover_every_repo():
     detail = {"exact": ex, "occupancy": {"runner_min": 60, "coverage": 1.0},
               "occupancy_org": {"runner_min": 90, "coverage": 1.0}, "runner_min_est": 30, "est_method": dashboard.EST_METHOD}
     assert dashboard.runner_minutes(detail) == 350 * 60 and dashboard.org_runner_minutes(detail) == 400 * 60
-    assert dashboard.org_runner_minutes(detail, 10) == 10 * 1440  # still never over the pool on the charts
+    # measured, so never capped: on 2026-10-13 65 hosted jobs ran at once on a "20-runner" account
+    assert dashboard.org_runner_minutes(detail, 10) == 400 * 60 and dashboard.runner_minutes(detail, 10) == 350 * 60
+    assert dashboard.over_ceiling(detail, 10)
     assert dashboard.runner_method(detail) == ("hexact", "measured (job times)")
     assert dashboard.runner_source(detail) == "job times (900 jobs, every repo)"
     assert dashboard.exact_detail(exact, "2026-10-12", "owner/none")["runner_min"] == 0  # a repo with no jobs that day
