@@ -242,9 +242,17 @@ def cancelled(a) -> int:
     keys = list(runs)
     for i in range(0, len(keys), a.batch):
         chunk = keys[i:i + a.batch]
-        data = graphql(STEPS, b, ids=[nodes[k] for k in chunk])
+        try:
+            got = list(zip(chunk, graphql(STEPS, b, ids=[nodes[k] for k in chunk])["nodes"]))
+        except RuntimeError:  # GitHub times out (502/504) on a heavy run: one run a query, and skip one that still fails
+            got = []
+            for k in chunk:
+                try:
+                    got += list(zip([k], graphql(STEPS, b, ids=[nodes[k]])["nodes"]))
+                except RuntimeError:
+                    log(f"run {k} unreadable (its jobs stay unchecked, so they are counted)")
         rows = []
-        for k, n in zip(chunk, data["nodes"]):
+        for k, n in got:
             if n and n.get("databaseId") != k[1]:  # a node id built wrong: never take another run's jobs
                 raise RuntimeError(f"node id for run {k} came back as run {n.get('databaseId')}")
             for c in ((n or {}).get("checkSuite") or {}).get("checkRuns", {}).get("nodes", []):
