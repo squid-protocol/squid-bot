@@ -316,7 +316,7 @@ def test_ci_hours_shows_the_whole_org_where_its_readings_cover_the_day():
     ET.fromstring(svg)
     assert "300 runner hours all repos, measured (100% of the day) · repo 100 h" in svg
     assert svg.count('<path class="hmeasured"') == 1  # the thin day stays an estimate, in a lighter grey
-    assert "measured</text>" in svg and "old small sample</text>" in svg  # the legend names each method on the chart
+    assert "measured (readings)</text>" in svg and "old small sample</text>" in svg  # the legend names each method
     assert dashboard.org_runner_minutes(data["days"][covered]["detail"], 4) == 4 * 1440  # capped at the pool
     assert dashboard.org_runner_minutes(data["days"][thin]["detail"]) is None
     for d in data["days"].values():
@@ -352,6 +352,54 @@ def test_each_days_bar_names_how_it_was_measured():
     assert dashboard.runner_method({"occupancy": {"runner_min": 60, "coverage": 0.9}})[0] == "hmeasured"
     assert dashboard.runner_method({"occupancy": {"runner_min": 60, "coverage": 0.5}, "est_method": dashboard.EST_METHOD})[0] == "hsampled"
     assert dashboard.runner_method({"runner_min_est": 60})[0] == "hold"  # thin coverage or an old fixed sample: not measured
+
+
+def test_job_times_beat_readings_and_samples_and_cover_every_repo():
+    """2026-10-31: a day measured from every job's start and end comes first, for this repo and for the whole pool."""
+    exact = {"repo": "owner/repo", "days": {"2026-10-12": {"runner_min": 400 * 60, "jobs": 900, "peak": 20,
+                                                           "by_repo": {"owner/repo": 350 * 60, "owner/other": 50 * 60}}}}
+    ex = dashboard.exact_detail(exact, "2026-10-12", "owner/repo")
+    assert ex["runner_min"] == 350 * 60 and ex["org_runner_min"] == 400 * 60
+    assert dashboard.exact_detail(exact, "2026-10-11", "owner/repo") is None
+    detail = {"exact": ex, "occupancy": {"runner_min": 60, "coverage": 1.0},
+              "occupancy_org": {"runner_min": 90, "coverage": 1.0}, "runner_min_est": 30, "est_method": dashboard.EST_METHOD}
+    assert dashboard.runner_minutes(detail) == 350 * 60 and dashboard.org_runner_minutes(detail) == 400 * 60
+    assert dashboard.org_runner_minutes(detail, 10) == 10 * 1440  # still never over the pool on the charts
+    assert dashboard.runner_method(detail) == ("hexact", "measured (job times)")
+    assert dashboard.runner_source(detail) == "job times (900 jobs, every repo)"
+    assert dashboard.exact_detail(exact, "2026-10-12", "owner/none")["runner_min"] == 0  # a repo with no jobs that day
+
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 100 * 60}
+    day = (TODAY - timedelta(days=4)).isoformat()
+    data["days"][day]["detail"]["exact"] = dashboard.exact_detail({"days": {day: exact["days"]["2026-10-12"]}}, day,
+                                                                  "owner/repo")
+    svg = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    ET.fromstring(svg)
+    assert svg.count('<path class="hexact"') == 1 and "measured (job times)</text>" in svg
+    assert "400 runner hours all repos, measured (job times) · repo 350 h" in svg
+
+
+def test_job_times_correct_the_readings_taken_before_the_fix():
+    """Readings before 2026-10-31 left out jobs running inside queued runs: on a measured day the running count becomes
+    the measured one, kept beside what was read; later readings and unmeasured days stay as they are."""
+    org, repo = [0.0] * 1440, [0.0] * 1440
+    org[600], repo[600] = 19.5, 16.0  # 10:00 UTC
+    exact = {"repo": "o/gg", "minutes": {"2026-10-28": {"org": org, "repo": repo}}}
+    readings = [
+        {"t": "2026-10-28T10:00:41Z", "scope": "org", "running": 14, "queued_runs": 30,
+         "by_repo": {"o/gg": {"running": 13}, "o/x": {"running": 1}}},
+        {"t": "2026-10-28T10:00:00Z", "scope": "repo", "running": 12, "by_repo": {"o/gg": {"running": 12}}},
+        {"t": "2026-10-28T10:00:00Z", "scope": "org", "running": 20, "running_in_queued_runs": 5},  # after the fix
+        {"t": "2026-10-27T10:00:00Z", "scope": "org", "running": 9},  # no job times that day
+    ]
+    fixed = dashboard.correct_readings(readings, exact)
+    assert fixed[0]["running"] == 19.5 and fixed[0]["running_read"] == 14
+    assert fixed[0]["by_repo"]["o/gg"]["running"] == 16.0 and fixed[0]["by_repo"]["o/x"]["running"] == 1
+    assert fixed[1]["running"] == 16.0  # a repo reading takes the repo's share
+    assert fixed[2:] == readings[2:]
+    assert dashboard.correct_readings(readings, {}) == readings
 
 
 def test_busy_while_waiting_reads_only_the_times_work_waited():

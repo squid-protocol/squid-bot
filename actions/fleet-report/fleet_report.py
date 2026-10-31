@@ -55,6 +55,11 @@ OCC_FILE = "occupancy.jsonl"  # one reading per line, appended by --occupancy-sa
 # Readings from before the sampler covered a day, read as well as OCC_FILE and never written here: an orchestrator's own
 # per-tick job counts (owner 2026-10-30; within 0.13 jobs of the sampler on average over 299 paired readings).
 OCC_BACKFILL_FILE = "occupancy_backfill.jsonl"
+# Runner time measured from every job's own start and end (scripts/backfill_exact_runner_time.py, 2026-10-31), read as
+# well and never written here. A day in it is measured, not sampled or read off the pool: it comes first. Its per-minute
+# counts also correct the readings taken before 2026-10-31, which left out jobs running inside runs GitHub still lists
+# as `queued` (14.75 read while 19.25 ran).
+EXACT_FILE = "runner_exact.json"
 WAITING_RUNS = 10  # a queue this long means work is waiting, so a free runner should be in use
 OCC_MAX_GAP_MIN = 45  # readings further apart than this leave the gap uncovered
 OCC_MIN_COVERAGE = 0.75  # a day's occupancy figure is used when its readings cover this share of the day
@@ -618,6 +623,54 @@ def read_occupancy(path: Path) -> list[dict]:
     return out
 
 
+def read_exact(path: Path) -> dict:
+    """runner_exact.json: {"repo", "days": {day: {"runner_min" (every repo), "by_repo", "peak", "min_at_pool", "jobs"}},
+    "minutes": {day: {"org": [1440], "repo": [1440]}}} (running jobs in each UTC minute, the whole pool and "repo")."""
+    try:
+        return json.loads(path.read_text()) if path.exists() else {}
+    except ValueError as e:
+        print(f"::warning title=Fleet CI report::{path.name} unreadable: {e}", file=sys.stderr)
+        return {}
+
+
+def exact_detail(exact: dict, day: str, repo: str) -> dict | None:
+    """The fields a day's detail carries from runner_exact.json: this repo's and every repo's runner minutes."""
+    d = (exact.get("days") or {}).get(day)
+    if not d or d.get("runner_min") is None:
+        return None
+    return {"runner_min": (d.get("by_repo") or {}).get(repo, 0), "org_runner_min": d["runner_min"],
+            "peak": d.get("peak"), "min_at_pool": d.get("min_at_pool"), "jobs": d.get("jobs")}
+
+
+def correct_readings(readings: list[dict], exact: dict) -> list[dict]:
+    """Readings from before 2026-10-31 (no `running_in_queued_runs`) left out jobs running inside runs GitHub still
+    lists as queued. Where job times cover the reading's minute, its running count becomes the measured one (the whole
+    pool for an org reading, `exact["repo"]`'s share for a repo reading); the queue counts stay as read."""
+    minutes, repo = exact.get("minutes") or {}, exact.get("repo")
+    out = []
+    for r in readings:
+        t = str(r.get("t", ""))
+        mins = minutes.get(t[:10]) or {}
+        if "running_in_queued_runs" in r or len(t) < 16 or r.get("running") is None:
+            out.append(r)
+            continue
+        i = int(t[11:13]) * 60 + int(t[14:16])
+        if r.get("scope") == "org":
+            series = mins.get("org")
+        elif set(r.get("by_repo") or {}) <= {repo}:  # a repo reading of the report's repo
+            series = mins.get("repo")
+        else:
+            series = None
+        if not series or i >= len(series):
+            out.append(r)
+            continue
+        fixed = {**r, "running": series[i], "running_read": r["running"]}
+        if repo and repo in (r.get("by_repo") or {}) and mins.get("repo"):
+            fixed["by_repo"] = {**r["by_repo"], repo: {**r["by_repo"][repo], "running": mins["repo"][i]}}
+        out.append(fixed)
+    return out
+
+
 def occupancy_day(readings: list[dict], day: str, now: datetime | None = None, repo: str | None = None) -> dict | None:
     """Runner minutes for one UTC day from occupancy readings: the running-jobs count integrated over time (trapezoid
     between readings at most OCC_MAX_GAP_MIN apart; each reading also holds half a gap on its open sides), the share of
@@ -657,9 +710,11 @@ def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     """The day's best runner-minute figure: time-sampled occupancy when its readings cover enough of the day, else the
     stratified sample's estimate. With `pool`, never more than the pool can run in a day: an estimate above that is a
     sampling overshoot (Oct 24 read 520 h ±85 on a 20-runner pool, 480 h), so the charts use the ceiling; the alert
-    reads the raw figure (no pool) and still flags it."""
+    reads the raw figure (no pool) and still flags it. A day measured from job times beats both."""
     occ = detail.get("occupancy") or {}
-    if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
+    if (exact := detail.get("exact") or {}).get("runner_min") is not None:
+        m = exact["runner_min"]
+    elif occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
         m = occ["runner_min"]
     else:
         m = detail.get("runner_min_est")
@@ -668,7 +723,10 @@ def runner_minutes(detail: dict, pool: int | None = None) -> float | None:
 
 def org_runner_minutes(detail: dict, pool: int | None = None) -> float | None:
     """The whole owner's runner minutes for the day, from org-scope occupancy; None when its readings don't cover the
-    day (there's no org figure before the sampler started, and the run sample only reads this repo)."""
+    day (there's no org figure before the sampler started, and the run sample only reads this repo). Job times measure
+    every repo, so a measured day has one however old."""
+    if (exact := detail.get("exact") or {}).get("org_runner_min") is not None:
+        return min(exact["org_runner_min"], pool * 1440) if pool else exact["org_runner_min"]
     occ = detail.get("occupancy_org") or {}
     if occ.get("runner_min") is None or occ.get("coverage", 0) < OCC_MIN_COVERAGE:
         return None
@@ -687,7 +745,10 @@ def busy_while_waiting(readings: list[dict], day: str, pool: int | None) -> dict
 
 
 def runner_method(detail: dict) -> tuple[str, str]:
-    """(css, words) for how a day's CI hours were found: measured, sampled, or the old fixed sample."""
+    """(css, words) for how a day's CI hours were found: job times, occupancy readings, sampled, or the old fixed
+    sample, darkest first."""
+    if (detail.get("exact") or {}).get("runner_min") is not None:
+        return "hexact", "measured (job times)"
     occ = detail.get("occupancy_org") or detail.get("occupancy") or {}
     if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
         return "hmeasured", f"measured ({occ['coverage']:.0%} of the day)"
@@ -697,6 +758,8 @@ def runner_method(detail: dict) -> tuple[str, str]:
 
 
 def runner_source(detail: dict) -> str:
+    if (exact := detail.get("exact") or {}).get("runner_min") is not None:
+        return f"job times ({exact.get('jobs', '?')} jobs, every repo)"
     occ = detail.get("occupancy") or {}
     if occ.get("runner_min") is not None and occ.get("coverage", 0) >= OCC_MIN_COVERAGE:
         return f"occupancy ({occ['coverage']:.0%} of the day)"
@@ -719,7 +782,7 @@ def judged_runs(row: dict) -> tuple[int, int]:
 def over_ceiling(detail: dict, pool: int | None, minutes_in_day: float = 1440) -> bool:
     """Above what `pool` runners can do in a day: this repo's figure, or the whole owner's when it was measured."""
     m = runner_minutes(detail)
-    org = (detail.get("occupancy_org") or {}).get("runner_min")
+    org = (detail.get("exact") or {}).get("org_runner_min") or (detail.get("occupancy_org") or {}).get("runner_min")
     return bool(pool) and any(x is not None and x > pool * minutes_in_day for x in (m, org))
 
 
@@ -1021,8 +1084,9 @@ STYLE = """
   .mark { stroke: var(--ink2); stroke-width: 1.5; } .markd { fill: var(--muted); }
   .evl { font-size: 10.5px; fill: var(--ink2); }
   .seg { stroke: var(--surface); stroke-width: 1; }
-  .hours { fill: var(--ink2); opacity: 0.55; } .hmeasured { fill: var(--ink2); opacity: 0.95; }
-  .hsampled { fill: var(--ink2); opacity: 0.5; } .hold { fill: var(--ink2); opacity: 0.22; }
+  .hours { fill: var(--ink2); opacity: 0.55; } .hexact { fill: var(--ink2); opacity: 0.95; }
+  .hmeasured { fill: var(--ink2); opacity: 0.72; }
+  .hsampled { fill: var(--ink2); opacity: 0.45; } .hold { fill: var(--ink2); opacity: 0.22; }
   .sect { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; fill: var(--ink2); }
   .ls1 { fill: var(--s1); } .ls2 { fill: var(--s2); } .ls3 { fill: var(--s3); } .ls4 { fill: var(--s4); } .ls5 { fill: var(--s5); }
   .ls6 { fill: var(--s6); } .lunk { fill: var(--neutral); } .unused { fill: var(--unused); } .inkkey { fill: var(--ink); }
@@ -1684,7 +1748,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
               + ("" if any_org else " (est., sampled)"), lambda v: f"{v:g}")
         panel += 1
         methods = [(css, words.split(" (")[0]) for css, words in map(runner_method, details)]
-        keys = (("hmeasured", "measured"), ("hsampled", "sampled estimate"), ("hold", "old small sample"))
+        keys = (("hexact", "measured (job times)"), ("hmeasured", "measured (readings)"), ("hsampled", "sampled estimate"),
+                ("hold", "old small sample"))
         shown_keys = [(label, css) for css, label in keys if any(c == css for c, _ in methods)]
         if len(shown_keys) > 1:
             legend(top - 30, shown_keys)
@@ -1701,7 +1766,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
             raw = runner_minutes(details[i])
             if not org and pool and raw > pool * 1440:
                 tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
-            fade = ' class="partial"' if day == today_s and css != "hmeasured" else ""  # a faded dark bar reads as an estimate
+            fade = ' class="partial"' if day == today_s and css not in ("hmeasured", "hexact") else ""  # a faded dark bar reads as an estimate
             out.append(f'<g{fade}><title>{escape(tip)}</title><path class="{css}" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
             if v > hours_max:
@@ -2478,8 +2543,11 @@ def main(argv: list[str] | None = None) -> int:
         # a run that starts before midnight UTC finishes after it: draw "today" as of the finish (the "updated" stamp),
         # so the day that just ended isn't labelled "today so far"
         today = datetime.now(timezone.utc).date()
-    readings = read_occupancy(occ_file) + read_occupancy(a.out / OCC_BACKFILL_FILE)
+    exact = read_exact(a.out / EXACT_FILE)
+    readings = correct_readings(read_occupancy(occ_file) + read_occupancy(a.out / OCC_BACKFILL_FILE), exact)
     for d, row in data.get("days", {}).items():  # occupancy is attached at render time: no API, always current
+        if "detail" in row and (ex := exact_detail(exact, d, cfg.repo)):
+            row["detail"]["exact"] = ex
         if readings and "detail" in row and (occ := occupancy_day(readings, d, repo=cfg.repo)):
             row["detail"]["occupancy"] = occ  # this repository's runner time
             if any(r.get("scope") == "org" for r in readings) and (pool := occupancy_day(readings, d)):

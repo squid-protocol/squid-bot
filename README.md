@@ -56,7 +56,7 @@ It's made by this repo's **[Fleet CI report action](actions/fleet-report)**. The
 | 6 | Cost per PR | Dollars per merged promoter-bot PR, each day |
 | 7 | Cost per resolved issue | promoter-bot dollars per issue it resolved |
 | | **How close are the limits?** | |
-| 8 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. The bar's grey says how it was found: dark is measured, mid is a sampled estimate, light is the old small sample |
+| 8 | CI hours | Runner hours per day across every repo in the org, against the dotted 480 h line: what the shared 20 runners can do in a day. The bar's grey says how it was found: darkest is measured from every job's start and end, then occupancy readings, a sampled estimate, the old small sample |
 | 9 | Speed | Job queue wait, p90 |
 | 10 | CI load | Runner hours per merged PR |
 | 11 | Efficiency | Run minutes saved by early cancellation vs runs failed |
@@ -73,7 +73,7 @@ A fleet is always held back by something, and it isn't always the same thing. Se
 | 1 | Limit each day | Hours per host under each limit |
 | 2 | Limit each hour | The same limits as a timeline: one row a day, one cell an hour |
 | 3 | Bots allowed vs working | The most bots allowed against the average working, split into new work and fix loops. The gap is unused capacity |
-| 4 | Runners in use while work waits | The median running jobs when 10+ runs are queued, against the runner limit. A line that stays under the limit shows something other than free runners is holding jobs back. Readings before 2026-10-31 read low: see the fleet-report README |
+| 4 | Runners in use while work waits | The median running jobs when 10+ runs are queued, against the runner limit. A line that stays under the limit shows something other than free runners is holding jobs back. Readings before 2026-10-31 read low; days measured from job times are corrected: see the fleet-report README |
 
 From Oct 23 to Oct 29 the fleet used 42% of its allowed bot-hours, so more bots wouldn't have helped: on the host we traced, the limit moved from code generation to CI and tokens, then to running out of startable work. This only sees launches, so a full fleet shows code generation at max even if merges are waiting behind CI.
 

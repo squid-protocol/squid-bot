@@ -232,15 +232,21 @@ def summarize(a) -> int:
         d["minutes"][t.strftime("%H:%M")] = round(tot, 2)
         for r, v in by.items():
             d["by_repo"][r] += v
-    out = {}
+    out, first = {}, min(days_done, default="")
+    jobs_per_day = defaultdict(int)
+    for line in (st / "jobs.jsonl").open():
+        j = json.loads(line)
+        if j.get("start"):
+            jobs_per_day[j["start"][:10]] += 1
     for day in sorted(days):
-        if days_done.get(day) != repos_all:  # a day not fully fetched for every repo is not reported as measured
+        # a day not fully fetched for every repo is not measured, nor the first (runs from the day before spill into it)
+        if days_done.get(day) != repos_all or day == first:
             continue
         d = days[day]
         mins = list(d["minutes"].values())
         det = est.get(day, {})
         out[day] = {
-            "runner_min_exact": round(d["org_min"]),
+            "runner_min": round(d["org_min"]), "jobs": jobs_per_day[day],
             "by_repo": {r: round(v) for r, v in sorted(d["by_repo"].items(), key=lambda x: -x[1])},
             "peak": round(max(mins, default=0), 1),
             "min_at_pool": sum(m >= a.pool - 0.5 for m in mins) if a.pool else None,
@@ -266,9 +272,18 @@ def summarize(a) -> int:
             n = len(diffs)
             print(f"{path}: {n} readings, read {sum(x for x, _ in diffs) / n:.2f} jobs on average, "
                   f"exact {sum(y for _, y in diffs) / n:.2f}")
-    (st / "exact_days.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
-    (st / "per_minute.json").write_text(json.dumps({d: days[d]["minutes"] for d in out}, sort_keys=True) + "\n")
-    print(f"wrote {st / 'exact_days.json'} and per_minute.json", file=sys.stderr)
+    # runner_exact.json, as fleet_report.py reads it (EXACT_FILE): per-minute series only from --minutes-since, the days
+    # whose occupancy readings they correct
+    def series(day: str, repo: str | None) -> list[float]:
+        t0 = iso(f"{day}T00:00:00Z")
+        return [round(sum(by.values()) if repo is None else by.get(repo, 0), 1)
+                for by in (per_min.get(t0 + timedelta(minutes=i), {}) for i in range(1440))]
+    doc = {"repo": a.repo, "pool": a.pool, "method": "job-times-v1",
+           "made": zfmt(datetime.now(timezone.utc)), "days": out,
+           "minutes": {d: {"org": series(d, None), "repo": series(d, a.repo)} for d in out if d >= a.minutes_since}}
+    target = Path(a.write) if a.write else st / "runner_exact.json"
+    target.write_text(json.dumps(doc, separators=(",", ":"), sort_keys=True) + "\n")
+    print(f"wrote {target} ({target.stat().st_size / 1e3:.0f} kB, {len(out)} days)", file=sys.stderr)
     return 0
 
 
@@ -289,6 +304,8 @@ def main() -> int:
     s.add_argument("--repo", default="squid-protocol/gitgalaxy")
     s.add_argument("--metrics")
     s.add_argument("--readings", nargs="*")
+    s.add_argument("--minutes-since", default="2026-10-24", help="keep per-minute counts from this day (readings era)")
+    s.add_argument("--write", help="where to write runner_exact.json (default: in --state)")
     a = p.parse_args()
     return fetch(a) if a.cmd == "fetch" else summarize(a)
 
