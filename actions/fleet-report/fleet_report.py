@@ -555,9 +555,11 @@ def org_repos(owner: str) -> list[str]:
 
 def occupancy_reading(repo: str, scope: str = "org") -> dict:
     """Jobs holding a runner right now, and jobs waiting for one. Owner policy 2026-10-24: the hosted-runner pool is
-    shared by every repository of the owner, so scope "org" counts them all (two calls per repo: its in-progress runs
-    and its queued count; one per in-progress run for its jobs); "repo" counts `repo` only. by_repo keeps each
-    repository's share."""
+    shared by every repository of the owner, so scope "org" counts them all (two calls per repo: its in-progress and
+    its queued runs; one per run for its jobs); "repo" counts `repo` only. by_repo keeps each repository's share.
+    2026-10-31: GitHub keeps a run `queued` while some of its jobs run and others wait for a runner, for minutes. Reading
+    in-progress runs alone saw 14.75 jobs on average while 19.25 ran, so queued runs' jobs are read too. Their running
+    jobs count in `running` and, to tell readings from before this apart, in `running_in_queued_runs`."""
     repos = org_repos(repo.split("/")[0]) if scope == "org" else [repo]
     if repo not in repos:
         repos.append(repo)
@@ -571,25 +573,38 @@ def occupancy_reading(repo: str, scope: str = "org") -> dict:
                 live += got
                 if len(got) < 100:
                     break
-            queued_runs = int(gh_json(f"repos/{name}/actions/runs?status=queued&per_page=1").get("total_count", 0))
+            waiting, queued_runs = [], 0
+            for page in range(1, 4):
+                got = gh_json(f"repos/{name}/actions/runs?status=queued&per_page=100&page={page}")
+                waiting += got["workflow_runs"]
+                queued_runs = max(queued_runs, int(got.get("total_count", 0)))
+                if len(got["workflow_runs"]) < 100:
+                    break
         except RuntimeError:
             unread += 1
             continue
-        running = queued = 0
-        for r in live:
+        running = queued = held = 0
+        in_progress = {r.get("id") for r in live}
+        for r in live + waiting:
             if str(r.get("id")) == os.environ.get("GITHUB_RUN_ID"):  # a reading taken from a workflow: not its own job
                 continue
             try:
                 jobs = gh_json(f"repos/{name}/actions/runs/{r['id']}/jobs?per_page=100&filter=latest")["jobs"]
             except RuntimeError:
                 continue
-            running += sum(j.get("status") == "in_progress" for j in jobs)
+            on_runner = sum(j.get("status") == "in_progress" for j in jobs)
+            running += on_runner
             queued += sum(j.get("status") in ("queued", "waiting", "pending") for j in jobs)
+            if r.get("id") not in in_progress:
+                held += on_runner
         if running or queued or queued_runs:
-            by_repo[name] = {"running": running, "queued": queued, "queued_runs": queued_runs}
+            by_repo[name] = {"running": running, "queued": queued, "queued_runs": queued_runs,
+                             "running_in_queued_runs": held}
     return {"t": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "scope": scope,
             "running": sum(v["running"] for v in by_repo.values()), "queued": sum(v["queued"] for v in by_repo.values()),
-            "queued_runs": sum(v["queued_runs"] for v in by_repo.values()), "repos_read": len(repos) - unread,
+            "queued_runs": sum(v["queued_runs"] for v in by_repo.values()),
+            "running_in_queued_runs": sum(v["running_in_queued_runs"] for v in by_repo.values()),
+            "repos_read": len(repos) - unread,
             **({"repos_unread": unread} if unread else {}), "by_repo": by_repo}
 
 
