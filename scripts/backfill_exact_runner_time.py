@@ -212,6 +212,12 @@ STEPS = """query($ids:[ID!]!) { rateLimit { cost remaining resetAt }
     nodes { databaseId conclusion steps(first:1) { totalCount } } } } } } }"""
 
 
+# A job that succeeded ran on a runner. Any other job may never have got one: cancelled while it waited (2026-10-05:
+# 54 of 60 at the peak minute) or failed while it waited (2026-10-07: 28 "compile" jobs failing for 8 minutes with
+# runner_id 0 and no steps). Their step count decides.
+RAN = {"SUCCESS", "SKIPPED"}
+
+
 def cancelled(a) -> int:
     """A job cancelled while it waited for a runner still gets a start (its creation) and an end (the cancel): on
     2026-10-05 54 of the 60 jobs "running" at the peak minute were such. GitHub's REST job has no runner_id for them;
@@ -225,7 +231,7 @@ def cancelled(a) -> int:
     runs, nodes = defaultdict(set), {}
     for line in (st / "jobs.jsonl").open():
         j = json.loads(line)
-        if j["conclusion"] == "CANCELLED" and j["job"] not in have:
+        if j["conclusion"] not in RAN and j["job"] not in have:
             runs[(j["repo"], j["run"])].add(j["job"])
     log(f"{sum(map(len, runs.values()))} cancelled jobs in {len(runs)} runs to check")
     repo_ids = {}
@@ -236,13 +242,21 @@ def cancelled(a) -> int:
     keys = list(runs)
     for i in range(0, len(keys), a.batch):
         chunk = keys[i:i + a.batch]
-        data = graphql(STEPS, b, ids=[nodes[k] for k in chunk])
+        try:
+            got = list(zip(chunk, graphql(STEPS, b, ids=[nodes[k] for k in chunk])["nodes"]))
+        except RuntimeError:  # GitHub times out (502/504) on a heavy run: one run a query, and skip one that still fails
+            got = []
+            for k in chunk:
+                try:
+                    got += list(zip([k], graphql(STEPS, b, ids=[nodes[k]])["nodes"]))
+                except RuntimeError:
+                    log(f"run {k} unreadable (its jobs stay unchecked, so they are counted)")
         rows = []
-        for k, n in zip(chunk, data["nodes"]):
+        for k, n in got:
             if n and n.get("databaseId") != k[1]:  # a node id built wrong: never take another run's jobs
                 raise RuntimeError(f"node id for run {k} came back as run {n.get('databaseId')}")
             for c in ((n or {}).get("checkSuite") or {}).get("checkRuns", {}).get("nodes", []):
-                if c["conclusion"] == "CANCELLED":
+                if c["conclusion"] not in RAN:
                     rows.append({"job": c["databaseId"], "steps": c["steps"]["totalCount"]})
         with out_f.open("a") as f:
             f.writelines(json.dumps(r) + "\n" for r in rows)
@@ -262,10 +276,13 @@ def summarize(a) -> int:
     unknown = dropped = 0
     for line in (st / "jobs.jsonl").open():
         j = json.loads(line)
-        if j["job"] in seen or not j["start"] or not j["end"] or j["conclusion"] == "SKIPPED":
+        # A re-run of failed jobs carries the run's passed jobs into the new attempt as new check runs with the old start
+        # and end (2026-10-21: one "db2 2/4" three times, to the second): one job per run, name, start and end.
+        once = (j["repo"], j["run"], j.get("name"), j["start"], j["end"])
+        if j["job"] in seen or once in seen or not j["start"] or not j["end"] or j["conclusion"] == "SKIPPED":
             continue
-        seen.add(j["job"])
-        if j["conclusion"] == "CANCELLED":  # cancelled while waiting: it never held a runner (see `cancelled`)
+        seen.update((j["job"], once))
+        if j["conclusion"] not in RAN:  # cancelled or failed while waiting: no step, no runner (see `cancelled`)
             if j["job"] not in steps:
                 unknown += 1
             elif not steps[j["job"]]:
