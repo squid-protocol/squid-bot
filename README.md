@@ -73,7 +73,7 @@ A fleet is always held back by something, and it isn't always the same thing. Se
 | 1 | Limit each day | Hours per host under each limit |
 | 2 | Limit each hour | The same limits as a timeline: one row a day, one cell an hour |
 | 3 | Bots allowed vs working | The most bots allowed against the average working, split into new work and fix loops. The gap is unused capacity |
-| 4 | Runners in use while work waits | The median running jobs when 10+ runs are queued, against the runner limit. A line that stays under the limit shows something other than free runners is holding jobs back |
+| 4 | Runners in use while work waits | The median running jobs when 10+ runs are queued, against the runner limit. A line that stays under the limit shows something other than free runners is holding jobs back. Readings before 2026-10-31 read low: see the fleet-report README |
 
 From Oct 23 to Oct 29 the fleet used 42% of its allowed bot-hours, so more bots wouldn't have helped: on the host we traced, the limit moved from code generation to CI and tokens, then to running out of startable work. This only sees launches, so a full fleet shows code generation at max even if merges are waiting behind CI.
 

@@ -689,7 +689,7 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
     """Owner policy 2026-10-24: the runner pool is the owner's, shared by all its repos, so all of them are counted."""
     runs = {"o/gitgalaxy": [{"id": 1, "status": "in_progress"}, {"id": 2, "status": "queued"}],
             "o/crucible": [{"id": 3, "status": "in_progress"}], "o/quiet": [{"id": 4, "status": "completed"}]}
-    jobs = {1: ["in_progress", "in_progress", "queued"], 3: ["in_progress"]}
+    jobs = {1: ["in_progress", "in_progress", "queued"], 2: ["in_progress", "queued"], 3: ["in_progress"]}
 
     def gh(path):
         if path.startswith("orgs/o/repos"):
@@ -703,18 +703,20 @@ def test_occupancy_reading_counts_every_repo_of_the_owner(monkeypatch):
 
     monkeypatch.setattr(dashboard, "gh_json", gh)
     r = dashboard.occupancy_reading("o/gitgalaxy", "org")
-    assert (r["running"], r["queued"], r["queued_runs"], r["repos_read"]) == (3, 1, 1, 3)
-    assert r["by_repo"] == {"o/gitgalaxy": {"running": 2, "queued": 1, "queued_runs": 1},
-                            "o/crucible": {"running": 1, "queued": 0, "queued_runs": 0}}
+    # 2026-10-31: a `queued` run can already have jobs on runners (run 2); they hold the pool like any other
+    assert (r["running"], r["queued"], r["queued_runs"], r["repos_read"]) == (4, 2, 1, 3)
+    assert r["running_in_queued_runs"] == 1
+    assert r["by_repo"] == {"o/gitgalaxy": {"running": 3, "queued": 2, "queued_runs": 1, "running_in_queued_runs": 1},
+                            "o/crucible": {"running": 1, "queued": 0, "queued_runs": 0, "running_in_queued_runs": 0}}
     only = dashboard.occupancy_reading("o/gitgalaxy", "repo")
-    assert only["running"] == 2 and list(only["by_repo"]) == ["o/gitgalaxy"]
+    assert only["running"] == 3 and list(only["by_repo"]) == ["o/gitgalaxy"]
     monkeypatch.setenv("GITHUB_RUN_ID", "3")  # taken from a workflow run: its own job holds a runner, not the fleet's
-    assert dashboard.occupancy_reading("o/gitgalaxy", "org")["running"] == 2
+    assert dashboard.occupancy_reading("o/gitgalaxy", "org")["running"] == 3
     monkeypatch.delenv("GITHUB_RUN_ID")
     day = "2026-10-23"
     readings = [{**r, "t": f"{day}T{h:02d}:{m:02d}:00Z"} for h in range(24) for m in (0, 15, 30, 45)]
-    assert dashboard.occupancy_day(readings, day)["runner_min"] == 3 * 1440  # the pool's load
-    assert dashboard.occupancy_day(readings, day, repo="o/gitgalaxy")["runner_min"] == 2 * 1440  # this repo's share
+    assert dashboard.occupancy_day(readings, day)["runner_min"] == 4 * 1440  # the pool's load
+    assert dashboard.occupancy_day(readings, day, repo="o/gitgalaxy")["runner_min"] == 3 * 1440  # this repo's share
     assert dashboard.occupancy_day(readings, day, repo="o/none")["runner_min"] == 0
 
 
