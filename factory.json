@@ -3806,7 +3806,7 @@
   },
   "2026-10-29": {
    "churn_merged": 76,
-   "ci_busy_hours": 20.9,
+   "ci_busy_hours": 9.58,
    "first_pass": {
     "first_pass": 61,
     "merged": 76
@@ -4013,8 +4013,8 @@
     "causes": {
      "collateral": 3,
      "conflict": 17,
-     "env": 14,
-     "other": 3,
+     "env": 8,
+     "other": 9,
      "stale": 1
     },
     "fix_runs": 38
@@ -4233,8 +4233,8 @@
     "causes": {
      "collateral": 7,
      "conflict": 10,
-     "env": 27,
-     "other": 1,
+     "env": 18,
+     "other": 10,
      "own_test": 1,
      "stale": 5
     },
@@ -4469,8 +4469,8 @@
     "causes": {
      "collateral": 4,
      "conflict": 12,
-     "env": 16,
-     "other": 3,
+     "env": 9,
+     "other": 10,
      "own_test": 3,
      "stale": 8
     },
@@ -7971,10 +7971,13 @@
       "21": 1175,
       "22": 831,
       "23": 566
-     }
+     },
+     "worker_calls": 0,
+     "worker_top_runs": {},
+     "worker_writes": 0
     },
     "churn_merged": 45,
-    "ci_busy_hours": 20.9,
+    "ci_busy_hours": 8.03,
     "first_pass": {
      "first_pass": 38,
      "merged": 45
@@ -8145,8 +8148,7 @@
      "causes": {
       "collateral": 1,
       "conflict": 11,
-      "env": 6,
-      "other": 1,
+      "other": 7,
       "stale": 1
      },
      "fix_runs": 20
@@ -8391,7 +8393,8 @@
      "causes": {
       "collateral": 5,
       "conflict": 9,
-      "env": 21,
+      "env": 12,
+      "other": 9,
       "own_test": 1,
       "stale": 3
      },
@@ -8644,8 +8647,8 @@
      "causes": {
       "collateral": 3,
       "conflict": 11,
-      "env": 14,
-      "other": 3,
+      "env": 7,
+      "other": 10,
       "own_test": 3,
       "stale": 8
      },
@@ -12879,5 +12882,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-11-01T00:02Z"
+ "updated": "2026-11-01T16:24Z"
 }
