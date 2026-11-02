@@ -4489,227 +4489,216 @@
    }
   },
   "2026-11-01": {
-   "api": {
-    "churn_by_caller": {
-     "ci_occupancy": 2171,
-     "ci_queue": 520,
-     "cmd_pr": 747,
-     "gh_json_etag": 668,
-     "live_pr_job_waits": 745,
-     "pr_files": 604,
-     "red_main_issues": 520,
-     "tend_bot_prs": 880
-    },
-    "churn_calls": 10486,
-    "churn_writes": 714,
-    "churn_writes_busiest_hour": 72,
-    "peak_hour": 2574,
-    "readings": 520,
-    "readings_at_zero": 0,
-    "used_by_hour": {
-     "00": 1140,
-     "01": 1392,
-     "02": 783,
-     "03": 1511,
-     "04": 1173,
-     "05": 1817,
-     "06": 853,
-     "07": 1230,
-     "08": 1130,
-     "09": 1147,
-     "10": 1075,
-     "11": 1137,
-     "12": 390,
-     "13": 537,
-     "14": 2574,
-     "15": 1864,
-     "16": 1797,
-     "17": 1886,
-     "18": 1787,
-     "19": 1248,
-     "20": 1053,
-     "21": 1810,
-     "22": 605,
-     "23": 132
-    },
-    "worker_calls": 778,
-    "worker_top_runs": {
-     "worker:5005-20261101T0929Z": 11,
-     "worker:5119-20261101T1228Z": 15,
-     "worker:5119-20261101T1611Z": 29,
-     "worker:5399-20261101T0614Z": 15,
-     "worker:7429-20261101T1200Z": 11
-    },
-    "worker_writes": 111
-   },
-   "churn_merged": 90,
+   "churn_merged": 97,
    "ci_busy_hours": 14.52,
    "first_pass": {
-    "first_pass": 74,
-    "merged": 90
+    "first_pass": 77,
+    "merged": 97
    },
    "holds": {
-    "pace": 6,
-    "paused": 0,
+    "pace": 81,
+    "paused": 5,
     "prs-need-work": 0
    },
+   "hosts": 2,
    "idle_blockers": {
     "#7386": 1,
     "#7461": 9
    },
    "idle_causes": {
     "blocked": 10,
-    "ci-admission": 132,
-    "off-focus": 2,
-    "owner": 145,
+    "ci-admission": 135,
+    "off-focus": 92,
+    "other": 45,
+    "owner": 235,
     "plan-overlap": 37,
-    "wait": 7
+    "wait": 11
    },
-   "idle_hours": 6.42,
-   "idle_ticks": 145,
+   "idle_hours": 19.77,
+   "idle_ticks": 235,
    "items_done": 12,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "box": 1,
-      "ci": 59
+      "box": 6,
+      "ci": 59,
+      "code-gen": 35,
+      "owner": 14,
+      "tokens": 6
      },
      "01": {
       "box": 4,
       "ci": 39,
-      "code-gen": 17
+      "code-gen": 17,
+      "owner": 12,
+      "tokens": 48
      },
      "02": {
       "box": 27,
       "ci": 29,
-      "code-gen": 4
+      "code-gen": 20,
+      "owner": 3,
+      "tokens": 26,
+      "unknown": 15
      },
      "03": {
       "box": 18,
       "ci": 23,
-      "code-gen": 19
+      "code-gen": 35,
+      "owner": 21,
+      "tokens": 23
      },
      "04": {
       "box": 26,
-      "ci": 34
+      "ci": 34,
+      "code-gen": 19,
+      "owner": 6,
+      "tokens": 35
      },
      "05": {
       "box": 1,
       "ci": 47,
-      "code-gen": 2,
-      "owner": 10
+      "code-gen": 9,
+      "owner": 28,
+      "tokens": 35
      },
      "06": {
       "ci": 36,
       "code-gen": 17,
-      "tokens": 7
+      "owner": 21,
+      "tokens": 7,
+      "unknown": 39
      },
      "07": {
-      "ci": 58,
-      "code-gen": 2
+      "box": 3,
+      "ci": 72,
+      "code-gen": 21,
+      "tokens": 14,
+      "unknown": 10
      },
      "08": {
-      "ci": 60
+      "ci": 67,
+      "code-gen": 9,
+      "owner": 9,
+      "tokens": 35
      },
      "09": {
       "box": 20,
-      "code-gen": 40
+      "ci": 5,
+      "code-gen": 40,
+      "owner": 19,
+      "tokens": 36
      },
      "10": {
-      "code-gen": 60
+      "code-gen": 60,
+      "owner": 24,
+      "tokens": 36
      },
      "11": {
       "ci": 56,
-      "code-gen": 4
+      "code-gen": 4,
+      "owner": 24,
+      "tokens": 36
      },
      "12": {
-      "ci": 60
+      "box": 19,
+      "ci": 60,
+      "owner": 17,
+      "tokens": 24
      },
      "13": {
-      "ci": 60
+      "box": 10,
+      "ci": 60,
+      "owner": 41,
+      "unknown": 9
      },
      "14": {
       "ci": 41,
-      "code-gen": 19
+      "code-gen": 19,
+      "owner": 53,
+      "unknown": 7
      },
      "15": {
       "code-gen": 49,
-      "owner": 6,
+      "owner": 66,
       "unknown": 5
      },
      "16": {
       "box": 1,
       "ci": 27,
       "code-gen": 17,
-      "owner": 15
+      "owner": 75
      },
      "17": {
       "ci": 36,
       "code-gen": 17,
-      "owner": 7
+      "owner": 67
      },
      "18": {
       "ci": 42,
       "code-gen": 3,
-      "owner": 15
+      "owner": 75
      },
      "19": {
       "ci": 20,
       "code-gen": 23,
-      "owner": 17
+      "owner": 77
      },
      "20": {
       "box": 32,
       "ci": 23,
-      "owner": 5
+      "owner": 65
      },
      "21": {
       "box": 50,
-      "code-gen": 10
+      "code-gen": 10,
+      "owner": 60
      },
      "22": {
-      "box": 60
+      "box": 60,
+      "owner": 11,
+      "unknown": 49
      },
      "23": {
       "box": 43,
       "code-gen": 8,
-      "unknown": 9
+      "unknown": 69
      }
     },
     "minutes": {
-     "box": 283,
-     "ci": 750,
-     "code-gen": 311,
-     "owner": 75,
-     "tokens": 7,
-     "unknown": 14
+     "box": 320,
+     "ci": 776,
+     "code-gen": 432,
+     "owner": 788,
+     "tokens": 361,
+     "unknown": 203
     }
    },
-   "loop_runs": 51,
-   "loops_per_merged_pr": 0.57,
-   "max_workers": 3,
-   "new_work_share": 0.777,
-   "paused_hours": 0.0,
-   "pr_open_to_merge_h_median": 0.66,
+   "loop_runs": 54,
+   "loops_per_merged_pr": 0.56,
+   "max_workers": 4,
+   "new_work_share": 0.761,
+   "paused_hours": 0.75,
+   "pr_open_to_merge_h_median": 0.71,
    "precheck": {
     "failed_again": 0,
-    "passed": 132,
+    "passed": 140,
     "sent_back": 2
    },
    "quality": {
     "by_size": {
      "1-2": {
       "fixed": 8,
-      "merged": 64
+      "merged": 65
      },
      "3-4": {
-      "fixed": 4,
-      "merged": 17
+      "fixed": 5,
+      "merged": 18
      },
      "5": {
-      "fixed": 0,
-      "merged": 3
+      "fixed": 3,
+      "merged": 8
      },
      "6+": {
       "fixed": 3,
@@ -4717,26 +4706,26 @@
      }
     },
     "causes": {
-     "collateral": 3,
-     "conflict": 9,
+     "collateral": 4,
+     "conflict": 10,
      "env": 22,
-     "other": 6,
+     "other": 7,
      "own_test": 4,
      "review": 1,
      "stale": 3
     },
-    "fix_runs": 48
+    "fix_runs": 51
    },
-   "review_wait_min_median": 2.0,
+   "review_wait_min_median": 2.14,
    "slices_merged": 35,
-   "slot_use": 0.478,
-   "usd": 145.81,
-   "usd_per_merged_churn_pr": 1.62,
+   "slot_use": 0.384,
+   "usd": 151.78,
+   "usd_per_merged_churn_pr": 1.56,
    "worker_hours": {
-    "new_work": 26.72,
-    "pr_fix": 1.72,
+    "new_work": 28.09,
+    "pr_fix": 1.97,
     "precheck_retry": 1.17,
-    "send_back": 4.8
+    "send_back": 5.67
    }
   }
  },
@@ -13380,9 +13369,248 @@
      "precheck_retry": 0.17,
      "send_back": 0.92
     }
+   },
+   "2026-11-01": {
+    "api": {
+     "churn_by_caller": {
+      "ci_in_progress": 155,
+      "ci_occupancy": 2015,
+      "ci_profile_sample": 270,
+      "ci_queue": 155,
+      "claimed_here": 155,
+      "gh_json_etag": 324,
+      "live_pr_job_waits": 74,
+      "prs_graphql": 99
+     },
+     "churn_calls": 3510,
+     "churn_writes": 84,
+     "churn_writes_busiest_hour": 12,
+     "peak_hour": 2325,
+     "readings": 155,
+     "readings_at_zero": 0,
+     "used_by_hour": {
+      "00": 976,
+      "01": 1295,
+      "02": 700,
+      "03": 1388,
+      "04": 1165,
+      "05": 419,
+      "06": 748,
+      "07": 1110,
+      "08": 944,
+      "09": 1127,
+      "10": 1009,
+      "11": 1024,
+      "12": 373,
+      "13": 509,
+      "14": 2325,
+      "15": 1897,
+      "16": 1672,
+      "17": 1917,
+      "18": 1818,
+      "19": 1212,
+      "20": 1089,
+      "23": 1136
+     },
+     "worker_calls": 38,
+     "worker_top_runs": {
+      "worker:7207-20261031T2351Z": 3,
+      "worker:7207-20261101T0230Z": 3,
+      "worker:7207-20261101T0406Z": 8,
+      "worker:7207-20261101T0430Z": 7,
+      "worker:7207-20261101T0741Z": 7
+     },
+     "worker_writes": 4
+    },
+    "churn_merged": 7,
+    "ci_busy_hours": 7.42,
+    "first_pass": {
+     "first_pass": 3,
+     "merged": 7
+    },
+    "holds": {
+     "pace": 75,
+     "paused": 5,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "ci-admission": 3,
+     "off-focus": 90,
+     "other": 45,
+     "owner": 90,
+     "wait": 4
+    },
+    "idle_hours": 13.35,
+    "idle_ticks": 90,
+    "items_done": 0,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "box": 5,
+       "code-gen": 35,
+       "owner": 14,
+       "tokens": 6
+      },
+      "01": {
+       "owner": 12,
+       "tokens": 48
+      },
+      "02": {
+       "code-gen": 16,
+       "owner": 3,
+       "tokens": 26,
+       "unknown": 15
+      },
+      "03": {
+       "code-gen": 16,
+       "owner": 21,
+       "tokens": 23
+      },
+      "04": {
+       "code-gen": 19,
+       "owner": 6,
+       "tokens": 35
+      },
+      "05": {
+       "code-gen": 7,
+       "owner": 18,
+       "tokens": 35
+      },
+      "06": {
+       "owner": 21,
+       "unknown": 39
+      },
+      "07": {
+       "box": 3,
+       "ci": 14,
+       "code-gen": 19,
+       "tokens": 14,
+       "unknown": 10
+      },
+      "08": {
+       "ci": 7,
+       "code-gen": 9,
+       "owner": 9,
+       "tokens": 35
+      },
+      "09": {
+       "ci": 5,
+       "owner": 19,
+       "tokens": 36
+      },
+      "10": {
+       "owner": 24,
+       "tokens": 36
+      },
+      "11": {
+       "owner": 24,
+       "tokens": 36
+      },
+      "12": {
+       "box": 19,
+       "owner": 17,
+       "tokens": 24
+      },
+      "13": {
+       "box": 10,
+       "owner": 41,
+       "unknown": 9
+      },
+      "14": {
+       "owner": 53,
+       "unknown": 7
+      },
+      "15": {
+       "owner": 60
+      },
+      "16": {
+       "owner": 60
+      },
+      "17": {
+       "owner": 60
+      },
+      "18": {
+       "owner": 60
+      },
+      "19": {
+       "owner": 60
+      },
+      "20": {
+       "owner": 60
+      },
+      "21": {
+       "owner": 60
+      },
+      "22": {
+       "owner": 11,
+       "unknown": 49
+      },
+      "23": {
+       "unknown": 60
+      }
+     },
+     "minutes": {
+      "box": 37,
+      "ci": 26,
+      "code-gen": 121,
+      "owner": 713,
+      "tokens": 354,
+      "unknown": 189
+     }
+    },
+    "loop_runs": 3,
+    "loops_per_merged_pr": 0.43,
+    "max_workers": 1,
+    "new_work_share": 0.55,
+    "paused_hours": 0.75,
+    "pr_open_to_merge_h_median": 1.32,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 8,
+     "sent_back": 0
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 0,
+       "merged": 1
+      },
+      "3-4": {
+       "fixed": 1,
+       "merged": 1
+      },
+      "5": {
+       "fixed": 3,
+       "merged": 5
+      },
+      "6+": {
+       "fixed": 0,
+       "merged": 0
+      }
+     },
+     "causes": {
+      "collateral": 1,
+      "conflict": 1,
+      "other": 1
+     },
+     "fix_runs": 3
+    },
+    "review_wait_min_median": 4.0,
+    "slices_merged": 0,
+    "slot_use": 0.103,
+    "usd": 5.97,
+    "usd_per_merged_churn_pr": 0.85,
+    "worker_hours": {
+     "new_work": 1.37,
+     "pr_fix": 0.25,
+     "precheck_retry": 0.0,
+     "send_back": 0.87
+    }
    }
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-11-02T00:03Z"
+ "updated": "2026-11-02T10:54Z"
 }
