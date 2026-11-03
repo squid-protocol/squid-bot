@@ -54,7 +54,7 @@
 </style>
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="919" height="1365" rx="10"/>
-  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet: what limits the fleet</text><text class="lead" x="24" y="54">Nov 2, the last finished day: the main limit was Box, 8.7 h per host.</text>
+  <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet: what limits the fleet</text><text class="lead" x="24" y="54">Nov 2, the last finished day: the main limit was Code generation at max, 6.4 h per host.</text>
   <g transform="translate(0 -1707)">
   <g><title>Each minute gets the first thing that, if removed, would start another bot. It only sees launches: with every slot full it says code generation, even if merges are stuck behind CI</title><text class="h2" x="24" y="1793">1 · Limit each day — hours per host each limit was the one in force</text></g>
   <line class="base" x1="66" x2="896" y1="2063.0" y2="2063.0"/>
@@ -110,7 +110,7 @@
   <g><title>Oct 30 · 2 host(s) · Code generation at max 6.6 h, CI 11.2 h, Box 1.9 h, Tokens 1.0 h, No ready work 3.0 h, Unknown 0.2 h</title><rect class="ls1 seg" x="787.8" y="1996.8" width="19.8" height="66.2"/><rect class="ls2 seg" x="787.8" y="1884.2" width="19.8" height="112.5"/><rect class="ls3 seg" x="787.8" y="1865.4" width="19.8" height="18.8"/><rect class="ls4 seg" x="787.8" y="1855.8" width="19.8" height="9.7"/><rect class="ls5 seg" x="787.8" y="1825.5" width="19.8" height="30.2"/><rect class="lunk seg" x="787.8" y="1823.0" width="19.8" height="2.5"/></g>
   <g><title>Oct 31 · 2 host(s) · Code generation at max 8.1 h, CI 6.9 h, Box 1.5 h, Tokens 2.3 h, No ready work 1.6 h, Unknown 3.7 h</title><rect class="ls1 seg" x="809.6" y="1982.3" width="19.8" height="80.7"/><rect class="ls2 seg" x="809.6" y="1913.4" width="19.8" height="68.9"/><rect class="ls3 seg" x="809.6" y="1898.5" width="19.8" height="14.9"/><rect class="ls4 seg" x="809.6" y="1875.7" width="19.8" height="22.8"/><rect class="ls5 seg" x="809.6" y="1860.0" width="19.8" height="15.8"/><rect class="lunk seg" x="809.6" y="1823.0" width="19.8" height="37.0"/></g>
   <g><title>Nov 1 · 2 host(s) · Code generation at max 3.6 h, CI 6.5 h, Box 2.7 h, Tokens 3.0 h, No ready work 6.6 h, Unknown 1.7 h</title><rect class="ls1 seg" x="831.5" y="2027.0" width="19.8" height="36.0"/><rect class="ls2 seg" x="831.5" y="1962.3" width="19.8" height="64.7"/><rect class="ls3 seg" x="831.5" y="1935.7" width="19.8" height="26.7"/><rect class="ls4 seg" x="831.5" y="1905.6" width="19.8" height="30.1"/><rect class="ls5 seg" x="831.5" y="1839.9" width="19.8" height="65.7"/><rect class="lunk seg" x="831.5" y="1823.0" width="19.8" height="16.9"/></g>
-  <g><title>Nov 2 · 1 host(s) · Code generation at max 2.0 h, CI 0.7 h, Box 8.7 h, No ready work 0.4 h, Unknown 12.1 h</title><rect class="ls1 seg" x="853.3" y="2042.5" width="19.8" height="20.5"/><rect class="ls2 seg" x="853.3" y="2035.5" width="19.8" height="7.0"/><rect class="ls3 seg" x="853.3" y="1948.5" width="19.8" height="87.0"/><rect class="ls5 seg" x="853.3" y="1944.3" width="19.8" height="4.2"/><rect class="lunk seg" x="853.3" y="1823.0" width="19.8" height="121.3"/></g>
+  <g><title>Nov 2 · 2 host(s) · Code generation at max 6.4 h, CI 0.4 h, Box 4.3 h, Tokens 6.2 h, No ready work 0.5 h, Unknown 6.1 h</title><rect class="ls1 seg" x="853.3" y="1998.8" width="19.8" height="64.2"/><rect class="ls2 seg" x="853.3" y="1994.8" width="19.8" height="4.0"/><rect class="ls3 seg" x="853.3" y="1951.2" width="19.8" height="43.5"/><rect class="ls4 seg" x="853.3" y="1888.8" width="19.8" height="62.4"/><rect class="ls5 seg" x="853.3" y="1883.7" width="19.8" height="5.2"/><rect class="lunk seg" x="853.3" y="1823.0" width="19.8" height="60.7"/></g>
   <text class="h2" x="24" y="2103">2 · Limit each hour — the main limit, by UTC hour</text>
   <text class="tick" x="66.0" y="2127">00:00</text>
   <text class="tick" x="169.8" y="2127">03:00</text>
@@ -696,29 +696,29 @@
   <rect class="ls3" x="826.8" y="2463" width="33.1" height="13.5" rx="2"><title>Nov 1 22:00 UTC: Box</title></rect>
   <rect class="lunk" x="861.4" y="2463" width="33.1" height="13.5" rx="2"><title>Nov 1 23:00 UTC: Unknown</title></rect>
   <text class="tick" x="58" y="2489" text-anchor="end">Nov 2</text>
-  <rect class="lunk" x="66.0" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 00:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="100.6" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 01:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="135.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 02:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="169.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 03:00 UTC: Unknown</title></rect>
+  <rect class="ls1" x="66.0" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 00:00 UTC: Code generation at max</title></rect>
+  <rect class="ls1" x="100.6" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 01:00 UTC: Code generation at max</title></rect>
+  <rect class="ls1" x="135.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 02:00 UTC: Code generation at max</title></rect>
+  <rect class="ls1" x="169.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 03:00 UTC: Code generation at max</title></rect>
   <rect class="lunk" x="204.3" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 04:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="238.9" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 05:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="273.5" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 06:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="308.1" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 07:00 UTC: Unknown</title></rect>
+  <rect class="ls1" x="238.9" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 05:00 UTC: Code generation at max</title></rect>
+  <rect class="ls1" x="273.5" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 06:00 UTC: Code generation at max</title></rect>
+  <rect class="ls1" x="308.1" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 07:00 UTC: Code generation at max</title></rect>
   <rect class="lunk" x="342.7" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 08:00 UTC: Unknown</title></rect>
-  <rect class="lunk" x="377.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 09:00 UTC: Unknown</title></rect>
+  <rect class="ls1" x="377.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 09:00 UTC: Code generation at max</title></rect>
   <rect class="lunk" x="411.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 10:00 UTC: Unknown</title></rect>
   <rect class="ls3" x="446.4" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 11:00 UTC: Box</title></rect>
-  <rect class="ls3" x="481.0" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 12:00 UTC: Box</title></rect>
-  <rect class="ls2" x="515.6" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 13:00 UTC: CI</title></rect>
+  <rect class="ls4" x="481.0" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 12:00 UTC: Tokens</title></rect>
+  <rect class="ls4" x="515.6" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 13:00 UTC: Tokens</title></rect>
   <rect class="ls3" x="550.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 14:00 UTC: Box</title></rect>
   <rect class="ls3" x="584.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 15:00 UTC: Box</title></rect>
-  <rect class="ls3" x="619.3" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 16:00 UTC: Box</title></rect>
-  <rect class="ls3" x="653.9" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 17:00 UTC: Box</title></rect>
+  <rect class="ls4" x="619.3" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 16:00 UTC: Tokens</title></rect>
+  <rect class="ls4" x="653.9" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 17:00 UTC: Tokens</title></rect>
   <rect class="ls3" x="688.5" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 18:00 UTC: Box</title></rect>
-  <rect class="ls3" x="723.1" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 19:00 UTC: Box</title></rect>
+  <rect class="ls4" x="723.1" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 19:00 UTC: Tokens</title></rect>
   <rect class="ls1" x="757.7" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 20:00 UTC: Code generation at max</title></rect>
-  <rect class="ls1" x="792.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 21:00 UTC: Code generation at max</title></rect>
-  <rect class="ls3" x="826.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 22:00 UTC: Box</title></rect>
+  <rect class="ls4" x="792.2" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 21:00 UTC: Tokens</title></rect>
+  <rect class="ls4" x="826.8" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 22:00 UTC: Tokens</title></rect>
   <rect class="ls3" x="861.4" y="2478" width="33.1" height="13.5" rx="2"><title>Nov 2 23:00 UTC: Box</title></rect>
   <g><title>The agy lane isn't counted in bots working. Bots allowed is one reading per day</title><text class="h2" x="24" y="2519">3 · Bots allowed vs working — average working each day, all hosts</text></g>
   <line class="base" x1="66" x2="896" y1="2759.0" y2="2759.0"/>
@@ -768,8 +768,8 @@
   <g><title>Oct 30 · up to 4 bots · 1.5 working on average (37% of slots) · 60 bot-hours unused · idle with nothing launchable 16.9 host-hours · paused 1.7 host-hours</title><rect class="unused" x="787.8" y="2619.0" width="19.8" height="88.2"/><rect class="ls2 seg" x="787.8" y="2707.2" width="19.8" height="12.4"/><rect class="ls1 seg" x="787.8" y="2719.7" width="19.8" height="39.3"/></g>
   <g><title>Oct 31 · up to 4 bots · 2.4 working on average (60% of slots) · 38 bot-hours unused · idle with nothing launchable 9.8 host-hours · paused 1.3 host-hours</title><rect class="unused" x="809.6" y="2619.0" width="19.8" height="55.8"/><rect class="ls2 seg" x="809.6" y="2674.8" width="19.8" height="21.2"/><rect class="ls1 seg" x="809.6" y="2696.0" width="19.8" height="63.0"/></g>
   <g><title>Nov 1 · up to 4 bots · 1.5 working on average (38% of slots) · 59 bot-hours unused · idle with nothing launchable 19.8 host-hours · paused 0.8 host-hours</title><rect class="unused" x="831.5" y="2619.0" width="19.8" height="86.2"/><rect class="ls2 seg" x="831.5" y="2705.2" width="19.8" height="12.8"/><rect class="ls1 seg" x="831.5" y="2718.0" width="19.8" height="41.0"/></g>
-  <g><title>Nov 2 · up to 2 bots · 0.6 working on average (29% of slots) · 34 bot-hours unused · idle with nothing launchable 1.2 host-hours · paused 0.0 host-hours</title><rect class="unused" x="853.3" y="2689.0" width="19.8" height="49.8"/><rect class="ls2 seg" x="853.3" y="2738.8" width="19.8" height="0.2"/><rect class="ls1 seg" x="853.3" y="2739.0" width="19.8" height="20.0"/></g>
-  <polyline class="maxline" points="349.9,2619.0 371.8,2619.0 371.8,2619.0 393.6,2619.0 393.6,2619.0 415.5,2619.0 415.5,2619.0 437.3,2619.0 437.3,2619.0 459.2,2619.0 459.2,2619.0 481.0,2619.0 481.0,2619.0 502.8,2619.0 502.8,2619.0 524.7,2619.0 524.7,2654.0 546.5,2654.0 546.5,2619.0 568.4,2619.0 568.4,2619.0 590.2,2619.0 590.2,2619.0 612.1,2619.0 612.1,2584.0 633.9,2584.0 633.9,2584.0 655.7,2584.0 655.7,2584.0 677.6,2584.0 677.6,2654.0 699.4,2654.0 699.4,2619.0 721.3,2619.0 721.3,2549.0 743.1,2549.0 743.1,2549.0 764.9,2549.0 764.9,2619.0 786.8,2619.0 786.8,2619.0 808.6,2619.0 808.6,2619.0 830.5,2619.0 830.5,2619.0 852.3,2619.0 852.3,2689.0 874.2,2689.0"/>
+  <g><title>Nov 2 · up to 3 bots · 1.3 working on average (42% of slots) · 42 bot-hours unused · idle with nothing launchable 1.8 host-hours · paused 12.5 host-hours</title><rect class="unused" x="853.3" y="2654.0" width="19.8" height="61.0"/><rect class="ls2 seg" x="853.3" y="2715.0" width="19.8" height="5.4"/><rect class="ls1 seg" x="853.3" y="2720.4" width="19.8" height="38.6"/></g>
+  <polyline class="maxline" points="349.9,2619.0 371.8,2619.0 371.8,2619.0 393.6,2619.0 393.6,2619.0 415.5,2619.0 415.5,2619.0 437.3,2619.0 437.3,2619.0 459.2,2619.0 459.2,2619.0 481.0,2619.0 481.0,2619.0 502.8,2619.0 502.8,2619.0 524.7,2619.0 524.7,2654.0 546.5,2654.0 546.5,2619.0 568.4,2619.0 568.4,2619.0 590.2,2619.0 590.2,2619.0 612.1,2619.0 612.1,2584.0 633.9,2584.0 633.9,2584.0 655.7,2584.0 655.7,2584.0 677.6,2584.0 677.6,2654.0 699.4,2654.0 699.4,2619.0 721.3,2619.0 721.3,2549.0 743.1,2549.0 743.1,2549.0 764.9,2549.0 764.9,2619.0 786.8,2619.0 786.8,2619.0 808.6,2619.0 808.6,2619.0 830.5,2619.0 830.5,2619.0 852.3,2619.0 852.3,2654.0 874.2,2654.0"/>
   <g><title>A long queue should fill the pool. A line that stays under the limit however long the queue gets means something other than free runners is holding jobs back</title><text class="h2" x="24" y="2799">4 · Runners in use while work waits — median, when 10+ runs are queued</text></g>
   <line class="base" x1="66" x2="896" y1="2999.0" y2="2999.0"/>
   <text class="tick" x="58" y="3002.5" text-anchor="end">0</text>
@@ -801,6 +801,7 @@
   <g><title>Oct 31 · median 20 running, peak 23 · at the limit 59% of the time · 56 readings</title><path class="ls1" d="M809.6,2999.0 V2867.0 Q809.6,2863.0 813.6,2863.0 H825.5 Q829.5,2863.0 829.5,2867.0 V2999.0 Z"/></g>
   <g><title>Nov 1 · median 20.5 running, peak 24 · at the limit 88% of the time · 82 readings</title><path class="ls1" d="M831.5,2999.0 V2863.6 Q831.5,2859.6 835.5,2859.6 H847.3 Q851.3,2859.6 851.3,2863.6 V2999.0 Z"/></g>
   <g><title>Nov 2 · median 20 running, peak 24 · at the limit 73% of the time · 26 readings</title><path class="ls1" d="M853.3,2999.0 V2867.0 Q853.3,2863.0 857.3,2863.0 H869.2 Q873.2,2863.0 873.2,2867.0 V2999.0 Z"/></g>
+  <g class="partial"><title>Nov 3 · median 20 running, peak 24 · at the limit 90% of the time · 38 readings</title><path class="ls1" d="M875.2,2999.0 V2867.0 Q875.2,2863.0 879.2,2863.0 H891.0 Q895.0,2863.0 895.0,2867.0 V2999.0 Z"/></g>
   <line class="avg" x1="66" x2="896" y1="2863.0" y2="2863.0"/><text class="avgl" x="896" y="2858.0" text-anchor="end">runner limit 20</text>
   </g>
   <text class="meta" x="24" y="1332">Limits: each minute gets the first thing that, if removed, would start another bot. Launches only: a full fleet shows code generation at max, whatever waits downstream.</text><text class="meta" x="24" y="1347">Days are UTC; faded marks are today so far. The agy lane isn't counted in bots working; bots allowed is one reading a day.</text>
