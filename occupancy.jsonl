@@ -825,6 +825,10 @@
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 2, "queued_runs": 2, "running": 20, "running_in_queued_runs": 5}}, "queued": 2, "queued_runs": 2, "repos_read": 21, "running": 20, "running_in_queued_runs": 5, "scope": "org", "t": "2026-11-03T00:00:36Z"}
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 0, "running": 10, "running_in_queued_runs": 0}}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 10, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:15:52Z"}
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 1, "queued_runs": 1, "running": 10, "running_in_queued_runs": 0}}, "queued": 1, "queued_runs": 1, "repos_read": 21, "running": 10, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:15:55Z"}
+{"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 0, "running": 5, "running_in_queued_runs": 0}}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 5, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:30:45Z"}
 {"by_repo": {"squid-protocol/gitgalaxy": {"queued": 0, "queued_runs": 0, "running": 4, "running_in_queued_runs": 0}}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 4, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:30:53Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:45:35Z"}
 {"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T00:46:01Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T01:00:27Z"}
 {"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T01:00:33Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 21, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-03T01:15:44Z"}
