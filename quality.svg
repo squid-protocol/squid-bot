@@ -68,21 +68,21 @@
   <text class="lead" x="24" y="77">All hosts, rolling 7 days, a new point every day.</text>
   <rect class="tile" x="24.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="36.0" y="126">FIRST PASS</text>
-  <text class="v" x="36.0" y="154">73%</text>
-  <text class="sub" x="36.0" y="172">448 of 615 merged · +14 pts</text>
+  <text class="v" x="36.0" y="154">74%</text>
+  <text class="sub" x="36.0" y="172">430 of 582 merged · +14 pts</text>
   <rect class="tile" x="245.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="257.0" y="126">FIX RATE, 1-4 FILES</text>
-  <text class="v" x="257.0" y="154">16%</text>
-  <text class="sub" x="257.0" y="172">80 of 508 PRs · -7 pts</text>
+  <text class="v" x="257.0" y="154">15%</text>
+  <text class="sub" x="257.0" y="172">73 of 484 PRs · -8 pts</text>
   <rect class="tile" x="466.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="478.0" y="126">FIX RATE, 5+ FILES</text>
-  <text class="v" x="478.0" y="154">32%</text>
-  <text class="sub" x="478.0" y="172">34 of 107 PRs · -21 pts</text>
+  <text class="v" x="478.0" y="154">34%</text>
+  <text class="sub" x="478.0" y="172">33 of 98 PRs · -16 pts</text>
   <rect class="tile" x="687.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="699.0" y="126">TOP CAUSE</text>
   <text class="v" x="699.0" y="154">env</text>
-  <text class="sub" x="699.0" y="172">80 of 252 fix runs</text>
-  <text class="meta" x="896" y="97" text-anchor="end">7 days Oct 26 – Nov 1</text>
+  <text class="sub" x="699.0" y="172">76 of 243 fix runs</text>
+  <text class="meta" x="896" y="97" text-anchor="end">7 days Oct 27 – Nov 2</text>
   <text class="h2" x="24" y="209">Fix rate by PR size: share of merged PRs that needed a review send-back or CI fix run</text>
   <line class="base" x1="68" x2="716" y1="397.0" y2="397.0"/>
   <text class="tick" x="60" y="401.5" text-anchor="end">0%</text>
@@ -94,25 +94,26 @@
   <text class="tick" x="60" y="274.0" text-anchor="end">60%</text>
   <line class="grid" x1="68" x2="716" y1="227.0" y2="227.0"/>
   <text class="tick" x="60" y="231.5" text-anchor="end">80%</text>
-  <text class="tick" x="132.8" y="416" text-anchor="middle">Oct 14</text>
-  <text class="tick" x="230.0" y="416" text-anchor="middle">Oct 17</text>
-  <text class="tick" x="327.2" y="416" text-anchor="middle">Oct 20</text>
-  <text class="tick" x="424.4" y="416" text-anchor="middle">Oct 23</text>
-  <text class="tick" x="521.6" y="416" text-anchor="middle">Oct 26</text>
-  <text class="tick" x="618.8" y="416" text-anchor="middle">Oct 29</text>
-  <text class="tick" x="716.0" y="416" text-anchor="middle">Nov 1</text>
-  <polyline class="line qs1" points="100.4,397.0 132.8,338.0 165.2,341.6 197.6,357.9 230.0,361.6 262.4,359.8 294.8,358.4 327.2,358.1 359.6,356.4 392.0,358.0 424.4,357.1 456.8,353.7 489.2,352.1 521.6,351.6 554.0,351.6 586.4,355.6 618.8,356.1 651.2,356.2 683.6,364.8 716.0,369.5"><title>1-2 files, last 7 days: 43 of 332 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs3" points="100.4,264.2 132.8,269.5 165.2,268.0 197.6,278.2 230.0,284.7 262.4,300.8 294.8,307.2 327.2,316.2 359.6,320.8 392.0,325.5 424.4,335.5 456.8,334.4 489.2,340.4 521.6,343.5 554.0,345.5 586.4,347.2 618.8,350.4 651.2,347.4 683.6,356.9 716.0,352.3"><title>3-4 files, last 7 days: 37 of 176 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs2" points="197.6,366.6 230.0,277.5 262.4,290.8 294.8,276.3 327.2,277.2 359.6,278.6 392.0,283.9 424.4,283.8 456.8,298.8 489.2,299.2 521.6,309.6 554.0,316.7 586.4,318.6 618.8,318.7 651.2,319.2 683.6,327.2 716.0,328.3"><title>5 files, last 7 days: 21 of 65 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs4" points="68.0,302.6 100.4,318.7 132.8,306.7 165.2,278.9 197.6,273.0 230.0,274.0 262.4,277.3 294.8,278.0 327.2,274.9 359.6,264.2 392.0,273.6 424.4,276.1 456.8,275.6 489.2,263.8 521.6,268.9 554.0,264.2 586.4,279.3 618.8,287.4 651.2,304.3 683.6,312.9 716.0,331.2"><title>6+ files, last 7 days: 13 of 42 merged PRs needed a fix</title></polyline>
-  <rect class="qs2k" x="726" y="326.3" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="333.3">5 files 32%</text>
-  <rect class="qs4k" x="726" y="344.3" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="351.3">6+ files 31%</text>
-  <rect class="qs3k" x="726" y="362.3" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="369.3">3-4 files 21%</text>
-  <rect class="qs1k" x="726" y="380.3" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="387.3">1-2 files 13%</text>
+  <text class="tick" x="68.0" y="416" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="160.6" y="416" text-anchor="middle">Oct 15</text>
+  <text class="tick" x="253.1" y="416" text-anchor="middle">Oct 18</text>
+  <text class="tick" x="345.7" y="416" text-anchor="middle">Oct 21</text>
+  <text class="tick" x="438.3" y="416" text-anchor="middle">Oct 24</text>
+  <text class="tick" x="530.9" y="416" text-anchor="middle">Oct 27</text>
+  <text class="tick" x="623.4" y="416" text-anchor="middle">Oct 30</text>
+  <text class="tick" x="716.0" y="416" text-anchor="middle">Nov 2</text>
+  <polyline class="line qs1" points="98.9,397.0 129.7,338.0 160.6,341.6 191.4,357.9 222.3,361.6 253.1,359.8 284.0,358.4 314.9,358.1 345.7,356.4 376.6,358.0 407.4,357.1 438.3,353.7 469.1,352.1 500.0,351.6 530.9,351.6 561.7,355.6 592.6,356.1 623.4,356.2 654.3,364.8 685.1,369.5 716.0,371.2"><title>1-2 files, last 7 days: 38 of 313 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs3" points="98.9,264.2 129.7,269.5 160.6,268.0 191.4,278.2 222.3,284.7 253.1,300.8 284.0,307.2 314.9,316.2 345.7,320.8 376.6,325.5 407.4,335.5 438.3,334.4 469.1,340.4 500.0,343.5 530.9,345.5 561.7,347.2 592.6,350.4 623.4,347.4 654.3,356.9 685.1,352.3 716.0,353.5"><title>3-4 files, last 7 days: 35 of 171 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs2" points="191.4,366.6 222.3,277.5 253.1,290.8 284.0,276.3 314.9,277.2 345.7,278.6 376.6,283.9 407.4,283.8 438.3,298.8 469.1,299.2 500.0,309.6 530.9,316.7 561.7,318.6 592.6,318.7 623.4,319.2 654.3,327.2 685.1,328.3 716.0,326.2"><title>5 files, last 7 days: 21 of 63 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs4" points="68.0,302.6 98.9,318.7 129.7,306.7 160.6,278.9 191.4,273.0 222.3,274.0 253.1,277.3 284.0,278.0 314.9,274.9 345.7,264.2 376.6,273.6 407.4,276.1 438.3,275.6 469.1,263.8 500.0,268.9 530.9,264.2 561.7,279.3 592.6,287.4 623.4,304.3 654.3,312.9 685.1,331.2 716.0,324.1"><title>6+ files, last 7 days: 12 of 35 merged PRs needed a fix</title></polyline>
+  <rect class="qs4k" x="726" y="322.1" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="329.1">6+ files 34%</text>
+  <rect class="qs2k" x="726" y="340.1" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="347.1">5 files 33%</text>
+  <rect class="qs3k" x="726" y="358.1" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="365.1">3-4 files 20%</text>
+  <rect class="qs1k" x="726" y="376.1" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="383.1">1-2 files 12%</text>
   <text class="h2" x="24" y="445">What broke: fix runs per 100 merged PRs, by cause</text>
   <line class="base" x1="68" x2="716" y1="633.0" y2="633.0"/>
   <text class="tick" x="60" y="637.5" text-anchor="end">0</text>
@@ -124,28 +125,29 @@
   <text class="tick" x="60" y="510.0" text-anchor="end">30</text>
   <line class="grid" x1="68" x2="716" y1="463.0" y2="463.0"/>
   <text class="tick" x="60" y="467.5" text-anchor="end">40</text>
-  <text class="tick" x="132.8" y="652" text-anchor="middle">Oct 14</text>
-  <text class="tick" x="230.0" y="652" text-anchor="middle">Oct 17</text>
-  <text class="tick" x="327.2" y="652" text-anchor="middle">Oct 20</text>
-  <text class="tick" x="424.4" y="652" text-anchor="middle">Oct 23</text>
-  <text class="tick" x="521.6" y="652" text-anchor="middle">Oct 26</text>
-  <text class="tick" x="618.8" y="652" text-anchor="middle">Oct 29</text>
-  <text class="tick" x="716.0" y="652" text-anchor="middle">Nov 1</text>
-  <polyline class="line qs1" points="68.0,558.0 100.4,575.6 132.8,596.3 165.2,586.2 197.6,583.5 230.0,578.6 262.4,579.7 294.8,581.7 327.2,584.2 359.6,575.9 392.0,574.0 424.4,578.7 456.8,582.6 489.2,581.9 521.6,583.1 554.0,581.6 586.4,588.4 618.8,596.1 651.2,599.0 683.6,602.6 716.0,610.2"><title>derived file not refreshed, last 7 days: 33 fix runs per 615 merged PRs</title></polyline>
-  <polyline class="line qs3" points="68.0,583.0 100.4,587.1 132.8,591.0 165.2,593.4 197.6,599.1 230.0,596.1 262.4,600.6 294.8,602.6 327.2,603.7 359.6,601.5 392.0,603.2 424.4,603.2 456.8,591.0 489.2,587.7 521.6,587.8 554.0,587.0 586.4,585.9 618.8,577.9 651.2,573.1 683.6,585.7 716.0,586.7"><title>conflict with main, last 7 days: 67 fix runs per 615 merged PRs</title></polyline>
-  <polyline class="line qs2" points="68.0,533.0 100.4,587.1 132.8,580.5 165.2,561.0 197.6,562.6 230.0,573.3 262.4,580.9 294.8,589.3 327.2,594.0 359.6,597.2 392.0,604.5 424.4,603.8 456.8,603.4 489.2,605.2 521.6,605.7 554.0,605.6 586.4,607.5 618.8,607.5 651.2,611.1 683.6,616.8 716.0,617.8"><title>broke other tests, last 7 days: 22 fix runs per 615 merged PRs</title></polyline>
-  <polyline class="line qs4" points="68.0,633.0 100.4,621.5 132.8,559.5 165.2,499.7 197.6,533.9 230.0,550.5 262.4,570.5 294.8,569.3 327.2,567.2 359.6,560.6 392.0,579.7 424.4,586.5 456.8,594.6 489.2,592.2 521.6,594.4 554.0,597.8 586.4,606.0 618.8,604.4 651.2,594.4 683.6,586.4 716.0,577.7"><title>main red / flake / infra, last 7 days: 80 fix runs per 615 merged PRs</title></polyline>
-  <polyline class="line qn" points="68.0,508.0 100.4,541.1 132.8,538.6 165.2,535.8 197.6,541.7 230.0,562.8 262.4,579.7 294.8,585.5 327.2,593.2 359.6,603.7 392.0,611.4 424.4,616.8 456.8,619.7 489.2,621.3 521.6,624.5 554.0,624.7 586.4,623.7 618.8,620.0 651.2,615.1 683.6,606.0 716.0,598.4"><title>own tests, review, other, last 7 days: 50 fix runs per 615 merged PRs</title></polyline>
-  <rect class="qs4k" x="726" y="575.7" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="582.7">env 13</text>
-  <rect class="qs3k" x="726" y="593.7" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="600.7">conflict 11</text>
-  <rect class="qnk" x="726" y="611.7" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="618.7">other 8</text>
-  <rect class="qs1k" x="726" y="629.7" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="636.7">stale 5</text>
-  <rect class="qs2k" x="726" y="647.7" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="654.7">collateral 4</text>
+  <text class="tick" x="68.0" y="652" text-anchor="middle">Oct 12</text>
+  <text class="tick" x="160.6" y="652" text-anchor="middle">Oct 15</text>
+  <text class="tick" x="253.1" y="652" text-anchor="middle">Oct 18</text>
+  <text class="tick" x="345.7" y="652" text-anchor="middle">Oct 21</text>
+  <text class="tick" x="438.3" y="652" text-anchor="middle">Oct 24</text>
+  <text class="tick" x="530.9" y="652" text-anchor="middle">Oct 27</text>
+  <text class="tick" x="623.4" y="652" text-anchor="middle">Oct 30</text>
+  <text class="tick" x="716.0" y="652" text-anchor="middle">Nov 2</text>
+  <polyline class="line qs1" points="68.0,558.0 98.9,575.6 129.7,596.3 160.6,586.2 191.4,583.5 222.3,578.6 253.1,579.7 284.0,581.7 314.9,584.2 345.7,575.9 376.6,574.0 407.4,578.7 438.3,582.6 469.1,581.9 500.0,583.1 530.9,581.6 561.7,588.4 592.6,596.1 623.4,599.0 654.3,602.6 685.1,610.2 716.0,611.1"><title>derived file not refreshed, last 7 days: 30 fix runs per 582 merged PRs</title></polyline>
+  <polyline class="line qs3" points="68.0,583.0 98.9,587.1 129.7,591.0 160.6,593.4 191.4,599.1 222.3,596.1 253.1,600.6 284.0,602.6 314.9,603.7 345.7,601.5 376.6,603.2 407.4,603.2 438.3,591.0 469.1,587.7 500.0,587.8 530.9,587.0 561.7,585.9 592.6,577.9 623.4,573.1 654.3,585.7 685.1,586.7 716.0,584.8"><title>conflict with main, last 7 days: 66 fix runs per 582 merged PRs</title></polyline>
+  <polyline class="line qs2" points="68.0,533.0 98.9,587.1 129.7,580.5 160.6,561.0 191.4,562.6 222.3,573.3 253.1,580.9 284.0,589.3 314.9,594.0 345.7,597.2 376.6,604.5 407.4,603.8 438.3,603.4 469.1,605.2 500.0,605.7 530.9,605.6 561.7,607.5 592.6,607.5 623.4,611.1 654.3,616.8 685.1,617.8 716.0,616.9"><title>broke other tests, last 7 days: 22 fix runs per 582 merged PRs</title></polyline>
+  <polyline class="line qs4" points="68.0,633.0 98.9,621.5 129.7,559.5 160.6,499.7 191.4,533.9 222.3,550.5 253.1,570.5 284.0,569.3 314.9,567.2 345.7,560.6 376.6,579.7 407.4,586.5 438.3,594.6 469.1,592.2 500.0,594.4 530.9,597.8 561.7,606.0 592.6,604.4 623.4,594.4 654.3,586.4 685.1,577.7 716.0,577.5"><title>main red / flake / infra, last 7 days: 76 fix runs per 582 merged PRs</title></polyline>
+  <polyline class="line qn" points="68.0,508.0 98.9,541.1 129.7,538.6 160.6,535.8 191.4,541.7 222.3,562.8 253.1,579.7 284.0,585.5 314.9,593.2 345.7,603.7 376.6,611.4 407.4,616.8 438.3,619.7 469.1,621.3 500.0,624.5 530.9,624.7 561.7,623.7 592.6,620.0 623.4,615.1 654.3,606.0 685.1,598.4 716.0,597.2"><title>own tests, review, other, last 7 days: 49 fix runs per 582 merged PRs</title></polyline>
+  <rect class="qs4k" x="726" y="575.5" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="582.5">env 13</text>
+  <rect class="qs3k" x="726" y="593.5" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="600.5">conflict 11</text>
+  <rect class="qnk" x="726" y="611.5" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="618.5">other 8</text>
+  <rect class="qs1k" x="726" y="629.5" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="636.5">stale 5</text>
+  <rect class="qs2k" x="726" y="647.5" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="654.5">collateral 4</text>
   <text class="meta" x="24" y="675">Each day is the 7 days ending on it (fewer at the start); a size line is drawn where that window has 5 merged PRs or more.</text>
   <text class="meta" x="24" y="693">Tiles: the last 7 days, change on the 7 before. Causes are labelled by a model from each fix run&apos;s report.</text>
   <text class="meta" x="24" y="711">Data: factory.json "quality", summed over every orchestrator host.</text>
