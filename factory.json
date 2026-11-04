@@ -4931,217 +4931,213 @@
    }
   },
   "2026-11-03": {
-   "api": {
-    "churn_by_caller": {
-     "ci_in_progress": 97,
-     "ci_occupancy": 776,
-     "ci_profile_sample": 166,
-     "ci_queue": 97,
-     "claimed_here": 97,
-     "gh_json_etag": 189,
-     "live_pr_job_waits": 58,
-     "prs_graphql": 72
-    },
-    "churn_calls": 1839,
-    "churn_writes": 87,
-    "churn_writes_busiest_hour": 16,
-    "peak_hour": 1314,
-    "readings": 96,
-    "readings_at_zero": 0,
-    "used_by_hour": {
-     "00": 309,
-     "01": 519,
-     "02": 2,
-     "11": 207,
-     "16": 1046,
-     "17": 1004,
-     "18": 1221,
-     "19": 1073,
-     "20": 1300,
-     "21": 821,
-     "22": 1314,
-     "23": 849
-    },
-    "worker_calls": 40,
-    "worker_top_runs": {
-     "worker:4055-20261103T0007Z": 3,
-     "worker:4108-20261103T0102Z": 3,
-     "worker:4108-20261103T0201Z": 8,
-     "worker:5274-20261103T1951Z": 5,
-     "worker:5274-20261103T2116Z": 5
-    },
-    "worker_writes": 5
-   },
-   "churn_merged": 6,
+   "churn_merged": 36,
    "ci_busy_hours": 10.42,
    "first_pass": {
-    "first_pass": 4,
-    "merged": 6
+    "first_pass": 26,
+    "merged": 36
    },
    "holds": {
-    "pace": 0,
-    "paused": 21,
+    "pace": 9,
+    "paused": 69,
     "prs-need-work": 0
    },
+   "hosts": 2,
    "idle_blockers": {
+    "#7577": 12,
+    "#7578": 12,
+    "#7580": 12,
     "#7611": 3
    },
    "idle_causes": {
-    "blocked": 3,
-    "ci-admission": 27,
-    "off-focus": 37,
+    "blocked": 15,
+    "ci-admission": 75,
+    "estate-wait": 1,
+    "off-focus": 49,
     "owner": 37,
-    "wait": 7
+    "plan-overlap": 17,
+    "wait": 12
    },
-   "idle_hours": 4.57,
-   "idle_ticks": 37,
-   "items_done": 0,
+   "idle_hours": 9.9,
+   "idle_ticks": 118,
+   "items_done": 6,
    "limits": {
-    "hosts": 1,
+    "hosts": 2,
     "hours": {
      "00": {
-      "box": 60
+      "box": 60,
+      "tokens": 60
      },
      "01": {
       "box": 20,
       "code-gen": 33,
-      "tokens": 7
+      "tokens": 67
      },
      "02": {
       "box": 56,
-      "tokens": 4
+      "tokens": 64
      },
      "03": {
-      "tokens": 60
+      "tokens": 120
      },
      "04": {
-      "tokens": 60
+      "tokens": 120
      },
      "05": {
-      "tokens": 60
+      "tokens": 120
      },
      "06": {
-      "tokens": 45,
+      "tokens": 105,
       "unknown": 15
      },
      "07": {
+      "tokens": 60,
       "unknown": 60
      },
      "08": {
-      "unknown": 60
+      "ci": 1,
+      "no-work": 13,
+      "unknown": 106
      },
      "09": {
-      "unknown": 60
+      "ci": 6,
+      "unknown": 114
      },
      "10": {
-      "unknown": 60
+      "code-gen": 3,
+      "unknown": 117
      },
      "11": {
-      "unknown": 60
+      "ci": 7,
+      "code-gen": 30,
+      "no-work": 2,
+      "unknown": 81
      },
      "12": {
+      "ci": 35,
+      "code-gen": 25,
       "unknown": 60
      },
      "13": {
+      "ci": 20,
+      "code-gen": 40,
       "unknown": 60
      },
      "14": {
+      "code-gen": 60,
       "unknown": 60
      },
      "15": {
+      "ci": 3,
+      "code-gen": 41,
+      "no-work": 14,
+      "tokens": 2,
       "unknown": 60
      },
      "16": {
-      "ci": 37,
+      "ci": 97,
       "unknown": 23
      },
      "17": {
-      "ci": 60
+      "ci": 115,
+      "code-gen": 5
      },
      "18": {
       "box": 6,
-      "ci": 54
+      "ci": 90,
+      "code-gen": 24
      },
      "19": {
       "box": 1,
-      "ci": 51,
-      "owner": 8
+      "ci": 102,
+      "code-gen": 8,
+      "owner": 8,
+      "tokens": 1
      },
      "20": {
       "box": 11,
-      "ci": 49
+      "ci": 107,
+      "tokens": 2
      },
      "21": {
       "box": 6,
-      "ci": 16,
-      "owner": 38
+      "ci": 48,
+      "code-gen": 8,
+      "owner": 38,
+      "unknown": 20
      },
      "22": {
+      "code-gen": 60,
       "owner": 59,
       "unknown": 1
      },
      "23": {
-      "box": 16,
+      "box": 24,
+      "code-gen": 52,
       "owner": 33,
       "tokens": 5,
       "unknown": 6
      }
     },
     "minutes": {
-     "box": 176,
-     "ci": 267,
-     "code-gen": 33,
+     "box": 184,
+     "ci": 631,
+     "code-gen": 389,
+     "no-work": 29,
      "owner": 138,
-     "tokens": 241,
-     "unknown": 585
+     "tokens": 726,
+     "unknown": 783
     }
    },
-   "loop_runs": 3,
-   "loops_per_merged_pr": 0.5,
-   "max_workers": 2,
-   "new_work_share": 0.923,
-   "paused_hours": 4.02,
-   "pr_open_to_merge_h_median": 0.61,
+   "loop_runs": 22,
+   "loops_per_merged_pr": 0.61,
+   "max_workers": 4,
+   "new_work_share": 0.746,
+   "paused_hours": 12.0,
+   "pr_open_to_merge_h_median": 0.69,
    "precheck": {
     "failed_again": 0,
-    "passed": 9,
-    "sent_back": 0
+    "passed": 53,
+    "sent_back": 2
    },
    "quality": {
     "by_size": {
      "1-2": {
-      "fixed": 1,
-      "merged": 4
+      "fixed": 3,
+      "merged": 22
      },
      "3-4": {
-      "fixed": 0,
-      "merged": 0
+      "fixed": 2,
+      "merged": 8
      },
      "5": {
-      "fixed": 1,
-      "merged": 2
+      "fixed": 3,
+      "merged": 4
      },
      "6+": {
-      "fixed": 0,
-      "merged": 0
+      "fixed": 2,
+      "merged": 2
      }
     },
     "causes": {
-     "conflict": 2,
-     "own_test": 1
+     "collateral": 1,
+     "conflict": 4,
+     "env": 5,
+     "own_test": 3,
+     "stale": 5
     },
-    "fix_runs": 3
+    "fix_runs": 18
    },
-   "review_wait_min_median": 1.0,
-   "slices_merged": 2,
-   "slot_use": 0.077,
-   "usd": 9.72,
-   "usd_per_merged_churn_pr": 1.62,
+   "review_wait_min_median": 1.83,
+   "slices_merged": 18,
+   "slot_use": 0.2,
+   "usd": 67.58,
+   "usd_per_merged_churn_pr": 1.88,
    "worker_hours": {
-    "new_work": 3.4,
-    "pr_fix": 0.17,
-    "precheck_retry": 0.0,
-    "send_back": 0.12
+    "new_work": 14.28,
+    "pr_fix": 4.45,
+    "precheck_retry": 0.22,
+    "send_back": 0.2
    }
   }
  },
@@ -9784,6 +9780,235 @@
      "pr_fix": 0.47,
      "precheck_retry": 1.28,
      "send_back": 1.78
+    }
+   },
+   "2026-11-03": {
+    "api": {
+     "churn_by_caller": {
+      "ci_in_progress": 261,
+      "ci_occupancy": 1216,
+      "ci_queue": 261,
+      "cmd_pr": 301,
+      "gh_json_etag": 432,
+      "live_pr_job_waits": 326,
+      "red_main_issues": 261,
+      "tend_bot_prs": 496
+     },
+     "churn_calls": 5198,
+     "churn_writes": 309,
+     "churn_writes_busiest_hour": 32,
+     "peak_hour": 1356,
+     "readings": 261,
+     "readings_at_zero": 0,
+     "used_by_hour": {
+      "08": 892,
+      "09": 303,
+      "10": 393,
+      "11": 605,
+      "12": 278,
+      "13": 515,
+      "14": 638,
+      "15": 788,
+      "16": 1128,
+      "17": 1022,
+      "18": 1245,
+      "19": 1088,
+      "20": 1356,
+      "21": 807,
+      "22": 1327,
+      "23": 904
+     },
+     "worker_calls": 382,
+     "worker_top_runs": {
+      "worker:4175-20261103T1951Z": 15,
+      "worker:7065-20261103T0840Z": 11,
+      "worker:7434-20261103T0806Z": 10,
+      "worker:7592-20261103T1202Z": 19,
+      "worker:7618-20261103T2142Z": 15
+     },
+     "worker_writes": 41
+    },
+    "churn_merged": 30,
+    "ci_busy_hours": 7.92,
+    "first_pass": {
+     "first_pass": 22,
+     "merged": 30
+    },
+    "holds": {
+     "pace": 9,
+     "paused": 48,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {
+     "#7577": 12,
+     "#7578": 12,
+     "#7580": 12
+    },
+    "idle_causes": {
+     "blocked": 12,
+     "ci-admission": 48,
+     "estate-wait": 1,
+     "off-focus": 12,
+     "plan-overlap": 17,
+     "wait": 5
+    },
+    "idle_hours": 5.33,
+    "idle_ticks": 81,
+    "items_done": 6,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "tokens": 60
+      },
+      "01": {
+       "tokens": 60
+      },
+      "02": {
+       "tokens": 60
+      },
+      "03": {
+       "tokens": 60
+      },
+      "04": {
+       "tokens": 60
+      },
+      "05": {
+       "tokens": 60
+      },
+      "06": {
+       "tokens": 60
+      },
+      "07": {
+       "tokens": 60
+      },
+      "08": {
+       "ci": 1,
+       "no-work": 13,
+       "unknown": 46
+      },
+      "09": {
+       "ci": 6,
+       "unknown": 54
+      },
+      "10": {
+       "code-gen": 3,
+       "unknown": 57
+      },
+      "11": {
+       "ci": 7,
+       "code-gen": 30,
+       "no-work": 2,
+       "unknown": 21
+      },
+      "12": {
+       "ci": 35,
+       "code-gen": 25
+      },
+      "13": {
+       "ci": 20,
+       "code-gen": 40
+      },
+      "14": {
+       "code-gen": 60
+      },
+      "15": {
+       "ci": 3,
+       "code-gen": 41,
+       "no-work": 14,
+       "tokens": 2
+      },
+      "16": {
+       "ci": 60
+      },
+      "17": {
+       "ci": 55,
+       "code-gen": 5
+      },
+      "18": {
+       "ci": 36,
+       "code-gen": 24
+      },
+      "19": {
+       "ci": 51,
+       "code-gen": 8,
+       "tokens": 1
+      },
+      "20": {
+       "ci": 58,
+       "tokens": 2
+      },
+      "21": {
+       "ci": 32,
+       "code-gen": 8,
+       "unknown": 20
+      },
+      "22": {
+       "code-gen": 60
+      },
+      "23": {
+       "box": 8,
+       "code-gen": 52
+      }
+     },
+     "minutes": {
+      "box": 8,
+      "ci": 364,
+      "code-gen": 356,
+      "no-work": 29,
+      "tokens": 485,
+      "unknown": 198
+     }
+    },
+    "loop_runs": 19,
+    "loops_per_merged_pr": 0.63,
+    "max_workers": 2,
+    "new_work_share": 0.704,
+    "paused_hours": 7.98,
+    "pr_open_to_merge_h_median": 0.71,
+    "precheck": {
+     "failed_again": 0,
+     "passed": 44,
+     "sent_back": 2
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 2,
+       "merged": 18
+      },
+      "3-4": {
+       "fixed": 2,
+       "merged": 8
+      },
+      "5": {
+       "fixed": 2,
+       "merged": 2
+      },
+      "6+": {
+       "fixed": 2,
+       "merged": 2
+      }
+     },
+     "causes": {
+      "collateral": 1,
+      "conflict": 2,
+      "env": 5,
+      "own_test": 2,
+      "stale": 5
+     },
+     "fix_runs": 15
+    },
+    "review_wait_min_median": 2.0,
+    "slices_merged": 16,
+    "slot_use": 0.322,
+    "usd": 57.86,
+    "usd_per_merged_churn_pr": 1.93,
+    "worker_hours": {
+     "new_work": 10.88,
+     "pr_fix": 4.28,
+     "precheck_retry": 0.22,
+     "send_back": 0.08
     }
    }
   },
