@@ -5593,6 +5593,258 @@
     "precheck_retry": 3.02,
     "send_back": 7.3
    }
+  },
+  "2026-11-06": {
+   "api": {
+    "churn_by_caller": {
+     "ci_in_progress": 517,
+     "ci_occupancy": 2337,
+     "ci_queue": 517,
+     "cmd_pr": 655,
+     "gh_json_etag": 683,
+     "live_pr_job_waits": 730,
+     "red_main_issues": 517,
+     "tend_bot_prs": 569
+    },
+    "churn_calls": 9606,
+    "churn_writes": 656,
+    "churn_writes_busiest_hour": 47,
+    "peak_hour": 1714,
+    "readings": 517,
+    "readings_at_zero": 0,
+    "used_by_hour": {
+     "00": 839,
+     "01": 1235,
+     "02": 1440,
+     "03": 1230,
+     "04": 1714,
+     "05": 1585,
+     "06": 1467,
+     "07": 1238,
+     "08": 1087,
+     "09": 1242,
+     "10": 1019,
+     "11": 997,
+     "12": 1249,
+     "13": 1148,
+     "14": 1212,
+     "15": 1372,
+     "16": 1493,
+     "17": 1426,
+     "18": 1231,
+     "19": 1323,
+     "20": 953,
+     "21": 605,
+     "22": 783,
+     "23": 585
+    },
+    "worker_calls": 694,
+    "worker_top_runs": {
+     "worker:7524-20261106T2132Z": 12,
+     "worker:7525-20261106T0558Z": 22,
+     "worker:7525-20261106T0841Z": 14,
+     "worker:7709-20261106T0410Z": 14,
+     "worker:7856-20261106T0243Z": 14
+    },
+    "worker_writes": 96
+   },
+   "churn_merged": 73,
+   "ci_busy_hours": 6.92,
+   "first_pass": {
+    "first_pass": 52,
+    "merged": 73
+   },
+   "holds": {
+    "pace": 5,
+    "paused": 0,
+    "prs-need-work": 0
+   },
+   "idle_blockers": {
+    "#7851": 21,
+    "#7853": 5,
+    "#7866": 9,
+    "#7903": 6,
+    "#7905": 12
+   },
+   "idle_causes": {
+    "blocked": 41,
+    "ci-admission": 28,
+    "empty": 16,
+    "off-focus": 3,
+    "plan-overlap": 23,
+    "wait": 27
+   },
+   "idle_hours": 5.48,
+   "idle_ticks": 90,
+   "items_done": 32,
+   "limits": {
+    "hosts": 1,
+    "hours": {
+     "00": {
+      "code-gen": 38,
+      "no-work": 20,
+      "unknown": 2
+     },
+     "01": {
+      "code-gen": 8,
+      "no-work": 52
+     },
+     "02": {
+      "code-gen": 35,
+      "no-work": 25
+     },
+     "03": {
+      "ci": 2,
+      "code-gen": 15,
+      "no-work": 43
+     },
+     "04": {
+      "box": 9,
+      "ci": 9,
+      "no-work": 42
+     },
+     "05": {
+      "code-gen": 32,
+      "no-work": 28
+     },
+     "06": {
+      "ci": 21,
+      "code-gen": 30,
+      "no-work": 9
+     },
+     "07": {
+      "box": 10,
+      "ci": 41,
+      "code-gen": 9
+     },
+     "08": {
+      "box": 17,
+      "code-gen": 43
+     },
+     "09": {
+      "ci": 9,
+      "code-gen": 34,
+      "no-work": 17
+     },
+     "10": {
+      "code-gen": 39,
+      "no-work": 21
+     },
+     "11": {
+      "ci": 49,
+      "no-work": 11
+     },
+     "12": {
+      "ci": 4,
+      "code-gen": 55,
+      "no-work": 1
+     },
+     "13": {
+      "ci": 16,
+      "code-gen": 21,
+      "no-work": 23
+     },
+     "14": {
+      "code-gen": 35,
+      "no-work": 25
+     },
+     "15": {
+      "box": 5,
+      "code-gen": 30,
+      "no-work": 25
+     },
+     "16": {
+      "ci": 17,
+      "code-gen": 32,
+      "no-work": 11
+     },
+     "17": {
+      "box": 11,
+      "code-gen": 49
+     },
+     "18": {
+      "box": 10,
+      "ci": 11,
+      "code-gen": 39
+     },
+     "19": {
+      "box": 8,
+      "code-gen": 46,
+      "no-work": 6
+     },
+     "20": {
+      "code-gen": 35,
+      "no-work": 25
+     },
+     "21": {
+      "code-gen": 12,
+      "no-work": 48
+     },
+     "22": {
+      "code-gen": 60
+     },
+     "23": {
+      "code-gen": 35,
+      "no-work": 25
+     }
+    },
+    "minutes": {
+     "box": 70,
+     "ci": 179,
+     "code-gen": 732,
+     "no-work": 457,
+     "unknown": 2
+    }
+   },
+   "loop_runs": 51,
+   "loops_per_merged_pr": 0.7,
+   "max_workers": 2,
+   "new_work_share": 0.751,
+   "paused_hours": 0.0,
+   "pr_open_to_merge_h_median": 0.73,
+   "precheck": {
+    "failed_again": 13,
+    "passed": 96,
+    "sent_back": 15
+   },
+   "quality": {
+    "by_size": {
+     "1-2": {
+      "fixed": 5,
+      "merged": 34
+     },
+     "3-4": {
+      "fixed": 8,
+      "merged": 28
+     },
+     "5": {
+      "fixed": 3,
+      "merged": 7
+     },
+     "6+": {
+      "fixed": 2,
+      "merged": 4
+     }
+    },
+    "causes": {
+     "conflict": 21,
+     "env": 6,
+     "other": 2,
+     "stale": 7
+    },
+    "fix_runs": 36
+   },
+   "review_wait_min_median": 1.0,
+   "slices_merged": 61,
+   "slot_use": 0.497,
+   "usd": 102.37,
+   "usd_per_merged_churn_pr": 1.4,
+   "worker_hours": {
+    "new_work": 17.93,
+    "pr_fix": 1.15,
+    "precheck_retry": 1.92,
+    "send_back": 2.87
+   }
   }
  },
  "hosts": {
@@ -10944,6 +11196,258 @@
      "precheck_retry": 2.77,
      "send_back": 0.6
     }
+   },
+   "2026-11-06": {
+    "api": {
+     "churn_by_caller": {
+      "ci_in_progress": 517,
+      "ci_occupancy": 2337,
+      "ci_queue": 517,
+      "cmd_pr": 655,
+      "gh_json_etag": 683,
+      "live_pr_job_waits": 730,
+      "red_main_issues": 517,
+      "tend_bot_prs": 569
+     },
+     "churn_calls": 9606,
+     "churn_writes": 656,
+     "churn_writes_busiest_hour": 47,
+     "peak_hour": 1714,
+     "readings": 517,
+     "readings_at_zero": 0,
+     "used_by_hour": {
+      "00": 839,
+      "01": 1235,
+      "02": 1440,
+      "03": 1230,
+      "04": 1714,
+      "05": 1585,
+      "06": 1467,
+      "07": 1238,
+      "08": 1087,
+      "09": 1242,
+      "10": 1019,
+      "11": 997,
+      "12": 1249,
+      "13": 1148,
+      "14": 1212,
+      "15": 1372,
+      "16": 1493,
+      "17": 1426,
+      "18": 1231,
+      "19": 1323,
+      "20": 953,
+      "21": 605,
+      "22": 783,
+      "23": 585
+     },
+     "worker_calls": 694,
+     "worker_top_runs": {
+      "worker:7524-20261106T2132Z": 12,
+      "worker:7525-20261106T0558Z": 22,
+      "worker:7525-20261106T0841Z": 14,
+      "worker:7709-20261106T0410Z": 14,
+      "worker:7856-20261106T0243Z": 14
+     },
+     "worker_writes": 96
+    },
+    "churn_merged": 73,
+    "ci_busy_hours": 6.92,
+    "first_pass": {
+     "first_pass": 52,
+     "merged": 73
+    },
+    "holds": {
+     "pace": 5,
+     "paused": 0,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {
+     "#7851": 21,
+     "#7853": 5,
+     "#7866": 9,
+     "#7903": 6,
+     "#7905": 12
+    },
+    "idle_causes": {
+     "blocked": 41,
+     "ci-admission": 28,
+     "empty": 16,
+     "off-focus": 3,
+     "plan-overlap": 23,
+     "wait": 27
+    },
+    "idle_hours": 5.48,
+    "idle_ticks": 90,
+    "items_done": 32,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "code-gen": 38,
+       "no-work": 20,
+       "unknown": 2
+      },
+      "01": {
+       "code-gen": 8,
+       "no-work": 52
+      },
+      "02": {
+       "code-gen": 35,
+       "no-work": 25
+      },
+      "03": {
+       "ci": 2,
+       "code-gen": 15,
+       "no-work": 43
+      },
+      "04": {
+       "box": 9,
+       "ci": 9,
+       "no-work": 42
+      },
+      "05": {
+       "code-gen": 32,
+       "no-work": 28
+      },
+      "06": {
+       "ci": 21,
+       "code-gen": 30,
+       "no-work": 9
+      },
+      "07": {
+       "box": 10,
+       "ci": 41,
+       "code-gen": 9
+      },
+      "08": {
+       "box": 17,
+       "code-gen": 43
+      },
+      "09": {
+       "ci": 9,
+       "code-gen": 34,
+       "no-work": 17
+      },
+      "10": {
+       "code-gen": 39,
+       "no-work": 21
+      },
+      "11": {
+       "ci": 49,
+       "no-work": 11
+      },
+      "12": {
+       "ci": 4,
+       "code-gen": 55,
+       "no-work": 1
+      },
+      "13": {
+       "ci": 16,
+       "code-gen": 21,
+       "no-work": 23
+      },
+      "14": {
+       "code-gen": 35,
+       "no-work": 25
+      },
+      "15": {
+       "box": 5,
+       "code-gen": 30,
+       "no-work": 25
+      },
+      "16": {
+       "ci": 17,
+       "code-gen": 32,
+       "no-work": 11
+      },
+      "17": {
+       "box": 11,
+       "code-gen": 49
+      },
+      "18": {
+       "box": 10,
+       "ci": 11,
+       "code-gen": 39
+      },
+      "19": {
+       "box": 8,
+       "code-gen": 46,
+       "no-work": 6
+      },
+      "20": {
+       "code-gen": 35,
+       "no-work": 25
+      },
+      "21": {
+       "code-gen": 12,
+       "no-work": 48
+      },
+      "22": {
+       "code-gen": 60
+      },
+      "23": {
+       "code-gen": 35,
+       "no-work": 25
+      }
+     },
+     "minutes": {
+      "box": 70,
+      "ci": 179,
+      "code-gen": 732,
+      "no-work": 457,
+      "unknown": 2
+     }
+    },
+    "loop_runs": 51,
+    "loops_per_merged_pr": 0.7,
+    "max_workers": 2,
+    "new_work_share": 0.751,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": 0.73,
+    "precheck": {
+     "failed_again": 13,
+     "passed": 96,
+     "sent_back": 15
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 5,
+       "merged": 34
+      },
+      "3-4": {
+       "fixed": 8,
+       "merged": 28
+      },
+      "5": {
+       "fixed": 3,
+       "merged": 7
+      },
+      "6+": {
+       "fixed": 2,
+       "merged": 4
+      }
+     },
+     "causes": {
+      "conflict": 21,
+      "env": 6,
+      "other": 2,
+      "stale": 7
+     },
+     "fix_runs": 36
+    },
+    "review_wait_min_median": 1.0,
+    "slices_merged": 61,
+    "slot_use": 0.497,
+    "usd": 102.37,
+    "usd_per_merged_churn_pr": 1.4,
+    "worker_hours": {
+     "new_work": 17.93,
+     "pr_fix": 1.15,
+     "precheck_retry": 1.92,
+     "send_back": 2.87
+    }
    }
   },
   "nyx": {
@@ -16290,5 +16794,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-11-06T00:06Z"
+ "updated": "2026-11-07T00:02Z"
 }
