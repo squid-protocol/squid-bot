@@ -52828,49 +52828,87 @@
   "2026-11-09": {
    "detail": {
     "bot_outcomes": {
-     "failure": 1,
-     "success": 115
+     "failure": 16,
+     "success": 394
     },
-    "bot_runs": 189,
+    "bot_runs": 730,
     "cancel_savings": {
-     "cancelled": 28,
-     "saved_min_est": 244,
+     "cancelled": 119,
+     "saved_min_est": 963,
      "unpriced": 0,
-     "wall_min": 1245
+     "wall_min": 6878
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 8159,
+      "title": "CI: pin the ctags-installing jobs to ubuntu-24.04 (Fixes #8158) (#8159)"
+     },
+     {
+      "pr": 8162,
+      "title": "Call-graph gates: measurement first (stale baselines, gin + flask lanes, fmt gtest scope, C include scorer, per-kind reporting, edge-kind contract) (Part of #8161) (#8162)"
+     },
+     {
+      "pr": 8172,
+      "title": "CI: docs PRs stop paying for ground truth, evidence deltas and two empty smoke parts (Part of #7963) (#8172)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 370,
+    "population": 1518,
     "reruns": {
-     "attempts": 4,
+     "attempts": 39,
      "by_workflow": {
-      "Det Sweep": [
+      "CICS Crucible": [
+       2,
        1,
+       0
+      ],
+      "DOOM-rosetta": [
+       2,
+       0,
+       0
+      ],
+      "Det Sweep": [
+       6,
        0,
        0
       ],
       "Equivalence E2E": [
-       1,
+       6,
        0,
        0
       ],
+      "Generated Docs": [
+       2,
+       1,
+       0
+      ],
       "GitGalaxy Smoke Tests": [
+       7,
+       1,
+       0
+      ],
+      "Golden Crucible Resilience Test": [
        1,
        0,
        0
       ],
       "Mainframe Ground Truth": [
+       5,
+       2,
+       1
+      ],
+      "Ports Compile": [
        1,
        0,
        0
       ]
      },
-     "failed_again": 0,
-     "passed": 4,
-     "runs": 4
+     "failed_again": 5,
+     "passed": 32,
+     "runs": 38
     },
-    "runner_min_ci": 1149,
-    "runner_min_est": 2236,
+    "runner_min_ci": 2293,
+    "runner_min_est": 10341,
     "sample": {
      "42539003748": {
       "m": 0.33,
@@ -52879,10 +52917,33 @@
        0.03
       ]
      },
+     "42539030185": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
      "42539738132": {
       "m": 0.55,
       "o": "bot",
       "w": [
+       0.02
+      ]
+     },
+     "42539900241": {
+      "m": 0.28,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "42539928068": {
+      "m": 31.35,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
        0.02
       ]
      },
@@ -52940,11 +53001,44 @@
       "o": "main",
       "w": []
      },
+     "42540871855": {
+      "m": 0.47,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "42540871871": {
+      "m": 9.07,
+      "o": "main",
+      "w": [
+       0.42,
+       0.32,
+       0.38,
+       0.42,
+       0.3,
+       0.43
+      ]
+     },
+     "42541374977": {
+      "m": 0.47,
+      "o": "main",
+      "w": [
+       0.12
+      ]
+     },
      "42541969745": {
       "m": 0.37,
       "o": "bot",
       "w": [
        0.02
+      ]
+     },
+     "42542014172": {
+      "m": 0.47,
+      "o": "main",
+      "w": [
+       0.13
       ]
      },
      "42543040376": {
@@ -52971,6 +53065,13 @@
       "o": "main",
       "w": [
        0.03
+      ]
+     },
+     "42543328222": {
+      "m": 1.88,
+      "o": "main",
+      "w": [
+       0.02
       ]
      },
      "42543328316": {
@@ -53113,11 +53214,35 @@
        0.53
       ]
      },
+     "42545707129": {
+      "m": 10.4,
+      "o": "main",
+      "w": [
+       2.72,
+       0.55
+      ]
+     },
+     "42545716468": {
+      "m": 0.25,
+      "o": "main",
+      "w": [
+       1.85
+      ]
+     },
      "42545868220": {
       "m": 0.22,
       "o": "main",
       "w": [
        0.73
+      ]
+     },
+     "42547092036": {
+      "m": 1.2,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       2.35
       ]
      },
      "42547092044": {
@@ -53175,6 +53300,13 @@
        0.05
       ]
      },
+     "42547828341": {
+      "m": 0.53,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
      "42547828345": {
       "m": 1.13,
       "o": "bot",
@@ -53211,6 +53343,13 @@
       "w": [
        0.05,
        0.02
+      ]
+     },
+     "42551296709": {
+      "m": 2.58,
+      "o": "main",
+      "w": [
+       0.03
       ]
      },
      "42551296825": {
@@ -53268,6 +53407,13 @@
        0.07
       ]
      },
+     "42553210431": {
+      "m": 0.53,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
      "42553238856": {
       "m": 4.63,
       "o": "main",
@@ -53288,76 +53434,708 @@
       "w": [
        0.02
       ]
+     },
+     "42557437887": {
+      "m": 17.25,
+      "o": "main",
+      "w": [
+       0.02,
+       0.02,
+       0.02,
+       1.0,
+       3.97,
+       3.9,
+       4.08,
+       0.03
+      ]
+     },
+     "42557587136": {
+      "m": 16.03,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       2.47,
+       0.13,
+       1.08,
+       0.28
+      ]
+     },
+     "42559107780": {
+      "m": 1.02,
+      "o": "bot",
+      "w": [
+       0.22
+      ]
+     },
+     "42560152955": {
+      "m": 3.85,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "42561293912": {
+      "m": 143.78,
+      "o": "main",
+      "w": [
+       0.02,
+       0.48,
+       1.73,
+       1.38,
+       0.33,
+       0.53,
+       0.63,
+       0.62,
+       1.47,
+       0.77,
+       1.48,
+       1.6
+      ]
+     },
+     "42561308428": {
+      "m": 0.45,
+      "o": "main",
+      "w": [
+       0.08
+      ]
+     },
+     "42561348238": {
+      "m": 0.98,
+      "o": "bot",
+      "w": [
+       1.03
+      ]
+     },
+     "42561350195": {
+      "m": 0.42,
+      "o": "bot",
+      "w": [
+       1.32
+      ]
+     },
+     "42561350301": {
+      "m": 0.78,
+      "o": "bot",
+      "w": [
+       1.33
+      ]
+     },
+     "42561369659": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42561451255": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42561618792": {
+      "m": 0.62,
+      "o": "bot",
+      "w": [
+       12.92
+      ]
+     },
+     "42574874967": {
+      "m": 5.77,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "42577722180": {
+      "m": 0.23,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "42611659925": {
+      "m": 405.43,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.05,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.62,
+       0.03,
+       3.07
+      ]
+     },
+     "42613825874": {
+      "m": 1.63,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "42623153123": {
+      "m": 1.63,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "42624022343": {
+      "m": 4.47,
+      "o": "main",
+      "w": [
+       3.05,
+       1.03
+      ]
+     },
+     "42626203789": {
+      "m": 23.88,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
+       0.02,
+       0.12,
+       0.47,
+       0.25,
+       0.03,
+       0.03
+      ]
+     },
+     "42627759865": {
+      "m": 0.68,
+      "o": "agent",
+      "w": [
+       0.02,
+       2.57
+      ]
+     },
+     "42628667907": {
+      "m": 0.47,
+      "o": "main",
+      "w": [
+       1.02
+      ]
+     },
+     "42629074902": {
+      "m": 0.23,
+      "o": "main",
+      "w": [
+       0.57
+      ]
+     },
+     "42629089873": {
+      "m": 17.95,
+      "o": "bot",
+      "w": [
+       0.9,
+       1.9,
+       2.1
+      ]
+     },
+     "42629090056": {
+      "m": 7.48,
+      "o": "bot",
+      "w": [
+       2.38,
+       2.88
+      ]
+     },
+     "42629640344": {
+      "m": 0.53,
+      "o": "main",
+      "w": [
+       0.92,
+       1.78
+      ]
+     },
+     "42630256936": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42631397835": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42631780723": {
+      "m": 1.48,
+      "o": "automation",
+      "w": [
+       3.62
+      ]
+     },
+     "42631845307": {
+      "m": 0.28,
+      "o": "main",
+      "w": [
+       1.9
+      ]
+     },
+     "42633947695": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42634213669": {
+      "m": 32.82,
+      "o": "main",
+      "w": [
+       0.78
+      ]
+     },
+     "42634310785": {
+      "m": 1.0,
+      "o": "main",
+      "w": [
+       1.97,
+       1.58
+      ]
+     },
+     "42634311165": {
+      "m": 4.02,
+      "o": "main",
+      "w": [
+       0.97
+      ]
+     },
+     "42636692679": {
+      "m": 4.67,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "42636830636": {
+      "m": 17.45,
+      "o": "bot",
+      "w": [
+       0.18,
+       0.3,
+       0.85,
+       1.12,
+       2.73,
+       2.92,
+       0.03,
+       0.03
+      ]
+     },
+     "42636830738": {
+      "m": 0.67,
+      "o": "bot",
+      "w": [
+       0.48
+      ]
+     },
+     "42636921581": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42637486568": {
+      "m": 62.28,
+      "o": "bot",
+      "w": [
+       0.08,
+       0.57,
+       1.9,
+       0.45,
+       4.72,
+       3.87,
+       2.82,
+       3.58,
+       1.08
+      ]
+     },
+     "42646507330": {
+      "m": 2.73,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "42649894691": {
+      "m": 25.17,
+      "o": "agent",
+      "w": [
+       0.02,
+       3.07,
+       1.7,
+       0.08,
+       0.32,
+       0.27,
+       2.28
+      ]
+     },
+     "42649894810": {
+      "m": 2.52,
+      "o": "agent",
+      "w": [
+       0.32
+      ]
+     },
+     "42650515580": {
+      "m": 0.67,
+      "o": "main",
+      "w": [
+       0.73
+      ]
+     },
+     "42651237976": {
+      "m": 4.77,
+      "o": "main",
+      "w": [
+       1.28
+      ]
+     },
+     "42651645460": {
+      "m": 0.88,
+      "o": "main",
+      "w": [
+       1.12
+      ]
+     },
+     "42652238756": {
+      "m": 60.97,
+      "o": "main",
+      "w": [
+       2.23,
+       0.67,
+       0.65,
+       0.7,
+       4.68
+      ]
+     },
+     "42652631892": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42652979839": {
+      "m": 14.15,
+      "o": "main",
+      "w": [
+       6.5,
+       2.97,
+       3.07,
+       8.42,
+       10.85,
+       11.08
+      ]
+     },
+     "42655412569": {
+      "m": 0.25,
+      "o": "main",
+      "w": [
+       0.35
+      ]
+     },
+     "42655981750": {
+      "m": 0.0,
+      "o": "bot",
+      "w": []
+     },
+     "42657253157": {
+      "m": 4.85,
+      "o": "agent",
+      "w": [
+       8.33
+      ]
+     },
+     "42662481835": {
+      "m": 0.78,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "42664295448": {
+      "m": 0.0,
+      "o": "bot",
+      "w": []
+     },
+     "42664586990": {
+      "m": 0.62,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03
+      ]
+     },
+     "42664587236": {
+      "m": 8.97,
+      "o": "main",
+      "w": [
+       0.03,
+       0.4
+      ]
+     },
+     "42664768222": {
+      "m": 13.83,
+      "o": "main",
+      "w": [
+       0.3,
+       0.03
+      ]
+     },
+     "42666844169": {
+      "m": 1.73,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.38
+      ]
+     },
+     "42666851359": {
+      "m": 20.2,
+      "o": "bot",
+      "w": [
+       0.32,
+       0.33,
+       6.3,
+       10.12,
+       9.8,
+       2.72
+      ]
+     },
+     "42666888931": {
+      "m": 1.42,
+      "o": "agent",
+      "w": [
+       1.62,
+       9.57,
+       7.28
+      ]
+     },
+     "42666889318": {
+      "m": 0.3,
+      "o": "agent",
+      "w": [
+       1.65
+      ]
+     },
+     "42666936176": {
+      "m": 0.95,
+      "o": "main",
+      "w": [
+       8.6,
+       6.98
+      ]
+     },
+     "42666936431": {
+      "m": 1.77,
+      "o": "main",
+      "w": [
+       9.87
+      ]
+     },
+     "42668061014": {
+      "m": 0.0,
+      "o": "bot",
+      "w": []
+     },
+     "42668485771": {
+      "m": 5.15,
+      "o": "main",
+      "w": [
+       1.45
+      ]
+     },
+     "42669727895": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "42671573239": {
+      "m": 0.0,
+      "o": "bot",
+      "w": []
+     },
+     "42674752338": {
+      "m": 0.35,
+      "o": "agent",
+      "w": [
+       0.03,
+       0.05
+      ]
+     },
+     "42679026673": {
+      "m": 22.15,
+      "o": "agent",
+      "w": [
+       0.05,
+       0.05,
+       0.22,
+       0.45,
+       3.9,
+       0.05
+      ]
+     },
+     "42681201152": {
+      "m": 0.55,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "42686177519": {
+      "m": 0.47,
+      "o": "bot",
+      "w": [
+       0.05
+      ]
+     },
+     "42686290442": {
+      "m": 0.67,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "42686354226": {
+      "m": 5.95,
+      "o": "main",
+      "w": [
+       0.03,
+       0.83
+      ]
+     },
+     "42686560199": {
+      "m": 20.9,
+      "o": "bot",
+      "w": [
+       1.02,
+       2.7,
+       2.55,
+       6.27,
+       6.98,
+       12.83,
+       1.97
+      ]
+     },
+     "42686560430": {
+      "m": 3.47,
+      "o": "bot",
+      "w": [
+       2.48
+      ]
+     },
+     "42686560449": {
+      "m": 2.63,
+      "o": "bot",
+      "w": [
+       3.22
+      ]
+     },
+     "42686560838": {
+      "m": 0.68,
+      "o": "bot",
+      "w": [
+       2.97
+      ]
+     },
+     "42687223703": {
+      "m": 0.4,
+      "o": "bot",
+      "w": [
+       1.77
+      ]
      }
     },
-    "sample_target": 30,
+    "sample_target": 76,
     "sampled_min_by_origin": {
-     "bot": 1026.0,
-     "main": 1210.1
+     "agent": 643.2,
+     "automation": 23.0,
+     "bot": 4382.4,
+     "main": 5292.5
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 25.2,
-     "CI shepherd (label events)": 10.6,
-     "CI shepherd (reconcile)": 23.8,
-     "CICS Crucible": 85.6,
-     "Call Graph Accuracy Audit": 6.0,
-     "Call Resolution History": 15.0,
-     "CodeQL Security Scan": 42.1,
-     "Crucible Path Independence": 8.2,
-     "DOOM-rosetta": 38.7,
-     "Deploy Museum of Code Docs": 38.7,
-     "Det Sweep": 82.1,
-     "Detection Accuracy Audit": 9.0,
-     "Equivalence E2E": 537.3,
-     "Estate Crucible": 2.8,
-     "Fact Cross-check": 6.1,
-     "Full Suite Gate (All OS x Python)": 39.4,
-     "Generated Docs": 55.3,
-     "Generated Java Base Generation": 38.2,
-     "Generated Java Compiles": 15.8,
-     "GitGalaxy Smoke Tests": 322.5,
-     "GitGalaxy Zero-Trust Pipeline": 77.3,
-     "Golden Crucible Resilience Test": 22.3,
-     "Graph Accuracy Audit": 39.3,
-     "Graph Comparison History": 46.7,
-     "Main Watch": 31.8,
-     "Mainframe Ground Truth": 331.8,
-     "Muninn Security Scan": 14.1,
-     "Mypy Audit": 23.9,
-     "OS Smoke Grid": 5.4,
-     "Ports Compile": 37.8,
-     "Ruff Audit": 17.0,
-     "Small Audits": 40.7,
-     "Tree-sitter Accuracy Audit": 9.2,
-     "Tree-sitter Accuracy History": 16.2,
-     "Tri-Comparison Audit": 0.8,
-     "Tri-Comparison History": 11.2,
-     "pages build and deployment": 73.2,
-     "post-merge": 10.3,
-     "rosetta-audit": 20.6,
-     "unicode-gauntlet": 4.1
+     "Answer Key Guard": 21.5,
+     "Archetype Validation": 88.3,
+     "CI shepherd (label events)": 43.7,
+     "CI shepherd (reconcile)": 136.2,
+     "CICS Crucible": 612.6,
+     "Cache Prune": 3.4,
+     "Call Graph Accuracy Audit": 127.0,
+     "Call Resolution History": 37.0,
+     "CodeQL Security Scan": 274.8,
+     "Crucible Path Independence": 42.8,
+     "DOOM-rosetta": 409.6,
+     "Deploy Museum of Code Docs": 28.3,
+     "Det Sweep": 630.5,
+     "Detection Accuracy Audit": 73.8,
+     "Doc Drift": 4.6,
+     "Engine Coverage Map": 69.5,
+     "Equivalence E2E": 1777.8,
+     "Estate Crucible": 17.4,
+     "Evidence Refresh": 583.8,
+     "Fact Cross-check": 39.0,
+     "Flake history (refresh)": 12.0,
+     "Full Suite Gate (All OS x Python)": 257.7,
+     "Generated Docs": 20.1,
+     "Generated Java Base Generation": 125.0,
+     "Generated Java Compiles": 218.8,
+     "GitGalaxy Smoke Tests": 1113.2,
+     "GitGalaxy Zero-Trust Pipeline": 136.2,
+     "Golden Crucible Resilience Test": 215.9,
+     "Graph Accuracy Audit": 345.2,
+     "Graph Comparison History": 126.2,
+     "Main Watch": 51.1,
+     "Mainframe Ground Truth": 1245.0,
+     "Muninn Security Scan": 186.1,
+     "Mypy Audit": 59.3,
+     "OS Smoke Grid": 33.7,
+     "Ports Compile": 379.8,
+     "Referee panel": 13.7,
+     "Ruff Audit": 41.1,
+     "Small Audits": 66.0,
+     "Tree-sitter Accuracy Audit": 208.8,
+     "Tree-sitter Accuracy History": 43.8,
+     "Tri-Comparison Audit": 61.6,
+     "Tri-Comparison History": 41.1,
+     "pages build and deployment": 104.4,
+     "post-merge": 42.4,
+     "rosetta-audit": 127.2,
+     "unicode-gauntlet": 44.1
     },
-    "sampled_runs": 51,
-    "wait_median": 0.17,
-    "wait_p90": 2.68
+    "sampled_runs": 141,
+    "wait_median": 0.35,
+    "wait_p90": 3.07
    },
-   "merged": 12,
+   "merged": 34,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 6,
     "automation": 0,
-    "bot": 12,
+    "bot": 28,
     "other": 0
    },
    "runs": {
-    "cancelled": 40,
-    "failure": 4,
-    "skipped": 186,
-    "success": 326,
-    "total": 556
+    "cancelled": 228,
+    "failure": 65,
+    "skipped": 625,
+    "success": 1187,
+    "total": 2144
    }
   }
  },
- "open_prs": 3,
+ "open_prs": 6,
  "repo": "squid-protocol/gitgalaxy",
  "scorecard": {
   "days": {
@@ -55987,54 +56765,110 @@
     }
    },
    "2026-11-09": {
-    "closed": 4,
+    "closed": 10,
     "not_planned": 0,
-    "opened": 1,
+    "opened": 7,
     "opened_by_origin": {
-     "agent": 1
+     "agent": 2,
+     "automation": 4,
+     "owner": 1
     },
-    "red_main": 0,
-    "red_main_h_median": null,
-    "red_main_open": 0,
-    "resolve_h_median": 21.4,
-    "resolved": 4,
-    "resolved_by_bot": 4,
+    "red_main": 4,
+    "red_main_h_median": 1.1,
+    "red_main_open": 1,
+    "resolve_h_median": 9.5,
+    "resolved": 10,
+    "resolved_by_bot": 10,
     "resolved_by_origin": {
-     "agent": 4
+     "agent": 6,
+     "automation": 3,
+     "owner": 1
     },
     "writes": {
-     "github-actions[bot]": {
+     "github-actions": {
       "busiest_hour": 2,
       "hours": {
-       "00": 1,
-       "01": 2,
-       "02": 1
+       "13": 2,
+       "17": 1,
+       "18": 1
       },
       "total": 4
      },
+     "github-actions[bot]": {
+      "busiest_hour": 6,
+      "hours": {
+       "00": 1,
+       "01": 2,
+       "02": 1,
+       "03": 1,
+       "04": 1,
+       "13": 6,
+       "14": 3,
+       "16": 1,
+       "17": 2,
+       "18": 1,
+       "19": 1,
+       "20": 2
+      },
+      "total": 22
+     },
      "squid-protocol": {
-      "busiest_hour": 25,
+      "busiest_hour": 26,
       "hours": {
        "00": 22,
        "01": 25,
-       "02": 21
+       "02": 21,
+       "03": 5,
+       "04": 13,
+       "05": 5,
+       "06": 6,
+       "07": 5,
+       "08": 6,
+       "09": 6,
+       "10": 6,
+       "11": 3,
+       "12": 11,
+       "13": 15,
+       "14": 26,
+       "15": 6,
+       "16": 18,
+       "17": 17,
+       "18": 9,
+       "19": 7
       },
-      "total": 68
+      "total": 232
+     },
+     "squid-shepherd": {
+      "busiest_hour": 1,
+      "hours": {
+       "14": 1
+      },
+      "total": 1
      },
      "squid-shepherd[bot]": {
-      "busiest_hour": 32,
+      "busiest_hour": 36,
       "hours": {
        "00": 32,
        "01": 19,
-       "02": 15
+       "02": 15,
+       "03": 11,
+       "04": 36,
+       "05": 4,
+       "13": 17,
+       "14": 30,
+       "15": 5,
+       "16": 14,
+       "17": 25,
+       "18": 34,
+       "19": 5
       },
-      "total": 66
+      "total": 247
      }
     }
    }
   },
-  "open_at": "2026-11-09T03:09Z",
+  "open_at": "2026-11-09T20:16Z",
   "open_now": 151
  },
- "updated": "2026-11-09T03:09Z"
+ "updated": "2026-11-09T20:16Z"
 }
