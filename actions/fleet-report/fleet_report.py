@@ -107,6 +107,9 @@ class Config:
     events: list[tuple[str, str]] = field(default_factory=list)
     cost_max: float | None = None  # top of the cost-per-PR axis; days above it are drawn at the top and marked
     red_main_label: str = ""  # the issue label a main-watch workflow opens when a check fails on main (change failure)
+    # "org": merged PRs of every repository of the owner (owner 2026-11-13: runner time is counted across all of them,
+    # since they share the pool, so the PRs it is divided by must be too); "repo": `repo` only
+    merged_scope: str = "org"
 
     @property
     def heading(self) -> str:
@@ -172,15 +175,21 @@ def classify_pr(pr: dict, cfg: Config) -> str:
 SEARCH_PRS = """query($q: String!, $after: String) {
   search(query: $q, type: ISSUE, first: 100, after: $after) {
     pageInfo { hasNextPage endCursor }
-    nodes { ... on PullRequest { number headRefName bodyText author { login __typename } } }
+    nodes { ... on PullRequest { number headRefName bodyText author { login __typename } repository { nameWithOwner } } }
   }
 }"""
 
 
-def merged_prs(repo: str, day: str) -> list[dict]:
+MERGED_BACKFILL = 20  # older days recounted under a new merged-scope each run (one search query a day), newest first
+
+
+def merged_prs(repo: str, day: str, scope: str = "repo") -> list[dict]:
+    """The PRs merged that day in `repo`, or (scope "org") in every repository of its owner the token can see.
+    `user:` matches an organization's repositories as well as a user's."""
+    where = f"user:{repo.split('/')[0]}" if scope == "org" else f"repo:{repo}"
     prs, after = [], None
     while True:
-        vars_ = {"q": f"repo:{repo} is:pr is:merged merged:{day}"}
+        vars_ = {"q": f"{where} is:pr is:merged merged:{day}"}
         if after:
             vars_["after"] = after
         s = gh_graphql(SEARCH_PRS, **vars_)["search"]
@@ -191,8 +200,18 @@ def merged_prs(repo: str, day: str) -> list[dict]:
 
 
 def merged_counts(repo: str, day: str, cfg: Config) -> dict:
-    c = Counter(classify_pr(p, cfg) for p in merged_prs(repo, day))
-    return {"merged": sum(c.values()), "merged_by_class": {k: c.get(k, 0) for k in CLASSES}}
+    prs = merged_prs(repo, day, cfg.merged_scope)
+    c = Counter(classify_pr(p, cfg) for p in prs)
+    out = {"merged": sum(c.values()), "merged_by_class": {k: c.get(k, 0) for k in CLASSES}, "merged_scope": cfg.merged_scope}
+    if cfg.merged_scope == "org":
+        by_repo = Counter((p.get("repository") or {}).get("nameWithOwner") or repo for p in prs)
+        out["merged_by_repo"] = dict(by_repo.most_common())
+    return out
+
+
+def merged_stale(row: dict, cfg: Config | None) -> bool:
+    """The day's merged count is of `repo` alone while the report now counts the owner's repositories: not yet recounted."""
+    return bool(cfg) and cfg.merged_scope == "org" and row.get("merged_scope", "repo") != "org"
 
 
 class RunOrigin:
@@ -508,6 +527,16 @@ def collect(cfg: Config, days: int, data: dict, today: date, backfill: int = DET
         classes = data["days"].get(d, {}).get("merged_by_class")
         if d in data["days"] and (classes is None or (cfg.bot_prefixes and "bot" not in classes)):
             data["days"][d].update(merged_counts(repo, d, cfg))
+    # days counted under another merged-scope (history from before the owner-wide count): recounted newest first, a
+    # capped number each run; the ones still waiting are drawn grey
+    rescoped = [d for d in window if d in data["days"]
+                and data["days"][d].get("merged_scope", "repo") != cfg.merged_scope][:MERGED_BACKFILL]
+    for d in rescoped:
+        try:
+            data["days"][d].update(merged_counts(repo, d, cfg))
+        except RuntimeError as e:  # the day keeps its old count; the next run tries again
+            print(f"::warning::merged PRs of {d} not recounted: {e}", file=sys.stderr)
+            break
     bots = bot_workflow_ids(repo, cfg)
     origin = RunOrigin(repo, cfg)
     def incomplete(det: dict) -> bool:  # missing, from the old 24-run estimator, or short of its sample target
@@ -1107,6 +1136,7 @@ STYLE = """
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
   .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
   .partial { opacity: 0.5; }
+  .stale .seg { fill: var(--neutral); opacity: 0.6; }
   .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
   .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
   .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);
@@ -1357,7 +1387,11 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     delivery = [_origin_parts(row) for _, row in rows]
     delivery_axis = _nice_axis(max(1.0, max(sum(parts.values()) for parts in delivery)))
     delivery_max = delivery_axis[0]
-    frame(top, chart_h, delivery_axis, "1 · Delivery — merged PRs per day, by origin", lambda v: f"{v:g}")
+    org_wide = bool(cfg) and cfg.merged_scope == "org"
+    stale_days = {day for day, row in rows if merged_stale(row, cfg)}
+    frame(top, chart_h, delivery_axis, "1 · Delivery — merged PRs per day, by origin"
+          + (", across all of the owner's repositories" if org_wide else "")
+          + (" (grey: this repository only, not yet recounted)" if stale_days else ""), lambda v: f"{v:g}")
     origins = [("bot", cfg.bot_name), ("agent", "other agents"), ("other", "other"), ("automation", "automation"),
                ("unknown", "unclassified")]
     if not start and not any(parts["bot"] for parts in delivery):
@@ -1376,7 +1410,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         total = sum(parts.values())
         tip = escape(f'{_fmt_day(day)} · {total:.0f} merged PRs{" (today so far)" if day == today_s else ""} · '
                      + ", ".join(f"{label} {parts[kind]:.0f}" for kind, label in origins))
-        fade = ' class="partial"' if day == today_s else ""
+        by_repo = rows[i][1].get("merged_by_repo") or {}
+        if len(by_repo) > 1:
+            tip += escape(" · " + ", ".join(f"{name.split('/')[-1]} {n}" for name, n in by_repo.items()))
+        if day in stale_days:
+            tip += escape(" · this repository only: the other repositories' PRs are not counted yet")
+        fade = ' class="stale"' if day in stale_days else ' class="partial"' if day == today_s else ""
         out.append(f'<g{fade}><title>{tip}</title>{"".join(elements)}</g>')
     annotate(top)
     legend(top - 30, [(label, kind) for kind, label in origins if kind != "unknown" or any(p["unknown"] for p in delivery)])
@@ -2513,6 +2552,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--runner-pool", default="", help="concurrent runners; estimates above pool x 24 h are flagged")
     p.add_argument("--occupancy-scope", choices=["org", "repo"], default="org",
                    help="count every repository of the owner (they share the runner pool; default) or --repo only")
+    p.add_argument("--merged-scope", choices=["org", "repo"], default="org",
+                   help="count merged PRs of every repository of the owner (default; runner time is counted that way) or --repo only")
     p.add_argument("--occupancy-sample", action="store_true",
                    help=f"append one runner-occupancy reading to <out>/{OCC_FILE} and exit (run every ~15 min)")
     p.add_argument("--detail-backfill", type=int, default=DETAIL_BACKFILL,
@@ -2532,7 +2573,8 @@ def main(argv: list[str] | None = None) -> int:
                  sample_fraction=a.sample_fraction, sample_min=a.sample_runs or a.sample_min,
                  sample_budget=a.sample_budget, runner_pool=int(a.runner_pool) if str(a.runner_pool).strip() else None,
                  bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
-                 events=_events(a.events), cost_max=_opt_float(a.cost_max), red_main_label=a.red_main_label.strip())
+                 events=_events(a.events), cost_max=_opt_float(a.cost_max), red_main_label=a.red_main_label.strip(),
+                 merged_scope=a.merged_scope)
     a.out.mkdir(parents=True, exist_ok=True)
     occ_file = a.out / OCC_FILE
     if a.occupancy_sample:

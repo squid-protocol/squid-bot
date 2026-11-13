@@ -71,6 +71,11 @@ inputs:
       "org" (default) = count every repository of the owner, since they share the hosted-runner pool; "repo" = `repo`
       only. A token that can read Actions on the owner's private repos is needed to see those (GITHUB_TOKEN sees public ones).
     default: "org"
+  merged-scope:
+    description: >-
+      "org" (default) = count the merged PRs of every repository of the owner, as runner time is counted; "repo" = `repo`
+      only. Days counted the other way are recounted over the next runs (20 a run) and drawn grey until then.
+    default: "org"
   occupancy-sample:
     description: >-
       "true" = take one runner-occupancy reading (jobs running now), append it to occupancy.jsonl on `branch` and stop.
@@ -135,6 +140,7 @@ runs:
         I_POOL: ${{ inputs.runner-pool }}
         I_OCC: ${{ inputs.occupancy-sample }}
         I_OCC_SCOPE: ${{ inputs.occupancy-scope }}
+        I_MERGED_SCOPE: ${{ inputs.merged-scope }}
         I_BOT_PREFIXES: ${{ inputs.bot-branch-prefixes }}
         I_BOT_NAME: ${{ inputs.bot-name }}
         I_BOT_START: ${{ inputs.bot-start }}
@@ -154,7 +160,7 @@ runs:
               --sample-budget "$I_SAMPLE_BUDGET" --runner-pool "$I_POOL" --detail-backfill "$I_BACKFILL"
               --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY"
               --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS"
-              --cost-max "$I_COST_MAX" --red-main-label "$I_RED_MAIN")
+              --cost-max "$I_COST_MAX" --red-main-label "$I_RED_MAIN" --merged-scope "$I_MERGED_SCOPE")
         [ -n "$I_MARKERS" ] && args+=(--agent-markers "$I_MARKERS")
         [ -n "$I_SAMPLE" ] && args+=(--sample-runs "$I_SAMPLE")
         [ "$I_FAIL" = "true" ] && args+=(--fail-on-alert)

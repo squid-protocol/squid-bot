@@ -78,6 +78,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `runner-pool` | off | Concurrent runners (e.g. `20`): a dotted line on the CI hours chart marks pool x 24 h, and a day above it is reported as an estimate fault |
 | `occupancy-sample` | `false` | `true`: take one occupancy reading and stop (run from its own ~15-min schedule) |
 | `occupancy-scope` | `org` | `org`: every repo of the owner (they share the pool); `repo`: this one |
+| `merged-scope` | `org` | `org`: merged PRs of every repo of the owner, as runner time is counted; `repo`: this one. Days counted the other way are recounted over the next runs and drawn grey until then |
 | `sample-runs` | — | Deprecated; read as `sample-min` |
 | `detail-backfill` | `4` | Older days to fill with sampled detail per run |
 | `max-wait-p90` | off | Warn when the 7-day average p90 queue wait (min) exceeds this |
