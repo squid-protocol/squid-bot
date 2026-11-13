@@ -72,12 +72,14 @@ MAPPINGS: list[tuple[str, str]] = [
     ("tests/tools/test_shepherd_gh.py", "tests/test_shepherd_gh.py"),
     ("tests/tools/test_ci_shepherd.py", "tests/test_ci_shepherd.py"),
     ("tests/tools/flake_history.py", "src/squid_bot/flake_history.py"),
+    # flake_history's first-attempt cause classifier: without it every cause is None and its tests fail here
+    ("tests/tools/ci_rerun_stats.py", "src/squid_bot/ci_rerun_stats.py"),
     ("tests/tools/test_flake_history.py", "tests/test_flake_history.py"),
 ]
 
 
 # Modules that are siblings in GitGalaxy's tests/tools and members of the squid_bot package here.
-LOCAL_MODULES = ("box_status", "ci_digest", "ci_shepherd", "flake_history", "pr_check", "shepherd_gh")
+LOCAL_MODULES = ("box_status", "ci_digest", "ci_rerun_stats", "ci_shepherd", "flake_history", "pr_check", "shepherd_gh")
 _LOCAL = "|".join(LOCAL_MODULES)
 # A top-level run of sibling imports, with the TOOLS / sys.path lines that set it up.
 _TOP_IMPORTS = re.compile(
@@ -134,6 +136,19 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
             r'REPO_SLUG = "squid-protocol/gitgalaxy"',
             'try:\n    from squid_bot.config import get_repo_slug\n    REPO_SLUG = get_repo_slug()\nexcept Exception:\n    REPO_SLUG = "squid-protocol/gitgalaxy"',
             content,
+        )
+
+        # ci_rerun_stats.py names the repository as REPO, not REPO_SLUG
+        content = re.sub(
+            r'^REPO = "squid-protocol/gitgalaxy"$',
+            'try:\n    from squid_bot.config import get_repo_slug\n    REPO = get_repo_slug()\nexcept Exception:\n    REPO = "squid-protocol/gitgalaxy"',
+            content, flags=re.MULTILINE,
+        )
+        # flake_history.py guards this import itself (the classifier is optional in GitGalaxy), so package_imports
+        # leaves it alone; here the classifier is a member of the package
+        content = content.replace(
+            "try:\n    import ci_rerun_stats  ",
+            "try:\n    from squid_bot import ci_rerun_stats  ",
         )
 
         # Handle lock dir in box_status.py
@@ -230,6 +245,26 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
                                       'REPO / "templates/workflows/shepherd-event.yml"')
             content = content.replace('REPO / ".github" / "workflows" / "shepherd-reconcile.yml"',
                                       'REPO / "templates" / "workflows" / "shepherd-reconcile.yml"')
+            # 2026-11-13: the three literal forms above missed two later ones (a `_workflow(name)` helper and a
+            # `root = ...` directory), so the synced tree failed nine tests for a month. Workflow files are now found
+            # by one helper: the template when this repository ships one, else .github/workflows; a workflow only
+            # GitGalaxy has (flake-history.yml) skips its test.
+            content = content.replace(
+                "REPO = Path(__file__).resolve().parents[1]\n",
+                "REPO = Path(__file__).resolve().parents[1]\n\n\n"
+                "def _wf_path(name):\n"
+                '    here = REPO / "templates" / "workflows" / name\n'
+                '    return here if here.exists() else REPO / ".github" / "workflows" / name\n',
+                1,
+            )
+            content = content.replace(
+                '    doc = yaml.safe_load((REPO / ".github" / "workflows" / name).read_text(encoding="utf-8"))\n',
+                "    if not _wf_path(name).exists():\n"
+                '        pytest.skip(f"{name} is GitGalaxy-specific")\n'
+                '    doc = yaml.safe_load(_wf_path(name).read_text(encoding="utf-8"))\n',
+            )
+            content = content.replace('    root = REPO / ".github" / "workflows"\n',
+                                      '    root = REPO / "templates" / "workflows"\n')
 
         # GitGalaxy guards its tools against naming this package; here they are this package
         if "test_flake_history.py" in rel_dest:

@@ -5,9 +5,11 @@ name: Sync from GitGalaxy
 # ONE pull request (branch sync/from-gitgalaxy) open with the drift. Nothing reaches main without review; with no
 # drift the PR is closed and its branch deleted.
 #
-# Token: secrets.AUTOMATION_PAT when set (its PR also runs the Tests workflow); otherwise github.token, which needs
-# Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests" and runs no Tests on
-# its PR, so this job runs the suite itself and puts the result in the PR title and body.
+# Token: secrets.AUTOMATION_PAT when it is set AND can push here (its PR also runs the Tests workflow); otherwise
+# github.token, which needs Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests"
+# and runs no Tests on its PR, so this job runs the suite itself and puts the result in the PR title and body.
+# 2026-11-13: the PAT was set but GitHub refused it, and every run since the workflow was added (2026-10-19) died in
+# git with "could not read Username". The token is now tried first, and the run says which one it used and why.
 on:
   schedule:
     - cron: "41 6 * * *"
@@ -55,10 +57,24 @@ jobs:
           echo "result=$result" >> "$GITHUB_OUTPUT"
           tail -n 25 "$RUNNER_TEMP/pytest.txt"
           { echo 'tail<<PYTEST_EOF'; tail -n 25 "$RUNNER_TEMP/pytest.txt"; echo PYTEST_EOF; } >> "$GITHUB_OUTPUT"
+      - name: Pick a token that can push here
+        id: token
+        env:
+          PAT: ${{ secrets.AUTOMATION_PAT }}
+        run: |
+          use=workflow
+          if [ -z "$PAT" ]; then
+            echo "::notice::AUTOMATION_PAT is not set: using the workflow token (the sync PR runs no Tests workflow)"
+          elif [ "$(GH_TOKEN="$PAT" gh api "repos/$GITHUB_REPOSITORY" --jq .permissions.push 2>/dev/null)" = "true" ]; then
+            use=pat
+          else
+            echo "::warning::AUTOMATION_PAT is set but GitHub refuses it or it cannot push to $GITHUB_REPOSITORY (expired, revoked, or not granted this repository): using the workflow token. Replace the secret to get Tests on the sync PR."
+          fi
+          echo "use=$use" >> "$GITHUB_OUTPUT"
       - name: Open or update the sync pull request
         uses: squid-protocol/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # forked from peter-evans/create-pull-request v8.1.1
         with:
-          token: ${{ secrets.AUTOMATION_PAT || github.token }}
+          token: ${{ steps.token.outputs.use == 'pat' && secrets.AUTOMATION_PAT || github.token }}
           branch: sync/from-gitgalaxy
           delete-branch: true
           add-paths: |
