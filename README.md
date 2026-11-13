@@ -8,9 +8,13 @@
 [![Platform: Linux](https://img.shields.io/badge/platform-Linux%20%7C%20POSIX-lightgrey.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> **What you can run today:** the host sensor (`box-status`), fair core sharing (`heavy-run.sh`), CI failure triage (`ci-digest`, `flake-history`), the merge bot (`integrase-bot`) and the dashboard action install from this repo. The launcher that starts the agents (`promoter-bot`) is a [separate repo](https://github.com/squid-protocol/promoter-bot) still tied to GitGalaxy, and the phone channel (`comms-bot`) is private. [Details below](#-what-you-can-run-today).
+
 ---
 
-## ⚡ What It Does
+## ⚡ How It Works
+
+![The squid-bot loop: issues and owner goals feed promoter-bot, which starts agents in isolated worktrees; draft PRs go through shepherd_gh, failures go to ci_digest and back to the agent with an exact repro, green PRs go through integrase-bot to updated main, and the merge frees a slot for the next slice](docs/images/fleet-loop.svg)
 
 On [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository it runs on, squid-bot has largely automated the production of code. The owner's job is to **set goals**: an ordered list of issue sets for the fleet to work through. From there the loop runs on its own, around the clock:
 
@@ -94,87 +98,78 @@ Up to 4 files, about one PR in five needs a fix; at 5 or more, about half do. Th
 
 ---
 
-## 🧬 The Frame: Editing a Genome, One Verified Change at a Time
+*Everything below is reference: what you can run, how each control loop works, the components, installation, and where the design came from.*
 
-Left unmanaged, coding agents behave like a plague of grasshoppers: five started at once will take every core, run the box out of memory, back the CI queue up for hours, and time their own tests out. Keeping them inside the host's carrying capacity is half the job. The other half is that a coding fleet is not a swarm competing for grass: many agents are making **heritable changes to one shared genome**, `origin/main`, which every future branch inherits.
+---
 
-That is gene editing, and the way labs do it safely is a good model for doing it with agents. In an *ex vivo* therapy (the way CAR-T cells are made), cells are taken out of the patient, edited in a dish, screened, and only verified cells are returned. squid-bot does the same with code: each issue is a known defect, each agent edits an isolated copy of the genome, CI screens the edited copy, and only a verified edit is integrated into `main`.
+## 📦 What You Can Run Today
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                       THE GENOME (origin/main)                               │
-│   Known defects to correct and traits to add: the issue backlog              │
-│      #4893 loss-of-function bug   ·   #5166 knock-in: new feature            │
-└──────────────────────────────────────┬───────────────────────────────────────┘
-                                       │
-            1. Initiation: promoter-bot switches editing on or off
-               • box-status: editor toxicity / host capacity (GREEN/YELLOW/RED)
-               • usage limits, connectivity, owner holds: when and how many
-               • comms-bot: the owner's sign-off, asked and answered by phone
-                                       │
-┌──────────────────────────────────────▼───────────────────────────────────────┐
-│          THE EDITORS (Claude Code / Gemini / Cursor), one per culture        │
-│                                                                              │
-│   Each edits an isolated worktree (a cell culture, not the patient) and      │
-│   produces an edited clone: a branch + draft PR, sharing cores via           │
-│   heavy-run.sh                                                               │
-└──────────────────────────────────────┬───────────────────────────────────────┘
-                                       │
-            2. Screening: is this clone correct, and did it break anything?
-               • draft PR: cheap genotyping first, full CI only after
-               • ci_digest: genotype a failed clone (real defect vs noise)
-                                       │
-┌──────────────────────────────────────▼───────────────────────────────────────┐
-│            INTEGRATION: integrase-bot (Verified Squash Merge)                │
-│                                                                              │
-│   Only a screened, green clone is integrated into origin/main. Memory of     │
-│   past failures is kept for the next editors (handoffs, lessons-inbox)       │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
+squid-bot was built on one repository, [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), and is being generalized piece by piece. This is where each piece stands:
 
-### The Mapping
-
-| Gene editing | squid-bot | What it does |
+| Piece | Status | What it needs |
 |---|---|---|
-| **The genome** | **`origin/main`** | The canonical sequence that every future branch inherits. Changes here are heritable. |
-| **A known defect, or a trait to add** | **An issue** | A bug is a loss-of-function mutation to correct; a feature is a knock-in of a new trait. |
-| **Inducible promoter driving the editor** (Tet-On style: edit only when the signal is present) | **promoter-bot** | Decides which edits start, when, and how many at once; switches editing off on host stress, usage limits or lost connectivity. |
-| **Editor toxicity** (too much Cas9 kills the cell) | **`box-status`** | Senses host pressure (`/proc/pressure/cpu`, `memory`, `io`) and holds new work before the host collapses. |
-| **The editor** (Cas9 plus its guide RNA) | **A coding agent** with its brief | The brief is the guide: where to cut and what the corrected sequence should be. |
-| **Editing in a dish, not in the patient** | **A git worktree** | Every edit happens in an isolated copy; `main` is never edited directly. |
-| **Sharing the incubator** | **`heavy-run.sh`** | Gives each heavy job a fair share of the cores when it starts. |
-| **The repair template; HDR vs NHEJ** | **The PR's diff** | A precise, template-guided fix (HDR) versus a quick patch that leaves side effects (NHEJ "indels"). |
-| **Screening clones; off-target sequencing** | **CI: draft checks, then the full suite** | Does the edit fix the defect, and did it break anything elsewhere (off-target effects = regressions)? |
-| **Genotyping a failed clone** | **`ci_digest`** | Classifies a failure (`real` / `infra` / `flake` / `main` / `dirty`) and hands the editor the exact local repro. |
-| **Integrase** (writes a verified sequence into the genome) | **integrase-bot** (formerly the shepherd) | Merges a green PR into `main`; holds, reruns and flags the rest. Also: it does Continuous Integration. |
-| **The physician's sign-off** (the clinician who ordered the therapy decides what the lab can't) | **comms-bot** | Takes the fleet's questions to the owner's phone in plain language, brings the decisions back, and sends a daily lab report. Uses no model tokens. |
-| **Discarding a failed clone** | **Closing a broken PR** | An edit that cannot be verified never reaches the genome. |
-| **Two edits at the same locus** | **Merge conflicts** | Caught as `dirty` and sent back for a rebuild against the current genome. |
-| **The CRISPR array** (bacteria store spacers from past infections to recognise them again) | **Handoffs, `lessons-inbox.md`, the integrase ledger & `flake-history`** | Memory of past failures carried to the next generation of editors. |
+| `box-status` | In this repo; runs after `pip install -e .` | Linux; PSI (`/proc/pressure`) for the full reading |
+| `heavy-run.sh`, `exclusive-lock.sh`, `kill-by-cwd.sh` | In this repo | `flock` |
+| `ci-digest`, `flake-history` | In this repo | `gh` signed in. Some repro commands and path rules are still GitGalaxy's |
+| `integrase-bot` (local loop) and the workflow templates | In this repo | `gh` with write access; the `shepherd:merge` / `hold` / `matrix` / `needs-fix` / `waiting-on-main` labels; your required checks listed in `squid-bot.toml`. It merges, so try it on a test repository first |
+| [Fleet CI report action](actions/fleet-report) | In this repo; works on any repository | A workflow with `contents: write` to publish the dashboard branch |
+| `promoter-bot` | [Separate repo](https://github.com/squid-protocol/promoter-bot); runs GitGalaxy today | Calls GitGalaxy's own gate scripts and a private agent skill. Read it for the design; it is not installable elsewhere yet |
+| `comms-bot` | Private | |
 
-### What Happens Without Regulation
+No part of this confines an agent in a container. Agents run as the user who starts them, in their own git worktree, under the agent CLI's permission mode. Treat it as you would any tool that runs code with your credentials: use an account or token limited to the repository it works on.
 
-| Host resource | Unregulated editor swarm | With squid-bot |
+### Names you will meet
+
+The loop above, in the names the code uses. Two renames are unfinished, so the older names still appear:
+
+| Step | Plain name | Program | Older name still in the code |
+|---|---|---|---|
+| Decide what starts, when, and how many | Admission gate and launcher | `promoter-bot` | `churn` (the program, its state files, the `churn/*` branches) |
+| Is the host able to take another job? | Host capacity sensor | `box-status` | |
+| Share the cores between heavy jobs | Fair core share | `heavy-run.sh` | |
+| Why did CI fail, and how is it reproduced locally? | CI failure triage | `ci-digest`, `flake-history` | |
+| Screen PRs, rerun noise, merge the green ones | Merge bot | `integrase-bot` | `shepherd` (the `shepherd:*` labels, the `[shepherd]` config section, `CI_SHEPHERD_*` variables) |
+| Ask the owner what only the owner can decide | Owner decisions by phone | `comms-bot` | |
+
+---
+
+## 🔁 The Control Loops
+
+Every hold in the system is one of these loops. Each has a sensor, something it acts on, a rule with its constants, and the incident that set it; the constants live beside dated notes in the code. The last column names the closest idea in cell regulation where there is one (see [Where the design came from](#-where-the-design-came-from-cell-regulation)).
+
+| Loop | Senses | Acts on | Rule | Set by | In a cell |
+|---|---|---|---|---|---|
+| **Host capacity** (`box-status`) | CPU, memory and disk pressure (PSI, 60 s average), load per core, available memory | Whether anything new starts | RED at CPU pressure ≥ 40%, memory available < 10% or memory pressure ≥ 20%; YELLOW at 15%, 20% and 5%. Launches only on GREEN, into free heavy slots (cores / 4) | Five agents started at once took every core and timed their own tests out | Sensing energy charge (stall), not counting enzymes |
+| **CI admission** (`promoter-bot`) | Runner-minutes queued and running; each workflow's learned cost (moving average, weight 0.3) | New launches | Room = target use × runners × 60 min, minus work in hand, minus what live workers will push. A launch needs room for one PR's cost | 2026-10-14: three workers outran 20 runners (31 runs queued, 24 min median wait). Counting runs stopped working when jobs got shorter | |
+| **CI target use** | Queue wait of PR jobs (median) | The target in the row above | Cut × 0.8 when the wait passes 7.5 min; climb ÷ 0.8 when it is under 3 min; each at most every 20 min; between 0.3 and 1.0. Hold everything while queued runs wait over 10 min | 2026-10-23: gauges read 1.3 min on started jobs while others queued 35 min. 2026-11-03: a slow climb held launches 10 h | Feedback inhibition by the end product |
+| **Spend pacing** | Dollars spent in the 5-hour usage window; the budget learned from past limit hits | New launches | Launch only if spend plus one typical run stays under 80% of the learned budget | The plan's limit is not published; it is learned from where it stopped the fleet | |
+| **Usage-limit pause** | The provider's limit message and its reset time | All launches | Stop until the stated reset; four hits in six hours pages the owner | A pause that ended straight back into the limit | Checkpoint arrest |
+| **Failure streak** | Workers that crash or error in a row | All launches | Four in a row: hold one hour, then one probe round | 2026-10-17: the agent CLI updates itself daily, and a release that changed its output would fail every worker while the gate looked healthy | Checkpoint arrest |
+| **GitHub API quota** | Calls left this hour and the burn rate | Optional reads, then launches | Lean under 2,000 left, hold under 1,000 | 2026-10-24: the quota ran out and the merge bot, which shares it, stopped merging | |
+| **Offline** | Whether the model API and GitHub answer | Launches, model ticks, retry counters | Freeze all three; requeue workers the outage killed | 2026-10-17: during an outage the gate launched the next item into every free slot, and each one failed | Checkpoint arrest |
+| **Stall** | A need the model tick has failed to settle | Whether that need wakes a tick again | After 3 tries it stops; it is asked again 2 h later | 2026-11-01: one stalled need left a host idle for 7 h | |
+| **Focus, then filler** | Whether the owner's focus list has anything launchable | Off-focus work | Off-focus work runs only when the focus has had nothing to launch for 2 passes, at most 4 launches a window, and it queues no follow-up | A focus that ran dry stopped the whole fleet; without the cap, filler reshuffled the queue | **The lac operon**: a second sugar is used only when it is there and the preferred one is not |
+| **Backfill** | CI busy while agent slots sit idle | CI-light work (mutation testing, research) | Starts only after CI has been busy 20 min; CPU-capped; when CI calms it finishes its step instead of being killed | 2026-10-14: uncapped, it drove load to 36 on 12 cores and was stopped and restarted 5 times in 5 h | The same switch, with a persistence filter so a blip does not flip it |
+| **Merge bot** (`integrase-bot`) | Check results on each PR head | Reruns, ready-marking, merges, fixers | At most 4 drafts marked ready a pass; infrastructure failures rerun up to 3 times, 15 min apart; a flaky failure once; a fixer only on GREEN, one a pass | 2026-10-09: a registry outage outlasted a single rerun | |
+| **Flake memory** (`flake-history`) | Jobs that failed, then passed on a rerun of the same run, over 14 days | Which first failures earn a rerun | Learned flaky at 2 or more rescues with 80% of reruns passing | | Immune memory of past infections |
+
+### What happens without them
+
+| Resource | Agents left to themselves | With squid-bot |
 |---|---|---|
 | **CPU cores & threads** | Every agent spawns `nproc` workers; load spikes to 60+; clock starvation triggers false regex/test timeouts. | `heavy-run.sh` gives each heavy job a fair share of cores (`online_cores / active_heavy_slots`). |
 | **Memory & swap** | Concurrent AST parsers, JVMs, and containers exhaust RAM; the OOM killer terminates active agent sessions. | `box-status` senses `/proc/pressure/memory` stall and holds heavy work (`YELLOW` / `RED`). |
 | **CI runner minutes** | Agents push speculative commits to test hypotheses on GitHub Actions, exhausting runner queues. | Draft screening plus `ci_digest`'s local repro: fix locally, push once. |
-| **The shared genome (`main`)** | Upstream merges invalidate in-flight branches; agents enter rebase loops or chase `main` failures. | integrase-bot serializes integration into `main` and marks `shepherd:waiting-on-main` while `main` itself is red. |
-
----
-
-## 🏛️ How the Pieces Fit
-
-![The squid-bot loop: issues and owner goals feed promoter-bot, which starts agents in isolated worktrees; draft PRs go through shepherd_gh, failures go to ci_digest and back to the agent with an exact repro, green PRs go through integrase-bot to updated main, and the merge frees a slot for the next slice](docs/images/fleet-loop.svg)
+| **The shared branch (`main`)** | Upstream merges invalidate in-flight branches; agents enter rebase loops or chase `main` failures. | integrase-bot serializes integration into `main` and marks `shepherd:waiting-on-main` while `main` itself is red. |
 
 ---
 
 ## 🔍 Components
 
-### 1. Host capacity sensor: `box-status` (editor toxicity)
+### 1. Host capacity sensor: `box-status`
 CLI command: `box-status`
 
-A cell doesn't guess its energy by counting enzymes; it senses actual stall (such as the AMP/ATP ratio). Likewise, instead of crude CPU percentages (which spike deceivingly during brief bursts), `box-status` reads Linux **Pressure Stall Information (PSI)** from `/proc/pressure/cpu`, `/proc/pressure/memory`, and `/proc/pressure/io`.
+Instead of crude CPU percentages (which spike deceivingly during brief bursts), `box-status` reads Linux **Pressure Stall Information (PSI)** from `/proc/pressure/cpu`, `/proc/pressure/memory`, and `/proc/pressure/io`.
 
 ```bash
 $ box-status
@@ -189,16 +184,16 @@ disk: io-pressure 1.79% (full 1.57%)  tasks blocked on disk 0
 ```
 
 #### Verdicts
-* **`GREEN` (editing on):** pressure is negligible and heavy slots are open. Agents may start heavy verification sweeps, Docker containers, or parallel gauntlets.
+* **`GREEN` (launches allowed):** pressure is negligible and heavy slots are open. Agents may start heavy verification sweeps, Docker containers, or parallel gauntlets.
 * **`YELLOW` (light work only):** heavy slots are occupied, available memory is under 20%, or load exceeds 70% of the core count. Agents down-shift to scouting, narrow unit tests, or code edits.
-* **`RED` (editing off):** CPU stall pressure $\ge 40\%$, available memory $< 10\%$, or the box is paging. Orchestrators start nothing new and ask active workers to write a handoff checkpoint.
+* **`RED` (nothing new starts):** CPU stall pressure $\ge 40\%$, available memory $< 10\%$, or the box is paging. Orchestrators start nothing new and ask active workers to write a handoff checkpoint.
 
 ---
 
-### 2. Fair core share: `heavy-run.sh` (sharing the incubator)
+### 2. Fair core share: `heavy-run.sh`
 Usage: `scripts/heavy-run.sh <command...>`
 
-Several cultures share one incubator; none may take all of it. `heavy-run.sh` sizes compute-intensive builds and test suites once, when each job starts:
+`heavy-run.sh` sizes compute-intensive builds and test suites once, when each job starts:
 1. It acquires one of $N$ shared slots ($N = \text{cores} / 4$, minimum 1) via kernel `flock`.
 2. It counts how many other heavy jobs are running.
 3. It calculates a fair core share for that moment:
@@ -209,12 +204,12 @@ The share is not revised while the job runs: a job that starts alone gets every 
 
 ---
 
-### 3. Initiation: `promoter-bot` (the inducible promoter)
-*Status: runs on GitGalaxy today (formerly `churn`). Source: [squid-protocol/promoter-bot](https://github.com/squid-protocol/promoter-bot); not yet packaged in this repo.*
+### 3. Admission gate and launcher: `promoter-bot`
+*Status: runs on GitGalaxy today; its program is still named `churn`. Source: [squid-protocol/promoter-bot](https://github.com/squid-protocol/promoter-bot); not yet packaged in this repo.*
 
 promoter-bot decides which issues get worked, when, and how many at once, and launches the agents that work them. It runs as a cheap gate every 10 minutes and starts a model session only when something needs judgment:
-* **Signals that switch editing off:** `box-status` RED, a usage limit (paused until its reset, weekly resets included), lost connectivity (workers that died offline are requeued), a run of failing workers, or a stop file.
-* **Dose:** at most `max_workers` agents at once, only into free heavy slots.
+* **Signals that stop new launches:** `box-status` RED, a usage limit (paused until its reset, weekly resets included), lost connectivity (workers that died offline are requeued), a run of failing workers, or a stop file.
+* **How many:** at most `max_workers` agents at once, only into free heavy slots.
 * **Goals:** the owner's ordered list of issue sets. The active goal's issues launch first and lead every refill; later goals follow, then everything else.
 * **Targets:** a tiered queue that refills itself from labelled issues.
 * **Slicing:** a worker takes one slice of an issue, capped at 5 hand-written files, so an issue usually lands as several small PRs. A checklist item that keeps merging partial slices is requeued to be split first.
@@ -222,10 +217,10 @@ promoter-bot decides which issues get worked, when, and how many at once, and la
 
 ---
 
-### 4. Screening & integration: `integrase-bot` (formerly the shepherd)
+### 4. CI screening and merge bot: `integrase-bot`
 CLI command: `integrase-bot run --every 600` (also available as `squid-bot run` and `shepherd`)
 
-Cellular regulation runs on state equilibrium, not fragile one-shot events. Likewise, GitHub webhook events drop under burst traffic, arrive out of order, or get canceled by concurrency groups, so integrase-bot **reconciles the true GitHub state directly** on every pass. Its PR labels keep their original `shepherd:` names:
+GitHub webhook events drop under burst traffic, arrive out of order, or get canceled by concurrency groups, so integrase-bot **reconciles the true GitHub state directly** on every pass. Its PR labels keep their original `shepherd:` names:
 * **Screen cheaply first (Draft → Ready):** agents open PRs as drafts so only cheap, fast checks run. Once those pass, integrase-bot marks the PR ready to trigger the full CI suite, and merges it on a later pass once that suite is green; it never merges a draft in the same step, because a draft's skipped heavy checks read as green. At most `CI_SHEPHERD_MAX_IN_FLIGHT` (default 4) drafts are released per pass, so a burst of drafts doesn't flood the CI runners.
 * **Integrate (`shepherd:merge`):** the moment all required checks pass and the branch is clean, integrase-bot squash-merges the edit into `main`.
 * **No chasing `main`:** a PR that is merely *behind* `main` is never updated just to stay current: every push restarts its CI. Leave branch protection's "require branches to be up to date" off and let `main`'s own CI catch the rare semantic conflict; with it on, a green-but-behind PR waits for a human.
@@ -233,15 +228,15 @@ Cellular regulation runs on state equilibrium, not fragile one-shot events. Like
 * **Fixer gating:** with `CI_SHEPHERD_FIXER` set, a `real` failure starts that command (`<fixer> <PR> <digest.json>`) to repair it. The digest comment posts at once, but the fixer starts only when `box-status` reads `GREEN`, at most `CI_SHEPHERD_MAX_FIXERS` (default 1) per pass, and the most useful first: the PR that others wait on (`--after`), then the one with the fewest failing checks.
 * **Hold (`shepherd:hold`):** keeps a PR open for human inspection without merging.
 * **Full matrix (`shepherd:matrix`):** runs the full cross-platform OS $\times$ Python suite and gates integration on a clean run.
-* **Damaged reference (`shepherd:waiting-on-main`):** applied when a failing check is confirmed to also be failing on `origin/main`, so agents don't mutate their own edit to fix a broken genome.
+* **Damaged reference (`shepherd:waiting-on-main`):** applied when a failing check is confirmed to also be failing on `origin/main`, so agents don't change their own PR to fix a failure that is `main`'s.
 * **Needs a fix (`shepherd:needs-fix`):** applied when a real regression or conflict (`dirty`) is detected, paired with a structured `ci_digest` report.
 
 ---
 
-### 5. Genotyping a failed clone: `ci_digest`
+### 5. CI failure triage: `ci_digest`
 CLI command: `ci-digest <PR_NUMBER>`
 
-When CI fails on a PR, dumping 10,000 lines of raw GitHub Actions logs into an agent's context window is toxic. `ci_digest` genotypes the failed clone instead: it scans the failure, filters out environmental noise, classifies it, and emits the exact local reproduction:
+When CI fails on a PR, dumping 10,000 lines of raw GitHub Actions logs into an agent's context window is toxic. `ci_digest` reads the failed run instead: it scans the failure, filters out environmental noise, classifies it, and emits the exact local reproduction:
 
 ```bash
 $ ci-digest 4976
@@ -259,9 +254,9 @@ $ ci-digest 4976
 #### Failure Classes
 * `infra`: environmental noise (runner disconnects, Docker Hub 429/504s). integrase-bot reruns these up to 3 times, 15 minutes apart.
 * `flake`: a known timing-sensitive test: listed in `FLAKY`, or the first attempt of a check that `flake-history` learned is flaky. Retried once automatically; if it fails again it is `real`.
-* `main`: the failure is in the reference genome (`origin/main`), not the edit. Triggers `shepherd:waiting-on-main`. While `main`'s newest commit is still running a check, the last finished result of that check on `main` (up to 3 commits back) is used, so a PR is not blamed for a failure it inherited in the minutes after a merge.
-* `dirty`: two edits at the same locus (a merge conflict with `main`). Signals the agent to merge `origin/main` and regenerate derived artifacts.
-* `real`: a true defect in the edit. Outputs the **exact local reproduction command** so the agent fixes and verifies locally before pushing once.
+* `main`: the failure is on `origin/main` itself, not in the PR. Triggers `shepherd:waiting-on-main`. While `main`'s newest commit is still running a check, the last finished result of that check on `main` (up to 3 commits back) is used, so a PR is not blamed for a failure it inherited in the minutes after a merge.
+* `dirty`: a merge conflict with `main`. Signals the agent to merge `origin/main` and regenerate derived artifacts.
+* `real`: a true defect in the PR. Outputs the **exact local reproduction command** so the agent fixes and verifies locally before pushing once.
 
 #### Learned Flakes (`flake-history`)
 CLI command: `flake-history [--json] [--file-issues]`
@@ -270,8 +265,8 @@ GitHub already records the evidence: a rerun workflow run has `run_attempt > 1`,
 
 ---
 
-### 6. Memory: handoffs & `lessons-inbox.md` (the CRISPR array)
-CRISPR began as a bacterial immune memory: a cell stores a short spacer from each past infection so it recognises the same invader next time. Coding agents need the same, because sessions end on context compaction, usage limits and preemptions.
+### 6. Memory between sessions: handoffs & `lessons-inbox.md`
+Agent sessions end on context compaction, usage limits and preemptions, so what one session learned has to be written down for the next.
 
 squid-bot keeps that memory in structured markdown handoffs ([`handoff-*.md`](templates/skills/parallel-agents/SKILL.md)) and `lessons-inbox.md`:
 * Before a session ends, an agent records its active worktrees, running background PIDs, the verification level reached, and open blockers.
@@ -280,10 +275,10 @@ squid-bot keeps that memory in structured markdown handoffs ([`handoff-*.md`](te
 
 ---
 
-### 7. Sign-off: `comms-bot` (the physician's sign-off)
+### 7. Owner decisions by phone: `comms-bot`
 *Status: runs privately on GitGalaxy today (added 2026-10-17); not yet packaged in this repo.*
 
-In a cell therapy, the lab does the editing, but some calls belong to the physician who ordered it: release this batch, retry that culture, stop. A fleet has the same kind of calls (retry a PR the agents have failed to fix four times today, release a held PR, make a ruling only the owner can make), and until comms-bot its only way to reach the owner was a log nobody was reading. On the day it shipped, the scorecard counted 24 idle ticks, about 2.9 hours with free slots and nothing to launch, all of them waiting on owner decisions.
+Some calls belong to the owner, not the fleet (retry a PR the agents have failed to fix four times today, release a held PR, make a ruling only the owner can make), and until comms-bot its only way to reach the owner was a log nobody was reading. On the day it shipped, the scorecard counted 24 idle ticks, about 2.9 hours with free slots and nothing to launch, all of them waiting on owner decisions.
 
 comms-bot is a two-way channel between the fleet and the owner's phone that uses no model tokens:
 * **Private by construction:** a self-hosted [ntfy](https://ntfy.sh) server reachable only over a private VPN, with no anonymous access. Only the owner's account can post commands and only the box's account can post alerts, so every command is the owner's.
@@ -323,7 +318,7 @@ required_checks = [
     "type-check"
 ]
 poll_interval_seconds = 600
-state_path = "/tmp/squid-bot/state/shepherd.json"
+state_path = "/var/lib/squid-bot/shepherd.json"   # somewhere that survives a reboot (the default is under /tmp)
 
 [supervisor]
 lock_dir = "/tmp/squid-bot/locks"
@@ -333,7 +328,9 @@ heavy_slots = 3
 ### 3. Check host capacity
 ```bash
 box-status
-# Output: GREEN: headroom (cores: 12, load: 2.1, free heavy slots: 3)
+# GREEN: headroom
+# cores 12  load 2.4 / 3.0 / 3.4  cpu-pressure 0.02%  mem-pressure 0.09%
+# heavy slots 0/3 held  free for new heavy work: 3
 ```
 
 ### 4. Run heavy jobs with a fair core share
@@ -342,6 +339,7 @@ scripts/heavy-run.sh pytest tests/
 ```
 
 ### 5. Start integrase-bot
+It merges PRs labelled `shepherd:merge` once the required checks are green, so point it at a repository only after reading [what it needs](#-what-you-can-run-today). The GitHub Actions version (`templates/workflows/`) accepts `--dry-run`; this local loop does not.
 ```bash
 nohup integrase-bot run --every 600 >> /tmp/squid-bot/shepherd.log 2>&1 &
 integrase-bot status   # the queue, plus the ledger's most recent events
@@ -355,32 +353,37 @@ integrase-bot status   # the queue, plus the ledger's most recent events
 
 ---
 
-## 🔄 The GitGalaxy Live Crucible & Sync Bridge
+## 🧬 Where the Design Came From: Cell Regulation
 
-`squid-bot` was forged inside **[GitGalaxy](https://github.com/squid-protocol/gitgalaxy)**, where it regulates multi-agent editing (4,800+ merged pull requests as of Oct 26, 2026).
+The system was designed by a biologist, and two of its ideas were taken from how cells regulate themselves. The rest is ordinary control engineering, and this section says which is which.
 
-To allow continuous evolution inside GitGalaxy while maintaining a clean, generalized open-source package, `squid-bot` includes a bi-directional sync bridge (`scripts/sync.py`):
+**1. Sense stall, not activity.** A cell does not estimate its energy by counting enzymes; it responds to energy charge, which is a measure of work that cannot proceed. The system does the same: it reads how long tasks waited for CPU, memory or disk (Linux PSI) instead of CPU percentage, and how long CI jobs waited for a runner instead of how many are running.
 
-```bash
-# Check drift between GitGalaxy and squid-bot
-python scripts/sync.py status
-python scripts/sync.py diff
+**2. The lac operon: use the second sugar only when it is there and the first is not.** *E. coli* makes the enzymes for lactose only when lactose is present *and* glucose, which it prefers, is absent. Two lanes follow that rule exactly. *Filler* work, from outside the owner's focus, launches only when it is queued and the focus has nothing that can launch. *Backfill* work, which is light on CI, launches only when it is queued and CI is too busy for normal work. Backfill also waits until CI has been busy for 20 minutes, the way a cell's feed-forward loops ignore a brief pulse and respond to a signal that persists.
 
-# Pull recent improvements from GitGalaxy into squid-bot
-python scripts/sync.py pull
+**3. Checkpoints.** When something is wrong (a usage limit, a run of crashes, a host under pressure, a lost connection) the system stops starting new work and leaves running work alone, as a cell arrests at a checkpoint instead of dismantling itself.
 
-# Push generalized fixes from squid-bot back to GitGalaxy (see the warning below)
-python scripts/sync.py push
-```
+**The picture of the pipeline** is *ex vivo* gene editing, the way CAR-T cells are made: cells are taken out, edited in a dish, screened, and only verified cells are returned. Here each agent edits an isolated copy (a worktree), CI screens it, and only a verified change is merged into `main`, which every later branch inherits. That is where the names come from: promoter-bot starts the editing, integrase-bot writes the verified result in. The [full mapping](docs/biology.md) is in the docs.
 
-The bridge translates paths, abstracts repository slugs, maps package imports, updates lock variables, and adapts test suites. `pull` is safe. **`push` is not a clean reverse:** it writes squid-bot's generalizations into GitGalaxy as well, including the default lock directory, which would split GitGalaxy's heavy-job slots between old and new agents. To move a change into GitGalaxy, `git format-patch` the commit, rewrite its paths (`src/squid_bot/X` → `tests/tools/[box/]X`, `tests/test_X` → `tests/tools/test_X`) and `git apply` it in a fresh GitGalaxy worktree.
+### Where the comparison stops
+
+- **The names are labels, not mechanisms.** A promoter answers to one signal. promoter-bot launches only when about ten independent holds are all clear, which is closer to several repressors on one gene.
+- **CI admission is not biology.** It is the congestion control networks use: cut the target by a fifth when jobs wait too long, raise it when they do not.
+- **A cell regulates continuously; this samples.** The gate runs every 10 minutes and most of its rules are thresholds, so it is on-or-off where a cell would be graded. The host verdict has no dwell time yet, so it can flip between readings.
+- **There is an owner.** A person sets the focus and answers the questions the system cannot. Nothing in a cell does that.
+
+---
+
+## 🔄 Staying in Step with GitGalaxy
+
+The tools here are generalized copies of the ones that run on GitGalaxy. `scripts/sync.py` and a daily workflow pull GitGalaxy's changes through a set of transforms and open a pull request with the drift. See [docs/sync-bridge.md](docs/sync-bridge.md).
 
 ---
 
 ## ❓ Frequently Asked Questions
 
-#### Q: Why frame `squid-bot` as gene editing instead of just a task queue?
-**A:** Because the hard part isn't ordering jobs; it's making heritable changes to one shared genome safely. A queue only orders work. squid-bot regulates the whole edit: it starts edits only when the host can take them (`promoter-bot`, `box-status`), edits in isolation (worktrees), sizes each heavy job's share of the cores as it starts (`heavy-run.sh`), screens cheaply before screening expensively (draft PRs), genotypes failures so they are fixed locally (`ci_digest`), and integrates only verified edits, never while the reference genome itself is broken (`integrase-bot`). When only a human can decide, it asks the owner in plain language and waits for the answer (`comms-bot`).
+#### Q: Is this a task queue with a biology theme?
+**A:** It is a set of control loops around a task queue; the [control loops table](#-the-control-loops) lists each one with its sensor, its rule and the incident that set it. Two ideas did come from how cells regulate themselves, and one section says which and where the comparison stops: [Where the design came from](#-where-the-design-came-from-cell-regulation).
 
 #### Q: Why measure Linux PSI instead of standard CPU usage?
 **A:** CPU percentages only measure how much time the processor spent on tasks, which spikes deceivingly during momentary bursts. PSI measures **task stall time**: the percentage of time processes were delayed waiting for CPU, memory, or disk. High PSI is a direct measure of a host under stress.
