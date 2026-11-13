@@ -54,7 +54,7 @@ def test_package_imports_covers_any_sibling_run_and_aliases():
     assert res.startswith("import sys\n") and res.endswith("\nX = 1\n")  # other imports and code untouched
     assert sync.package_imports("import flake_history as fh\n") == (
         "try:\n    from squid_bot import flake_history as fh\nexcept ImportError:\n    import flake_history as fh\n")
-    assert sync.package_imports("import ci_rerun_stats\nimport json\n") == "import ci_rerun_stats\nimport json\n"
+    assert sync.package_imports("import det_sweep_plan\nimport json\n") == "import det_sweep_plan\nimport json\n"
 
 
 def test_package_imports_wraps_function_local_imports_unless_import_guarded():
@@ -71,3 +71,25 @@ def test_gitgalaxy_only_guard_test_is_skipped_here():
     src = "def test_no_squid_bot_reference_in_the_shepherd_tools():\n    from pathlib import Path\n"
     res = sync.transform_for_squid_bot(src, "tests/test_flake_history.py")
     assert 'pytest.skip("GitGalaxy-only' in res
+
+
+def test_the_cause_classifier_is_synced_as_a_package_member():
+    """2026-11-13: flake_history's causes come from ci_rerun_stats, which was not synced, so three of its tests failed
+    on every synced tree."""
+    assert ("tests/tools/ci_rerun_stats.py", "src/squid_bot/ci_rerun_stats.py") in sync.MAPPINGS
+    fh = sync.transform_for_squid_bot(
+        "try:\n    import ci_rerun_stats  # the classifier\nexcept ImportError:\n    ci_rerun_stats = None\n",
+        "src/squid_bot/flake_history.py")
+    assert fh.startswith("try:\n    from squid_bot import ci_rerun_stats  # the classifier\nexcept ImportError:\n")
+    stats = sync.transform_for_squid_bot('import json\n\nREPO = "squid-protocol/gitgalaxy"\n', "src/squid_bot/ci_rerun_stats.py")
+    assert "REPO = get_repo_slug()" in stats and 'REPO = "squid-protocol/gitgalaxy"' in stats  # the fallback stays
+
+
+def test_shepherd_workflow_tests_find_the_templates_however_they_spell_the_path():
+    src = ('REPO = Path(__file__).resolve().parents[2]\n\n\ndef _workflow(name):\n    yaml = pytest.importorskip("yaml")\n'
+           '    doc = yaml.safe_load((REPO / ".github" / "workflows" / name).read_text(encoding="utf-8"))\n    return doc\n\n\n'
+           'def test_x():\n    root = REPO / ".github" / "workflows"\n    return root\n')
+    res = sync.transform_for_squid_bot(src, "tests/test_shepherd_gh.py")
+    assert 'def _wf_path(name):\n    here = REPO / "templates" / "workflows" / name\n' in res
+    assert '        pytest.skip(f"{name} is GitGalaxy-specific")\n    doc = yaml.safe_load(_wf_path(name).read_text(' in res
+    assert '    root = REPO / "templates" / "workflows"\n' in res and res.count("def _wf_path") == 1
