@@ -948,3 +948,69 @@ def test_quality_sheet_draws_daily_rolling_fix_rates_by_size_and_causes():
     assert "| fix 5 |" in md and "(partial)" in md
     assert dashboard.render_quality(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
     assert dashboard.quality_md(_data(3), TODAY) == []
+
+
+# ---------------------------------------------------------------- merged PRs across the owner's repositories (2026-11-13)
+
+def _pr(repo, branch="x"):
+    return {"number": 1, "headRefName": branch, "bodyText": "", "author": {"login": "a", "__typename": "User"},
+            "repository": {"nameWithOwner": repo}}
+
+
+def test_merged_prs_are_counted_across_the_owners_repositories_by_default(monkeypatch):
+    asked = []
+
+    def fake(query, **v):
+        asked.append(v["q"])
+        return {"search": {"pageInfo": {"hasNextPage": False}, "nodes": [_pr("owner/repo"), _pr("owner/repo"), _pr("owner/tools")]}}
+    monkeypatch.setattr(dashboard, "gh_graphql", fake)
+    got = dashboard.merged_counts("owner/repo", "2026-11-12", dashboard.Config(repo="owner/repo"))
+    assert asked == ["user:owner is:pr is:merged merged:2026-11-12"]
+    assert got["merged"] == 3 and got["merged_scope"] == "org"
+    assert got["merged_by_repo"] == {"owner/repo": 2, "owner/tools": 1}
+    one = dashboard.merged_counts("owner/repo", "2026-11-12", dashboard.Config(repo="owner/repo", merged_scope="repo"))
+    assert asked[-1] == "repo:owner/repo is:pr is:merged merged:2026-11-12"
+    assert one["merged_scope"] == "repo" and "merged_by_repo" not in one
+
+
+def test_days_counted_for_one_repository_are_drawn_grey_until_recounted():
+    cfg = dashboard.Config(repo="owner/repo")
+    data = _detailed()
+    days = sorted(data["days"])
+    for d in days[-3:]:
+        data["days"][d] |= {"merged_scope": "org", "merged_by_repo": {"owner/repo": 2, "owner/tools": 1}}
+    svg = dashboard.render(data, 30, TODAY, cfg)
+    ET.fromstring(svg)
+    assert svg.count('<g class="stale">') == len([d for d in days if d not in days[-3:]])
+    assert "not yet recounted" in svg and "repo 2, tools 1" in svg
+    for d in days:
+        data["days"][d]["merged_scope"] = "org"
+    done = dashboard.render(data, 30, TODAY, cfg)
+    assert '<g class="stale">' not in done and "not yet recounted" not in done
+    # a report that counts one repository has nothing to recount
+    assert '<g class="stale">' not in dashboard.render(_detailed(), 30, TODAY, dashboard.Config(repo="owner/repo", merged_scope="repo"))
+
+
+def test_collect_recounts_older_days_across_the_owner_newest_first_and_capped(monkeypatch):
+    data = _data(30)
+    for d in data["days"].values():
+        d["merged_by_class"] = {"other": 1}
+    recounted = []
+
+    def counts(repo, day, cfg):
+        recounted.append(day)
+        return {"merged": 5, "merged_by_class": {"other": 5}, "merged_scope": "org", "merged_by_repo": {"owner/repo": 5}}
+
+    monkeypatch.setattr(dashboard, "MERGED_BACKFILL", 4)
+    monkeypatch.setattr(dashboard, "fetch_day", lambda repo, day, cfg: _day(1, 1, 0, 0) | {"merged_scope": "org", "merged_by_class": {"other": 1}})
+    monkeypatch.setattr(dashboard, "merged_counts", counts)
+    monkeypatch.setattr(dashboard, "bot_workflow_ids", lambda repo, cfg: {})
+    monkeypatch.setattr(dashboard, "RunOrigin", lambda repo, cfg: None)
+    monkeypatch.setattr(dashboard, "fetch_detail", lambda *a: {"sampled_runs": 0, "runner_min_est": None})
+    monkeypatch.setattr(dashboard, "collect_scorecard", lambda cfg, data, today, days: {})
+    monkeypatch.setattr(dashboard, "gh_count", lambda path: 0)
+    out = dashboard.collect(dashboard.Config(repo="owner/repo"), 30, data, TODAY)
+    assert len(recounted) == 4 and recounted == sorted(recounted, reverse=True)  # newest of the old days first
+    assert all(out["days"][d]["merged"] == 5 and out["days"][d]["merged_scope"] == "org" for d in recounted)
+    waiting = [d for d, r in out["days"].items() if r.get("merged_scope", "repo") != "org"]
+    assert waiting and max(waiting) < min(recounted)  # the rest wait for the next runs (and are drawn grey)
