@@ -41,6 +41,7 @@
   .line.saved { fill: none; stroke: var(--good); } .dot.saved { fill: var(--good); }
   .line.failedl { fill: none; stroke: var(--failed); } .dot.failedl { fill: var(--failed); }
   .partial { opacity: 0.5; }
+  .stale .seg { fill: var(--neutral); opacity: 0.6; }
   .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
   .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
   .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);

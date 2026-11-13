@@ -3918,13 +3918,18 @@
     "wait_median": 0.35,
     "wait_p90": 7.53
    },
-   "merged": 131,
+   "merged": 141,
    "merged_by_class": {
-    "agent": 8,
+    "agent": 18,
     "automation": 0,
     "bot": 122,
     "other": 1
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 131,
+    "squid-protocol/promoter-bot": 10
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1098,
     "failure": 443,
@@ -4083,13 +4088,21 @@
     "wait_median": 2.33,
     "wait_p90": 13.2
    },
-   "merged": 199,
+   "merged": 207,
    "merged_by_class": {
-    "agent": 5,
+    "agent": 12,
     "automation": 4,
-    "bot": 189,
+    "bot": 190,
     "other": 1
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 199,
+    "squid-protocol/promoter-bot": 4,
+    "squid-protocol/squid-bot": 1,
+    "squid-protocol/temporal-crucible": 2
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 2243,
     "failure": 79,
@@ -4341,13 +4354,20 @@
     "wait_median": 3.1,
     "wait_p90": 13.28
    },
-   "merged": 232,
+   "merged": 243,
    "merged_by_class": {
-    "agent": 7,
+    "agent": 18,
     "automation": 0,
     "bot": 225,
     "other": 0
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 232,
+    "squid-protocol/promoter-bot": 6,
+    "squid-protocol/squid-bot": 4,
+    "squid-protocol/temporal-crucible": 1
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 2888,
     "failure": 139,
@@ -4538,13 +4558,20 @@
     "wait_median": 4.43,
     "wait_p90": 17.67
    },
-   "merged": 121,
+   "merged": 131,
    "merged_by_class": {
-    "agent": 10,
+    "agent": 18,
     "automation": 1,
     "bot": 109,
-    "other": 1
+    "other": 3
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 121,
+    "squid-protocol/promoter-bot": 4,
+    "squid-protocol/squid-bot": 5
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1254,
     "failure": 67,
@@ -4681,13 +4708,20 @@
     "wait_median": 0.2,
     "wait_p90": 4.35
    },
-   "merged": 61,
+   "merged": 74,
    "merged_by_class": {
-    "agent": 6,
+    "agent": 17,
     "automation": 1,
-    "bot": 52,
+    "bot": 54,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 61,
+    "squid-protocol/keyword-rosetta": 6,
+    "squid-protocol/promoter-bot": 4,
+    "squid-protocol/squid-bot": 3
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 295,
     "failure": 34,
@@ -4788,13 +4822,20 @@
     "wait_median": 0.57,
     "wait_p90": 6.2
    },
-   "merged": 68,
+   "merged": 72,
    "merged_by_class": {
-    "agent": 5,
+    "agent": 9,
     "automation": 1,
     "bot": 62,
     "other": 0
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 68,
+    "squid-protocol/promoter-bot": 2,
+    "squid-protocol/temporal-crucible": 1
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 525,
     "failure": 52,
@@ -4942,13 +4983,20 @@
     "wait_median": 1.4,
     "wait_p90": 10.12
    },
-   "merged": 109,
+   "merged": 118,
    "merged_by_class": {
-    "agent": 6,
+    "agent": 12,
     "automation": 1,
-    "bot": 101,
-    "other": 1
+    "bot": 103,
+    "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/estate-crucible": 1,
+    "squid-protocol/gitgalaxy": 109,
+    "squid-protocol/promoter-bot": 6,
+    "squid-protocol/temporal-crucible": 2
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1113,
     "failure": 188,
@@ -5120,13 +5168,18 @@
     "wait_median": 1.45,
     "wait_p90": 8.02
    },
-   "merged": 88,
+   "merged": 89,
    "merged_by_class": {
-    "agent": 8,
+    "agent": 9,
     "automation": 1,
     "bot": 77,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 88,
+    "squid-protocol/promoter-bot": 1
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1010,
     "failure": 26,
@@ -12884,13 +12937,21 @@
     "wait_median": 3.6,
     "wait_p90": 14.95
    },
-   "merged": 137,
+   "merged": 150,
    "merged_by_class": {
-    "agent": 12,
+    "agent": 24,
     "automation": 5,
-    "bot": 111,
+    "bot": 112,
     "other": 9
    },
+   "merged_by_repo": {
+    "squid-protocol/estate-crucible": 1,
+    "squid-protocol/gitgalaxy": 137,
+    "squid-protocol/gitgalaxy-population-analyses": 2,
+    "squid-protocol/promoter-bot": 5,
+    "squid-protocol/squid-bot": 5
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 2352,
     "failure": 69,
@@ -16517,13 +16578,21 @@
     "wait_median": 4.58,
     "wait_p90": 15.43
    },
-   "merged": 134,
+   "merged": 145,
    "merged_by_class": {
-    "agent": 11,
+    "agent": 16,
     "automation": 1,
-    "bot": 119,
+    "bot": 125,
     "other": 3
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/estate-crucible": 5,
+    "squid-protocol/gitgalaxy": 134,
+    "squid-protocol/promoter-bot": 2,
+    "squid-protocol/squid-bot": 3
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 2372,
     "failure": 56,
@@ -21362,13 +21431,20 @@
     "wait_median": 2.63,
     "wait_p90": 8.72
    },
-   "merged": 119,
+   "merged": 129,
    "merged_by_class": {
-    "agent": 17,
+    "agent": 25,
     "automation": 2,
     "bot": 96,
-    "other": 4
+    "other": 6
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 2,
+    "squid-protocol/gitgalaxy": 119,
+    "squid-protocol/gitgalaxy-population-analyses": 2,
+    "squid-protocol/promoter-bot": 6
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1465,
     "failure": 65,
@@ -23817,13 +23893,22 @@
     "wait_median": 0.43,
     "wait_p90": 4.08
    },
-   "merged": 61,
+   "merged": 71,
    "merged_by_class": {
-    "agent": 4,
+    "agent": 13,
     "automation": 1,
-    "bot": 54,
+    "bot": 55,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/agent-habits": 4,
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/estate-crucible": 1,
+    "squid-protocol/gitgalaxy": 61,
+    "squid-protocol/gitgalaxy-population-analyses": 2,
+    "squid-protocol/promoter-bot": 2
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 186,
     "failure": 14,
@@ -26071,13 +26156,19 @@
     "wait_median": 1.15,
     "wait_p90": 10.7
    },
-   "merged": 45,
+   "merged": 50,
    "merged_by_class": {
-    "agent": 8,
+    "agent": 12,
     "automation": 0,
-    "bot": 36,
+    "bot": 37,
     "other": 1
    },
+   "merged_by_repo": {
+    "squid-protocol/estate-crucible": 1,
+    "squid-protocol/gitgalaxy": 45,
+    "squid-protocol/promoter-bot": 4
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 404,
     "failure": 39,
@@ -28422,13 +28513,22 @@
     "wait_median": 2.48,
     "wait_p90": 11.12
    },
-   "merged": 99,
+   "merged": 113,
    "merged_by_class": {
-    "agent": 15,
+    "agent": 23,
     "automation": 1,
-    "bot": 81,
+    "bot": 87,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/estate-crucible": 8,
+    "squid-protocol/gitgalaxy": 99,
+    "squid-protocol/gitgalaxy-population-analyses": 1,
+    "squid-protocol/promoter-bot": 3,
+    "squid-protocol/temporal-crucible": 1
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1151,
     "failure": 52,
@@ -31160,13 +31260,18 @@
     "wait_median": 0.33,
     "wait_p90": 4.12
    },
-   "merged": 72,
+   "merged": 75,
    "merged_by_class": {
-    "agent": 2,
+    "agent": 5,
     "automation": 1,
     "bot": 67,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 72,
+    "squid-protocol/temporal-crucible": 3
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 469,
     "failure": 25,
@@ -33757,13 +33862,20 @@
     "wait_median": 1.93,
     "wait_p90": 9.2
    },
-   "merged": 95,
+   "merged": 124,
    "merged_by_class": {
-    "agent": 4,
-    "automation": 7,
+    "agent": 32,
+    "automation": 8,
     "bot": 84,
     "other": 0
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 95,
+    "squid-protocol/language-crucible": 1,
+    "squid-protocol/temporal-crucible": 27
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 1225,
     "failure": 47,
@@ -36148,13 +36260,21 @@
     "wait_median": 0.07,
     "wait_p90": 4.5
    },
-   "merged": 56,
+   "merged": 68,
    "merged_by_class": {
-    "agent": 6,
+    "agent": 18,
     "automation": 1,
     "bot": 47,
     "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 2,
+    "squid-protocol/gitgalaxy": 56,
+    "squid-protocol/gitgalaxy-population-analyses": 1,
+    "squid-protocol/promoter-bot": 1,
+    "squid-protocol/temporal-crucible": 8
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 405,
     "failure": 29,
@@ -39107,13 +39227,20 @@
     "wait_median": 0.23,
     "wait_p90": 5.75
    },
-   "merged": 63,
+   "merged": 67,
    "merged_by_class": {
-    "agent": 8,
+    "agent": 11,
     "automation": 0,
-    "bot": 51,
+    "bot": 52,
     "other": 4
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 63,
+    "squid-protocol/gitgalaxy-raw-output": 1,
+    "squid-protocol/keyword-rosetta": 2
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 521,
     "failure": 57,
@@ -41240,13 +41367,22 @@
     "wait_median": 0.7,
     "wait_p90": 5.95
    },
-   "merged": 41,
+   "merged": 67,
    "merged_by_class": {
-    "agent": 6,
+    "agent": 32,
     "automation": 0,
     "bot": 35,
     "other": 0
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 2,
+    "squid-protocol/gitgalaxy": 41,
+    "squid-protocol/promoter-bot": 1,
+    "squid-protocol/squid-protocol": 3,
+    "squid-protocol/squid-telemetry": 1,
+    "squid-protocol/temporal-crucible": 19
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 441,
     "failure": 85,
@@ -42800,13 +42936,20 @@
     "wait_median": 1.62,
     "wait_p90": 10.55
    },
-   "merged": 42,
+   "merged": 74,
    "merged_by_class": {
-    "agent": 3,
+    "agent": 27,
     "automation": 0,
-    "bot": 38,
-    "other": 1
+    "bot": 44,
+    "other": 3
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 21,
+    "squid-protocol/gitgalaxy": 42,
+    "squid-protocol/promoter-bot": 2,
+    "squid-protocol/temporal-crucible": 9
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 374,
     "failure": 39,
@@ -44801,13 +44944,19 @@
     "wait_median": 2.13,
     "wait_p90": 11.6
    },
-   "merged": 75,
+   "merged": 140,
    "merged_by_class": {
-    "agent": 6,
+    "agent": 64,
     "automation": 0,
-    "bot": 68,
-    "other": 1
+    "bot": 74,
+    "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 12,
+    "squid-protocol/gitgalaxy": 75,
+    "squid-protocol/temporal-crucible": 53
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 839,
     "failure": 52,
@@ -46099,13 +46248,18 @@
     "wait_median": 0.03,
     "wait_p90": 2.12
    },
-   "merged": 51,
+   "merged": 55,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 4,
     "automation": 0,
     "bot": 51,
     "other": 0
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 51,
+    "squid-protocol/temporal-crucible": 4
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 511,
     "failure": 25,
@@ -46118,33 +46272,71 @@
    "detail": {
     "bot_outcomes": {
      "failure": 0,
-     "success": 59
+     "success": 292
     },
-    "bot_runs": 89,
+    "bot_runs": 481,
     "cancel_savings": {
-     "cancelled": 9,
-     "saved_min_est": 52,
+     "cancelled": 65,
+     "saved_min_est": 493,
      "unpriced": 0,
-     "wall_min": 557
+     "wall_min": 4274
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 8398,
+      "title": "Bump the codeql-action group with 3 updates (#8398)"
+     },
+     {
+      "pr": 8399,
+      "title": "Bump actions/setup-java from 6.1.0 to 6.2.0 (#8399)"
+     },
+     {
+      "pr": 8400,
+      "title": "Bump actions/setup-dotnet from 6.0.0 to 6.1.0 (#8400)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 196,
+    "population": 1014,
     "reruns": {
-     "attempts": 2,
+     "attempts": 26,
      "by_workflow": {
-      "Mainframe Ground Truth": [
-       0,
+      "CICS Crucible": [
        2,
+       0,
+       0
+      ],
+      "Det Sweep": [
+       2,
+       1,
+       0
+      ],
+      "Equivalence E2E": [
+       3,
+       1,
+       0
+      ],
+      "Generated Docs": [
+       2,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
+       2,
+       0,
+       0
+      ],
+      "Mainframe Ground Truth": [
+       2,
+       5,
        0
       ]
      },
-     "failed_again": 2,
-     "passed": 0,
-     "runs": 2
+     "failed_again": 7,
+     "passed": 13,
+     "runs": 20
     },
-    "runner_min_ci": 761,
-    "runner_min_est": 1507,
+    "runner_min_ci": 1445,
+    "runner_min_est": 8702,
     "sample": {
      "43334205038": {
       "m": 0.37,
@@ -46160,8 +46352,22 @@
        0.02
       ]
      },
+     "43337969857": {
+      "m": 0.3,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
      "43337969875": {
       "m": 3.63,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43337969932": {
+      "m": 0.2,
       "o": "main",
       "w": [
        0.02
@@ -46222,6 +46428,15 @@
       "o": "main",
       "w": [
        0.03
+      ]
+     },
+     "43338248892": {
+      "m": 13.3,
+      "o": "automation",
+      "w": [
+       0.03,
+       0.0,
+       0.0
       ]
      },
      "43338248896": {
@@ -46334,11 +46549,30 @@
        0.03
       ]
      },
+     "43342807022": {
+      "m": 1.8,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
      "43342807034": {
       "m": 0.23,
       "o": "main",
       "w": [
        0.02
+      ]
+     },
+     "43342807155": {
+      "m": 12.25,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03
       ]
      },
      "43342807192": {
@@ -46438,6 +46672,13 @@
        0.4
       ]
      },
+     "43346047707": {
+      "m": 0.3,
+      "o": "bot",
+      "w": [
+       0.23
+      ]
+     },
      "43346442378": {
       "m": 0.28,
       "o": "bot",
@@ -46459,6 +46700,20 @@
        0.02
       ]
      },
+     "43347677919": {
+      "m": 2.82,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43347678044": {
+      "m": 0.3,
+      "o": "main",
+      "w": [
+       0.07
+      ]
+     },
      "43347678104": {
       "m": 0.3,
       "o": "main",
@@ -46471,6 +46726,13 @@
       "o": "main",
       "w": [
        0.03
+      ]
+     },
+     "43347817969": {
+      "m": 0.43,
+      "o": "main",
+      "w": [
+       0.02
       ]
      },
      "43351638457": {
@@ -46506,71 +46768,618 @@
       "w": [
        0.03
       ]
+     },
+     "43374411712": {
+      "m": 33.1,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "43381628118": {
+      "m": 4.28,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43383719736": {
+      "m": 1.75,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43384849525": {
+      "m": 0.68,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43386807800": {
+      "m": 0.52,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43388600494": {
+      "m": 138.6,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "43388600505": {
+      "m": 0.62,
+      "o": "bot",
+      "w": [
+       0.08
+      ]
+     },
+     "43388600507": {
+      "m": 22.17,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "43397014126": {
+      "m": 0.13,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43402790828": {
+      "m": 0.5,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43405342217": {
+      "m": 0.43,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43407132824": {
+      "m": 0.42,
+      "o": "bot",
+      "w": [
+       1.75
+      ]
+     },
+     "43407629485": {
+      "m": 0.33,
+      "o": "bot",
+      "w": [
+       2.57
+      ]
+     },
+     "43407778470": {
+      "m": 0.37,
+      "o": "bot",
+      "w": [
+       4.57,
+       0.88
+      ]
+     },
+     "43408663056": {
+      "m": 2.42,
+      "o": "main",
+      "w": [
+       0.05
+      ]
+     },
+     "43408663739": {
+      "m": 1.12,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43408728515": {
+      "m": 0.53,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43408775027": {
+      "m": 2.8,
+      "o": "main",
+      "w": [
+       0.08
+      ]
+     },
+     "43408810404": {
+      "m": 3.42,
+      "o": "automation",
+      "w": [
+       0.3
+      ]
+     },
+     "43408972489": {
+      "m": 5.52,
+      "o": "automation",
+      "w": [
+       2.5
+      ]
+     },
+     "43408972548": {
+      "m": 4.9,
+      "o": "automation",
+      "w": [
+       4.27,
+       4.07,
+       10.33
+      ]
+     },
+     "43409138538": {
+      "m": 1.17,
+      "o": "automation",
+      "w": [
+       4.37
+      ]
+     },
+     "43409143336": {
+      "m": 2.48,
+      "o": "automation",
+      "w": [
+       9.98
+      ]
+     },
+     "43411124414": {
+      "m": 0.32,
+      "o": "main",
+      "w": [
+       4.75
+      ]
+     },
+     "43413798546": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43417403088": {
+      "m": 1.03,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43420116534": {
+      "m": 0.87,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43420160113": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43420582395": {
+      "m": 0.58,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.05
+      ]
+     },
+     "43421056348": {
+      "m": 2.8,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43421056497": {
+      "m": 2.65,
+      "o": "bot",
+      "w": [
+       0.05,
+       0.03
+      ]
+     },
+     "43423267429": {
+      "m": 0.37,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43423799117": {
+      "m": 8.62,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "43423799212": {
+      "m": 0.82,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43425236170": {
+      "m": 0.62,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43426633125": {
+      "m": 162.25,
+      "o": "main",
+      "w": [
+       0.03,
+       0.05,
+       0.05,
+       0.05,
+       0.03,
+       0.03,
+       0.05,
+       0.05,
+       0.05,
+       0.05,
+       0.03,
+       0.03
+      ]
+     },
+     "43428041385": {
+      "m": 57.42,
+      "o": "main",
+      "w": [
+       0.07,
+       0.07,
+       0.15,
+       0.95,
+       0.85
+      ]
+     },
+     "43429102181": {
+      "m": 6.83,
+      "o": "main",
+      "w": [
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02
+      ]
+     },
+     "43431769106": {
+      "m": 52.08,
+      "o": "automation",
+      "w": [
+       0.03,
+       0.15,
+       0.25,
+       0.33,
+       0.03
+      ]
+     },
+     "43431769423": {
+      "m": 17.57,
+      "o": "automation",
+      "w": [
+       0.03,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.03
+      ]
+     },
+     "43432395075": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       0.05
+      ]
+     },
+     "43432552151": {
+      "m": 0.32,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43432831058": {
+      "m": 0.57,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43433761251": {
+      "m": 31.77,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43433815074": {
+      "m": 0.4,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43433873440": {
+      "m": 0.75,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43440967713": {
+      "m": 0.8,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43442526738": {
+      "m": 4.62,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43443150832": {
+      "m": 6.68,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43447034250": {
+      "m": 2.52,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43449271675": {
+      "m": 0.32,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "43450255816": {
+      "m": 1.48,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43451923406": {
+      "m": 17.42,
+      "o": "main",
+      "w": [
+       0.02,
+       0.03
+      ]
+     },
+     "43452039056": {
+      "m": 91.28,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.03
+      ]
+     },
+     "43453506224": {
+      "m": 0.88,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43453820322": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43455359678": {
+      "m": 12.92,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43463469957": {
+      "m": 1.55,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "43472772868": {
+      "m": 0.68,
+      "o": "agent",
+      "w": [
+       0.02
+      ]
+     },
+     "43497254457": {
+      "m": 17.0,
+      "o": "bot",
+      "w": [
+       0.45,
+       0.47,
+       0.03,
+       2.9,
+       2.22,
+       0.12
+      ]
+     },
+     "43497476158": {
+      "m": 0.32,
+      "o": "bot",
+      "w": [
+       4.67
+      ]
+     },
+     "43499313133": {
+      "m": 0.62,
+      "o": "bot",
+      "w": [
+       1.5
+      ]
+     },
+     "43500575305": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       2.87,
+       3.02
+      ]
+     },
+     "43504111850": {
+      "m": 0.22,
+      "o": "main",
+      "w": [
+       0.03
+      ]
      }
     },
-    "sample_target": 30,
+    "sample_target": 51,
     "sampled_min_by_origin": {
-     "automation": 249.8,
-     "bot": 198.5,
-     "main": 1058.4
+     "agent": 32.4,
+     "automation": 1912.7,
+     "bot": 3132.6,
+     "main": 3623.9
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 26.9,
-     "CI shepherd (label events)": 12.1,
-     "CI shepherd (reconcile)": 31.5,
-     "CICS Crucible": 76.6,
-     "Call Graph Accuracy Audit": 7.8,
-     "Call Resolution History": 28.7,
-     "CodeQL Security Scan": 32.8,
-     "DOOM-rosetta": 26.6,
-     "Deploy Museum of Code Docs": 21.6,
-     "Det Sweep": 89.6,
-     "Detection Accuracy Audit": 6.5,
-     "Equivalence E2E": 203.4,
-     "Evidence Refresh": 293.4,
-     "Generated Docs": 14.1,
-     "Generated Java Base Generation": 44.7,
-     "GitGalaxy Smoke Tests": 140.7,
-     "GitGalaxy Zero-Trust Pipeline": 74.6,
-     "Golden Crucible Resilience Test": 17.7,
-     "Graph Accuracy Audit": 34.8,
-     "Graph Comparison History": 3.6,
-     "Main Watch": 7.6,
-     "Mainframe Ground Truth": 128.5,
-     "Muninn Security Scan": 14.5,
-     "Mypy Audit": 12.5,
-     "Ports Compile": 57.7,
-     "Ruff Audit": 8.8,
-     "Small Audits": 29.0,
-     "Tree-sitter Accuracy Audit": 12.9,
-     "Tree-sitter Accuracy History": 3.3,
-     "Tri-Comparison Audit": 11.2,
-     "Tri-Comparison History": 3.7,
-     "pages build and deployment": 7.9,
-     "post-merge": 3.8,
-     "rosetta-audit": 17.7
+     "Archetype Validation": 77.0,
+     "Blind 1 inventory (one-off)": 3.6,
+     "CI shepherd (label events)": 21.9,
+     "CI shepherd (reconcile)": 185.8,
+     "CICS Crucible": 579.7,
+     "Cache Prune": 2.4,
+     "Call Graph Accuracy Audit": 21.6,
+     "Call Resolution History": 41.3,
+     "CodeQL Security Scan": 251.5,
+     "Configured Graph Update: pip in /. #1701366926": 2.1,
+     "Crucible Path Independence": 15.1,
+     "DOOM-rosetta": 96.6,
+     "Dependabot relock": 12.5,
+     "Deploy Museum of Code Docs": 145.8,
+     "Det Sweep": 2022.6,
+     "Detection Accuracy Audit": 22.3,
+     "Doc Drift": 0.8,
+     "Engine Coverage Map": 71.3,
+     "Equivalence E2E": 1564.2,
+     "Estate Crucible": 1.0,
+     "Evidence Refresh": 809.7,
+     "Fact Cross-check": 10.5,
+     "Flake history (refresh)": 22.9,
+     "Full Suite Gate (All OS x Python)": 46.5,
+     "Generated Docs": 83.4,
+     "Generated Java Base Generation": 100.6,
+     "Generated Java Compiles": 124.1,
+     "GitGalaxy Smoke Tests": 98.9,
+     "GitGalaxy Zero-Trust Pipeline": 184.5,
+     "Golden Crucible Resilience Test": 69.5,
+     "Graph Accuracy Audit": 208.6,
+     "Graph Comparison History": 21.9,
+     "Main Watch": 22.4,
+     "Mainframe Ground Truth": 919.9,
+     "Muninn Security Scan": 148.1,
+     "Mypy Audit": 30.0,
+     "OS Smoke Grid": 4.4,
+     "Ports Compile": 256.9,
+     "Referee panel": 29.1,
+     "Ruff Audit": 18.0,
+     "Small Audits": 86.0,
+     "Tree-sitter Accuracy Audit": 32.8,
+     "Tree-sitter Accuracy History": 25.7,
+     "Tri-Comparison Audit": 22.6,
+     "Tri-Comparison History": 21.9,
+     "github_actions in /. - Update #1701167548": 5.6,
+     "pages build and deployment": 79.7,
+     "pip in /. - Update #1701167543": 2.6,
+     "pip in /ci/requirements - Update #1701171524": 6.6,
+     "post-merge": 11.2,
+     "rosetta-audit": 52.4,
+     "unicode-gauntlet": 5.8
     },
-    "sampled_runs": 43,
+    "sampled_runs": 116,
     "wait_median": 0.03,
-    "wait_p90": 0.4
+    "wait_p90": 0.52
    },
-   "merged": 5,
+   "merged": 37,
    "merged_by_class": {
-    "agent": 0,
-    "automation": 0,
-    "bot": 5,
-    "other": 0
+    "agent": 8,
+    "automation": 4,
+    "bot": 23,
+    "other": 2
    },
+   "merged_by_repo": {
+    "squid-protocol/estate-crucible": 4,
+    "squid-protocol/gitgalaxy": 23,
+    "squid-protocol/promoter-bot": 4,
+    "squid-protocol/squid-bot": 1,
+    "squid-protocol/temporal-crucible": 5
+   },
+   "merged_scope": "org",
    "runs": {
-    "cancelled": 11,
-    "failure": 2,
-    "skipped": 102,
-    "success": 182,
-    "total": 298
+    "cancelled": 113,
+    "failure": 17,
+    "skipped": 405,
+    "success": 846,
+    "total": 1381
    }
   }
  },
- "open_prs": 5,
+ "open_prs": 12,
  "repo": "squid-protocol/gitgalaxy",
  "scorecard": {
   "days": {
@@ -49462,7 +50271,7 @@
        "08": 1,
        "11": 1,
        "12": 3,
-       "13": 3,
+       "13": 4,
        "14": 1,
        "15": 3,
        "16": 1,
@@ -49470,7 +50279,7 @@
        "19": 1,
        "21": 4
       },
-      "total": 41
+      "total": 42
      },
      "squid-protocol": {
       "busiest_hour": 35,
@@ -49478,57 +50287,57 @@
        "00": 30,
        "01": 32,
        "02": 10,
-       "03": 33,
-       "04": 31,
+       "03": 35,
+       "04": 32,
        "05": 17,
        "06": 24,
-       "07": 33,
+       "07": 34,
        "08": 13,
        "09": 14,
        "10": 11,
-       "11": 24,
+       "11": 27,
        "12": 22,
-       "13": 23,
+       "13": 24,
        "14": 18,
        "15": 16,
        "16": 11,
-       "17": 11,
+       "17": 12,
        "18": 35,
        "19": 18,
        "20": 4,
        "21": 22,
        "23": 5
       },
-      "total": 457
+      "total": 466
      },
      "squid-shepherd[bot]": {
-      "busiest_hour": 59,
+      "busiest_hour": 60,
       "hours": {
        "00": 41,
-       "01": 46,
+       "01": 47,
        "02": 36,
        "03": 43,
-       "04": 49,
-       "05": 53,
+       "04": 53,
+       "05": 54,
        "06": 21,
        "07": 25,
        "08": 13,
        "09": 13,
        "10": 2,
        "11": 27,
-       "12": 59,
-       "13": 56,
+       "12": 60,
+       "13": 57,
        "14": 16,
        "15": 49,
        "16": 43,
        "17": 32,
-       "18": 21,
+       "18": 22,
        "19": 33,
        "21": 15,
        "22": 2,
        "23": 4
       },
-      "total": 699
+      "total": 708
      }
     }
    },
@@ -49640,51 +50449,111 @@
     }
    },
    "2026-11-13": {
-    "closed": 0,
+    "closed": 4,
     "not_planned": 0,
-    "opened": 0,
-    "opened_by_origin": {},
+    "opened": 10,
+    "opened_by_origin": {
+     "owner": 10
+    },
     "red_main": 0,
     "red_main_h_median": null,
     "red_main_open": 0,
-    "resolve_h_median": null,
-    "resolved": 0,
-    "resolved_by_bot": 0,
-    "resolved_by_origin": {},
+    "resolve_h_median": 145.5,
+    "resolved": 4,
+    "resolved_by_bot": 2,
+    "resolved_by_origin": {
+     "automation": 3,
+     "owner": 1
+    },
     "writes": {
+     "dependabot": {
+      "busiest_hour": 5,
+      "hours": {
+       "10": 5
+      },
+      "total": 5
+     },
+     "dependabot[bot]": {
+      "busiest_hour": 10,
+      "hours": {
+       "10": 10
+      },
+      "total": 10
+     },
      "github-actions[bot]": {
-      "busiest_hour": 1,
+      "busiest_hour": 6,
       "hours": {
        "00": 1,
-       "01": 1
+       "01": 1,
+       "07": 1,
+       "10": 6,
+       "12": 1,
+       "13": 6,
+       "20": 2
       },
-      "total": 2
+      "total": 18
+     },
+     "sg0nzalez": {
+      "busiest_hour": 1,
+      "hours": {
+       "09": 1
+      },
+      "total": 1
      },
      "squid-protocol": {
-      "busiest_hour": 18,
+      "busiest_hour": 39,
       "hours": {
        "00": 6,
        "01": 8,
        "02": 4,
-       "03": 18
+       "03": 16,
+       "05": 3,
+       "06": 1,
+       "07": 9,
+       "08": 1,
+       "09": 5,
+       "10": 8,
+       "11": 13,
+       "12": 9,
+       "14": 3,
+       "15": 8,
+       "17": 17,
+       "18": 4,
+       "19": 29,
+       "20": 31,
+       "21": 39
       },
-      "total": 36
+      "total": 214
      },
      "squid-shepherd[bot]": {
-      "busiest_hour": 12,
+      "busiest_hour": 22,
       "hours": {
        "00": 8,
        "01": 12,
        "02": 2,
-       "03": 1
+       "03": 1,
+       "05": 2,
+       "06": 2,
+       "07": 14,
+       "08": 3,
+       "09": 4,
+       "10": 20,
+       "11": 5,
+       "12": 7,
+       "13": 1,
+       "15": 7,
+       "16": 2,
+       "17": 4,
+       "19": 6,
+       "20": 22
       },
-      "total": 23
+      "total": 122
      }
     }
    }
   },
-  "open_at": "2026-11-13T03:46Z",
-  "open_now": 137
+  "open_at": "2026-11-13T21:00Z",
+  "open_now": 151
  },
- "updated": "2026-11-13T03:46Z"
+ "updated": "2026-11-13T21:00Z"
 }
