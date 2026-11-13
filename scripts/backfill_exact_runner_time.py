@@ -337,9 +337,9 @@ def summarize(a) -> int:
             "estimate_min": det.get("runner_min_est"), "estimate_ci": det.get("runner_min_ci"),
         }
         print(f"{day}  exact {d['org_min'] / 60:6.0f} h  ({out[day]['util'] or 0:.0%} of pool)  peak {out[day]['peak']:5.1f}"
-              f"  at-pool {out[day]['min_at_pool'] or 0:4d} min  estimate(gitgalaxy) "
-              f"{(det.get('runner_min_est') or 0) / 60:6.0f} h  exact(gitgalaxy) "
-              f"{d['by_repo'].get('squid-protocol/gitgalaxy', 0) / 60:6.0f} h")
+              f"  at-pool {out[day]['min_at_pool'] or 0:4d} min  estimate({a.repo}) "
+              f"{(det.get('runner_min_est') or 0) / 60:6.0f} h  exact({a.repo}) "
+              f"{d['by_repo'].get(a.repo, 0) / 60:6.0f} h")
     # the old readings against the exact count at their own minute
     for path in a.readings or []:
         diffs = []
@@ -387,7 +387,7 @@ def main() -> int:
     c.add_argument("--gql-floor", type=int, default=1500)
     s = sub.add_parser("summarize")
     s.add_argument("--pool", type=int, default=20)
-    s.add_argument("--repo", default="squid-protocol/gitgalaxy")
+    s.add_argument("--repo", required=True, help="the report's repository, owner/repo")
     s.add_argument("--metrics")
     s.add_argument("--readings", nargs="*")
     s.add_argument("--minutes-since", default="2026-10-24", help="keep per-minute counts from this day (readings era)")

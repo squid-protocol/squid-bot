@@ -82,7 +82,8 @@ def test_the_cause_classifier_is_synced_as_a_package_member():
         "src/squid_bot/flake_history.py")
     assert fh.startswith("try:\n    from squid_bot import ci_rerun_stats  # the classifier\nexcept ImportError:\n")
     stats = sync.transform_for_squid_bot('import json\n\nREPO = "squid-protocol/gitgalaxy"\n', "src/squid_bot/ci_rerun_stats.py")
-    assert "REPO = get_repo_slug()" in stats and 'REPO = "squid-protocol/gitgalaxy"' in stats  # the fallback stays
+    assert "REPO = get_repo_slug()" in stats and 'REPO = ""' in stats  # no GitGalaxy default (2026-11-13)
+    assert "squid-protocol/gitgalaxy" not in stats
 
 
 def test_shepherd_workflow_tests_find_the_templates_however_they_spell_the_path():

@@ -110,8 +110,8 @@ squid-bot was built on one repository, [GitGalaxy](https://github.com/squid-prot
 |---|---|---|
 | `box-status` | In this repo; runs after `pip install -e .` | Linux; PSI (`/proc/pressure`) for the full reading |
 | `heavy-run.sh`, `exclusive-lock.sh`, `kill-by-cwd.sh` | In this repo | `flock` |
-| `ci-digest`, `flake-history` | In this repo | `gh` signed in. Some repro commands and path rules are still GitGalaxy's |
-| `integrase-bot` (local loop) and the workflow templates | In this repo | `gh` with write access; the `shepherd:merge` / `hold` / `matrix` / `needs-fix` / `waiting-on-main` labels; your required checks listed in `squid-bot.toml`. It merges, so try it on a test repository first |
+| `ci-digest`, `flake-history` | In this repo | `gh` signed in; your local test commands under `[repro]` in `squid-bot.toml` |
+| `integrase-bot` (local loop) and the workflow templates | In this repo | `gh` with write access; the `shepherd:merge` / `hold` / `matrix` / `needs-fix` / `waiting-on-main` labels; required checks set in your repository's rules on `main`. It merges, so try it on a test repository first |
 | [Fleet CI report action](actions/fleet-report) | In this repo; works on any repository | A workflow with `contents: write` to publish the dashboard branch |
 | `promoter-bot` | [Separate repo](https://github.com/squid-protocol/promoter-bot); runs GitGalaxy today | Calls GitGalaxy's own gate scripts and a private agent skill. Read it for the design; it is not installable elsewhere yet |
 | `comms-bot` | Private | |
@@ -128,7 +128,7 @@ The loop above, in the names the code uses. Two renames are unfinished, so the o
 | Is the host able to take another job? | Host capacity sensor | `box-status` | |
 | Share the cores between heavy jobs | Fair core share | `heavy-run.sh` | |
 | Why did CI fail, and how is it reproduced locally? | CI failure triage | `ci-digest`, `flake-history` | |
-| Screen PRs, rerun noise, merge the green ones | Merge bot | `integrase-bot` | `shepherd` (the `shepherd:*` labels, the `[shepherd]` config section, `CI_SHEPHERD_*` variables) |
+| Screen PRs, rerun noise, merge the green ones | Merge bot | `integrase-bot` | `shepherd`: the `shepherd:*` labels on GitHub and the workflow file names keep it; the `[shepherd]` config section and `CI_SHEPHERD_*` variables still work beside the new `[integrase]` and `INTEGRASE_*` |
 | Ask the owner what only the owner can decide | Owner decisions by phone | `comms-bot` | |
 
 ---
@@ -225,7 +225,7 @@ GitHub webhook events drop under burst traffic, arrive out of order, or get canc
 * **Integrate (`shepherd:merge`):** the moment all required checks pass and the branch is clean, integrase-bot squash-merges the edit into `main`.
 * **No chasing `main`:** a PR that is merely *behind* `main` is never updated just to stay current: every push restarts its CI. Leave branch protection's "require branches to be up to date" off and let `main`'s own CI catch the rare semantic conflict; with it on, a green-but-behind PR waits for a human.
 * **Reruns for noise:** `infra` failures are rerun up to 3 times, 15 minutes apart, and `flake` failures once. The budget belongs to the workflow run, not the check: the failing legs of one matrix run share a single `gh run rerun --failed`.
-* **Fixer gating:** with `CI_SHEPHERD_FIXER` set, a `real` failure starts that command (`<fixer> <PR> <digest.json>`) to repair it. The digest comment posts at once, but the fixer starts only when `box-status` reads `GREEN`, at most `CI_SHEPHERD_MAX_FIXERS` (default 1) per pass, and the most useful first: the PR that others wait on (`--after`), then the one with the fewest failing checks.
+* **Fixer gating:** with `INTEGRASE_FIXER` set, a `real` failure starts that command (`<fixer> <PR> <digest.json>`) to repair it. The digest comment posts at once, but the fixer starts only when `box-status` reads `GREEN`, at most `INTEGRASE_MAX_FIXERS` (default 1) per pass, and the most useful first: the PR that others wait on (`--after`), then the one with the fewest failing checks.
 * **Hold (`shepherd:hold`):** keeps a PR open for human inspection without merging.
 * **Full matrix (`shepherd:matrix`):** runs the full cross-platform OS $\times$ Python suite and gates integration on a clean run.
 * **Damaged reference (`shepherd:waiting-on-main`):** applied when a failing check is confirmed to also be failing on `origin/main`, so agents don't change their own PR to fix a failure that is `main`'s.
@@ -304,26 +304,27 @@ pip install -e .
 ```
 
 ### 2. Configure (`squid-bot.toml`)
-Create a `squid-bot.toml` in your repository root (the section is still named `[shepherd]`):
+Create a `squid-bot.toml` in your repository root. There is no default repository; the commands that need one say so.
 
 ```toml
 [repository]
 slug = "owner/repo"
 
-[shepherd]
-# Required CI checks before integrase-bot merges a PR labelled shepherd:merge
-required_checks = [
-    "test",
-    "lint",
-    "type-check"
-]
+[integrase]                      # the merge bot; an older [shepherd] section is still read
 poll_interval_seconds = 600
-state_path = "/var/lib/squid-bot/shepherd.json"   # somewhere that survives a reboot (the default is under /tmp)
+# state_path = "~/.local/state/squid-bot/integrase.json"   # the default; it survives a reboot
 
 [supervisor]
 lock_dir = "/tmp/squid-bot/locks"
 heavy_slots = 3
+
+[repro]                          # the local command ci-digest prints for a failed check
+default = "python -m pytest -q {tests}"
+[repro.rules]
+"^lint$" = "ruff check ."
 ```
+
+The checks a PR must pass before integrase-bot merges it are the ones your repository's rules on `main` require; they are set on GitHub, not here.
 
 ### 3. Check host capacity
 ```bash
@@ -341,15 +342,17 @@ scripts/heavy-run.sh pytest tests/
 ### 5. Start integrase-bot
 It merges PRs labelled `shepherd:merge` once the required checks are green, so point it at a repository only after reading [what it needs](#-what-you-can-run-today). The GitHub Actions version (`templates/workflows/`) accepts `--dry-run`; this local loop does not.
 ```bash
-nohup integrase-bot run --every 600 >> /tmp/squid-bot/shepherd.log 2>&1 &
+nohup integrase-bot run --every 600 >> ~/.local/state/squid-bot/integrase.log 2>&1 &
 integrase-bot status   # the queue, plus the ledger's most recent events
 ```
 
 | Environment variable | Default | Effect |
 |---|---|---|
-| `CI_SHEPHERD_FIXER` | unset | Command started for a `real` failure: `<fixer> <PR> <digest.json>` |
-| `CI_SHEPHERD_MAX_FIXERS` | `1` | Fixers started per pass (only while `box-status` is `GREEN`) |
-| `CI_SHEPHERD_MAX_IN_FLIGHT` | `4` | Drafts marked ready per pass |
+| `INTEGRASE_FIXER` | unset | Command started for a `real` failure: `<fixer> <PR> <digest.json>` |
+| `INTEGRASE_MAX_FIXERS` | `1` | Fixers started per pass (only while `box-status` is `GREEN`) |
+| `INTEGRASE_MAX_IN_FLIGHT` | `4` | Drafts marked ready per pass |
+
+The older `CI_SHEPHERD_*` names are still read.
 
 ---
 

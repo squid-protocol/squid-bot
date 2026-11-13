@@ -7,17 +7,33 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-# Default configuration values
-DEFAULT_REPO_SLUG = "squid-protocol/gitgalaxy"
-DEFAULT_LOCK_DIR = "/tmp/squid-bot/locks"
-DEFAULT_STATE_PATH = "/tmp/squid-bot/state/shepherd.json"
-DEFAULT_REQUIRED_CHECKS = [
-    "det",
-    "full-suite",
-    "ground-truth",
-    "mypy-audit",
-    "ruff-audit",
-]
+# Default configuration values. 2026-11-13: the defaults were GitGalaxy's (its repository slug, its five required
+# checks) and the merge queue's state lived under /tmp, where a reboot loses it. There is now no default repository
+# (get_repo_slug returns "" and the commands that need one say how to set it), required checks come from the
+# repository's own rules on main, and state lives under the user's state directory.
+DEFAULT_REPO_SLUG = ""
+DEFAULT_LOCK_DIR = "/tmp/squid-bot/locks"  # flock files only: nothing here needs to survive a reboot
+LEGACY_STATE_PATH = "/tmp/squid-bot/state/shepherd.json"
+DEFAULT_REQUIRED_CHECKS: list[str] = []
+# The merge bot was renamed from "shepherd" to integrase-bot. New names first; the old ones still work.
+SECTIONS = ("integrase", "shepherd")
+
+
+def default_state_path() -> Path:
+    """<state dir>/squid-bot/integrase.json, where the state dir is $XDG_STATE_HOME or ~/.local/state. An install
+    that already has state at the old /tmp default and none at the new place keeps using the old file."""
+    base = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state")
+    new = base / "squid-bot" / "integrase.json"
+    legacy = Path(LEGACY_STATE_PATH)
+    return legacy if legacy.exists() and not new.exists() else new
+
+
+def _section(cfg: dict[str, Any]) -> dict[str, Any]:
+    """The merge bot's config section: [integrase], else the older [shepherd]."""
+    for name in SECTIONS:
+        if isinstance(cfg.get(name), dict):
+            return cfg[name]
+    return {}
 
 
 def _find_config_file() -> Path | None:
@@ -74,7 +90,7 @@ def get_config() -> dict[str, Any]:
 
 
 def get_repo_slug() -> str:
-    """Resolve the target GitHub repository slug ('owner/repo')."""
+    """Resolve the target GitHub repository slug ('owner/repo'); "" when none is configured or detectable."""
     # 1. Environment variable override
     env = os.environ.get("SQUID_BOT_REPO") or os.environ.get("GITHUB_REPOSITORY")
     if env:
@@ -100,7 +116,7 @@ def get_repo_slug() -> str:
     except Exception:
         pass
 
-    # 4. Default fallback
+    # 4. None: the caller says how to set one (see squid_bot.cli.need_repo)
     return DEFAULT_REPO_SLUG
 
 
@@ -119,24 +135,22 @@ def get_lock_dir() -> Path:
 
 
 def get_state_path() -> Path:
-    """Resolve the path to the CI shepherd state file."""
+    """Resolve the path to the merge bot's state file."""
     p = os.environ.get("SQUID_BOT_STATE") or os.environ.get("CI_SHEPHERD_STATE")
     if p:
         return Path(p)
 
-    cfg = get_config()
-    shp_cfg = cfg.get("shepherd", {})
-    if isinstance(shp_cfg, dict) and "state_path" in shp_cfg:
-        return Path(shp_cfg["state_path"])
+    shp_cfg = _section(get_config())
+    if "state_path" in shp_cfg:
+        return Path(str(shp_cfg["state_path"])).expanduser()
 
-    return Path(DEFAULT_STATE_PATH)
+    return default_state_path()
 
 
 def get_required_checks() -> list[str]:
     """Resolve the list of required check names for auto-merge."""
-    cfg = get_config()
-    shp_cfg = cfg.get("shepherd", {})
-    if isinstance(shp_cfg, dict) and "required_checks" in shp_cfg:
+    shp_cfg = _section(get_config())
+    if "required_checks" in shp_cfg:
         val = shp_cfg["required_checks"]
         if isinstance(val, list):
             return [str(x) for x in val]

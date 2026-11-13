@@ -204,7 +204,7 @@ STRAY_MINUTES = 15
 
 def _scan_roots() -> set[str]:
     home = str(Path.home())
-    return {"/", "/home", "/srv", "/srv/storage_16tb", "/mnt", "/media", home, home + "/"}
+    return {"/", "/home", "/srv", "/mnt", "/media", home, home + "/"}
 
 
 def is_stray_scan(argv: list[str], age_min: int) -> bool:
