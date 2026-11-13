@@ -21,13 +21,13 @@ dev = [
 ]
 
 [project.scripts]
-squid-bot = "squid_bot.ci_shepherd:main"
-shepherd = "squid_bot.ci_shepherd:main"
-integrase-bot = "squid_bot.ci_shepherd:main"
+squid-bot = "squid_bot.cli:integrase"
+shepherd = "squid_bot.cli:integrase"
+integrase-bot = "squid_bot.cli:integrase"
 box-status = "squid_bot.box_status:main"
-ci-digest = "squid_bot.ci_digest:main"
-pr-check = "squid_bot.pr_check:main"
-flake-history = "squid_bot.flake_history:main"
+ci-digest = "squid_bot.cli:ci_digest"
+pr-check = "squid_bot.cli:pr_check"
+flake-history = "squid_bot.cli:flake_history"
 
 [tool.setuptools.packages.find]
 where = ["src"]

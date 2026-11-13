@@ -7,14 +7,14 @@
 # readings skipped the saturated hours) and each reading counted its own job. A host reads off the pool, on time.
 # Readings are kept locally and pushed at most once per SQUID_OCC_PUSH_MIN (60), merged with the branch's by time, so
 # a missed push or another writer loses nothing. Needs git, python3 and gh logged in (fleet_report.py calls gh api).
-#   SQUID_OCC_REPO       the report's repo; its owner is the pool counted   (squid-protocol/gitgalaxy)
-#   SQUID_OCC_DASHBOARD  the repo whose branch holds occupancy.jsonl        (squid-protocol/squid-bot)
+#   SQUID_OCC_REPO       the report's repo; its owner is the pool counted   (required)
+#   SQUID_OCC_DASHBOARD  the repo whose branch holds occupancy.jsonl        (required)
 #   SQUID_OCC_BRANCH     that branch                                         (dashboard)
 #   SQUID_OCC_STATE      local state: clone, readings, last push             (~/.local/state/squid-occupancy)
 #   SQUID_OCC_REMOTE     where to clone and push (tests point it at a local copy)  (https://github.com/$SQUID_OCC_DASHBOARD.git)
 set -euo pipefail
-repo=${SQUID_OCC_REPO:-squid-protocol/gitgalaxy}
-dash=${SQUID_OCC_DASHBOARD:-squid-protocol/squid-bot}
+repo=${SQUID_OCC_REPO:?"set SQUID_OCC_REPO to the repository the report is for, as owner/repo; it has no default"}
+dash=${SQUID_OCC_DASHBOARD:?"set SQUID_OCC_DASHBOARD to the repository whose branch holds occupancy.jsonl, as owner/repo"}
 branch=${SQUID_OCC_BRANCH:-dashboard}
 state=${SQUID_OCC_STATE:-$HOME/.local/state/squid-occupancy}
 push_min=${SQUID_OCC_PUSH_MIN:-60}

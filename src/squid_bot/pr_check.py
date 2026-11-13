@@ -39,7 +39,7 @@ try:
     from squid_bot.config import get_repo_slug
     REPO_SLUG = get_repo_slug()
 except Exception:
-    REPO_SLUG = "squid-protocol/gitgalaxy"
+    REPO_SLUG = ""
 FLAGGED = re.compile(r"ratchet|baseline|golden|evidence|ledger", re.I)
 PIN_FILE = "tests/crucible_pins.toml"
 OK = {"success"}

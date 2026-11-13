@@ -37,7 +37,7 @@ Swap merely in use is shown but not judged alone: it can be old pages pushed out
 pressure near 0 means the disk is the bottleneck: the reason then says "mostly tasks waiting on disk: <culprit>" and the
 `disk:` lines name the reader. On 2026-10-11 a stray `find /` (aliased to `bfs`) held the box YELLOW for 40 minutes with
 nothing in "busiest". Load with neither CPU nor I/O pressure behind it (tasks stuck on a dead mount) is reported and not
-judged. A whole-filesystem scan (`find`/`bfs`/`fd`/`du`/`rg`/`grep` over `/`, `/home`, `/srv`, `/srv/storage_16tb`, `$HOME`)
+judged. A whole-filesystem scan (`find`/`bfs`/`fd`/`du`/`rg`/`grep` over `/`, `/home`, `/srv`, `$HOME`)
 alive 15+ minutes is listed as `STRAY?` with its pid.
 
 ## 2. Admission (before every launch and every heavy run of your own)

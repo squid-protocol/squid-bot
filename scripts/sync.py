@@ -23,12 +23,8 @@ from pathlib import Path
 # Paths
 SQUID_BOT_ROOT = Path(__file__).resolve().parent.parent
 
-# Detect GitGalaxy root from environment or known local paths
-DEFAULT_GG_CANDIDATES = [
-    Path("/srv/storage_16tb/projects/gitgalaxy-worktrees/main-check"),
-    Path("/home/joe/Projects/gitgalaxy"),
-    Path("/srv/storage_16tb/projects/gitgalaxy"),
-]
+# GitGalaxy's checkout: $GITGALAXY_ROOT, else a `gitgalaxy` directory beside this repository
+DEFAULT_GG_CANDIDATES = [SQUID_BOT_ROOT.parent / "gitgalaxy"]
 
 
 def find_gitgalaxy_root() -> Path:
@@ -134,14 +130,14 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
         # Handle hardcoded repo slug definitions
         content = re.sub(
             r'REPO_SLUG = "squid-protocol/gitgalaxy"',
-            'try:\n    from squid_bot.config import get_repo_slug\n    REPO_SLUG = get_repo_slug()\nexcept Exception:\n    REPO_SLUG = "squid-protocol/gitgalaxy"',
+            'try:\n    from squid_bot.config import get_repo_slug\n    REPO_SLUG = get_repo_slug()\nexcept Exception:\n    REPO_SLUG = ""',
             content,
         )
 
         # ci_rerun_stats.py names the repository as REPO, not REPO_SLUG
         content = re.sub(
             r'^REPO = "squid-protocol/gitgalaxy"$',
-            'try:\n    from squid_bot.config import get_repo_slug\n    REPO = get_repo_slug()\nexcept Exception:\n    REPO = "squid-protocol/gitgalaxy"',
+            'try:\n    from squid_bot.config import get_repo_slug\n    REPO = get_repo_slug()\nexcept Exception:\n    REPO = ""',
             content, flags=re.MULTILINE,
         )
         # flake_history.py guards this import itself (the classifier is optional in GitGalaxy), so package_imports
@@ -273,6 +269,10 @@ def transform_for_squid_bot(content: str, rel_dest: str) -> str:
                 "def test_no_squid_bot_reference_in_the_shepherd_tools():\n    import pytest\n\n"
                 '    pytest.skip("GitGalaxy-only: in squid-bot the tools are the squid_bot package")\n',
             )
+
+    # one host's mount point is not a scan root everywhere
+    if rel_dest.endswith(("box_status.py", "box-capacity/SKILL.md")):
+        content = content.replace('"/srv", "/srv/storage_16tb", ', '"/srv", ').replace("`/srv`, `/srv/storage_16tb`, ", "`/srv`, ")
 
     # 3. Adapt scripts
     if rel_dest.endswith("heavy-run.sh"):
