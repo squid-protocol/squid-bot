@@ -1,6 +1,6 @@
 # 🦑 squid-bot
 
-**A controlled release of coding agents: squid-bot starts agents only as the host, CI and budget can take them, screens every change they make, and merges only verified ones into `main`, so a repository gets a steady, rolling stream of small improvements that never has to stop.**
+**A controlled release of coding agents: squid-bot starts agents only as the host, CI and budget can take them, screens every change they make, and merges only verified ones into `main`, so a repository gets a steady stream of small, checked changes.**
 
 [![Tests](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/tests.yml)
 [![Dashboard](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml/badge.svg)](https://github.com/squid-protocol/squid-bot/actions/workflows/dashboard.yml)
@@ -14,16 +14,16 @@
 
 ## ⚡ How It Works
 
-![The squid-bot loop: issues and owner goals feed promoter-bot, which starts agents in isolated worktrees; draft PRs go through shepherd_gh, failures go to ci_digest and back to the agent with an exact repro, green PRs go through integrase-bot to updated main, and the merge frees a slot for the next slice](docs/images/fleet-loop.svg)
+![The squid-bot loop: issues and owner goals feed promoter-bot, which starts agents in isolated worktrees; draft PRs are screened by the merge bot, failures go to ci_digest and back to the agent with an exact repro, green PRs go through integrase-bot to updated main, and the merge frees a slot for the next slice](docs/images/fleet-loop.svg)
 
-On [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository it runs on, squid-bot has largely automated the production of code. The owner's job is to **set goals**: an ordered list of issue sets for the fleet to work through. From there the loop runs on its own, around the clock:
+On [GitGalaxy](https://github.com/squid-protocol/gitgalaxy), the repository it runs on, squid-bot starts, screens and merges most of the code changes. The owner's job is to **set goals**: an ordered list of issue sets for the fleet to work through. From there the loop runs on its own, around the clock:
 
 1. **Release agents as resources allow.** Every 10 minutes a cheap gate checks the host (CPU, memory and disk pressure), the CI queue, the spend budget, usage limits and connectivity. It starts a new agent only into free capacity, and stops starting them when any of those signals says so.
 2. **Edit in isolation.** Each agent works one slice of an issue in its own git worktree and opens a draft PR.
 3. **Screen, then merge.** Cheap checks first, the full CI suite after. A failure is classified (real defect, infra noise, flake, broken `main`, conflict) and sent back with the exact local repro; only a green PR is squash-merged.
 4. **Keep rolling.** Finished slices free their slots, the queue refills from the goals, and the next agents start. When only a human can decide something, the question goes to the owner's phone and the fleet carries on with other work.
 
-The aim is a perpetual cycle: no batch to start, no run to finish, just as much verified improvement per day as the machine, the CI pool and the budget allow.
+There is no batch to start and no run to finish: the loop does as much checked work each day as the machine, the CI pool and the budget allow.
 
 The system itself is still being tuned. The owner adjusts the rules (PR size caps, pacing, retry limits, which goal comes first) and watches the dashboards below to see whether each change helped.
 
@@ -31,11 +31,11 @@ The system itself is still being tuned. The owner adjusts the rules (PR size cap
 
 ## 🔬 Being Honest About the Numbers
 
-**PRs are deliberately small, so PR counts overstate the work.** Agents are told to slice an issue into small PRs, touching at most 5 hand-written files each, because small PRs pass review and CI far more often (see the quality chart below). The cost is that one issue usually becomes several PRs. From Oct 19 to Oct 25, promoter-bot merged **926 PRs** while closing **193 work items**: about **4.8 PRs per item**. Read the merged-PR line on the dashboard as *throughput of verified changes*, not issues solved; the Issues and Cost-per-resolved-issue panels are the better measures of outcome.
+**PRs are deliberately small, so PR counts overstate the work.** Agents are told to slice an issue into small PRs, touching at most 5 hand-written files each, because small PRs pass review and CI far more often (see the quality chart below). The cost is that one issue usually becomes several PRs. From Oct 11 to Nov 12 the agents merged about **2,500 PRs**, and **433 issues** were resolved with their work: close to **6 PRs per issue**. Read the merged-PR line on the dashboard as *throughput of verified changes*, not issues solved; the Issues and Cost-per-resolved-issue panels are the better measures of outcome.
 
-**The fleet isn't free to run.** Since promoter-bot went live on Oct 11, CI runner hours per day and job queue wait have both risen sharply, `main` goes red a few times a day (each one caught and fixed, but counted), and the agents cost about $2,700 in their first two weeks (about $2 per merged PR, about $11 per resolved issue). All of these are on the dashboard rather than left out of it.
+**The fleet isn't free to run.** Since promoter-bot went live on Oct 11, CI runner hours per day and job queue wait have both risen sharply. `main` went red 141 times in those 33 days, about 5.5 times per 100 agent PRs; each was caught and fixed, typically within about an hour, but it happened on every one of those days. The agents used about $4,700 of model time at list prices (about $1.90 per merged PR, about $11 per resolved issue). All of these are on the dashboard rather than left out of it.
 
-**Some things aren't measured yet:** the owner's time saved (the real point of the system), host pressure over time, and rework after merge.
+**What the numbers do not show.** "Resolved" means an issue closed after an agent PR that referenced it was merged; of the 570 issues opened in that time, the owner filed 252, agents 147 and automation 171, so agents also resolve issues that agents raised. Merges are approved by a model review, not a person. Not measured yet: the owner's time saved (the real point of the system), host pressure over time, and rework after merge.
 
 ---
 
@@ -85,16 +85,16 @@ From Oct 23 to Oct 29 the fleet used 42% of its allowed bot-hours, so more bots 
 
 ![GitGalaxy PR quality by size: daily rolling 7-day fix rate by hand-written file count, and fix runs per 100 merged PRs by cause, all hosts](https://raw.githubusercontent.com/squid-protocol/squid-bot/dashboard/quality.svg)
 
-This is the evidence behind the small-PR rule, and we have only just started tracking it (from Oct 10). For every merged promoter-bot PR, the fleet records how many hand-written files it changed and whether it needed a fix before merging: a review send-back or a CI fix run. When it did, a model reads the fix run's own report and labels what broke. So far:
+This is the evidence behind the small-PR rule, tracked since Oct 10. For every merged promoter-bot PR, the fleet records how many hand-written files it changed and whether it needed a fix before merging: a review send-back or a CI fix run. When it did, a model reads the fix run's own report and labels what broke. Oct 11 to Nov 12, both hosts:
 
 | Hand-written files changed | Merged PRs | Needed a fix |
 |---|---|---|
-| 1-2 | 113 | **21%** |
-| 3-4 | 110 | **22%** |
-| 5 | 37 | **49%** |
-| 6+ | 18 | **44%** |
+| 1-2 | 1,250 | **17%** |
+| 3-4 | 747 | **27%** |
+| 5 | 256 | **38%** |
+| 6+ | 256 | **55%** |
 
-Up to 4 files, about one PR in five needs a fix; at 5 or more, about half do. The most common causes are a derived file not refreshed (stale), a conflict with `main`, and `main` itself being red or flaky. The chart covers every orchestrator host and gains a point each day: each point is the 7 days ending on it, and a size line is drawn only where those 7 days have 5 PRs or more. The tiles score the last 7 days against the 7 before. The 5-file cap stays until the 5+ line comes down to the 3-4 line. The data is in `factory.json`'s `quality` field.
+About one PR in six needs a fix at 1-2 files and one in four at 3-4; at 5 files it is nearly two in five, and past 5 more than half. The most common causes are a derived file not refreshed (stale), a conflict with `main`, and `main` itself being red or flaky. The chart covers every orchestrator host and gains a point each day: each point is the 7 days ending on it, and a size line is drawn only where those 7 days have 5 PRs or more. The tiles score the last 7 days against the 7 before. The 5-file cap stays until the 5+ line comes down to the 3-4 line. The data is in `factory.json`'s `quality` field.
 
 ---
 
@@ -135,23 +135,23 @@ The loop above, in the names the code uses. Two renames are unfinished, so the o
 
 ## 🔁 The Control Loops
 
-Every hold in the system is one of these loops. Each has a sensor, something it acts on, a rule with its constants, and the incident that set it; the constants live beside dated notes in the code. The last column names the closest idea in cell regulation where there is one (see [Where the design came from](#-where-the-design-came-from-cell-regulation)).
+Every hold in the system is one of these loops. Each has a sensor, something it acts on, a rule with its constants, and the incident that set it; the constants live beside dated notes in the code. The last column names an idea from cell regulation only for the three rows that were designed from one (see [Where the design came from](#-where-the-design-came-from-cell-regulation)).
 
 | Loop | Senses | Acts on | Rule | Set by | In a cell |
 |---|---|---|---|---|---|
-| **Host capacity** (`box-status`) | CPU, memory and disk pressure (PSI, 60 s average), load per core, available memory | Whether anything new starts | RED at CPU pressure ≥ 40%, memory available < 10% or memory pressure ≥ 20%; YELLOW at 15%, 20% and 5%. Launches only on GREEN, into free heavy slots (cores / 4) | Five agents started at once took every core and timed their own tests out | Sensing energy charge (stall), not counting enzymes |
+| **Host capacity** (`box-status`) | CPU, memory and disk pressure (PSI, 60 s average), load per core, available memory | Whether anything new starts | RED at CPU pressure ≥ 40%, memory available < 10% or memory pressure ≥ 20%; YELLOW at 15%, 20% and 5%. RED also at load ≥ cores when pressure is behind it; YELLOW at load ≥ 70% of cores or disk pressure ≥ 50%. Launches only on GREEN, into free heavy slots (cores / 4) | Five agents started at once took every core and timed their own tests out | Sensing stalled work, not counting enzymes |
 | **CI admission** (`promoter-bot`) | Runner-minutes queued and running; each workflow's learned cost (moving average, weight 0.3) | New launches | Room = target use × runners × 60 min, minus work in hand, minus what live workers will push. A launch needs room for one PR's cost | 2026-10-14: three workers outran 20 runners (31 runs queued, 24 min median wait). Counting runs stopped working when jobs got shorter | |
-| **CI target use** | Queue wait of PR jobs (median) | The target in the row above | Cut × 0.8 when the wait passes 7.5 min; climb ÷ 0.8 when it is under 3 min; each at most every 20 min; between 0.3 and 1.0. Hold everything while queued runs wait over 10 min | 2026-10-23: gauges read 1.3 min on started jobs while others queued 35 min. 2026-11-03: a slow climb held launches 10 h | Feedback inhibition by the end product |
+| **CI target use** | Queue wait of PR jobs (median) | The target in the row above | Cut × 0.8 when the wait passes 7.5 min; climb ÷ 0.8 when it is under 3 min; each at most every 20 min; between 0.3 and 1.0. An hourly pass also cuts above 5 min and climbs by 0.05. Hold everything while queued runs wait over 10 min | 2026-10-23: gauges read 1.3 min on started jobs while others queued 35 min. 2026-11-03: a slow climb held launches 10 h | |
 | **Spend pacing** | Dollars spent in the 5-hour usage window; the budget learned from past limit hits | New launches | Launch only if spend plus one typical run stays under 80% of the learned budget | The plan's limit is not published; it is learned from where it stopped the fleet | |
-| **Usage-limit pause** | The provider's limit message and its reset time | All launches | Stop until the stated reset; four hits in six hours pages the owner | A pause that ended straight back into the limit | Checkpoint arrest |
-| **Failure streak** | Workers that crash or error in a row | All launches | Four in a row: hold one hour, then one probe round | 2026-10-17: the agent CLI updates itself daily, and a release that changed its output would fail every worker while the gate looked healthy | Checkpoint arrest |
+| **Usage-limit pause** | The provider's limit message and its reset time | All launches | Stop until the stated reset; four hits in six hours pages the owner | A pause that ended straight back into the limit | |
+| **Failure streak** | Workers that crash or error in a row | All launches | Four in a row: hold one hour, then one probe round | 2026-10-17: the agent CLI updates itself daily, and a release that changed its output would fail every worker while the gate looked healthy | |
 | **GitHub API quota** | Calls left this hour and the burn rate | Optional reads, then launches | Lean under 2,000 left, hold under 1,000 | 2026-10-24: the quota ran out and the merge bot, which shares it, stopped merging | |
-| **Offline** | Whether the model API and GitHub answer | Launches, model ticks, retry counters | Freeze all three; requeue workers the outage killed | 2026-10-17: during an outage the gate launched the next item into every free slot, and each one failed | Checkpoint arrest |
+| **Offline** | Whether the model API and GitHub answer | Launches, model ticks, retry counters | Freeze all three; requeue workers the outage killed | 2026-10-17: during an outage the gate launched the next item into every free slot, and each one failed | |
 | **Stall** | A need the model tick has failed to settle | Whether that need wakes a tick again | After 3 tries it stops; it is asked again 2 h later | 2026-11-01: one stalled need left a host idle for 7 h | |
 | **Focus, then filler** | Whether the owner's focus list has anything launchable | Off-focus work | Off-focus work runs only when the focus has had nothing to launch for 2 passes, at most 4 launches a window, and it queues no follow-up | A focus that ran dry stopped the whole fleet; without the cap, filler reshuffled the queue | **The lac operon**: a second sugar is used only when it is there and the preferred one is not |
-| **Backfill** | CI busy while agent slots sit idle | CI-light work (mutation testing, research) | Starts only after CI has been busy 20 min; CPU-capped; when CI calms it finishes its step instead of being killed | 2026-10-14: uncapped, it drove load to 36 on 12 cores and was stopped and restarted 5 times in 5 h | The same switch, with a persistence filter so a blip does not flip it |
+| **Backfill** | CI busy while agent slots sit idle | CI-light work (mutation testing, research) | Starts after CI has been busy 20 min, or when CI is calm but nothing normal can launch and slots sat idle for 2 passes; CPU-capped; when CI calms it finishes its step (up to 45 min) instead of being killed | 2026-10-14: uncapped, it drove load to 36 on 12 cores and was stopped and restarted 5 times in 5 h | A looser cousin of the same switch |
 | **Merge bot** (`integrase-bot`) | Check results on each PR head | Reruns, ready-marking, merges, fixers | At most 4 drafts marked ready a pass; infrastructure failures rerun up to 3 times, 15 min apart; a flaky failure once; a fixer only on GREEN, one a pass | 2026-10-09: a registry outage outlasted a single rerun | |
-| **Flake memory** (`flake-history`) | Jobs that failed, then passed on a rerun of the same run, over 14 days | Which first failures earn a rerun | Learned flaky at 2 or more rescues with 80% of reruns passing | | Immune memory of past infections |
+| **Flake memory** (`flake-history`) | Jobs that failed, then passed on a rerun of the same run, over 14 days | Which first failures earn a rerun | Learned flaky at 2 or more rescues with 80% of reruns passing | | |
 
 ### What happens without them
 
@@ -186,7 +186,7 @@ disk: io-pressure 1.79% (full 1.57%)  tasks blocked on disk 0
 #### Verdicts
 * **`GREEN` (launches allowed):** pressure is negligible and heavy slots are open. Agents may start heavy verification sweeps, Docker containers, or parallel gauntlets.
 * **`YELLOW` (light work only):** heavy slots are occupied, available memory is under 20%, or load exceeds 70% of the core count. Agents down-shift to scouting, narrow unit tests, or code edits.
-* **`RED` (nothing new starts):** CPU stall pressure $\ge 40\%$, available memory $< 10\%$, or the box is paging. Orchestrators start nothing new and ask active workers to write a handoff checkpoint.
+* **`RED` (nothing new starts):** CPU stall pressure of 40% or more, available memory under 10%, or the box is paging. Orchestrators start nothing new and ask active workers to write a handoff checkpoint.
 
 ---
 
@@ -194,10 +194,10 @@ disk: io-pressure 1.79% (full 1.57%)  tasks blocked on disk 0
 Usage: `scripts/heavy-run.sh <command...>`
 
 `heavy-run.sh` sizes compute-intensive builds and test suites once, when each job starts:
-1. It acquires one of $N$ shared slots ($N = \text{cores} / 4$, minimum 1) via kernel `flock`.
+1. It acquires one of N shared slots (N = cores / 4, minimum 1) via kernel `flock`.
 2. It counts how many other heavy jobs are running.
 3. It calculates a fair core share for that moment:
-   $$\text{SQUID\_BOT\_CORES} = \max\left(1, \frac{\text{online\_cores}}{\text{active\_heavy\_slots}}\right)$$
+   `SQUID_BOT_CORES = max(1, online_cores / active_heavy_slots)`
 4. It exports `SQUID_BOT_CORES` and `GG_JOB_CORES`, which downstream tools (pytest-xdist, compiler jobs, linters) read to size their internal worker pools.
 
 The share is not revised while the job runs: a job that starts alone gets every core, and jobs started after it get smaller shares, so a staggered start can briefly ask for more cores than exist (about 1.8x with 3 slots). The slot count still caps how many heavy jobs run at once.
@@ -227,7 +227,7 @@ GitHub webhook events drop under burst traffic, arrive out of order, or get canc
 * **Reruns for noise:** `infra` failures are rerun up to 3 times, 15 minutes apart, and `flake` failures once. The budget belongs to the workflow run, not the check: the failing legs of one matrix run share a single `gh run rerun --failed`.
 * **Fixer gating:** with `INTEGRASE_FIXER` set, a `real` failure starts that command (`<fixer> <PR> <digest.json>`) to repair it. The digest comment posts at once, but the fixer starts only when `box-status` reads `GREEN`, at most `INTEGRASE_MAX_FIXERS` (default 1) per pass, and the most useful first: the PR that others wait on (`--after`), then the one with the fewest failing checks.
 * **Hold (`shepherd:hold`):** keeps a PR open for human inspection without merging.
-* **Full matrix (`shepherd:matrix`):** runs the full cross-platform OS $\times$ Python suite and gates integration on a clean run.
+* **Full matrix (`shepherd:matrix`):** runs the full cross-platform OS × Python suite and gates integration on a clean run.
 * **Damaged reference (`shepherd:waiting-on-main`):** applied when a failing check is confirmed to also be failing on `origin/main`, so agents don't change their own PR to fix a failure that is `main`'s.
 * **Needs a fix (`shepherd:needs-fix`):** applied when a real regression or conflict (`dirty`) is detected, paired with a structured `ci_digest` report.
 
@@ -360,19 +360,20 @@ The older `CI_SHEPHERD_*` names are still read.
 
 The system was designed by a biologist, and two of its ideas were taken from how cells regulate themselves. The rest is ordinary control engineering, and this section says which is which.
 
-**1. Sense stall, not activity.** A cell does not estimate its energy by counting enzymes; it responds to energy charge, which is a measure of work that cannot proceed. The system does the same: it reads how long tasks waited for CPU, memory or disk (Linux PSI) instead of CPU percentage, and how long CI jobs waited for a runner instead of how many are running.
+**1. Sense stall, not activity.** A cell short of amino acids does not count its enzymes. It detects ribosomes that have stalled waiting for a charged tRNA, and slows growth in response (the stringent response). The system does the same: it reads how long tasks waited for CPU, memory or disk (Linux PSI) instead of CPU percentage, and how long CI jobs waited for a runner instead of how many are running.
 
-**2. The lac operon: use the second sugar only when it is there and the first is not.** *E. coli* makes the enzymes for lactose only when lactose is present *and* glucose, which it prefers, is absent. Two lanes follow that rule exactly. *Filler* work, from outside the owner's focus, launches only when it is queued and the focus has nothing that can launch. *Backfill* work, which is light on CI, launches only when it is queued and CI is too busy for normal work. Backfill also waits until CI has been busy for 20 minutes, the way a cell's feed-forward loops ignore a brief pulse and respond to a signal that persists.
-
-**3. Checkpoints.** When something is wrong (a usage limit, a run of crashes, a host under pressure, a lost connection) the system stops starting new work and leaves running work alone, as a cell arrests at a checkpoint instead of dismantling itself.
+**2. The lac operon: use the second sugar only when it is there and the first is not.** *E. coli* makes the enzymes for lactose only when lactose is present *and* glucose, which it prefers, is absent. *Filler* work, from outside the owner's focus, follows that rule: it launches only when it is queued and the focus has had nothing that can launch for two passes, and then only inside a capped window. *Backfill* work, which is light on CI, is a looser cousin: it launches when CI is too busy for normal work, and also when CI is calm but nothing normal can start.
 
 **The picture of the pipeline** is *ex vivo* gene editing, the way CAR-T cells are made: cells are taken out, edited in a dish, screened, and only verified cells are returned. Here each agent edits an isolated copy (a worktree), CI screens it, and only a verified change is merged into `main`, which every later branch inherits. That is where the names come from: promoter-bot starts the editing, integrase-bot writes the verified result in. The [full mapping](docs/biology.md) is in the docs.
 
 ### Where the comparison stops
 
 - **The names are labels, not mechanisms.** A promoter answers to one signal. promoter-bot launches only when about ten independent holds are all clear, which is closer to several repressors on one gene.
-- **CI admission is not biology.** It is the congestion control networks use: cut the target by a fifth when jobs wait too long, raise it when they do not.
-- **A cell regulates continuously; this samples.** The gate runs every 10 minutes and most of its rules are thresholds, so it is on-or-off where a cell would be graded. The host verdict has no dwell time yet, so it can flip between readings.
+- **CI admission is not biology.** It is delay-based rate control of the kind networks use: cut the target by a fifth when jobs wait over 7.5 minutes, raise it by a quarter when they wait under 3, leave it alone in between, and move at most once every 20 minutes.
+- **Backfill's 20-minute wait is a timer, not a circuit.** Cells ignore a brief pulse with a coherent feed-forward loop (the arabinose system is the textbook case). The effect is similar; the mechanism was not copied.
+- **The pauses are not checkpoints.** A usage limit or an outage is a supply running out, and the system simply stops starting work. An earlier version of this page called that checkpoint arrest; it is closer to a cell going quiet when food runs out.
+- **The real lac operon is messier.** It is leaky, it can sit in either of two states, and glucose acts partly by keeping lactose out of the cell. The rule borrowed here is the textbook one.
+- **A cell regulates continuously; this samples.** The gate runs every 10 minutes and reads a 60-second average, so it sees a tenth of the time, and most of its rules are thresholds, on-or-off where a cell would be graded. The host verdict has no dwell time yet, so it can flip between readings.
 - **There is an owner.** A person sets the focus and answers the questions the system cannot. Nothing in a cell does that.
 
 ---
