@@ -1109,7 +1109,7 @@
   <g><title>Nov 11 · median 20 running, peak 25 · at the limit 65% of the time · 118 readings</title><path class="ls1" d="M829.2,3164.0 V3054.7 Q829.2,3050.7 833.2,3050.7 H840.2 Q844.2,3050.7 844.2,3054.7 V3164.0 Z"/></g>
   <g><title>Nov 12 · median 5 running, peak 23 · at the limit 11% of the time · 189 readings</title><path class="ls1" d="M846.2,3164.0 V3139.7 Q846.2,3135.7 850.2,3135.7 H857.1 Q861.1,3135.7 861.1,3139.7 V3164.0 Z"/></g>
   <g><title>Nov 13 · median 2 running, peak 21 · at the limit 12% of the time · 173 readings</title><path class="ls1" d="M863.1,3164.0 V3156.7 Q863.1,3152.7 867.1,3152.7 H874.1 Q878.1,3152.7 878.1,3156.7 V3164.0 Z"/></g>
-  <g class="partial"><title>Nov 14 · median 14 running, peak 23 · at the limit 30% of the time · 27 readings</title><path class="ls1" d="M880.1,3164.0 V3088.7 Q880.1,3084.7 884.1,3084.7 H891.0 Q895.0,3084.7 895.0,3088.7 V3164.0 Z"/></g>
+  <g class="partial"><title>Nov 14 · median 6 running, peak 23 · at the limit 21% of the time · 176 readings</title><path class="ls1" d="M880.1,3164.0 V3134.0 Q880.1,3130.0 884.1,3130.0 H891.0 Q895.0,3130.0 895.0,3134.0 V3164.0 Z"/></g>
   <line class="avg" x1="66" x2="896" y1="3050.7" y2="3050.7"/><text class="avgl" x="896" y="3045.7" text-anchor="end">runner limit 20</text>
   </g>
   <text class="meta" x="24" y="1497">Limits: each minute gets the first thing that, if removed, would start another bot. Launches only: a full fleet shows code generation at max, whatever waits downstream.</text><text class="meta" x="24" y="1512">Days are UTC; faded marks are today so far. The agy lane isn't counted in bots working; bots allowed is one reading a day.</text>

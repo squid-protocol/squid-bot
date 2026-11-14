@@ -795,6 +795,10 @@
     "bot": 0,
     "other": 29
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 75
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 136,
     "failure": 20,
@@ -883,6 +887,10 @@
     "bot": 0,
     "other": 10
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 19
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 29,
     "failure": 13,
@@ -959,13 +967,18 @@
     "wait_median": 0.78,
     "wait_p90": 8.28
    },
-   "merged": 20,
+   "merged": 21,
    "merged_by_class": {
-    "agent": 17,
+    "agent": 18,
     "automation": 0,
     "bot": 0,
     "other": 3
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 20
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 51,
     "failure": 10,
@@ -1052,13 +1065,19 @@
     "wait_median": 0.08,
     "wait_p90": 1.97
    },
-   "merged": 16,
+   "merged": 19,
    "merged_by_class": {
-    "agent": 12,
+    "agent": 15,
     "automation": 0,
     "bot": 0,
     "other": 4
    },
+   "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 16,
+    "squid-protocol/language-crucible": 2
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 34,
     "failure": 10,
@@ -1153,6 +1172,10 @@
     "bot": 0,
     "other": 9
    },
+   "merged_by_repo": {
+    "squid-protocol/gitgalaxy": 30
+   },
+   "merged_scope": "org",
    "runs": {
     "cancelled": 26,
     "failure": 11,
@@ -38850,7 +38873,7 @@
      "cancelled": 89,
      "saved_min_est": 609,
      "unpriced": 0,
-     "wall_min": 5029
+     "wall_min": 5025
     },
     "ci_changes": [
      {
@@ -38869,10 +38892,15 @@
     "est_method": "ratio-v2",
     "population": 1297,
     "reruns": {
-     "attempts": 38,
+     "attempts": 39,
      "by_workflow": {
       "CICS Crucible": [
        2,
+       0,
+       0
+      ],
+      "Dependabot relock": [
+       1,
        0,
        0
       ],
@@ -38903,11 +38931,11 @@
       ]
      },
      "failed_again": 8,
-     "passed": 24,
-     "runs": 32
+     "passed": 25,
+     "runs": 33
     },
-    "runner_min_ci": 1303,
-    "runner_min_est": 9576,
+    "runner_min_ci": 1294,
+    "runner_min_est": 9603,
     "sample": {
      "43334205038": {
       "m": 0.37,
@@ -40325,64 +40353,64 @@
     "sample_target": 65,
     "sampled_min_by_origin": {
      "agent": 147.6,
-     "automation": 2207.6,
-     "bot": 3822.4,
-     "main": 3323.9,
+     "automation": 2208.1,
+     "bot": 3826.4,
+     "main": 3346.3,
      "other": 74.2
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 94.2,
-     "Blind 1 inventory (one-off)": 3.8,
+     "Archetype Validation": 95.4,
+     "Blind 1 inventory (one-off)": 3.9,
      "CI shepherd (label events)": 49.1,
      "CI shepherd (reconcile)": 190.7,
-     "CICS Crucible": 621.1,
+     "CICS Crucible": 628.8,
      "Cache Prune": 2.6,
-     "Call Graph Accuracy Audit": 23.2,
-     "Call Resolution History": 44.2,
+     "Call Graph Accuracy Audit": 23.5,
+     "Call Resolution History": 44.8,
      "CodeQL Security Scan": 101.6,
-     "Configured Graph Update: pip in /. #1701366926": 2.2,
-     "Crucible Path Independence": 16.2,
-     "DOOM-rosetta": 103.6,
-     "Dependabot relock": 13.4,
+     "Configured Graph Update: pip in /. #1701366926": 2.3,
+     "Crucible Path Independence": 16.4,
+     "DOOM-rosetta": 104.8,
+     "Dependabot relock": 3.6,
      "Deploy Museum of Code Docs": 80.8,
      "Det Sweep": 1985.0,
-     "Detection Accuracy Audit": 23.9,
+     "Detection Accuracy Audit": 24.2,
      "Doc Drift": 0.9,
-     "Engine Coverage Map": 76.4,
+     "Engine Coverage Map": 77.3,
      "Equivalence E2E": 1821.9,
      "Estate Crucible": 1.1,
-     "Evidence Refresh": 867.6,
-     "Fact Cross-check": 11.2,
-     "Flake history (refresh)": 24.5,
-     "Full Suite Gate (All OS x Python)": 49.8,
+     "Evidence Refresh": 878.4,
+     "Fact Cross-check": 11.4,
+     "Flake history (refresh)": 24.8,
+     "Full Suite Gate (All OS x Python)": 50.5,
      "Generated Docs": 49.7,
      "Generated Java Base Generation": 114.3,
-     "Generated Java Compiles": 148.5,
+     "Generated Java Compiles": 150.4,
      "GitGalaxy Smoke Tests": 837.0,
      "GitGalaxy Zero-Trust Pipeline": 191.1,
-     "Golden Crucible Resilience Test": 74.5,
-     "Graph Accuracy Audit": 223.5,
-     "Graph Comparison History": 23.4,
+     "Golden Crucible Resilience Test": 75.4,
+     "Graph Accuracy Audit": 226.3,
+     "Graph Comparison History": 23.7,
      "Main Watch": 25.5,
      "Mainframe Ground Truth": 920.1,
      "Muninn Security Scan": 30.2,
      "Mypy Audit": 22.2,
      "OS Smoke Grid": 4.7,
-     "Ports Compile": 289.0,
-     "Referee panel": 31.1,
+     "Ports Compile": 292.6,
+     "Referee panel": 31.5,
      "Ruff Audit": 28.6,
      "Small Audits": 109.1,
-     "Tree-sitter Accuracy Audit": 35.1,
-     "Tree-sitter Accuracy History": 27.6,
-     "Tri-Comparison Audit": 24.3,
-     "Tri-Comparison History": 23.5,
+     "Tree-sitter Accuracy Audit": 35.5,
+     "Tree-sitter Accuracy History": 27.9,
+     "Tri-Comparison Audit": 24.6,
+     "Tri-Comparison History": 23.8,
      "github_actions in /. - Update #1701167548": 6.0,
      "pages build and deployment": 44.2,
      "pip in /. - Update #1701167543": 2.8,
-     "pip in /ci/requirements - Update #1701171524": 7.0,
+     "pip in /ci/requirements - Update #1701171524": 7.1,
      "post-merge": 11.2,
-     "rosetta-audit": 56.1,
-     "unicode-gauntlet": 6.2
+     "rosetta-audit": 56.8,
+     "unicode-gauntlet": 6.3
     },
     "sampled_runs": 176,
     "wait_median": 0.03,
@@ -40405,69 +40433,105 @@
    "merged_scope": "org",
    "runs": {
     "cancelled": 189,
-    "failure": 22,
+    "failure": 21,
     "skipped": 430,
-    "success": 1086,
+    "success": 1087,
     "total": 1727
    }
   },
   "2026-11-14": {
    "detail": {
     "bot_outcomes": {
-     "failure": 1,
-     "success": 120
+     "failure": 2,
+     "success": 519
     },
-    "bot_runs": 214,
+    "bot_runs": 841,
     "cancel_savings": {
-     "cancelled": 54,
-     "saved_min_est": 478,
+     "cancelled": 161,
+     "saved_min_est": 1412,
      "unpriced": 0,
-     "wall_min": 1430
+     "wall_min": 7353
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 8478,
+      "title": "det-sweep: fall back to equivalence-e2e's cached Db2 ODBC driver (#8478)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 443,
+    "population": 1836,
     "reruns": {
-     "attempts": 10,
+     "attempts": 53,
      "by_workflow": {
-      "Det Sweep": [
-       3,
+      "CICS Crucible": [
+       2,
        0,
        0
       ],
+      "Det Sweep": [
+       7,
+       4,
+       1
+      ],
       "Equivalence E2E": [
+       6,
+       0,
+       0
+      ],
+      "Generated Docs": [
        1,
        0,
        0
       ],
       "GitGalaxy Smoke Tests": [
-       2,
+       10,
        0,
        1
       ],
       "Mainframe Ground Truth": [
-       2,
-       0,
+       10,
+       1,
        1
       ]
      },
-     "failed_again": 0,
-     "passed": 8,
-     "runs": 10
+     "failed_again": 5,
+     "passed": 36,
+     "runs": 44
     },
-    "runner_min_ci": 493,
-    "runner_min_est": 1903,
+    "runner_min_ci": 1630,
+    "runner_min_est": 11673,
     "sample": {
+     "43531248955": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
      "43531534490": {
       "m": 0.0,
       "o": "main",
       "w": []
+     },
+     "43531570798": {
+      "m": 0.92,
+      "o": "main",
+      "w": [
+       0.32,
+       0.08
+      ]
      },
      "43531745051": {
       "m": 1.18,
       "o": "main",
       "w": [
        0.13
+      ]
+     },
+     "43531815841": {
+      "m": 0.37,
+      "o": "main",
+      "w": [
+       0.35,
+       0.65
       ]
      },
      "43532051958": {
@@ -40477,6 +40541,17 @@
        0.05
       ]
      },
+     "43532325479": {
+      "m": 12.47,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.28,
+       0.42,
+       0.43,
+       0.03
+      ]
+     },
      "43532325555": {
       "m": 2.0,
       "o": "bot",
@@ -40484,11 +40559,36 @@
        0.02
       ]
      },
+     "43532325642": {
+      "m": 1.03,
+      "o": "bot",
+      "w": [
+       0.77,
+       0.8,
+       1.22
+      ]
+     },
      "43532325754": {
       "m": 5.53,
       "o": "bot",
       "w": [
        0.45
+      ]
+     },
+     "43532325809": {
+      "m": 15.43,
+      "o": "bot",
+      "w": [
+       0.28,
+       0.08,
+       0.73
+      ]
+     },
+     "43532989254": {
+      "m": 0.92,
+      "o": "main",
+      "w": [
+       0.02
       ]
      },
      "43533107295": {
@@ -40521,11 +40621,25 @@
        0.03
       ]
      },
+     "43534964385": {
+      "m": 0.18,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
      "43535036211": {
       "m": 0.35,
       "o": "bot",
       "w": [
        0.03
+      ]
+     },
+     "43535161419": {
+      "m": 0.97,
+      "o": "main",
+      "w": [
+       0.05
       ]
      },
      "43535180803": {
@@ -40553,6 +40667,13 @@
        0.32
       ]
      },
+     "43535181233": {
+      "m": 1.43,
+      "o": "bot",
+      "w": [
+       4.13
+      ]
+     },
      "43535218981": {
       "m": 0.65,
       "o": "bot",
@@ -40567,12 +40688,29 @@
        0.27
       ]
      },
+     "43535639134": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
      "43536456473": {
       "m": 1.02,
       "o": "main",
       "w": [
        0.03
       ]
+     },
+     "43537123954": {
+      "m": 0.32,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43537709391": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
      },
      "43539876091": {
       "m": 0.82,
@@ -40602,11 +40740,26 @@
        0.03
       ]
      },
+     "43539960379": {
+      "m": 0.9,
+      "o": "main",
+      "w": [
+       0.03,
+       0.63
+      ]
+     },
      "43543667935": {
       "m": 0.28,
       "o": "bot",
       "w": [
        0.03
+      ]
+     },
+     "43546457897": {
+      "m": 0.5,
+      "o": "bot",
+      "w": [
+       0.02
       ]
      },
      "43546461503": {
@@ -40633,6 +40786,13 @@
       "o": "main",
       "w": []
      },
+     "43546773060": {
+      "m": 4.8,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
      "43546773157": {
       "m": 5.12,
       "o": "bot",
@@ -40653,6 +40813,11 @@
       "w": [
        1.9
       ]
+     },
+     "43548082410": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
      },
      "43548421516": {
       "m": 1.57,
@@ -40680,6 +40845,20 @@
        1.88,
        1.53,
        1.3
+      ]
+     },
+     "43548924289": {
+      "m": 4.27,
+      "o": "bot",
+      "w": [
+       0.4
+      ]
+     },
+     "43548955209": {
+      "m": 0.23,
+      "o": "bot",
+      "w": [
+       1.78
       ]
      },
      "43548955238": {
@@ -40746,11 +40925,25 @@
        3.47
       ]
      },
+     "43550061162": {
+      "m": 0.28,
+      "o": "bot",
+      "w": [
+       3.7
+      ]
+     },
      "43550176863": {
       "m": 1.6,
       "o": "main",
       "w": [
        0.13
+      ]
+     },
+     "43550216264": {
+      "m": 1.02,
+      "o": "main",
+      "w": [
+       3.18
       ]
      },
      "43551113046": {
@@ -40807,82 +41000,891 @@
        0.02
       ]
      },
+     "43551818681": {
+      "m": 1.72,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
      "43552799102": {
       "m": 0.47,
       "o": "bot",
       "w": [
        0.03
       ]
+     },
+     "43552861296": {
+      "m": 0.15,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43553066934": {
+      "m": 362.88,
+      "o": "main",
+      "w": [
+       0.02,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.02,
+       0.02,
+       0.03,
+       0.02,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.8,
+       0.02,
+       0.02,
+       0.03,
+       0.78
+      ]
+     },
+     "43555530933": {
+      "m": 1.72,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43559881227": {
+      "m": 53.38,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       2.67,
+       3.02,
+       2.87,
+       0.83
+      ]
+     },
+     "43561378384": {
+      "m": 1.3,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       0.05
+      ]
+     },
+     "43562418507": {
+      "m": 0.38,
+      "o": "main",
+      "w": [
+       0.03,
+       0.07,
+       0.03
+      ]
+     },
+     "43562979469": {
+      "m": 0.57,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43563061887": {
+      "m": 22.53,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.02,
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.03
+      ]
+     },
+     "43563061899": {
+      "m": 1.08,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.02,
+       0.03
+      ]
+     },
+     "43564285454": {
+      "m": 0.65,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43564285459": {
+      "m": 0.37,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43564285491": {
+      "m": 0.65,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43564285507": {
+      "m": 0.6,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43566894984": {
+      "m": 1.08,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43566916091": {
+      "m": 2.52,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43569228643": {
+      "m": 1.22,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03
+      ]
+     },
+     "43569452157": {
+      "m": 3.57,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43571598730": {
+      "m": 0.35,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43571916688": {
+      "m": 0.35,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.05
+      ]
+     },
+     "43575693723": {
+      "m": 0.87,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43577798239": {
+      "m": 9.72,
+      "o": "bot",
+      "w": [
+       3.63,
+       2.78,
+       2.83
+      ]
+     },
+     "43579455105": {
+      "m": 6.0,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.08,
+       0.03,
+       0.03
+      ]
+     },
+     "43584808171": {
+      "m": 0.32,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03
+      ]
+     },
+     "43587182926": {
+      "m": 51.02,
+      "o": "bot",
+      "w": [
+       3.8,
+       12.52,
+       2.62,
+       14.57,
+       0.03
+      ]
+     },
+     "43587182992": {
+      "m": 18.67,
+      "o": "bot",
+      "w": [
+       8.05,
+       12.67,
+       13.82,
+       0.03
+      ]
+     },
+     "43587334322": {
+      "m": 0.75,
+      "o": "main",
+      "w": [
+       6.9
+      ]
+     },
+     "43587875020": {
+      "m": 1.05,
+      "o": "main",
+      "w": [
+       6.62
+      ]
+     },
+     "43588643854": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43591471450": {
+      "m": 142.4,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.82,
+       0.03,
+       0.8,
+       1.07,
+       7.27
+      ]
+     },
+     "43592475238": {
+      "m": 6.2,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.05
+      ]
+     },
+     "43592479056": {
+      "m": 0.33,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43593495811": {
+      "m": 1.4,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43593802556": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43593992936": {
+      "m": 22.23,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.23,
+       0.28,
+       0.8,
+       0.87,
+       0.05
+      ]
+     },
+     "43594552443": {
+      "m": 0.3,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43595226951": {
+      "m": 20.08,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43595260287": {
+      "m": 15.33,
+      "o": "bot",
+      "w": [
+       0.72,
+       0.95,
+       2.92,
+       3.3,
+       3.92,
+       3.53
+      ]
+     },
+     "43595260390": {
+      "m": 28.43,
+      "o": "bot",
+      "w": [
+       3.35,
+       4.37,
+       4.58,
+       0.38,
+       0.55,
+       0.3,
+       0.67,
+       0.22,
+       3.63
+      ]
+     },
+     "43595365875": {
+      "m": 0.53,
+      "o": "main",
+      "w": [
+       2.87
+      ]
+     },
+     "43596031629": {
+      "m": 0.33,
+      "o": "agent",
+      "w": [
+       0.03,
+       0.15
+      ]
+     },
+     "43596031828": {
+      "m": 28.25,
+      "o": "agent",
+      "w": [
+       0.03,
+       0.03,
+       0.05,
+       0.03,
+       0.02,
+       0.02,
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "43596202613": {
+      "m": 1.32,
+      "o": "main",
+      "w": [
+       3.8
+      ]
+     },
+     "43596956916": {
+      "m": 10.77,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       1.82,
+       1.0,
+       0.7,
+       1.42
+      ]
+     },
+     "43596956969": {
+      "m": 4.62,
+      "o": "main",
+      "w": [
+       0.62
+      ]
+     },
+     "43599083082": {
+      "m": 1.2,
+      "o": "main",
+      "w": [
+       0.33
+      ]
+     },
+     "43599140940": {
+      "m": 0.72,
+      "o": "agent",
+      "w": [
+       0.92
+      ]
+     },
+     "43599202273": {
+      "m": 0.58,
+      "o": "bot",
+      "w": [
+       2.38
+      ]
+     },
+     "43599313614": {
+      "m": 4.47,
+      "o": "main",
+      "w": [
+       0.17
+      ]
+     },
+     "43599450253": {
+      "m": 0.62,
+      "o": "bot",
+      "w": [
+       0.17
+      ]
+     },
+     "43599461461": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43599706850": {
+      "m": 6.78,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43599709002": {
+      "m": 0.92,
+      "o": "main",
+      "w": [
+       0.05
+      ]
+     },
+     "43599976372": {
+      "m": 0.57,
+      "o": "agent",
+      "w": [
+       2.9
+      ]
+     },
+     "43599976380": {
+      "m": 14.25,
+      "o": "agent",
+      "w": [
+       1.08,
+       3.63,
+       3.68
+      ]
+     },
+     "43600819064": {
+      "m": 45.78,
+      "o": "automation",
+      "w": [
+       17.55,
+       0.12,
+       2.08,
+       6.08
+      ]
+     },
+     "43601448098": {
+      "m": 3.07,
+      "o": "main",
+      "w": [
+       3.92
+      ]
+     },
+     "43601936562": {
+      "m": 0.22,
+      "o": "main",
+      "w": [
+       3.77
+      ]
+     },
+     "43602905236": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43604293707": {
+      "m": 1.12,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43604301393": {
+      "m": 1.45,
+      "o": "bot",
+      "w": [
+       0.25
+      ]
+     },
+     "43605459597": {
+      "m": 0.75,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43605693501": {
+      "m": 16.77,
+      "o": "agent",
+      "w": [
+       0.02,
+       0.7
+      ]
+     },
+     "43605693561": {
+      "m": 0.5,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "43606204208": {
+      "m": 0.52,
+      "o": "main",
+      "w": [
+       0.27
+      ]
+     },
+     "43607702871": {
+      "m": 0.72,
+      "o": "main",
+      "w": [
+       1.28
+      ]
+     },
+     "43608901511": {
+      "m": 0.42,
+      "o": "main",
+      "w": [
+       2.2
+      ]
+     },
+     "43611322344": {
+      "m": 0.92,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43611322371": {
+      "m": 2.12,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43611322460": {
+      "m": 1.13,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43611322862": {
+      "m": 1.62,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43611475687": {
+      "m": 1.0,
+      "o": "automation",
+      "w": [
+       0.03
+      ]
+     },
+     "43611571608": {
+      "m": 4.57,
+      "o": "automation",
+      "w": [
+       0.25
+      ]
+     },
+     "43611703681": {
+      "m": 2.05,
+      "o": "agent",
+      "w": [
+       3.85,
+       0.38
+      ]
+     },
+     "43611824619": {
+      "m": 0.25,
+      "o": "bot",
+      "w": [
+       11.17
+      ]
+     },
+     "43612117256": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43612719702": {
+      "m": 0.23,
+      "o": "main",
+      "w": [
+       13.2
+      ]
+     },
+     "43614685901": {
+      "m": 0.67,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43615796088": {
+      "m": 0.38,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43621843432": {
+      "m": 0.3,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43622787927": {
+      "m": 0.43,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "43622787949": {
+      "m": 25.93,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       0.58,
+       0.03,
+       1.9,
+       0.2,
+       0.03
+      ]
+     },
+     "43623159282": {
+      "m": 49.17,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.78,
+       1.0,
+       1.78
+      ]
+     },
+     "43623159367": {
+      "m": 9.82,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.05
+      ]
+     },
+     "43623159455": {
+      "m": 0.65,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43623159468": {
+      "m": 2.8,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43623892298": {
+      "m": 7.72,
+      "o": "main",
+      "w": [
+       0.03,
+       0.42
+      ]
+     },
+     "43623921874": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       0.47
+      ]
+     },
+     "43627595233": {
+      "m": 0.52,
+      "o": "main",
+      "w": [
+       0.02,
+       0.03
+      ]
+     },
+     "43627600638": {
+      "m": 1.23,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43629178101": {
+      "m": 5.08,
+      "o": "other",
+      "w": [
+       2.12
+      ]
+     },
+     "43629178247": {
+      "m": 4.97,
+      "o": "other",
+      "w": [
+       0.97
+      ]
+     },
+     "43635674581": {
+      "m": 0.82,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43639451354": {
+      "m": 0.22,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43645814134": {
+      "m": 30.52,
+      "o": "other",
+      "w": [
+       0.02,
+       0.02,
+       0.03
+      ]
      }
     },
-    "sample_target": 30,
+    "sample_target": 92,
     "sampled_min_by_origin": {
-     "bot": 1434.7,
-     "main": 444.1,
-     "other": 23.8
+     "agent": 661.9,
+     "automation": 649.7,
+     "bot": 6567.6,
+     "main": 3181.3,
+     "other": 612.3
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 9.0,
-     "CI shepherd (label events)": 16.1,
-     "CI shepherd (reconcile)": 78.4,
-     "CICS Crucible": 95.0,
-     "Call Graph Accuracy Audit": 2.1,
-     "Call Resolution History": 4.9,
-     "CodeQL Security Scan": 52.9,
-     "DOOM-rosetta": 63.7,
-     "Deploy Museum of Code Docs": 27.6,
-     "Det Sweep": 256.8,
-     "Detection Accuracy Audit": 22.1,
-     "Equivalence E2E": 377.7,
-     "Generated Docs": 27.4,
-     "Generated Java Base Generation": 12.2,
-     "Generated Java Compiles": 20.2,
-     "GitGalaxy Smoke Tests": 279.2,
-     "GitGalaxy Zero-Trust Pipeline": 73.0,
-     "Golden Crucible Resilience Test": 30.6,
-     "Graph Accuracy Audit": 24.4,
-     "Graph Comparison History": 1.6,
-     "Main Watch": 4.4,
-     "Mainframe Ground Truth": 223.8,
-     "Muninn Security Scan": 21.7,
-     "Mypy Audit": 20.2,
-     "Ports Compile": 39.5,
-     "Ruff Audit": 12.2,
-     "Small Audits": 32.2,
-     "Tree-sitter Accuracy Audit": 7.2,
-     "Tree-sitter Accuracy History": 0.7,
-     "Tri-Comparison Audit": 2.9,
-     "Tri-Comparison History": 0.7,
-     "pages build and deployment": 13.6,
-     "post-merge": 12.2,
-     "rosetta-audit": 36.5
+     "Archetype Validation": 101.5,
+     "CI shepherd (label events)": 73.6,
+     "CI shepherd (reconcile)": 192.6,
+     "CICS Crucible": 876.3,
+     "Cache Prune": 16.0,
+     "Call Graph Accuracy Audit": 67.3,
+     "Call Resolution History": 37.7,
+     "CodeQL Security Scan": 175.7,
+     "Configured Graph Update: pip in /ci/requirements #1704448937": 2.5,
+     "Configured Graph Update: pip in /ci/requirements #1704514187": 2.5,
+     "Configured Graph Update: pip in /ci/requirements #1704671069": 2.7,
+     "Crucible Path Independence": 14.3,
+     "DOOM-rosetta": 387.2,
+     "Dependabot relock": 2.2,
+     "Deploy Museum of Code Docs": 81.5,
+     "Det Sweep": 1462.1,
+     "Detection Accuracy Audit": 72.6,
+     "Doc Drift": 0.7,
+     "Engine Coverage Map": 42.0,
+     "Equivalence E2E": 2301.3,
+     "Estate Crucible": 7.1,
+     "Evidence Pages": 3.2,
+     "Evidence Refresh": 787.8,
+     "Fact Cross-check": 9.7,
+     "Flake history (refresh)": 11.8,
+     "Full Suite Gate (All OS x Python)": 40.4,
+     "Generated Docs": 58.9,
+     "Generated Java Base Generation": 145.1,
+     "Generated Java Compiles": 71.8,
+     "GitGalaxy Smoke Tests": 2144.3,
+     "GitGalaxy Zero-Trust Pipeline": 293.6,
+     "Golden Crucible Resilience Test": 291.3,
+     "Graph Accuracy Audit": 232.9,
+     "Graph Comparison History": 29.5,
+     "Main Watch": 5.5,
+     "Mainframe Ground Truth": 739.4,
+     "Muninn Security Scan": 105.0,
+     "Mypy Audit": 28.3,
+     "OS Smoke Grid": 2.7,
+     "Ports Compile": 147.0,
+     "Referee panel": 1.7,
+     "Ruff Audit": 71.6,
+     "Small Audits": 81.2,
+     "Tree-sitter Accuracy Audit": 109.8,
+     "Tree-sitter Accuracy History": 33.2,
+     "Tri-Comparison Audit": 39.7,
+     "Tri-Comparison History": 17.9,
+     "github_actions in /. - Update #1704514190": 4.6,
+     "pages build and deployment": 24.5,
+     "pip in /. - Update #1704514191": 2.1,
+     "pip in /ci/requirements - Update #1704514197": 3.5,
+     "post-merge": 23.0,
+     "rosetta-audit": 177.8,
+     "unicode-gauntlet": 14.6
     },
-    "sampled_runs": 45,
-    "wait_median": 0.33,
-    "wait_p90": 4.02
+    "sampled_runs": 161,
+    "wait_median": 0.07,
+    "wait_p90": 3.68
    },
-   "merged": 13,
+   "merged": 48,
    "merged_by_class": {
-    "agent": 5,
-    "automation": 0,
-    "bot": 8,
+    "agent": 15,
+    "automation": 3,
+    "bot": 30,
     "other": 0
    },
    "merged_by_repo": {
-    "squid-protocol/gitgalaxy": 12,
+    "squid-protocol/cics-crucible": 1,
+    "squid-protocol/gitgalaxy": 44,
+    "squid-protocol/promoter-bot": 1,
+    "squid-protocol/squid-bot": 1,
     "squid-protocol/temporal-crucible": 1
    },
    "merged_scope": "org",
    "runs": {
-    "cancelled": 95,
-    "failure": 4,
-    "skipped": 162,
-    "success": 333,
-    "total": 594
+    "cancelled": 303,
+    "failure": 20,
+    "skipped": 621,
+    "success": 1513,
+    "total": 2457
    }
   }
  },
- "open_prs": 11,
+ "open_prs": 4,
  "repo": "squid-protocol/gitgalaxy",
  "scorecard": {
   "days": {
@@ -44061,47 +45063,88 @@
     }
    },
    "2026-11-14": {
-    "closed": 1,
+    "closed": 3,
     "not_planned": 0,
-    "opened": 1,
+    "opened": 4,
     "opened_by_origin": {
-     "automation": 1
+     "automation": 2,
+     "owner": 2
     },
-    "red_main": 1,
+    "red_main": 2,
     "red_main_h_median": 0.6,
     "red_main_open": 0,
     "resolve_h_median": 0.6,
-    "resolved": 1,
-    "resolved_by_bot": 0,
+    "resolved": 3,
+    "resolved_by_bot": 1,
     "resolved_by_origin": {
-     "automation": 1
+     "automation": 2,
+     "owner": 1
     },
     "writes": {
-     "github-actions": {
+     "dependabot": {
       "busiest_hour": 1,
       "hours": {
-       "01": 1
+       "15": 1
       },
       "total": 1
      },
+     "dependabot[bot]": {
+      "busiest_hour": 2,
+      "hours": {
+       "15": 2
+      },
+      "total": 2
+     },
+     "github-actions": {
+      "busiest_hour": 1,
+      "hours": {
+       "01": 1,
+       "12": 1
+      },
+      "total": 2
+     },
      "github-actions[bot]": {
-      "busiest_hour": 3,
+      "busiest_hour": 4,
       "hours": {
        "00": 1,
        "01": 1,
-       "02": 3
+       "02": 3,
+       "05": 1,
+       "07": 1,
+       "08": 2,
+       "10": 2,
+       "12": 4,
+       "13": 1,
+       "14": 1,
+       "15": 3,
+       "17": 1
       },
-      "total": 5
+      "total": 21
      },
      "squid-protocol": {
-      "busiest_hour": 17,
+      "busiest_hour": 22,
       "hours": {
        "00": 17,
        "01": 4,
        "02": 12,
-       "03": 14
+       "03": 14,
+       "04": 4,
+       "05": 11,
+       "06": 8,
+       "07": 6,
+       "08": 7,
+       "09": 7,
+       "10": 9,
+       "11": 2,
+       "12": 22,
+       "13": 17,
+       "14": 10,
+       "15": 7,
+       "17": 4,
+       "18": 3,
+       "21": 1
       },
-      "total": 47
+      "total": 165
      },
      "squid-shepherd[bot]": {
       "busiest_hour": 38,
@@ -44109,15 +45152,31 @@
        "00": 38,
        "01": 8,
        "02": 28,
-       "03": 14
+       "03": 14,
+       "04": 5,
+       "05": 19,
+       "06": 13,
+       "07": 15,
+       "08": 9,
+       "09": 9,
+       "10": 16,
+       "11": 10,
+       "12": 33,
+       "13": 26,
+       "14": 19,
+       "15": 22,
+       "16": 4,
+       "17": 12,
+       "18": 4,
+       "20": 2
       },
-      "total": 88
+      "total": 306
      }
     }
    }
   },
-  "open_at": "2026-11-14T03:42Z",
-  "open_now": 151
+  "open_at": "2026-11-14T22:50Z",
+  "open_now": 152
  },
- "updated": "2026-11-14T03:42Z"
+ "updated": "2026-11-14T22:50Z"
 }
