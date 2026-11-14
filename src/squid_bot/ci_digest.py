@@ -8,9 +8,12 @@
 Per failed check: its triage -- `main` (a real failure of a check that also fails on main's newest commit:
 main's to fix, not this PR's), `dirty` (`action_required` on a PR that conflicts with main: no checks ran; merge
 origin/main and regenerate the generated files with their tools, never hand-merge them), `infra` (the runner, not the code: cancelled / startup failure / lost runner / disk /
-rate limit; rerun it once), `flake` (a test listed in FLAKY failed and nothing else did, or the first attempt of a
-check flake_history learned is flaky failed; rerun it once) or `real` (a
-fixer's job) -- then the job log's error lines and its last lines, ANSI and timestamps stripped, and the repro: the
+rate limit, or (#5273) a check whose job dependency failed as infra; rerun it once), `flake` (a test listed in FLAKY
+failed and nothing else did, only the time ratchet failed on tests outside the PR diff or within RATCHET_SLACK x their
+limit, or the first attempt of a check the flake-history cache learned is flaky failed; rerun it once) or `real` (a fixer's job).
+A roll-up check (full-suite, ground-truth, det) takes the triage of its failed part jobs. `main` is also a stale base
+(#5273): the failing tests' files changed on origin/main since the PR's merge-base, so `git merge origin/main` is the
+whole fix (also when main changed engine source and this PR touches none of it, #5276) -- then the job log's error lines and its last lines, ANSI and timestamps stripped, and the repro: the
 local command for that check from REPRO (pr_gates' own gate and ratchet names where one exists, otherwise the tool),
 filled with what the log names (the failing pytest node ids, the det cases not proven). A check with no local
 equivalent (CodeQL, Muninn, the dead-key audit ...) says so.
@@ -33,6 +36,7 @@ from typing import Any
 try:
     from squid_bot import pr_check
 except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     import pr_check  # noqa: E402
 
 REPO_SLUG = pr_check.REPO_SLUG
@@ -57,7 +61,9 @@ REPRO: list[tuple[str, str]] = [
     (r"^plan$", "python tests/tools/det_sweep_plan.py --base origin/main"),
     (r"^(compile \(.+\)|committed ports compile)$", RATCHET + " ports"),
     (r"^crosscheck$", RATCHET + " fact-crosscheck"),
-    (r"^ground-truth$", RATCHET + " ground-truth"),
+    # the parts run pytest over tests/cobol_mainframe/ (mainframe-ground-truth.yml); --fast runs none of it
+    (r"^ground-truth part \d+/\d+$", "python -m pytest -q {tests}"),
+    (r"^ground-truth$", RATCHET + " ground-truth   (when a ground-truth part failed too, run that part's repro)"),
     (
         r"^crucible$",
         "tests/tools/box/heavy-run.sh python -m pytest -q tests/cics_crucible && tests/tools/box/heavy-run.sh "
@@ -87,7 +93,40 @@ FAILED_TEST = re.compile(r"^FAILED (\S+::\S+)")
 RUN_JOB = re.compile(r"/actions/runs/(\d+)/job/(\d+)")
 UNPROVEN = re.compile(r"^\s*det (\S+)\s+NOT PROVEN")
 
+# #5273 time_ratchet.py lines: `FAIL <nodeid>: 16.2s is over 15s and has no ...` / `... is over 2x its baseline 10.0s (...)`
+RATCHET_FAIL = re.compile(r"^FAIL (\S+): ([\d.]+)s is over (?:([\d.]+)x its baseline ([\d.]+)s|([\d.]+)s and has no)")
+EXIT_LINE = re.compile(r"Process completed with exit code")
+RATCHET_SLACK = 1.5  # an overage within this multiple of its limit is runner noise, in the PR diff or not
+
+# A roll-up / dependent check -> the part jobs it only summarises; it takes their non-real triage (#5273). The
+# check-runs API carries no `needs`, so this mirrors smoke-test.yml, mainframe-ground-truth.yml, det-sweep.yml,
+# equivalence-e2e.yml and cics-crucible.yml (a test fails when a roll-up over a matrix job is missing).
+# Since ci-gate holds a merge on every red check (#6919), a roll-up left out here turns a cancelled shard into a real
+# failure: equivalence-e2e on #6951. Part names shared between workflows (`shard N/M`, `plan`) only keep a roll-up
+# `real` when any of them is: the safe side.
+PARTS: dict[str, str] = {
+    "full-suite": r"^(full-suite part \d+/\d+|tested-tree|suite-plan)$",
+    "ground-truth": r"^(ground-truth part \d+/\d+|tested-tree|plan|ground-truth-warm)$",
+    "det": r"^(shard \d+/\d+|db2 \d+/\d+|plan|detmut)$",
+    "equivalence-e2e": r"^(shard \d+/\d+|db2|plan|tested-tree)$",
+    "crucible": r"^(measure \(shard [\d/]+\)|runner-tests|plan)$",
+}
+# A job -> the upstream jobs it `needs` (#5276): when one of those failed as infra, a dependent that shows no failing
+# test or case (the plan / warm-up output it reads is missing) is a knock-on of it, not a code defect.
+UPSTREAM: dict[str, str] = {
+    r"^(shard|db2) \d+/\d+$": r"^plan$",
+    r"^ground-truth part \d+/\d+$": r"^(tested-tree|plan|ground-truth-warm)$",
+    r"^(full-suite part \d+/\d+|plan the suite parts)$": r"^(tested-tree|suite-plan)$",
+}
+NON_REAL = ("main", "flake", "infra")  # a roll-up with no real part takes the first of these any failed part has
+# A roll-up's own result line when what it summarises was cancelled and nothing failed: `full-suite parts: cancelled`,
+# `measure: cancelled, runner-tests: cancelled`, `the plan job did not succeed (cancelled)`. A push or a label flip
+# cancels the parts before they run, and a part cancelled before its matrix expands keeps its `${{ ... }}` name.
+ROLLUP_CANCELLED = re.compile(r"\b(?:shards|parts|measure|runner-tests|db2): cancelled\b|did not succeed \(cancelled\)")
+MATRIX_TEMPLATE = re.compile(r"\$\{\{.*?\}\}")
+
 Logs = Callable[[int], str]
+Files = Callable[[], set[str] | None]
 
 
 def job_log(job_id: int) -> str:
@@ -111,22 +150,55 @@ def extract(log: str, tail: int = 40, max_errors: int = 25) -> dict[str, Any]:
             errors.append(x)
     tests = sorted({m.group(1) for x in lines if (m := FAILED_TEST.match(x))})
     cases = sorted({m.group(1) for x in lines if (m := UNPROVEN.match(x))})
+    ratchet: dict[str, list[float]] = {}  # nodeid -> [seconds, limit]
+    for x in lines:
+        if m := RATCHET_FAIL.match(x):
+            limit = float(m.group(3)) * float(m.group(4)) if m.group(3) else float(m.group(5))
+            ratchet[m.group(1)] = [float(m.group(2)), limit]
+    other = [x for x in errors if not RATCHET_FAIL.match(x) and not EXIT_LINE.search(x)]
     return {"errors": errors[:max_errors], "more_errors": max(0, len(errors) - max_errors), "tail": lines[-tail:],
-            "tests": tests, "cases": cases}  # fmt: skip
+            "tests": tests, "cases": cases, "ratchet": ratchet,
+            "rollup_cancelled": any(ROLLUP_CANCELLED.search(x) and "failure" not in x for x in lines),
+            "ratchet_only": bool(ratchet) and not tests and not other}  # fmt: skip
 
 
-def triage(conclusion: str, log: str, tests: list[str], mergeable_state: str | None = None) -> str:
+def ratchet_triage(ratchet: dict[str, list[float]], diff_files: Files | None) -> str:
+    """#5273: `flake` unless an over-limit test is in the PR diff (or the diff is unknown) AND over RATCHET_SLACK x its limit."""
+    diff = diff_files() if diff_files else None
+    for nodeid, (seconds, limit) in ratchet.items():
+        if (diff is None or nodeid.split("::")[0] in diff) and seconds > RATCHET_SLACK * limit:
+            return "real"
+    return "flake"
+
+
+def triage(
+    conclusion: str,
+    log: str,
+    tests: list[str],
+    mergeable_state: str | None = None,
+    ex: dict[str, Any] | None = None,
+    diff_files: Files | None = None,
+) -> str:
     if conclusion == "action_required" and mergeable_state == "dirty":
         return "dirty"
     if conclusion in INFRA_CONCLUSIONS or INFRA_LOG.search(log):
         return "infra"
+    if ex and ex.get("ratchet_only"):
+        return ratchet_triage(ex["ratchet"], diff_files)
     names = {t.split("::")[-1].split("[")[0] for t in tests}
     if names and names <= FLAKY:
         return "flake"
     return "real"
 
 
-def repro(name: str, ex: dict[str, Any], kind: str = "real") -> str | None:
+def repro(name: str, ex: dict[str, Any], kind: str = "real", stale: bool | str = False) -> str | None:
+    if kind == "main" and stale == "source":
+        return (
+            "stale base (main changed engine source since this branch, and this PR touches none of it): "
+            "git merge origin/main; if the test still fails after the merge it is this PR's"
+        )
+    if kind == "main" and stale:
+        return "stale base (main changed these tests since this branch): git merge origin/main"
     if kind == "main":
         return "fails on main too: fix main (then merge origin/main here)"
     if kind == "dirty":
@@ -135,7 +207,8 @@ def repro(name: str, ex: dict[str, Any], kind: str = "real") -> str | None:
         return None
     for pat, cmd in REPRO:
         if re.search(pat, name):
-            return cmd.format(tests=" ".join(ex["tests"]) or "tests", cases=",".join(ex["cases"]) or "<case>")
+            whole = "tests/cobol_mainframe/" if name.startswith("ground-truth part") else "tests"
+            return cmd.format(tests=" ".join(ex["tests"]) or whole, cases=",".join(ex["cases"]) or "<case>")
     return GATES + " --fast"
 
 
@@ -147,38 +220,208 @@ def _completed_names(runs: list[dict[str, Any]]) -> tuple[set[str], set[str]]:
     return failed, set(c["passed"]) | failed | neutral
 
 
-def main_failures(api: pr_check.Api, lookback: int = 3) -> set[str]:
+def changed_files(api: pr_check.Api, path: str) -> set[str] | None:
+    """The file names of a files listing; None when unreadable (the callers then keep `real`)."""
+    try:
+        return {f["filename"] for f in pr_check.paged(api, path, limit=30)}
+    except (SystemExit, KeyError, TypeError):
+        return None
+
+
+def files_since_merge_base(api: pr_check.Api, sha: str) -> set[str]:
+    """Files changed on main since the merge-base of main and the PR head (#5273)."""
+    try:
+        base = api(f"repos/{REPO_SLUG}/compare/main...{sha}")["merge_base_commit"]["sha"]
+        return {f["filename"] for f in api(f"repos/{REPO_SLUG}/compare/{base}...main").get("files", [])}
+    except (SystemExit, KeyError, TypeError):
+        return set()
+
+
+def stale_by_source(mine: set[str] | None, main_changed: set[str], tests: list[str]) -> bool:
+    """#5276: main changed engine source since the merge-base (its fix for a test file it never touched) and this PR
+    provably cannot have moved the failing tests: its file list is readable and holds no engine source, conftest,
+    fixture or file beside a failing test. Anything else stays `real` (a real breakage read as `main` once is the risk)."""
+    if mine is None or not any(f.startswith("gitgalaxy/") for f in main_changed):
+        return False
+    dirs = {t.split("::")[0].rpartition("/")[0] for t in tests}
+    return not any(
+        f.startswith(("gitgalaxy/", "tests/fixtures/"))
+        or f.rpartition("/")[2] == "conftest.py"
+        or f.rpartition("/")[0] in dirs
+        for f in mine
+    )
+
+
+def is_part(pattern: str, name: str) -> bool:
+    """`name` is a part job of a PARTS pattern, reading an unexpanded `${{ ... }}` as a matrix value (`1` or `1/1`)."""
+    return any(re.search(pattern, MATRIX_TEMPLATE.sub(value, name)) for value in ("1", "1/1"))
+
+
+def rollup_kind(name: str, kind: str, ex: dict[str, Any], kinds: dict[str, str]) -> str:
+    """#5273: a `real` roll-up check (full-suite, ground-truth, det) whose failed part jobs are all non-real takes theirs:
+    a Db2 image pull leaves `det` with "shard did not report", a suite part is over its time limit. With no failed part
+    to read, a roll-up whose own log says its parts were cancelled is `infra` too: a rerun, not a worker."""
+    pat = PARTS.get(name)
+    if kind != "real" or not pat or ex["tests"] or ex["cases"]:
+        return kind
+    parts = [k for part, k in kinds.items() if is_part(pat, part)]
+    if any(k not in NON_REAL for k in parts):
+        return kind
+    if not parts:
+        return "infra" if ex.get("rollup_cancelled") else kind
+    return next(k for k in NON_REAL if k in parts)
+
+
+def knock_on_kind(name: str, kind: str, ex: dict[str, Any], kinds: dict[str, str]) -> str:
+    """#5276: a `real` job with no failing test or case whose upstream job (UPSTREAM) failed as infra is `infra` too."""
+    if kind != "real" or ex["tests"] or ex["cases"]:
+        return kind
+    for dep, up in UPSTREAM.items():
+        if re.search(dep, name) and any(k == "infra" for part, k in kinds.items() if re.search(up, part)):
+            return "infra"
+    return kind
+
+
+MAIN_QUERY = """
+query($owner: String!, $name: String!) {
+  rateLimit { cost }
+  repository(owner: $owner, name: $name) {
+    ref(qualifiedName: "refs/heads/main") { target { ... on Commit { oid
+      parents(first: 1) { nodes { oid } }
+      @@SUITES@@
+    } } }
+  }
+}""".replace("@@SUITES@@", pr_check.SUITES_SELECTION)
+
+
+COMMIT_QUERY = """
+query($owner: String!, $name: String!, $sha: GitObjectID!) {
+  rateLimit { cost }
+  repository(owner: $owner, name: $name) {
+    object(oid: $sha) { ... on Commit { oid
+      parents(first: 1) { nodes { oid } }
+      @@SUITES@@
+    } }
+  }
+}""".replace("@@SUITES@@", pr_check.SUITES_SELECTION)
+
+
+def commit_runs(
+    api: pr_check.Api, sha: str, graphql: pr_check.GraphQL | None = None
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """(commit as REST's {sha, parents}, its check runs) for a commit by sha (#6534: one GraphQL query when `graphql`
+    is given, the two REST reads when it fails or comes back incomplete). SystemExit / KeyError / TypeError when REST
+    cannot read it either."""
+    if graphql:
+        owner, name = REPO_SLUG.split("/")
+        try:
+            c = graphql(COMMIT_QUERY, {"owner": owner, "name": name, "sha": sha})["repository"]["object"]
+            runs = pr_check.runs_from_suites(pr_check.whole(c["checkSuites"]))
+            return {"sha": c["oid"], "parents": [{"sha": x["oid"]} for x in c["parents"]["nodes"]]}, runs
+        except (SystemExit, KeyError, TypeError, AttributeError, ValueError):
+            pass
+    commit = api(f"repos/{REPO_SLUG}/commits/{sha}")
+    return commit, pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{sha}/check-runs", "check_runs")
+
+
+def main_tip(
+    api: pr_check.Api, graphql: pr_check.GraphQL | None = None
+) -> tuple[dict[str, Any], list[dict[str, Any]]] | None:
+    """(main's newest commit as REST's {sha, parents}, its check runs), or None when unreadable (#6534: one GraphQL
+    query when `graphql` is given, the two REST reads when it fails or comes back incomplete)."""
+    if graphql:
+        owner, name = REPO_SLUG.split("/")
+        try:
+            c = graphql(MAIN_QUERY, {"owner": owner, "name": name})["repository"]["ref"]["target"]
+            runs = pr_check.runs_from_suites(pr_check.whole(c["checkSuites"]))
+            return {"sha": c["oid"], "parents": [{"sha": x["oid"]} for x in c["parents"]["nodes"]]}, runs
+        except (SystemExit, KeyError, TypeError, AttributeError, ValueError):
+            pass
+    try:
+        commit = api(f"repos/{REPO_SLUG}/commits/main")
+        return commit, pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{commit['sha']}/check-runs", "check_runs")
+    except (SystemExit, KeyError, TypeError):
+        return None
+
+
+# 2026-11-03: equivalence-e2e, mainframe-ground-truth and smoke-test run on main at most hourly (their tested-tree gate's
+# CADENCE_HOURS): the commits in between carry those checks cancelled, or not at all. A cancelled check on main says
+# nothing, so it is undecided, never a failure (it would excuse a PR's real red as main's), and a check the PR failed
+# (`wanted`) is looked up as far as WANTED_LOOKBACK first-parent commits back, to the last commit main really ran it on.
+WANTED_LOOKBACK = 6
+
+
+def _main_names(runs: list[dict[str, Any]]) -> tuple[set[str], set[str], set[str]]:
+    """(failed, decided, cancelled) check names of one main commit: a check whose verdict is `cancelled` is in
+    neither of the first two."""
+    c = pr_check.classify(runs, [])
+    cancelled = {x.rsplit(" (", 1)[0] for x in c["failed"] if x.endswith(" (cancelled)")}
+    failed = {x.rsplit(" (", 1)[0] for x in c["failed"]} - cancelled
+    neutral = {x.rsplit(" (", 1)[0] for x in c["neutral"]}
+    return failed, set(c["passed"]) | failed | neutral, cancelled
+
+
+def main_failures(
+    api: pr_check.Api,
+    lookback: int = 3,
+    graphql: pr_check.GraphQL | None = None,
+    tip: tuple[dict[str, Any], list[dict[str, Any]]] | None = None,
+    wanted: set[str] | None = None,
+    wanted_lookback: int = WANTED_LOOKBACK,
+) -> set[str]:
     """The checks failing on main's newest commit (#4790): a PR failing the same check inherited it from main.
     Basal persistence: when main's tip commit just landed and its checks are still pending (or not yet registered),
     walk up to `lookback` first-parent commits on main so checks not yet completed on tip retain their last known
-    completed main status instead of causing a false 'real' failure during the post-merge CI window."""
-    try:
-        commit = api(f"repos/{REPO_SLUG}/commits/main")
-        sha = commit["sha"]
-        runs = pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{sha}/check-runs", "check_runs")
-    except (SystemExit, KeyError, TypeError):
+    completed main status instead of causing a false 'real' failure during the post-merge CI window. A check cancelled
+    on a commit is undecided there, like a pending one. `wanted` (the checks a PR failed) are walked for up to
+    `wanted_lookback` commits until each has a verdict (the hourly suites skip most commits).
+    `tip`: main_tip's answer, when the pass already read it."""
+    tip = tip or main_tip(api, graphql)
+    if tip is None:
         return set()
-    failed, decided = _completed_names(runs)
-    pending = {x.rsplit(" (", 1)[0] for x in pr_check.classify(runs, [])["pending"]}
+    commit, runs = tip
+    failed, decided, cancelled = _main_names(runs)
+    pending = {x.rsplit(" (", 1)[0] for x in pr_check.classify(runs, [])["pending"]} | cancelled
+    want = set(wanted or ())
     parents = commit.get("parents") or []
     steps = 0
-    while steps < lookback and parents and (pending - decided or not runs):
+    while parents:
+        near = steps < lookback and (pending - decided or not runs)
+        far = steps < wanted_lookback and want - decided
+        if not (near or far):
+            break
         parent_sha = (parents[0] or {}).get("sha")
         if not parent_sha:
             break
         try:
-            p_commit = api(f"repos/{REPO_SLUG}/commits/{parent_sha}")
-            p_runs = pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{parent_sha}/check-runs", "check_runs")
+            p_commit, p_runs = commit_runs(api, parent_sha, graphql)
         except (SystemExit, KeyError, TypeError):
             break
-        p_failed, p_decided = _completed_names(p_runs)
+        p_failed, p_decided, p_cancelled = _main_names(p_runs)
         failed |= p_failed - decided
         decided |= p_decided
-        if p_runs and not (pending - decided):
-            break
+        pending |= p_cancelled
+        runs = runs or p_runs
         parents = p_commit.get("parents") or [] if isinstance(p_commit, dict) else []
         steps += 1
     return failed
+
+
+def main_green(
+    api: pr_check.Api,
+    graphql: pr_check.GraphQL | None = None,
+    tip: tuple[dict[str, Any], list[dict[str, Any]]] | None = None,
+) -> tuple[str, set[str]]:
+    """(main's newest sha, the checks completed green on exactly that commit) (#5484). Tip only, no look-back: a check
+    still pending on the tip is not green yet, so a PR waiting on main keeps waiting. Unreadable: ("", set())."""
+    tip = tip or main_tip(api, graphql)
+    if tip is None:
+        return "", set()
+    commit, runs = tip
+    c = pr_check.classify(runs, [])
+    failed, _ = _completed_names(runs)
+    pending = {x.rsplit(" (", 1)[0] for x in c["pending"]}
+    return commit["sha"], set(c["passed"]) - failed - pending
 
 
 def first_attempt(api: pr_check.Api, job_id: int) -> bool:
@@ -195,30 +438,67 @@ def digest(
     logs: Logs = job_log,
     on_main: set[str] | None = None,
     flaky: set[str] | None = None,
+    pr: dict[str, Any] | None = None,
+    runs: list[dict[str, Any]] | None = None,
+    graphql: pr_check.GraphQL | None = None,
 ) -> dict[str, Any]:
-    on_main = main_failures(api) if on_main is None else on_main
-    pr = api(f"repos/{REPO_SLUG}/pulls/{n}")
+    """`pr`, `runs`: the pull request and its head's check runs when the caller already read them (#6534).
+    `graphql`: what is still unread (the PR, its runs, main's tip and parents) comes from GraphQL, REST when a query
+    fails or comes back incomplete."""
+    if (pr is None or runs is None) and graphql:
+        got = pr_check._graphql_check(graphql, n)
+        if got and (pr is None or pr["head"]["sha"] == got["pr"]["head"]["sha"]):
+            pr = got["pr"] if pr is None else pr
+            runs = got["runs"] if runs is None else runs
+    pr = api(f"repos/{REPO_SLUG}/pulls/{n}") if pr is None else pr
     sha = pr["head"]["sha"]
-    runs = pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{sha}/check-runs", "check_runs")
+    if runs is None:
+        runs = pr_check.paged(api, f"repos/{REPO_SLUG}/commits/{sha}/check-runs", "check_runs")
     failed = pr_check.failed_names(runs)
+    on_main = main_failures(api, graphql=graphql, wanted=failed) if on_main is None else on_main
     newest: dict[str, dict[str, Any]] = {}
     for r in sorted(runs, key=lambda r: r.get("id", 0)):
         if r["name"] in failed and r.get("conclusion") not in pr_check.NEUTRAL | {None}:
             newest[r["name"]] = r
-    out = []
+    lazy: dict[str, set[str] | None] = {}
+
+    def diff_files() -> set[str] | None:  # fetched once, and only when a verdict needs the PR's files
+        if "pr" not in lazy:
+            lazy["pr"] = changed_files(api, f"repos/{REPO_SLUG}/pulls/{n}/files")
+        return lazy["pr"]
+
+    first = []
     for name, r in sorted(newest.items()):
         actions = (r.get("app") or {}).get("slug") == "github-actions"
         log = logs(r["id"]) if actions else ""
         ex = extract(log)
-        kind = triage(r.get("conclusion") or "", log, ex["tests"], pr.get("mergeable_state"))
+        kind = triage(r.get("conclusion") or "", log, ex["tests"], pr.get("mergeable_state"), ex, diff_files)
+        first.append((name, r, ex, kind))
+    kinds = {name: kind for name, _, _, kind in first}
+    out = []
+    for name, r, ex, kind in first:
+        kind = knock_on_kind(name, rollup_kind(name, kind, ex, kinds), ex, kinds)
+        stale: bool | str = False
         if kind == "real" and name in on_main:
             kind = "main"  # the same check fails on main: fix main, not this PR
+        elif kind == "real" and ex["tests"]:
+            files = {t.split("::")[0] for t in ex["tests"]}
+            mine = diff_files()
+            since = files_since_merge_base(api, sha)
+            if mine is not None and files & since and not files & mine:
+                kind, stale = "main", True  # main fixed these tests since the merge-base (#5273)
+            elif stale_by_source(mine, since, ex["tests"]):
+                kind, stale = "main", "source"  # main's fix was in source only, the PR touches none of it (#5276)
         ids = RUN_JOB.search(r.get("details_url") or "")
         if kind == "real" and flaky and name in flaky and ids and first_attempt(api, int(ids.group(2))):
-            kind = "flake"  # a learned flake's first failure gets one rerun; a second failure is real
+            # a learned flake's first failure gets one rerun; a second failure is real. Not when the log names failing
+            # tests and reruns of this check's test failures fail again (the learned list's real_causes): then the
+            # failure is the PR's own and a rerun only spends a CI round (PR #8169: seven reruns, each failed again)
+            own = bool(ex["tests"]) and "test_failure" in getattr(flaky, "real_causes", {}).get(name, ())
+            kind = "real" if own else "flake"
         out.append({"check": name, "conclusion": r.get("conclusion"), "url": r.get("html_url") or r.get("details_url"),
                     "run_id": int(ids.group(1)) if ids else None, "job_id": int(ids.group(2)) if ids else None,
-                    "triage": kind, "repro": repro(name, ex, kind), **ex})  # fmt: skip
+                    "triage": kind, "repro": repro(name, ex, kind, stale), **ex})  # fmt: skip
     return {"number": n, "head_sha": sha, "mergeable_state": pr.get("mergeable_state"), "failed": out}
 
 
@@ -246,7 +526,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("number", type=int)
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
-    d = digest(args.number)
+    d = digest(args.number, graphql=pr_check.gh_graphql)
     print(json.dumps(d, indent=1) if args.json else render(d))
     return 1 if d["failed"] else 0
 

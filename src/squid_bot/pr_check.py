@@ -6,7 +6,7 @@
     python tests/tools/pr_check.py N --json
     python tests/tools/pr_check.py N --digest   # also: per failed check, its triage, error lines and local repro (ci_digest.py)
 
-Four REST calls through `gh api` (gh pr view / edit / issue view fail on this repo's Projects-classic GraphQL): the pull
+One GraphQL query (REST fallback, #6534), else four REST calls through `gh api` (gh pr view / edit / issue view fail on this repo's Projects-classic GraphQL): the pull
 request (mergeable state, draft, head SHA), the head SHA's check runs and its combined commit status (paginated at
 100), and the files touched. No polling: run it again later.
 
@@ -27,6 +27,7 @@ skipped check reads as green, so its CI starts on `ready_for_review` and a secon
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -72,6 +73,225 @@ def paged(api: Api, path: str, key: str | None = None, limit: int = 10) -> list[
     return out
 
 
+GraphQL = Callable[[str, dict[str, Any]], Any]
+
+
+def gh_graphql(query: str, variables: dict[str, Any]) -> Any:
+    """`gh api graphql` as the response's `data` (#6534: GraphQL has its own 5,000-points/h quota, apart from REST's).
+    Ints go as -F (typed), everything else as -f (a string). A failed call or any `errors` raises SystemExit."""
+    argv = ["gh", "api", "graphql", "-f", f"query={query}"]
+    for k, v in variables.items():
+        argv += ["-F" if isinstance(v, int) else "-f", f"{k}={v}"]
+    res = subprocess.run(argv, capture_output=True, text=True, check=False)  # noqa: S603
+    doc = json.loads(res.stdout or "null") if res.stdout.strip().startswith("{") else None
+    if res.returncode or not doc or doc.get("errors") or not doc.get("data"):
+        raise SystemExit(f"gh api graphql failed: {(res.stderr or res.stdout).strip()[:300]}")
+    return doc["data"]
+
+
+class Truncated(ValueError):
+    """A GraphQL list came back shorter than its totalCount."""
+
+
+def whole(conn: dict[str, Any], count: str = "totalCount") -> list[dict[str, Any]]:
+    """A GraphQL connection's nodes, or Truncated when GitHub holds more than came back."""
+    nodes = conn["nodes"]
+    if conn[count] > len(nodes):
+        raise Truncated
+    return nodes
+
+
+# the check suites of a commit with their runs, as one GraphQL selection (shared by the PR and main reads, #6534)
+SUITES_SELECTION = """checkSuites(first: 100) { totalCount nodes { createdAt app { slug }
+          checkRuns(first: 100) { totalCount nodes { databaseId name status conclusion detailsUrl url } } } }"""
+
+
+def runs_from_suites(suites: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """REST's check-run dicts from a SUITES_SELECTION's suites (Truncated when a suite's runs are cut short)."""
+    runs = []
+    for suite in suites:
+        slug = (suite.get("app") or {}).get("slug")
+        for r in whole(suite["checkRuns"]):
+            runs.append({
+                "id": r["databaseId"], "name": r["name"], "status": r["status"].lower(),
+                "conclusion": r["conclusion"].lower() if r["conclusion"] else None, "app": {"slug": slug},
+                "details_url": r["detailsUrl"], "html_url": r["detailsUrl"] if slug == "github-actions" else r["url"],
+            })  # fmt: skip
+    return runs
+
+
+# the per-PR reads of the shepherd's gather() as one selection (#6534): every list is fetched whole or not used
+PR_FIELDS = """
+      number state merged isDraft body mergeStateStatus headRefOid headRefName baseRefName
+      headRepository { nameWithOwner }
+      autoMergeRequest { enabledAt }
+      labels(first: 100) { totalCount nodes { name } }
+      comments(last: 100) { totalCount nodes { author { __typename login } body } }
+      timelineItems(itemTypes: [LABELED_EVENT], last: 100) {
+        filteredCount nodes { ... on LabeledEvent { actor { __typename login } createdAt label { name } } }
+      }
+      commits(last: 1) { nodes { commit { oid
+        status { contexts { context state description } }
+        @@SUITES@@
+      } } }
+"""
+PR_FIELDS = PR_FIELDS.replace("@@SUITES@@", SUITES_SELECTION)
+# what check() reads: the pull, its head's runs and statuses, and the files touched (first 100; more goes to REST)
+CHECK_FIELDS = """
+      id number title state merged isDraft mergeable mergeStateStatus headRefOid
+      files(first: 100) { totalCount nodes { path additions deletions changeType } }
+      commits(last: 1) { nodes { commit { oid
+        status { contexts { context state description } }
+        @@SUITES@@
+      } } }
+""".replace("@@SUITES@@", SUITES_SELECTION)
+CHECK_QUERY = (
+    "query($owner: String!, $name: String!, $n: Int!) {\n  rateLimit { cost }\n  repository(owner: $owner, name: $name) {\n"
+    "    pullRequest(number: $n) {" + CHECK_FIELDS + "    }\n  }\n}"
+)
+MERGEABLE = {"MERGEABLE": True, "CONFLICTING": False}
+CHANGE_STATUS = {"ADDED": "added", "MODIFIED": "modified", "REMOVED": "removed", "RENAMED": "renamed",
+                 "COPIED": "copied", "CHANGED": "changed"}  # fmt: skip
+
+
+def graphql_check_reads(p: dict[str, Any]) -> dict[str, Any]:
+    """check()'s REST shapes (pull, runs, statuses, files) from one CHECK_QUERY pullRequest. KeyError / TypeError /
+    Truncated when anything is missing or cut short; Truncated too when mergeability is still UNKNOWN (the REST read
+    asks GitHub to compute it, GraphQL does not: a dirty PR must not pass for clean)."""
+    commit = p["commits"]["nodes"][0]["commit"]
+    if commit["oid"] != p["headRefOid"] or p["mergeable"] == "UNKNOWN" or p["mergeStateStatus"] == "UNKNOWN":
+        raise Truncated
+    pr = {
+        "number": p["number"], "title": p["title"], "state": "open" if p["state"] == "OPEN" else "closed",
+        "merged": bool(p["merged"]), "draft": bool(p["isDraft"]), "mergeable": MERGEABLE[p["mergeable"]],
+        "mergeable_state": p["mergeStateStatus"].lower(), "node_id": p["id"], "head": {"sha": p["headRefOid"]},
+    }  # fmt: skip
+    return {
+        "pr": pr,
+        "runs": runs_from_suites(whole(commit["checkSuites"])),
+        "statuses": [{"context": c["context"], "state": c["state"].lower()}
+                     for c in ((commit.get("status") or {}).get("contexts") or [])],
+        "files": [{"filename": f["path"], "status": CHANGE_STATUS[f["changeType"]], "additions": f["additions"],
+                   "deletions": f["deletions"]} for f in whole(p["files"])],
+    }  # fmt: skip
+
+
+def _graphql_check(graphql: GraphQL, n: int) -> dict[str, Any] | None:
+    """graphql_check_reads for PR n, or None (the REST path) when the query fails or anything is incomplete."""
+    owner, name = REPO_SLUG.split("/")
+    try:
+        data = graphql(CHECK_QUERY, {"owner": owner, "name": name, "n": n})
+        return graphql_check_reads(data["repository"]["pullRequest"])
+    except (SystemExit, KeyError, TypeError, IndexError, AttributeError, ValueError):
+        return None
+
+
+SHA_PATH = re.compile(r"^repos/[^/]+/[^/]+/commits/[0-9a-f]{40}$")  # a commit by sha: its parents never change
+RUNS_PATH = re.compile(r"^repos/[^/]+/[^/]+/commits/[0-9a-f]{40}/check-runs\?")
+RUN_PATH = re.compile(r"^repos/[^/]+/[^/]+/actions/runs/\d+$")
+
+
+def pass_cache(api: Api) -> Api:
+    """`api` with the reads one pass may share (#6534): a commit by sha, a sha's check runs once every one is completed,
+    a workflow run once completed. For ONE pass only: a completed run can still be re-run, so only a commit's parents
+    would be safe to keep longer."""
+    memo: dict[str, Any] = {}
+
+    def done(path: str, doc: Any) -> bool:
+        if SHA_PATH.match(path):
+            return True
+        if RUNS_PATH.match(path):
+            return all(r.get("status") == "completed" for r in (doc or {}).get("check_runs", []))
+        return bool(RUN_PATH.match(path)) and (doc or {}).get("status") == "completed"
+
+    def cached(path: str) -> Any:
+        if path in memo:
+            return memo[path]
+        doc = api(path)
+        if done(path, doc):
+            memo[path] = doc
+        return doc
+
+    return cached
+
+
+HEAD = re.compile(r"\A(HTTP/\S+ (\d{3})[^\n]*\n.*?)\r?\n\r?\n", re.S)
+
+
+def conditional_api(store: Path, run: Callable[[list[str]], subprocess.CompletedProcess[str]] | None = None) -> Api:
+    """gh_api with conditional requests (#6534): each GET sends the ETag it got last time as If-None-Match, and a 304
+    (which does not count against the REST quota) returns the body kept under `store`. A read with no ETag yet, or
+    a store that cannot be written, is a plain read."""
+    run = run or (lambda argv: subprocess.run(argv, capture_output=True, text=True, check=False))  # noqa: S603
+
+    def api(path: str) -> Any:
+        file = store / (hashlib.sha256(path.encode()).hexdigest()[:32] + ".json")
+        try:
+            kept = json.loads(file.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            kept = None
+        argv = ["gh", "api", "-i", path]
+        if kept and kept.get("etag"):
+            argv[3:3] = ["-H", f"If-None-Match: {kept['etag']}"]
+        res = run(argv)
+        m = HEAD.match(res.stdout or "")
+        if kept and m and m[2] == "304":
+            return kept["body"]
+        if res.returncode or not m:
+            raise SystemExit(f"gh api {path} failed: {res.stderr.strip()[:300]}")
+        body = json.loads(res.stdout[m.end() :] or "null")
+        etag = re.search(r"^etag:\s*(.+?)\s*$", m[1], re.I | re.M)
+        if etag:
+            try:
+                store.mkdir(parents=True, exist_ok=True)
+                tmp = file.with_suffix(".tmp")  # atomic: a cache saved mid-write never holds a torn entry
+                tmp.write_text(json.dumps({"etag": etag[1], "body": body}), encoding="utf-8")
+                tmp.replace(file)
+            except OSError:
+                pass  # no store: the next read is plain
+        return body
+
+    return api
+
+
+def prune_api_store(
+    store: Path, max_age_s: float = 7 * 86400, max_entries: int = 2000, now: float | None = None
+) -> int:
+    """Keep a conditional-read store that persists across passes small (#6534): drop entries older than `max_age_s`
+    (a 304 rewrites nothing, so an entry's mtime is the last time its body changed), leftover temp files, then the
+    oldest beyond `max_entries`. Returns how many were removed; a missing or unreadable store removes none."""
+    import time
+
+    now = time.time() if now is None else now
+    try:
+        files = [(f.stat().st_mtime, f) for f in store.iterdir() if f.suffix in (".json", ".tmp")]
+    except OSError:
+        return 0
+    files.sort(key=lambda t: t[0], reverse=True)
+    entries = [(m, f) for m, f in files if f.suffix == ".json"]
+    drop = [f for m, f in files if f.suffix == ".tmp"] + [
+        f for i, (m, f) in enumerate(entries) if now - m > max_age_s or i >= max_entries
+    ]
+    removed = 0
+    for f in drop:
+        try:
+            f.unlink()
+            removed += 1
+        except OSError:
+            pass
+    return removed
+
+
+# azure-pipelines.yml has `pr: none`: Azure never validates a pull request. On a PR whose base it sees conflicting it still
+# posts `action_required` "Skipped due to merge conflicts", and never replaces it once the conflict is gone (#7673 sat
+# red on ci-gate with every other check green). A conflict is read from mergeable_state, not from this run: neutral.
+NO_PR_APPS = {"azure-pipelines"}
+
+
+def _no_pr_app_skip(run: dict[str, Any]) -> bool:
+    return run.get("conclusion") == "action_required" and (run.get("app") or {}).get("slug") in NO_PR_APPS
+
+
 def classify(runs: list[dict[str, Any]], statuses: list[dict[str, Any]]) -> dict[str, Any]:
     """{passed, failed, pending, neutral, ignored} -- names, one verdict per check name; `ignored` explains each
     cancelled run left out because a same-name run on the SHA succeeded."""
@@ -93,6 +313,9 @@ def classify(runs: list[dict[str, Any]], statuses: list[dict[str, Any]]) -> dict
             out["ignored"].append(f"{name}: {len(skipped)} skipped run(s) after the successful one (event runs that "
                                   f"do not audit) ignored")  # fmt: skip
         newest = deciding[-1]
+        if newest.get("status") == "completed" and _no_pr_app_skip(newest):
+            out["neutral"].append(f"{name} (skipped by an app that does not validate pull requests)")
+            continue
         if newest.get("status") != "completed":
             out["pending"].append(f"{name} ({newest.get('status')})")
         elif newest.get("conclusion") in OK:
@@ -122,13 +345,20 @@ def flag(path: str) -> str | None:
     return m.group(0).lower() if m else None
 
 
-def check(n: int, api: Api = gh_api) -> dict[str, Any]:
-    pr = api(f"repos/{REPO_SLUG}/pulls/{n}")
+def check(n: int, api: Api = gh_api, graphql: GraphQL | None = None) -> dict[str, Any]:
+    """`graphql` (#6534): the four reads come from one CHECK_QUERY; None, or a query that fails or comes back
+    incomplete (over 100 files or runs, mergeability UNKNOWN), reads them through REST."""
+    got = _graphql_check(graphql, n) if graphql else None
+    if got:
+        pr, runs, files, statuses = got["pr"], got["runs"], got["files"], got["statuses"]
+    else:
+        pr = api(f"repos/{REPO_SLUG}/pulls/{n}")
+        runs = paged(api, f"repos/{REPO_SLUG}/commits/{pr['head']['sha']}/check-runs", "check_runs")
+        status = api(f"repos/{REPO_SLUG}/commits/{pr['head']['sha']}/status")
+        files = paged(api, f"repos/{REPO_SLUG}/pulls/{n}/files", limit=30)
+        statuses = status.get("statuses", []) if status else []
     sha = pr["head"]["sha"]
-    runs = paged(api, f"repos/{REPO_SLUG}/commits/{sha}/check-runs", "check_runs")
-    status = api(f"repos/{REPO_SLUG}/commits/{sha}/status")
-    files = paged(api, f"repos/{REPO_SLUG}/pulls/{n}/files", limit=30)
-    checks = classify(runs, status.get("statuses", []) if status else [])
+    checks = classify(runs, statuses)
     reasons = []
     if pr["state"] != "open" or pr.get("merged"):
         reasons.append("merged already" if pr.get("merged") else f"the PR is {pr['state']}")
@@ -225,12 +455,17 @@ def main(argv: list[str] | None = None, api: Api = gh_api) -> int:
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--digest", action="store_true", help="also print each failed check's digest (ci_digest.py)")
     args = ap.parse_args(argv)
-    res = check(args.number, api)
+    res = check(args.number, api, gh_graphql if api is gh_api else None)
     print(json.dumps(res, indent=1) if args.json else report(res))
     if args.digest and res["checks"]["failed"]:
-        import ci_digest  # noqa: PLC0415 -- fetches job logs; only when asked
+        try:
+            from squid_bot import ci_digest
+        except ImportError:
+            import ci_digest  # noqa: PLC0415 -- fetches job logs; only when asked
 
-        print("\n" + ci_digest.render(ci_digest.digest(args.number, api)))
+        print(
+            "\n" + ci_digest.render(ci_digest.digest(args.number, api, graphql=gh_graphql if api is gh_api else None))
+        )
     if not args.merge:
         return 0 if res["ready"] else 1
     if not res["ready"]:

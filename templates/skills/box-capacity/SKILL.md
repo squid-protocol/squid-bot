@@ -27,8 +27,8 @@ tests/tools/test_box_status.py):
 | Verdict | Means | Do |
 |---|---|---|
 | GREEN | headroom | launch; heavy work only into a free slot (`free_slots`) |
-| YELLOW | load >= 70% of cores, CPU pressure >= 15%, disk I/O pressure >= 50%, memory pressure >= 5%, memory available < 20%, or all slots held | light work only: a read-only scout, a narrow `pytest -k`, review; no proof, sweep, gate, full suite, Docker run |
-| RED | load >= cores, CPU pressure >= 40%, memory pressure >= 20%, or memory available < 10% | launch nothing; see 4 |
+| YELLOW | load >= 70% of cores, CPU pressure >= 15%, disk I/O pressure >= 50%, memory pressure >= 5%, memory available < 20%, disk free < min(10%, 100 GB) or inodes free < 10% on /, the temp dir or the repo's disk, or all slots held | light work only: a read-only scout, a narrow `pytest -k`, review; no proof, sweep, gate, full suite, Docker run |
+| RED | load >= cores, CPU pressure >= 40%, memory pressure >= 20%, memory available < 10%, or disk free < min(5%, 25 GB) / inodes free < 5% | launch nothing; see 4 |
 
 Swap merely in use is shown but not judged alone: it can be old pages pushed out by a spike long gone (4 GB of swap with
 22 GB available and 0% memory pressure is GREEN). Paging NOW shows as memory pressure.
@@ -56,6 +56,7 @@ alive 15+ minutes is listed as `STRAY?` with its pid.
 Heavy: `pr_gates.py --fast` / `--ratchets`, the full or a large pytest run (hundreds of tests or `-n`), `det_port.py run` /
 `check`, `proof_sweep.py`, `evidence.py prove`, `cics_census.py survey`, `crucible_check.py` (golden: `golden-lock.sh`, not
 `heavy-run.sh`), any `EQUIVALENCE_E2E=1` run, a galaxyscope scan of a corpus.
+A queued `heavy-run.sh pr_gates --fast` can wait past a 10 min background timeout: start it with `timeout` 3600000 (#6260).
 Light: `pytest file -k name` on a few tests, `ruff`, `git`, `gh api`, reading files, `register.py render`.
 Put the wrapping in every worker brief (the `gitgalaxy-pr-worker` agent already says so) and do it yourself.
 
@@ -87,7 +88,7 @@ pytest, a `--jobs` sweep) reads `GG_JOB_CORES` the same way, never `os.cpu_count
   same source files waits, or is told the exact seams (a new function / block / test at a distinct anchor, never a reorder).
   Hot files on this repo: `gitgalaxy/tools/cobol_to_java/det/cics.py`, `det/program.py`, `det/stmt.py`,
   `cobol_to_java_transaction_forge.py`, `cobolrt/Cobol.java`, the spec under `gitgalaxy/standards/cics/`, and the test files
-  agents append to (`tests/cobol_mainframe/test_det_translate.py`, `test_equivalence_cics.py`,
+  agents append to (`tests/cobol_mainframe/test_det_translate.py`, `test_equivalence_cics.py` and its family files,
   `tests/cics_crucible/test_cics_runtimes.py`): two PRs appending at the same anchor conflict; the second to merge keeps
   both blocks.
 - **Generated / ratchet files:** golden masters (`golden-lock.sh crucible_check.py --update --yes`), the ruff/mypy baselines (regenerate),
