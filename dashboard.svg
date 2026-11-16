@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 3022" width="920" height="3022" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, quality, cost and CI capacity per day, before and with promoter-bot; 4,084 merged PRs in the selected period">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 3022" width="920" height="3022" role="img" aria-label="squid-protocol/gitgalaxy: promoter-bot fleet: delivery, quality, cost and CI capacity per day, before and with promoter-bot; 4,105 merged PRs in the selected period">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
@@ -56,8 +56,8 @@
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="919" height="3021" rx="10"/>
   <text class="h1" x="24" y="34">squid-protocol/gitgalaxy: promoter-bot fleet</text>
-  <text class="meta" x="896" y="34" text-anchor="end">last 51 days · updated 2026-11-16 03:18 UTC</text>
-  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 2,667 of the 3,417 PRs merged since then were its own (78%). Today so far: 2 merged.</text>
+  <text class="meta" x="896" y="34" text-anchor="end">last 51 days · updated 2026-11-16 19:56 UTC</text>
+  <text class="lead" x="24" y="54">promoter-bot has run since Oct 11: 2,677 of the 3,438 PRs merged since then were its own (78%). Today so far: 23 merged.</text>
   <g>
   <rect class="tile" x="24.0" y="68" width="209.0" height="74" rx="8"/>
   <text class="k" x="38.0" y="88">MERGED PRs</text>
@@ -158,7 +158,7 @@
   <g><title>Nov 13 · 54 merged PRs · promoter-bot 24, other agents 24, other 2, automation 4, unclassified 0 · estate-crucible 4, gitgalaxy 32, promoter-bot 9, squid-bot 4, temporal-crucible 5</title><rect class="bot seg" x="831.9" y="432.3" width="14.3" height="18.7"/><rect class="agent seg" x="831.9" y="413.6" width="14.3" height="18.7"/><rect class="other seg" x="831.9" y="412.0" width="14.3" height="1.6"/><path class="automation seg" d="M831.9,412.0 V412.0 Q831.9,408.9 835.0,408.9 H843.1 Q846.2,408.9 846.2,412.0 V412.0 Z"/></g>
   <g><title>Nov 14 · 48 merged PRs · promoter-bot 30, other agents 15, other 0, automation 3, unclassified 0 · gitgalaxy 44, cics-crucible 1, promoter-bot 1, squid-bot 1, temporal-crucible 1</title><rect class="bot seg" x="848.2" y="427.6" width="14.3" height="23.4"/><rect class="agent seg" x="848.2" y="415.9" width="14.3" height="11.7"/><path class="automation seg" d="M848.2,415.9 V415.9 Q848.2,413.6 850.5,413.6 H860.1 Q862.5,413.6 862.5,415.9 V415.9 Z"/></g>
   <g><title>Nov 15 · 23 merged PRs · promoter-bot 13, other agents 1, other 8, automation 1, unclassified 0 · gitgalaxy 20, structural-fingerprint-scanner 1, temporal-crucible 1, keyword-rosetta 1</title><rect class="bot seg" x="864.5" y="440.9" width="14.3" height="10.1"/><rect class="agent seg" x="864.5" y="440.1" width="14.3" height="0.8"/><rect class="other seg" x="864.5" y="433.8" width="14.3" height="6.2"/><path class="automation seg" d="M864.5,433.8 V433.8 Q864.5,433.1 865.2,433.1 H877.9 Q878.7,433.1 878.7,433.8 V433.8 Z"/></g>
-  <g class="partial"><title>Nov 16 · 2 merged PRs (today so far) · promoter-bot 1, other agents 0, other 1, automation 0, unclassified 0</title><rect class="bot seg" x="880.7" y="450.2" width="14.3" height="0.8"/><path class="other seg" d="M880.7,450.2 V450.2 Q880.7,449.4 881.5,449.4 H894.2 Q895.0,449.4 895.0,450.2 V450.2 Z"/></g>
+  <g class="partial"><title>Nov 16 · 23 merged PRs (today so far) · promoter-bot 11, other agents 5, other 6, automation 1, unclassified 0 · gitgalaxy 22, temporal-crucible 1</title><rect class="bot seg" x="880.7" y="442.4" width="14.3" height="8.6"/><rect class="agent seg" x="880.7" y="438.5" width="14.3" height="3.9"/><rect class="other seg" x="880.7" y="433.8" width="14.3" height="4.7"/><path class="automation seg" d="M880.7,433.8 V433.8 Q880.7,433.1 881.5,433.1 H894.2 Q895.0,433.1 895.0,433.8 V433.8 Z"/></g>
   <text class="startl" x="298.8" y="248" text-anchor="start">promoter-bot live · Oct 11</text>
   <text class="evl" x="272.6" y="248" text-anchor="end">Oct 10 · integrase-bot (CI shepherd) on</text>
   <rect class="automation" x="812.0" y="218" width="9" height="9" rx="2"/>
@@ -260,7 +260,7 @@
   <g><title>Nov 14: opened 7 (people 5, agents 0, bots 2); closed 3 as completed, 0 as not planned</title><rect class="people" x="849.3" y="599.1" width="4.9" height="6.9"/><rect class="bots" x="849.3" y="599.1" width="4.9" height="0.0"/><path class="bots" d="M847.6,599.1 L851.7,596.4 L855.9,599.1 Z"/><rect class="closed" x="856.5" y="606.0" width="4.9" height="0.0"/><path class="closed" d="M854.7,606.0 L858.9,610.1 L863.0,606.0 Z"/></g>
   <g><title>Nov 15: opened 3 (people 0, agents 0, bots 3); closed 2 as completed, 0 as not planned</title><rect class="bots" x="865.6" y="606.0" width="4.9" height="0.0"/><path class="bots" d="M863.9,606.0 L868.0,601.9 L872.2,606.0 Z"/><rect class="closed" x="872.7" y="606.0" width="4.9" height="0.0"/><path class="closed" d="M871.0,606.0 L875.2,608.7 L879.3,606.0 Z"/></g>
   <rect class="dayband" x="879.7" y="517" width="16.3" height="178"/>
-  <g class="partial"><title>Nov 16: opened 0 (people 0, agents 0, bots 0); closed 1 as completed, 0 as not planned (today so far)</title><rect class="closed" x="889.0" y="606.0" width="4.9" height="0.0"/><path class="closed" d="M887.3,606.0 L891.4,607.4 L895.6,606.0 Z"/></g>
+  <g class="partial"><title>Nov 16: opened 3 (people 3, agents 0, bots 0); closed 8 as completed, 4 as not planned (today so far)</title><rect class="people" x="881.8" y="606.0" width="4.9" height="0.0"/><path class="people" d="M880.1,606.0 L884.3,601.9 L888.4,606.0 Z"/><rect class="closed" x="889.0" y="606.0" width="4.9" height="6.6"/><path class="closed" d="M887.3,612.6 L891.4,617.0 L895.6,612.6 Z"/></g>
   <text class="tick" x="90.4" y="709" text-anchor="middle">Sep 28</text>
   <text class="tick" x="204.3" y="709" text-anchor="middle">Oct 5</text>
   <text class="tick" x="318.3" y="709" text-anchor="middle">Oct 12</text>
@@ -385,7 +385,7 @@
   <circle class="dot failedl" cx="839.0" cy="1095.0" r="4"><title>Nov 13: 0.0% (0 times main went red for 54 merged PRs)</title></circle>
   <circle class="dot failedl" cx="855.3" cy="1064.4" r="4"><title>Nov 14: 4.2% (2 times main went red for 48 merged PRs; median 0.6 h to green)</title></circle>
   <circle class="dot failedl" cx="871.6" cy="999.3" r="4"><title>Nov 15: 13.0% (3 times main went red for 23 merged PRs; median 3 h to green; 1 still red)</title></circle>
-  <circle class="dot failedl partial" cx="887.9" cy="1095.0" r="4"><title>Nov 16: 0.0% (0 times main went red for 2 merged PRs) (today so far)</title></circle>
+  <circle class="dot failedl partial" cx="887.9" cy="1095.0" r="4"><title>Nov 16: 0.0% (0 times main went red for 23 merged PRs) (today so far)</title></circle>
   <line class="base" x1="24" x2="896" y1="1125" y2="1125"/><text class="sect" x="24" y="1141">WHAT DID IT COST?</text>
   <g><title>2,540 merged promoter-bot PRs for $4,782</title><text class="h2" x="24" y="1169">5 · Spend — promoter-bot cost in dollars, cumulative since Oct 11</text></g>
   <line class="base" x1="66" x2="896" y1="1349.0" y2="1349.0"/>
@@ -672,8 +672,8 @@
   <g><title>Nov 1 · 430 runner hours all repos, measured (98% of the day) · gitgalaxy 428 h · 6,559 runs · bot 58%, main 31%, agent 6%, automation 4%, other 1%</title><path class="hmeasured" d="M636.6,1973.0 V1848.1 Q636.6,1844.1 640.6,1844.1 H646.9 Q650.9,1844.1 650.9,1848.1 V1973.0 Z"/></g>
   <g><title>Nov 2 · 249 runner hours all repos, measured (100% of the day) · gitgalaxy 248 h · 3,560 runs · bot 50%, main 43%, agent 5%, other 1%</title><path class="hmeasured" d="M652.9,1973.0 V1902.3 Q652.9,1898.3 656.9,1898.3 H663.2 Q667.2,1898.3 667.2,1902.3 V1973.0 Z"/></g>
   <g><title>Nov 3 · 292 runner hours all repos, measured (100% of the day) · gitgalaxy 292 h · 2,840 runs · bot 50%, main 30%, agent 12%, automation 8%</title><path class="hmeasured" d="M669.2,1973.0 V1889.4 Q669.2,1885.4 673.2,1885.4 H679.4 Q683.4,1885.4 683.4,1889.4 V1973.0 Z"/></g>
-  <g><title>Nov 4 · 444 runner hours all repos, measured (100% of the day) · gitgalaxy 443 h · 6,228 runs · bot 52%, main 23%, agent 21%, other 3%, automation 1%</title><path class="hmeasured" d="M685.4,1973.0 V1843.9 Q685.4,1839.9 689.4,1839.9 H695.7 Q699.7,1839.9 699.7,1843.9 V1973.0 Z"/></g>
-  <g><title>Nov 5 · 274 runner hours all repos, measured (100% of the day) · gitgalaxy 273 h · 4,337 runs · bot 59%, main 38%, agent 2%, automation 1%, other 0%</title><path class="hmeasured" d="M701.7,1973.0 V1894.7 Q701.7,1890.7 705.7,1890.7 H712.0 Q716.0,1890.7 716.0,1894.7 V1973.0 Z"/></g>
+  <g><title>Nov 4 · 444 runner hours all repos, measured (100% of the day) · gitgalaxy 443 h · 6,228 runs · bot 52%, main 23%, agent 21%, other 3%, automation 1%</title><path class="hmeasured" d="M685.4,1973.0 V1843.8 Q685.4,1839.8 689.4,1839.8 H695.7 Q699.7,1839.8 699.7,1843.8 V1973.0 Z"/></g>
+  <g><title>Nov 5 · 275 runner hours all repos, measured (100% of the day) · gitgalaxy 274 h · 4,337 runs · bot 59%, main 38%, agent 2%, automation 1%, other 0%</title><path class="hmeasured" d="M701.7,1973.0 V1894.4 Q701.7,1890.4 705.7,1890.4 H712.0 Q716.0,1890.4 716.0,1894.4 V1973.0 Z"/></g>
   <g><title>Nov 6 · 425 runner hours all repos, measured (100% of the day) · gitgalaxy 424 h · 6,503 runs · bot 77%, main 18%, agent 3%, automation 2%</title><path class="hmeasured" d="M718.0,1973.0 V1849.5 Q718.0,1845.5 722.0,1845.5 H728.3 Q732.3,1845.5 732.3,1849.5 V1973.0 Z"/></g>
   <g><title>Nov 7 · 221 runner hours all repos, measured (100% of the day) · gitgalaxy 220 h · 3,210 runs · bot 55%, main 35%, automation 8%, agent 2%, other 0%</title><path class="hmeasured" d="M734.3,1973.0 V1910.8 Q734.3,1906.8 738.3,1906.8 H744.5 Q748.5,1906.8 748.5,1910.8 V1973.0 Z"/></g>
   <g><title>Nov 8 · 278 runner hours all repos, measured (100% of the day) · gitgalaxy 276 h · 4,589 runs · bot 60%, main 26%, agent 9%, other 3%, automation 1%</title><path class="hmeasured" d="M750.5,1973.0 V1893.6 Q750.5,1889.6 754.5,1889.6 H760.8 Q764.8,1889.6 764.8,1893.6 V1973.0 Z"/></g>
@@ -684,7 +684,7 @@
   <g><title>Nov 13 · 132 runner hours all repos, measured (100% of the day) · gitgalaxy 131 h · 1,727 runs · bot 40%, main 35%, automation 23%, agent 2%, other 1%</title><path class="hmeasured" d="M831.9,1973.0 V1937.3 Q831.9,1933.3 835.9,1933.3 H842.2 Q846.2,1933.3 846.2,1937.3 V1973.0 Z"/></g>
   <g><title>Nov 14 · 197 runner hours all repos, measured (100% of the day) · gitgalaxy 196 h · 2,461 runs · bot 56%, main 27%, agent 6%, automation 6%, other 5%</title><path class="hmeasured" d="M848.2,1973.0 V1917.9 Q848.2,1913.9 852.2,1913.9 H858.5 Q862.5,1913.9 862.5,1917.9 V1973.0 Z"/></g>
   <g><title>Nov 15 · 63 runner hours all repos, measured (100% of the day) · gitgalaxy 62 h · 855 runs · other 53%, main 39%, bot 7%, automation 1%</title><path class="hmeasured" d="M864.5,1973.0 V1958.2 Q864.5,1954.2 868.5,1954.2 H874.7 Q878.7,1954.2 878.7,1958.2 V1973.0 Z"/></g>
-  <g><title>Nov 16 · 22 runner hours all repos, measured (95% of the day) · gitgalaxy 22 h (today so far) · 173 runs · other 74%, main 14%, bot 12%, automation 0%</title><path class="hmeasured" d="M880.7,1973.0 V1970.5 Q880.7,1966.5 884.7,1966.5 H891.0 Q895.0,1966.5 895.0,1970.5 V1973.0 Z"/></g>
+  <g><title>Nov 16 · 90 runner hours all repos, measured (100% of the day) · gitgalaxy 90 h (today so far) · 1,171 runs · other 42%, main 39%, bot 14%, agent 5%, automation 0%</title><path class="hmeasured" d="M880.7,1973.0 V1949.9 Q880.7,1945.9 884.7,1945.9 H891.0 Q895.0,1945.9 895.0,1949.9 V1973.0 Z"/></g>
   <line class="avg" x1="66" x2="896" y1="1829.0" y2="1829.0"/><text class="avgl" x="896" y="1824.0" text-anchor="end">runner max 480 h/day (20 runners)</text>
   <g><text class="h2" x="24" y="2013">9 · Speed — job queue wait (p90) per day, sampled (minutes)</text></g>
   <line class="base" x1="66" x2="896" y1="2163.0" y2="2163.0"/>
@@ -757,7 +757,8 @@
   <g><title>Nov 12: CI change(s) merged #8334, #8335, #8339, #8342, #8346, #8350</title><path class="markd" d="M822.8,2034 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Nov 13: CI change(s) merged #8398, #8399, #8400</title><path class="markd" d="M839.0,2034 l3,3 l-3,3 l-3,-3 Z"/></g>
   <g><title>Nov 14: CI change(s) merged #8478</title><path class="markd" d="M855.3,2034 l3,3 l-3,3 l-3,-3 Z"/></g>
-  <polyline class="line " points="74.1,2144.4 90.4,2159.6 106.7,2123.3 123.0,2153.5 139.2,2156.2 155.5,2103.2 171.8,2128.2 188.1,2149.2 204.3,2117.5 220.6,2140.3 236.9,2135.3 253.2,2121.5 269.4,2097.2 285.7,2117.9 302.0,2093.3 318.3,2115.9 334.5,2054.5 350.8,2086.1 367.1,2122.3 383.4,2126.8 399.6,2127.5 415.9,2117.6 432.2,2115.6 448.5,2076.5 464.7,2065.8 481.0,2126.9 497.3,2099.6 513.5,2099.3 529.8,2078.2 546.1,2142.1 562.4,2133.2 578.6,2114.4 594.9,2124.5 611.2,2091.2 627.5,2088.9 643.7,2121.1 660.0,2143.4 676.3,2111.6 692.6,2109.6 708.8,2143.2 725.1,2118.8 741.4,2141.4 757.7,2135.4 773.9,2134.4 790.2,2112.4 806.5,2107.3 822.8,2152.8 839.0,2158.1 855.3,2145.3 871.6,2161.3 887.9,2161.1"/>
+  <g><title>Nov 16: CI change(s) merged #8514, #8517, #8522</title><path class="markd" d="M887.9,2034 l3,3 l-3,3 l-3,-3 Z"/></g>
+  <polyline class="line " points="74.1,2144.4 90.4,2159.6 106.7,2123.3 123.0,2153.5 139.2,2156.2 155.5,2103.2 171.8,2128.2 188.1,2149.2 204.3,2117.5 220.6,2140.3 236.9,2135.3 253.2,2121.5 269.4,2097.2 285.7,2117.9 302.0,2093.3 318.3,2115.9 334.5,2054.5 350.8,2086.1 367.1,2122.3 383.4,2126.8 399.6,2127.5 415.9,2117.6 432.2,2115.6 448.5,2076.5 464.7,2065.8 481.0,2126.9 497.3,2099.6 513.5,2099.3 529.8,2078.2 546.1,2142.1 562.4,2133.2 578.6,2114.4 594.9,2124.5 611.2,2091.2 627.5,2088.9 643.7,2121.1 660.0,2143.4 676.3,2111.6 692.6,2109.6 708.8,2143.2 725.1,2118.8 741.4,2141.4 757.7,2135.4 773.9,2134.4 790.2,2112.4 806.5,2107.3 822.8,2152.8 839.0,2158.1 855.3,2145.3 871.6,2161.3 887.9,2160.0"/>
   <circle class="dot " cx="74.1" cy="2144.4" r="4"><title>Sep 27: 3.9 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="90.4" cy="2159.6" r="4"><title>Sep 28: 0.7 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="106.7" cy="2123.3" r="4"><title>Sep 29: 8.3 minutes · 5% of each day's runs sampled</title></circle>
@@ -808,7 +809,7 @@
   <circle class="dot " cx="839.0" cy="2158.1" r="4"><title>Nov 13: 1.0 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="855.3" cy="2145.3" r="4"><title>Nov 14: 3.7 minutes · 5% of each day's runs sampled</title></circle>
   <circle class="dot " cx="871.6" cy="2161.3" r="4"><title>Nov 15: 0.3 minutes · 5% of each day's runs sampled</title></circle>
-  <circle class="dot  partial" cx="887.9" cy="2161.1" r="4"><title>Nov 16: 0.4 minutes · 5% of each day's runs sampled (today so far)</title></circle>
+  <circle class="dot  partial" cx="887.9" cy="2160.0" r="4"><title>Nov 16: 0.6 minutes · 5% of each day's runs sampled (today so far)</title></circle>
   <rect class="markd" x="774.8" y="2005" width="9" height="9" rx="2"/>
   <text class="lbl" x="787.8" y="2013">CI change merged</text>
   <g><text class="h2" x="24" y="2203">10 · CI load — runner hours per merged PR (est., sampled)</text></g>
@@ -834,7 +835,7 @@
   <text class="tick" x="887.9" y="2369" text-anchor="middle">Nov 16</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="277.6" x2="277.6" y1="2229" y2="2353"/></g>
   <line class="start" x1="293.8" x2="293.8" y1="2229" y2="2353"/>
-  <polyline class="line " points="74.1,2330.4 90.4,2330.3 106.7,2319.1 123.0,2332.2 139.2,2330.4 155.5,2327.8 171.8,2334.3 188.1,2333.7 204.3,2320.0 220.6,2297.9 236.9,2300.3 253.2,2253.7 269.4,2281.7 285.7,2272.9 302.0,2279.9 318.3,2269.2 334.5,2263.1 350.8,2282.1 367.1,2284.9 383.4,2313.8 399.6,2320.4 415.9,2321.6 432.2,2312.8 448.5,2312.4 464.7,2312.4 481.0,2326.7 497.3,2329.0 513.5,2330.3 529.8,2311.0 546.1,2321.9 562.4,2307.0 578.6,2315.0 594.9,2304.1 611.2,2316.4 627.5,2313.3 643.7,2313.2 660.0,2311.0 676.3,2283.0 692.6,2306.0 708.8,2309.3 725.1,2311.9 741.4,2314.2 757.7,2303.6 773.9,2308.5 790.2,2305.7 806.5,2323.7 822.8,2315.7 839.0,2323.9 855.3,2303.9 871.6,2320.7 887.9,2233.0"/>
+  <polyline class="line " points="74.1,2330.4 90.4,2330.3 106.7,2319.1 123.0,2332.2 139.2,2330.4 155.5,2327.8 171.8,2334.3 188.1,2333.7 204.3,2320.0 220.6,2297.9 236.9,2300.3 253.2,2253.7 269.4,2281.7 285.7,2272.9 302.0,2279.9 318.3,2269.2 334.5,2263.1 350.8,2282.1 367.1,2284.9 383.4,2313.8 399.6,2320.4 415.9,2321.6 432.2,2312.8 448.5,2312.4 464.7,2312.4 481.0,2326.7 497.3,2329.0 513.5,2330.3 529.8,2311.0 546.1,2321.9 562.4,2307.0 578.6,2315.0 594.9,2304.1 611.2,2316.4 627.5,2313.3 643.7,2313.2 660.0,2311.0 676.3,2283.0 692.6,2306.0 708.8,2309.1 725.1,2311.9 741.4,2314.2 757.7,2303.6 773.9,2308.5 790.2,2305.7 806.5,2323.7 822.8,2315.7 839.0,2323.9 855.3,2303.9 871.6,2320.7 887.9,2306.1"/>
   <circle class="dot " cx="74.1" cy="2330.4" r="4"><title>Sep 27: 1.88 runner hours / merged PR</title></circle>
   <circle class="dot " cx="90.4" cy="2330.3" r="4"><title>Sep 28: 1.89 runner hours / merged PR</title></circle>
   <circle class="dot " cx="106.7" cy="2319.1" r="4"><title>Sep 29: 2.82 runner hours / merged PR</title></circle>
@@ -874,7 +875,7 @@
   <circle class="dot " cx="660.0" cy="2311.0" r="4"><title>Nov 2: 3.50 runner hours / merged PR</title></circle>
   <circle class="dot " cx="676.3" cy="2283.0" r="4"><title>Nov 3: 5.83 runner hours / merged PR</title></circle>
   <circle class="dot " cx="692.6" cy="2306.0" r="4"><title>Nov 4: 3.92 runner hours / merged PR</title></circle>
-  <circle class="dot " cx="708.8" cy="2309.3" r="4"><title>Nov 5: 3.64 runner hours / merged PR</title></circle>
+  <circle class="dot " cx="708.8" cy="2309.1" r="4"><title>Nov 5: 3.66 runner hours / merged PR</title></circle>
   <circle class="dot " cx="725.1" cy="2311.9" r="4"><title>Nov 6: 3.42 runner hours / merged PR</title></circle>
   <circle class="dot " cx="741.4" cy="2314.2" r="4"><title>Nov 7: 3.23 runner hours / merged PR</title></circle>
   <circle class="dot " cx="757.7" cy="2303.6" r="4"><title>Nov 8: 4.12 runner hours / merged PR</title></circle>
@@ -885,8 +886,7 @@
   <circle class="dot " cx="839.0" cy="2323.9" r="4"><title>Nov 13: 2.43 runner hours / merged PR</title></circle>
   <circle class="dot " cx="855.3" cy="2303.9" r="4"><title>Nov 14: 4.09 runner hours / merged PR</title></circle>
   <circle class="dot " cx="871.6" cy="2320.7" r="4"><title>Nov 15: 2.69 runner hours / merged PR</title></circle>
-  <circle class="dot  partial" cx="887.9" cy="2233.0" r="4"><title>Nov 16: 10.81 runner hours / merged PR (above the 10 h axis) (today so far)</title></circle>
-  <text class="clip" x="887.9" y="2225" text-anchor="middle">▲ 11 h</text>
+  <circle class="dot  partial" cx="887.9" cy="2306.1" r="4"><title>Nov 16: 3.91 runner hours / merged PR (today so far)</title></circle>
   <g><title>CI workflow-run outcomes; not a per-PR quality score. Reruns that passed: 89.4% (337 passed, 40 failed again; 411 total). Mainframe Ground Truth: 105 reruns, 77 passed, 16 failed again. GitGalaxy Smoke Tests: 88 reruns, 71 passed, 6 failed again. Det Sweep: 74 reruns, 60 passed, 12 failed again. Equivalence E2E: 70 reruns, 64 passed, 2 failed again. CICS Crucible: 30 reruns, 25 passed, 2 failed again. Generated Docs: 19 reruns, 18 passed, 1 failed again. DOOM-rosetta: 18 reruns, 16 passed, 0 failed again. Tri-Comparison Audit: 2 reruns, 2 passed, 0 failed again. Dependabot relock: 1 reruns, 1 passed, 0 failed again. Evidence Refresh: 1 reruns, 0 passed, 1 failed again. Golden Crucible Resilience Test: 1 reruns, 1 passed, 0 failed again. Graph Accuracy Audit: 1 reruns, 1 passed, 0 failed again</title><text class="h2" x="24" y="2393">11 · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed</text></g>
   <line class="base" x1="66" x2="896" y1="2543.0" y2="2543.0"/>
   <text class="tick" x="58" y="2546.5" text-anchor="end">0%</text>
@@ -908,7 +908,7 @@
   <text class="tick" x="887.9" y="2559" text-anchor="middle">Nov 16</text>
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="277.6" x2="277.6" y1="2419" y2="2543"/></g>
   <line class="start" x1="293.8" x2="293.8" y1="2419" y2="2543"/>
-  <polyline class="line saved" points="74.1,2508.8 90.4,2517.7 106.7,2525.5 123.0,2514.5 139.2,2520.7 155.5,2521.9 171.8,2495.2 188.1,2506.9 204.3,2516.4 220.6,2514.4 236.9,2508.5 253.2,2509.4 269.4,2512.7 285.7,2518.8 302.0,2510.8 318.3,2520.1 334.5,2515.7 350.8,2496.2 367.1,2527.3 383.4,2495.3 399.6,2518.0 415.9,2497.0 432.2,2521.8 448.5,2518.8 464.7,2487.6 481.0,2526.2 497.3,2480.2 513.5,2479.4 529.8,2502.3 546.1,2524.1 562.4,2524.8 578.6,2497.6 594.9,2481.0 611.2,2439.5 627.5,2433.9 643.7,2469.4 660.0,2518.6 676.3,2494.5 692.6,2449.4 708.8,2489.6 725.1,2449.0 741.4,2446.8 757.7,2465.1 773.9,2476.0 790.2,2489.7 806.5,2479.4 822.8,2475.4 839.0,2478.1 855.3,2448.0 871.6,2485.6 887.9,2439.0"/>
+  <polyline class="line saved" points="74.1,2508.8 90.4,2517.7 106.7,2525.5 123.0,2514.5 139.2,2520.7 155.5,2521.9 171.8,2495.2 188.1,2506.9 204.3,2516.4 220.6,2514.4 236.9,2508.5 253.2,2509.4 269.4,2512.7 285.7,2518.8 302.0,2510.8 318.3,2520.1 334.5,2515.7 350.8,2496.2 367.1,2527.3 383.4,2495.3 399.6,2518.0 415.9,2497.0 432.2,2521.8 448.5,2518.8 464.7,2487.6 481.0,2526.2 497.3,2480.2 513.5,2479.4 529.8,2502.3 546.1,2524.1 562.4,2524.8 578.6,2497.6 594.9,2481.0 611.2,2439.5 627.5,2433.9 643.7,2469.4 660.0,2518.6 676.3,2494.5 692.6,2449.4 708.8,2489.6 725.1,2449.0 741.4,2446.8 757.7,2465.1 773.9,2476.0 790.2,2489.7 806.5,2479.4 822.8,2475.4 839.0,2478.1 855.3,2448.0 871.6,2485.6 887.9,2483.4"/>
   <circle class="dot saved" cx="74.1" cy="2508.8" r="4"><title>Sep 27: 5.7% of run minutes saved by early cancellation (est. 468 of 8,211 min; 136 runs cancelled)</title></circle>
   <circle class="dot saved" cx="90.4" cy="2517.7" r="4"><title>Sep 28: 4.2% of run minutes saved by early cancellation (est. 69 of 1,637 min; 29 runs cancelled)</title></circle>
   <circle class="dot saved" cx="106.7" cy="2525.5" r="4"><title>Sep 29: 2.9% of run minutes saved by early cancellation (est. 98 of 3,369 min; 51 runs cancelled)</title></circle>
@@ -959,8 +959,8 @@
   <circle class="dot saved" cx="839.0" cy="2478.1" r="4"><title>Nov 13: 10.8% of run minutes saved by early cancellation (est. 609 of 5,634 min; 89 runs cancelled)</title></circle>
   <circle class="dot saved" cx="855.3" cy="2448.0" r="4"><title>Nov 14: 15.8% of run minutes saved by early cancellation (est. 1,387 of 8,762 min; 158 runs cancelled)</title></circle>
   <circle class="dot saved" cx="871.6" cy="2485.6" r="4"><title>Nov 15: 9.6% of run minutes saved by early cancellation (est. 198 of 2,068 min; 32 runs cancelled)</title></circle>
-  <circle class="dot saved partial" cx="887.9" cy="2439.0" r="4"><title>Nov 16: 17.3% of run minutes saved by early cancellation (est. 82 of 473 min; 7 runs cancelled) (today so far)</title></circle>
-  <polyline class="line failedl" points="74.1,2535.1 90.4,2524.7 106.7,2534.2 123.0,2527.3 139.2,2531.9 155.5,2529.9 171.8,2528.8 188.1,2529.2 204.3,2527.1 220.6,2523.3 236.9,2511.8 253.2,2527.5 269.4,2521.7 285.7,2518.3 302.0,2528.0 318.3,2518.0 334.5,2531.0 350.8,2527.6 367.1,2516.8 383.4,2527.1 399.6,2529.0 415.9,2529.3 432.2,2529.3 448.5,2532.1 464.7,2531.6 481.0,2529.7 497.3,2530.9 513.5,2528.8 529.8,2528.9 546.1,2528.3 562.4,2527.0 578.6,2529.2 594.9,2538.0 611.2,2532.2 627.5,2534.4 643.7,2529.7 660.0,2537.7 676.3,2528.5 692.6,2532.2 708.8,2536.4 725.1,2534.7 741.4,2529.8 757.7,2527.6 773.9,2510.9 790.2,2526.5 806.5,2529.7 822.8,2539.2 839.0,2526.4 855.3,2532.4 871.6,2524.9 887.9,2519.6"/>
+  <circle class="dot saved partial" cx="887.9" cy="2483.4" r="4"><title>Nov 16: 9.9% of run minutes saved by early cancellation (est. 316 of 3,183 min; 73 runs cancelled) (today so far)</title></circle>
+  <polyline class="line failedl" points="74.1,2535.1 90.4,2524.7 106.7,2534.2 123.0,2527.3 139.2,2531.9 155.5,2529.9 171.8,2528.8 188.1,2529.2 204.3,2527.1 220.6,2523.3 236.9,2511.8 253.2,2527.5 269.4,2521.7 285.7,2518.3 302.0,2528.0 318.3,2518.0 334.5,2531.0 350.8,2527.6 367.1,2516.8 383.4,2527.1 399.6,2529.0 415.9,2529.3 432.2,2529.3 448.5,2532.1 464.7,2531.6 481.0,2529.7 497.3,2530.9 513.5,2528.8 529.8,2528.9 546.1,2528.3 562.4,2527.0 578.6,2529.2 594.9,2538.0 611.2,2532.2 627.5,2534.4 643.7,2529.7 660.0,2537.7 676.3,2528.5 692.6,2532.2 708.8,2536.4 725.1,2534.7 741.4,2529.8 757.7,2527.6 773.9,2510.9 790.2,2526.5 806.5,2529.7 822.8,2539.2 839.0,2526.4 855.3,2532.4 871.6,2524.9 887.9,2529.9"/>
   <circle class="dot failedl" cx="74.1" cy="2535.1" r="4"><title>Sep 27: 1.3% of runs failed (20 of 1,525 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
   <circle class="dot failedl" cx="90.4" cy="2524.7" r="4"><title>Sep 28: 3.0% of runs failed (13 of 427 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
   <circle class="dot failedl" cx="106.7" cy="2534.2" r="4"><title>Sep 29: 1.5% of runs failed (10 of 683 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
@@ -1011,7 +1011,7 @@
   <circle class="dot failedl" cx="839.0" cy="2526.4" r="4"><title>Nov 13: 2.8% of runs failed (21 of 760 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
   <circle class="dot failedl" cx="855.3" cy="2532.4" r="4"><title>Nov 14: 1.8% of runs failed (18 of 1,016 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
   <circle class="dot failedl" cx="871.6" cy="2524.9" r="4"><title>Nov 15: 3.0% of runs failed (12 of 397 CI runs that passed or failed · the bot's own workflows left out)</title></circle>
-  <circle class="dot failedl partial" cx="887.9" cy="2519.6" r="4"><title>Nov 16: 3.9% of runs failed (3 of 77 CI runs that passed or failed · the bot's own workflows left out) (today so far)</title></circle>
+  <circle class="dot failedl partial" cx="887.9" cy="2529.9" r="4"><title>Nov 16: 2.2% of runs failed (12 of 548 CI runs that passed or failed · the bot's own workflows left out) (today so far)</title></circle>
   <rect class="failed" x="805.8" y="2385" width="9" height="9" rx="2"/>
   <text class="lbl" x="818.8" y="2393">runs failed</text>
   <rect class="saved" x="659.8" y="2385" width="9" height="9" rx="2"/>
@@ -1087,7 +1087,7 @@
   <g><title>Oct 10: integrase-bot (CI shepherd) on</title><line class="mark" x1="277.6" x2="277.6" y1="2789" y2="2903"/></g>
   <line class="start" x1="293.8" x2="293.8" y1="2789" y2="2903"/>
   <line class="avg" x1="66" x2="896" y1="2793.0" y2="2793.0"/><text class="avgl" x="896" y="2788.0" text-anchor="end">~500/h</text>
-  <polyline class="line cum" points="497.3,2855.9 513.5,2841.8 529.8,2885.6 546.1,2896.2 562.4,2896.0 578.6,2858.1 594.9,2890.9 611.2,2889.1 627.5,2889.4 643.7,2889.8 660.0,2894.4 676.3,2895.3 692.6,2892.0 708.8,2894.6 725.1,2889.6 741.4,2893.8 757.7,2894.4 773.9,2897.5 790.2,2898.2 806.5,2895.3 822.8,2892.0 839.0,2892.4 855.3,2898.2 871.6,2900.6 887.9,2901.2"/>
+  <polyline class="line cum" points="497.3,2855.9 513.5,2841.8 529.8,2885.6 546.1,2896.2 562.4,2896.0 578.6,2858.1 594.9,2890.9 611.2,2889.1 627.5,2889.4 643.7,2889.8 660.0,2894.4 676.3,2895.3 692.6,2892.0 708.8,2894.6 725.1,2889.6 741.4,2893.8 757.7,2894.4 773.9,2897.5 790.2,2898.2 806.5,2895.3 822.8,2892.0 839.0,2892.4 855.3,2898.2 871.6,2900.6 887.9,2896.6"/>
   <circle class="dot cum" cx="497.3" cy="2855.9" r="4"><title>Oct 23: squid-protocol: busiest hour 214 writes, 2129 that day</title></circle>
   <circle class="dot cum" cx="513.5" cy="2841.8" r="4"><title>Oct 24: squid-protocol: busiest hour 278 writes, 3499 that day</title></circle>
   <circle class="dot cum" cx="529.8" cy="2885.6" r="4"><title>Oct 25: squid-protocol: busiest hour 79 writes, 725 that day</title></circle>
@@ -1112,8 +1112,8 @@
   <circle class="dot cum" cx="839.0" cy="2892.4" r="4"><title>Nov 13: squid-protocol: busiest hour 48 writes, 250 that day</title></circle>
   <circle class="dot cum" cx="855.3" cy="2898.2" r="4"><title>Nov 14: squid-protocol: busiest hour 22 writes, 171 that day</title></circle>
   <circle class="dot cum" cx="871.6" cy="2900.6" r="4"><title>Nov 15: squid-protocol: busiest hour 11 writes, 67 that day</title></circle>
-  <circle class="dot cum partial" cx="887.9" cy="2901.2" r="4"><title>Nov 16: squid-protocol: busiest hour 8 writes, 18 that day (today so far)</title></circle>
-  <polyline class="line failedl" points="513.5,2888.0 529.8,2889.1 546.1,2891.1 562.4,2890.7 578.6,2882.8 594.9,2889.1 611.2,2883.9 627.5,2885.8 643.7,2881.0 660.0,2895.7 676.3,2889.4 692.6,2886.5 708.8,2891.8 725.1,2885.0 741.4,2891.1 757.7,2887.4 773.9,2890.0 790.2,2893.3 806.5,2889.8 822.8,2882.1 839.0,2895.5 855.3,2894.6 871.6,2899.9 887.9,2901.5"/>
+  <circle class="dot cum partial" cx="887.9" cy="2896.6" r="4"><title>Nov 16: squid-protocol: busiest hour 29 writes, 126 that day (today so far)</title></circle>
+  <polyline class="line failedl" points="513.5,2888.0 529.8,2889.1 546.1,2891.1 562.4,2890.7 578.6,2882.8 594.9,2889.1 611.2,2883.9 627.5,2885.8 643.7,2881.0 660.0,2895.7 676.3,2889.4 692.6,2886.5 708.8,2891.8 725.1,2885.0 741.4,2891.1 757.7,2887.4 773.9,2890.0 790.2,2893.3 806.5,2889.8 822.8,2882.1 839.0,2895.5 855.3,2894.6 871.6,2899.9 887.9,2897.5"/>
   <circle class="dot failedl" cx="513.5" cy="2888.0" r="4"><title>Oct 24: squid-shepherd[bot]: busiest hour 68 writes, 204 that day</title></circle>
   <circle class="dot failedl" cx="529.8" cy="2889.1" r="4"><title>Oct 25: squid-shepherd[bot]: busiest hour 63 writes, 950 that day</title></circle>
   <circle class="dot failedl" cx="546.1" cy="2891.1" r="4"><title>Oct 26: squid-shepherd[bot]: busiest hour 54 writes, 412 that day</title></circle>
@@ -1137,8 +1137,8 @@
   <circle class="dot failedl" cx="839.0" cy="2895.5" r="4"><title>Nov 13: squid-shepherd[bot]: busiest hour 34 writes, 166 that day</title></circle>
   <circle class="dot failedl" cx="855.3" cy="2894.6" r="4"><title>Nov 14: squid-shepherd[bot]: busiest hour 38 writes, 306 that day</title></circle>
   <circle class="dot failedl" cx="871.6" cy="2899.9" r="4"><title>Nov 15: squid-shepherd[bot]: busiest hour 14 writes, 67 that day</title></circle>
-  <circle class="dot failedl partial" cx="887.9" cy="2901.5" r="4"><title>Nov 16: squid-shepherd[bot]: busiest hour 7 writes, 17 that day (today so far)</title></circle>
-  <polyline class="line saved" points="497.3,2901.0 513.5,2901.0 529.8,2901.5 546.1,2901.5 562.4,2901.7 578.6,2901.7 594.9,2901.5 611.2,2901.5 627.5,2901.5 643.7,2901.0 660.0,2901.5 676.3,2902.1 692.6,2901.7 708.8,2899.7 725.1,2900.4 741.4,2900.8 757.7,2901.7 773.9,2901.7 790.2,2902.1 806.5,2901.9 822.8,2901.7 839.0,2901.7 855.3,2902.1 871.6,2902.6 887.9,2902.8"/>
+  <circle class="dot failedl partial" cx="887.9" cy="2897.5" r="4"><title>Nov 16: squid-shepherd[bot]: busiest hour 25 writes, 111 that day (today so far)</title></circle>
+  <polyline class="line saved" points="497.3,2901.0 513.5,2901.0 529.8,2901.5 546.1,2901.5 562.4,2901.7 578.6,2901.7 594.9,2901.5 611.2,2901.5 627.5,2901.5 643.7,2901.0 660.0,2901.5 676.3,2902.1 692.6,2901.7 708.8,2899.7 725.1,2900.4 741.4,2900.8 757.7,2901.7 773.9,2901.7 790.2,2902.1 806.5,2901.9 822.8,2901.7 839.0,2901.7 855.3,2902.1 871.6,2902.6 887.9,2902.3"/>
   <circle class="dot saved" cx="497.3" cy="2901.0" r="4"><title>Oct 23: github-actions[bot]: busiest hour 9 writes, 84 that day</title></circle>
   <circle class="dot saved" cx="513.5" cy="2901.0" r="4"><title>Oct 24: github-actions[bot]: busiest hour 9 writes, 112 that day</title></circle>
   <circle class="dot saved" cx="529.8" cy="2901.5" r="4"><title>Oct 25: github-actions[bot]: busiest hour 7 writes, 64 that day</title></circle>
@@ -1163,7 +1163,7 @@
   <circle class="dot saved" cx="839.0" cy="2901.7" r="4"><title>Nov 13: github-actions[bot]: busiest hour 6 writes, 21 that day</title></circle>
   <circle class="dot saved" cx="855.3" cy="2902.1" r="4"><title>Nov 14: github-actions[bot]: busiest hour 4 writes, 21 that day</title></circle>
   <circle class="dot saved" cx="871.6" cy="2902.6" r="4"><title>Nov 15: github-actions[bot]: busiest hour 2 writes, 8 that day</title></circle>
-  <circle class="dot saved partial" cx="887.9" cy="2902.8" r="4"><title>Nov 16: github-actions[bot]: busiest hour 1 writes, 1 that day (today so far)</title></circle>
+  <circle class="dot saved partial" cx="887.9" cy="2902.3" r="4"><title>Nov 16: github-actions[bot]: busiest hour 3 writes, 15 that day (today so far)</title></circle>
   <rect class="saved" x="756.2" y="2755" width="9" height="9" rx="2"/>
   <text class="lbl" x="769.2" y="2763">github-actions[bot]</text>
   <rect class="failed" x="616.4" y="2755" width="9" height="9" rx="2"/>

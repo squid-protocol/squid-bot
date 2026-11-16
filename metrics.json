@@ -34703,36 +34703,105 @@
    "detail": {
     "bot_outcomes": {
      "failure": 0,
-     "success": 49
+     "success": 254
     },
-    "bot_runs": 63,
+    "bot_runs": 399,
     "cancel_savings": {
-     "cancelled": 7,
-     "saved_min_est": 82,
+     "cancelled": 73,
+     "saved_min_est": 316,
      "unpriced": 0,
-     "wall_min": 391
+     "wall_min": 2867
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 8514,
+      "title": "evidence-refresh: step timeout so a hung det-mutation refresh still keeps its ledgers (Part of #8509) (#8514)"
+     },
+     {
+      "pr": 8517,
+      "title": "evidence-refresh: a det-mutation shard lost to the runner no longer fails the refresh (Part of #8509) (#8517)"
+     },
+     {
+      "pr": 8522,
+      "title": "evidence-refresh: the put-in-place artifact filter accepts the shard-N.done markers (Part of #8509) (#8522)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 135,
+    "population": 948,
     "reruns": {
-     "attempts": 1,
+     "attempts": 13,
      "by_workflow": {
-      "Det Sweep": [
-       0,
+      "CICS Crucible": [
        1,
+       0,
+       0
+      ],
+      "Det Sweep": [
+       2,
+       1,
+       0
+      ],
+      "Equivalence E2E": [
+       1,
+       0,
+       0
+      ],
+      "Generated Docs": [
+       2,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
+       3,
+       0,
+       0
+      ],
+      "Mainframe Ground Truth": [
+       3,
+       0,
        0
       ]
      },
      "failed_again": 1,
-     "passed": 0,
-     "runs": 1
+     "passed": 12,
+     "runs": 13
     },
-    "runner_min_ci": 316,
-    "runner_min_est": 925,
+    "runner_min_ci": 2277,
+    "runner_min_est": 6753,
     "sample": {
      "43779482691": {
       "m": 4.37,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43779482720": {
+      "m": 5.17,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43779482734": {
+      "m": 0.53,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43779482753": {
+      "m": 10.1,
+      "o": "other",
+      "w": [
+       0.57,
+       0.13,
+       0.72,
+       0.22
+      ]
+     },
+     "43779482777": {
+      "m": 2.6,
       "o": "other",
       "w": [
        0.03
@@ -34747,6 +34816,13 @@
      },
      "43780112860": {
       "m": 0.45,
+      "o": "other",
+      "w": [
+       0.02
+      ]
+     },
+     "43780112866": {
+      "m": 2.97,
       "o": "other",
       "w": [
        0.02
@@ -34780,6 +34856,22 @@
       "o": "main",
       "w": [
        0.03
+      ]
+     },
+     "43781826807": {
+      "m": 0.43,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43785075232": {
+      "m": 8.77,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
+       0.02
       ]
      },
      "43785075239": {
@@ -34839,6 +34931,13 @@
      },
      "43789422344": {
       "m": 0.47,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43789509419": {
+      "m": 0.32,
       "o": "main",
       "w": [
        0.03
@@ -34994,66 +35093,539 @@
        0.03
       ]
      },
+     "43794213625": {
+      "m": 0.77,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
      "43795489880": {
       "m": 0.35,
       "o": "bot",
       "w": [
        0.03
       ]
+     },
+     "43813382025": {
+      "m": 234.17,
+      "o": "main",
+      "w": [
+       0.02,
+       0.02,
+       0.02,
+       0.03,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       3.37
+      ]
+     },
+     "43814316060": {
+      "m": 0.5,
+      "o": "main",
+      "w": [
+       0.35
+      ]
+     },
+     "43815218628": {
+      "m": 0.17,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43817389690": {
+      "m": 0.47,
+      "o": "automation",
+      "w": [
+       0.03
+      ]
+     },
+     "43818188736": {
+      "m": 1.08,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43853345663": {
+      "m": 0.77,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43853979882": {
+      "m": 28.93,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.28,
+       0.47,
+       0.88,
+       1.03,
+       2.8,
+       1.13,
+       0.03
+      ]
+     },
+     "43855051095": {
+      "m": 0.57,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43855435371": {
+      "m": 3.08,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "43856010812": {
+      "m": 1.35,
+      "o": "main",
+      "w": [
+       0.05,
+       0.03
+      ]
+     },
+     "43862501953": {
+      "m": 0.53,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43867565287": {
+      "m": 0.15,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43872843842": {
+      "m": 177.98,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03,
+       0.13,
+       0.12,
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.03,
+       0.03,
+       0.12,
+       0.03
+      ]
+     },
+     "43875549102": {
+      "m": 7.27,
+      "o": "main",
+      "w": [
+       0.03,
+       0.05,
+       0.03,
+       0.03,
+       0.05,
+       0.07
+      ]
+     },
+     "43880038550": {
+      "m": 0.23,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43881421879": {
+      "m": 31.2,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43881601516": {
+      "m": 0.83,
+      "o": "main",
+      "w": [
+       0.05
+      ]
+     },
+     "43897021677": {
+      "m": 3.82,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43897371537": {
+      "m": 0.52,
+      "o": "main",
+      "w": [
+       0.25
+      ]
+     },
+     "43897928890": {
+      "m": 3.87,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43902934053": {
+      "m": 1.17,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43902934083": {
+      "m": 0.63,
+      "o": "other",
+      "w": [
+       0.33
+      ]
+     },
+     "43903125519": {
+      "m": 0.35,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43905605052": {
+      "m": 0.0,
+      "o": "other",
+      "w": []
+     },
+     "43905612728": {
+      "m": 3.62,
+      "o": "other",
+      "w": [
+       0.63,
+       2.6,
+       4.07
+      ]
+     },
+     "43906104384": {
+      "m": 10.13,
+      "o": "main",
+      "w": [
+       1.88
+      ]
+     },
+     "43906278371": {
+      "m": 3.98,
+      "o": "bot",
+      "w": [
+       1.18
+      ]
+     },
+     "43906390005": {
+      "m": 0.92,
+      "o": "other",
+      "w": [
+       0.33
+      ]
+     },
+     "43906390198": {
+      "m": 22.87,
+      "o": "other",
+      "w": [
+       0.27,
+       0.42,
+       0.55,
+       0.03
+      ]
+     },
+     "43906884900": {
+      "m": 2.38,
+      "o": "main",
+      "w": [
+       0.95
+      ]
+     },
+     "43907930264": {
+      "m": 3.75,
+      "o": "main",
+      "w": [
+       0.03,
+       0.05
+      ]
+     },
+     "43908746559": {
+      "m": 0.38,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43908948405": {
+      "m": 0.98,
+      "o": "main",
+      "w": [
+       0.65
+      ]
+     },
+     "43910771724": {
+      "m": 0.37,
+      "o": "main",
+      "w": [
+       0.05
+      ]
+     },
+     "43911396500": {
+      "m": 0.0,
+      "o": "other",
+      "w": []
+     },
+     "43911397773": {
+      "m": 1.72,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43913362517": {
+      "m": 17.1,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03
+      ]
+     },
+     "43913991743": {
+      "m": 0.43,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43914202415": {
+      "m": 1.32,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43914202771": {
+      "m": 2.62,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43914723878": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
+     "43915404639": {
+      "m": 0.15,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "43918941164": {
+      "m": 0.83,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43923905409": {
+      "m": 1.25,
+      "o": "other",
+      "w": [
+       0.03,
+       0.02,
+       0.02
+      ]
+     },
+     "43927337517": {
+      "m": 3.75,
+      "o": "other",
+      "w": [
+       0.03
+      ]
+     },
+     "43927337559": {
+      "m": 1.32,
+      "o": "other",
+      "w": [
+       0.4,
+       0.85,
+       0.32
+      ]
+     },
+     "43928091387": {
+      "m": 9.73,
+      "o": "main",
+      "w": [
+       0.03,
+       0.27,
+       1.4,
+       0.42,
+       1.55,
+       2.18
+      ]
+     },
+     "43929545892": {
+      "m": 0.55,
+      "o": "main",
+      "w": [
+       0.03,
+       0.03
+      ]
+     },
+     "43931628709": {
+      "m": 0.28,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43935276218": {
+      "m": 0.87,
+      "o": "other",
+      "w": [
+       0.02
+      ]
+     },
+     "43935323257": {
+      "m": 0.63,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "43936505946": {
+      "m": 8.47,
+      "o": "other",
+      "w": [
+       0.02,
+       0.03
+      ]
+     },
+     "43940235522": {
+      "m": 18.8,
+      "o": "agent",
+      "w": [
+       0.02,
+       0.23,
+       0.17,
+       0.03
+      ]
+     },
+     "43942745014": {
+      "m": 27.55,
+      "o": "agent",
+      "w": [
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.02,
+       0.18,
+       0.03
+      ]
      }
     },
-    "sample_target": 30,
+    "sample_target": 48,
     "sampled_min_by_origin": {
-     "automation": 1.9,
-     "bot": 113.4,
-     "main": 129.8,
-     "other": 680.3
+     "agent": 349.3,
+     "automation": 7.2,
+     "bot": 957.2,
+     "main": 2600.0,
+     "other": 2839.1
     },
     "sampled_min_by_workflow": {
-     "Archetype Validation": 10.2,
-     "CI shepherd (label events)": 4.7,
-     "CI shepherd (reconcile)": 8.3,
-     "CICS Crucible": 61.4,
-     "CodeQL Security Scan": 40.9,
-     "Deploy Museum of Code Docs": 7.1,
-     "Det Sweep": 176.1,
-     "Equivalence E2E": 225.0,
-     "Generated Docs": 11.7,
-     "Generated Java Base Generation": 12.7,
-     "Generated Java Compiles": 24.5,
-     "GitGalaxy Smoke Tests": 118.1,
-     "GitGalaxy Zero-Trust Pipeline": 42.0,
-     "Main Watch": 6.9,
-     "Mainframe Ground Truth": 77.4,
-     "Muninn Security Scan": 17.4,
-     "Mypy Audit": 11.7,
-     "Ports Compile": 26.1,
-     "Ruff Audit": 9.5,
-     "Small Audits": 29.0,
-     "pages build and deployment": 2.6,
-     "post-merge": 2.0
+     "Archetype Validation": 73.7,
+     "CI shepherd (label events)": 24.8,
+     "CI shepherd (reconcile)": 77.8,
+     "CICS Crucible": 432.9,
+     "Cache Prune": 1.7,
+     "CodeQL Security Scan": 415.9,
+     "Crucible Path Independence": 11.0,
+     "DOOM-rosetta": 33.9,
+     "Deploy Museum of Code Docs": 137.1,
+     "Det Sweep": 1309.1,
+     "Doc Drift": 0.8,
+     "Engine Coverage Map": 88.1,
+     "Equivalence E2E": 911.6,
+     "Estate Crucible": 2.5,
+     "Evidence Pages": 4.7,
+     "Evidence Refresh": 326.6,
+     "Fact Cross-check": 10.9,
+     "Flake history (refresh)": 3.2,
+     "Full Suite Gate (All OS x Python)": 68.5,
+     "Generated Docs": 39.3,
+     "Generated Java Base Generation": 106.8,
+     "Generated Java Compiles": 199.9,
+     "GitGalaxy Smoke Tests": 814.4,
+     "GitGalaxy Zero-Trust Pipeline": 135.0,
+     "Golden Crucible Resilience Test": 89.1,
+     "Graph Accuracy Audit": 48.4,
+     "Main Watch": 13.0,
+     "Mainframe Ground Truth": 470.7,
+     "Muninn Security Scan": 205.1,
+     "Mypy Audit": 84.8,
+     "OS Smoke Grid": 4.7,
+     "Ports Compile": 308.1,
+     "Referee panel": 2.4,
+     "Ruff Audit": 22.7,
+     "Small Audits": 65.8,
+     "Tree-sitter Accuracy Audit": 10.8,
+     "pages build and deployment": 69.8,
+     "post-merge": 34.0,
+     "rosetta-audit": 83.2,
+     "unicode-gauntlet": 9.4
     },
-    "sampled_runs": 34,
+    "sampled_runs": 97,
     "wait_median": 0.03,
-    "wait_p90": 0.4
+    "wait_p90": 0.63
    },
-   "merged": 2,
+   "merged": 23,
    "merged_by_class": {
-    "agent": 0,
-    "automation": 0,
-    "bot": 1,
-    "other": 1
+    "agent": 5,
+    "automation": 1,
+    "bot": 11,
+    "other": 6
    },
    "merged_by_repo": {
-    "squid-protocol/gitgalaxy": 2
+    "squid-protocol/gitgalaxy": 22,
+    "squid-protocol/temporal-crucible": 1
    },
    "merged_scope": "org",
    "runs": {
-    "cancelled": 9,
-    "failure": 3,
-    "skipped": 38,
-    "success": 123,
-    "total": 173
+    "cancelled": 116,
+    "failure": 12,
+    "skipped": 219,
+    "success": 790,
+    "total": 1171
    }
   }
  },
@@ -38439,35 +39011,58 @@
     }
    },
    "2026-11-16": {
-    "closed": 1,
-    "not_planned": 0,
-    "opened": 0,
-    "opened_by_origin": {},
+    "closed": 12,
+    "not_planned": 4,
+    "opened": 3,
+    "opened_by_origin": {
+     "owner": 3
+    },
     "red_main": 0,
     "red_main_h_median": null,
     "red_main_open": 0,
-    "resolve_h_median": 327.2,
-    "resolved": 1,
-    "resolved_by_bot": 0,
+    "resolve_h_median": 1124.3,
+    "resolved": 8,
+    "resolved_by_bot": 6,
     "resolved_by_origin": {
-     "owner": 1
+     "agent": 4,
+     "owner": 4
     },
     "writes": {
      "github-actions[bot]": {
-      "busiest_hour": 1,
+      "busiest_hour": 3,
       "hours": {
-       "00": 1
+       "00": 1,
+       "06": 3,
+       "11": 2,
+       "12": 1,
+       "15": 1,
+       "16": 3,
+       "18": 3,
+       "19": 1
       },
-      "total": 1
+      "total": 15
      },
      "squid-protocol": {
-      "busiest_hour": 8,
+      "busiest_hour": 29,
       "hours": {
        "00": 8,
        "01": 2,
-       "02": 8
+       "02": 7,
+       "05": 2,
+       "06": 11,
+       "07": 1,
+       "08": 5,
+       "10": 1,
+       "11": 11,
+       "12": 1,
+       "13": 1,
+       "15": 3,
+       "16": 28,
+       "17": 5,
+       "18": 11,
+       "19": 29
       },
-      "total": 18
+      "total": 126
      },
      "squid-shepherd": {
       "busiest_hour": 1,
@@ -38477,19 +39072,30 @@
       "total": 1
      },
      "squid-shepherd[bot]": {
-      "busiest_hour": 7,
+      "busiest_hour": 25,
       "hours": {
        "00": 7,
        "01": 3,
-       "02": 7
+       "02": 7,
+       "05": 2,
+       "06": 8,
+       "08": 5,
+       "10": 5,
+       "11": 17,
+       "12": 3,
+       "15": 3,
+       "16": 25,
+       "17": 4,
+       "18": 17,
+       "19": 5
       },
-      "total": 17
+      "total": 111
      }
     }
    }
   },
-  "open_at": "2026-11-16T03:18Z",
-  "open_now": 155
+  "open_at": "2026-11-16T19:56Z",
+  "open_now": 147
  },
- "updated": "2026-11-16T03:18Z"
+ "updated": "2026-11-16T19:56Z"
 }
