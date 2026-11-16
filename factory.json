@@ -8626,6 +8626,237 @@
     "precheck_retry": 0.0,
     "send_back": 0.0
    }
+  },
+  "2026-11-15": {
+   "api": {
+    "churn_by_caller": {
+     "ci_in_progress": 150,
+     "ci_occupancy": 1249,
+     "ci_profile_sample": 255,
+     "ci_queue": 150,
+     "gh_json_etag": 583,
+     "prs_graphql": 150,
+     "red_main_issues": 150,
+     "tend_bot_prs": 292
+    },
+    "churn_calls": 3547,
+    "churn_writes": 122,
+    "churn_writes_busiest_hour": 18,
+    "peak_hour": 1071,
+    "readings": 150,
+    "readings_at_zero": 0,
+    "used_by_hour": {
+     "03": 566,
+     "04": 1071,
+     "05": 500,
+     "06": 380,
+     "07": 543,
+     "08": 414,
+     "09": 205,
+     "10": 314,
+     "11": 592,
+     "12": 665,
+     "13": 686,
+     "14": 721,
+     "15": 548,
+     "16": 553,
+     "17": 744,
+     "18": 537,
+     "19": 920,
+     "20": 659,
+     "21": 636,
+     "22": 651,
+     "23": 323
+    },
+    "worker_calls": 53,
+    "worker_top_runs": {
+     "worker:7954-20261115T0424Z": 3,
+     "worker:7954-20261115T0858Z": 5,
+     "worker:8500-20261115T1419Z": 7,
+     "worker:8500-20261115T1423Z": 8,
+     "worker:8501-20261115T1353Z": 4
+    },
+    "worker_writes": 13
+   },
+   "churn_merged": 13,
+   "ci_busy_hours": 0.33,
+   "first_pass": {
+    "first_pass": 13,
+    "merged": 13
+   },
+   "holds": {
+    "pace": 75,
+    "paused": 1,
+    "prs-need-work": 0
+   },
+   "idle_blockers": {},
+   "idle_causes": {
+    "ci-admission": 2,
+    "other": 60
+   },
+   "idle_hours": 7.9,
+   "idle_ticks": 60,
+   "items_done": 1,
+   "limits": {
+    "hosts": 1,
+    "hours": {
+     "00": {
+      "unknown": 60
+     },
+     "01": {
+      "unknown": 60
+     },
+     "02": {
+      "unknown": 60
+     },
+     "03": {
+      "unknown": 60
+     },
+     "04": {
+      "code-gen": 55,
+      "unknown": 5
+     },
+     "05": {
+      "code-gen": 60
+     },
+     "06": {
+      "code-gen": 60
+     },
+     "07": {
+      "code-gen": 32,
+      "no-work": 3,
+      "tokens": 25
+     },
+     "08": {
+      "code-gen": 7,
+      "no-work": 16,
+      "tokens": 37
+     },
+     "09": {
+      "code-gen": 60
+     },
+     "10": {
+      "code-gen": 60
+     },
+     "11": {
+      "code-gen": 35,
+      "no-work": 4,
+      "tokens": 21
+     },
+     "12": {
+      "no-work": 24,
+      "tokens": 36
+     },
+     "13": {
+      "ci": 8,
+      "code-gen": 7,
+      "no-work": 15,
+      "tokens": 30
+     },
+     "14": {
+      "code-gen": 34,
+      "no-work": 8,
+      "tokens": 18
+     },
+     "15": {
+      "no-work": 20,
+      "tokens": 40
+     },
+     "16": {
+      "box": 28,
+      "no-work": 14,
+      "tokens": 18
+     },
+     "17": {
+      "box": 21,
+      "no-work": 9,
+      "tokens": 30
+     },
+     "18": {
+      "box": 10,
+      "code-gen": 7,
+      "no-work": 14,
+      "tokens": 29
+     },
+     "19": {
+      "code-gen": 51,
+      "no-work": 3,
+      "tokens": 6
+     },
+     "20": {
+      "code-gen": 9,
+      "no-work": 9,
+      "tokens": 42
+     },
+     "21": {
+      "box": 37,
+      "no-work": 17,
+      "tokens": 6
+     },
+     "22": {
+      "box": 30,
+      "no-work": 13,
+      "tokens": 17
+     },
+     "23": {
+      "box": 14,
+      "no-work": 16,
+      "tokens": 30
+     }
+    },
+    "minutes": {
+     "box": 140,
+     "ci": 8,
+     "code-gen": 477,
+     "no-work": 185,
+     "tokens": 385,
+     "unknown": 245
+    }
+   },
+   "loop_runs": 7,
+   "loops_per_merged_pr": 0.54,
+   "max_workers": 2,
+   "new_work_share": 0.935,
+   "paused_hours": 0.0,
+   "pr_open_to_merge_h_median": 0.47,
+   "precheck": {
+    "failed_again": 1,
+    "passed": 8,
+    "sent_back": 5
+   },
+   "quality": {
+    "by_size": {
+     "1-2": {
+      "fixed": 0,
+      "merged": 11
+     },
+     "3-4": {
+      "fixed": 0,
+      "merged": 0
+     },
+     "5": {
+      "fixed": 0,
+      "merged": 1
+     },
+     "6+": {
+      "fixed": 0,
+      "merged": 1
+     }
+    },
+    "causes": {},
+    "fix_runs": 0
+   },
+   "review_wait_min_median": 3.0,
+   "slices_merged": 4,
+   "slot_use": 0.562,
+   "usd": 19.3,
+   "usd_per_merged_churn_pr": 1.48,
+   "worker_hours": {
+    "new_work": 25.23,
+    "pr_fix": 0.0,
+    "precheck_retry": 1.05,
+    "send_back": 0.7
+   }
   }
  },
  "hosts": {
@@ -16106,6 +16337,237 @@
      "precheck_retry": 0.0,
      "send_back": 0.0
     }
+   },
+   "2026-11-15": {
+    "api": {
+     "churn_by_caller": {
+      "ci_in_progress": 150,
+      "ci_occupancy": 1249,
+      "ci_profile_sample": 255,
+      "ci_queue": 150,
+      "gh_json_etag": 583,
+      "prs_graphql": 150,
+      "red_main_issues": 150,
+      "tend_bot_prs": 292
+     },
+     "churn_calls": 3547,
+     "churn_writes": 122,
+     "churn_writes_busiest_hour": 18,
+     "peak_hour": 1071,
+     "readings": 150,
+     "readings_at_zero": 0,
+     "used_by_hour": {
+      "03": 566,
+      "04": 1071,
+      "05": 500,
+      "06": 380,
+      "07": 543,
+      "08": 414,
+      "09": 205,
+      "10": 314,
+      "11": 592,
+      "12": 665,
+      "13": 686,
+      "14": 721,
+      "15": 548,
+      "16": 553,
+      "17": 744,
+      "18": 537,
+      "19": 920,
+      "20": 659,
+      "21": 636,
+      "22": 651,
+      "23": 323
+     },
+     "worker_calls": 53,
+     "worker_top_runs": {
+      "worker:7954-20261115T0424Z": 3,
+      "worker:7954-20261115T0858Z": 5,
+      "worker:8500-20261115T1419Z": 7,
+      "worker:8500-20261115T1423Z": 8,
+      "worker:8501-20261115T1353Z": 4
+     },
+     "worker_writes": 13
+    },
+    "churn_merged": 13,
+    "ci_busy_hours": 0.33,
+    "first_pass": {
+     "first_pass": 13,
+     "merged": 13
+    },
+    "holds": {
+     "pace": 75,
+     "paused": 1,
+     "prs-need-work": 0
+    },
+    "idle_blockers": {},
+    "idle_causes": {
+     "ci-admission": 2,
+     "other": 60
+    },
+    "idle_hours": 7.9,
+    "idle_ticks": 60,
+    "items_done": 1,
+    "limits": {
+     "hosts": 1,
+     "hours": {
+      "00": {
+       "unknown": 60
+      },
+      "01": {
+       "unknown": 60
+      },
+      "02": {
+       "unknown": 60
+      },
+      "03": {
+       "unknown": 60
+      },
+      "04": {
+       "code-gen": 55,
+       "unknown": 5
+      },
+      "05": {
+       "code-gen": 60
+      },
+      "06": {
+       "code-gen": 60
+      },
+      "07": {
+       "code-gen": 32,
+       "no-work": 3,
+       "tokens": 25
+      },
+      "08": {
+       "code-gen": 7,
+       "no-work": 16,
+       "tokens": 37
+      },
+      "09": {
+       "code-gen": 60
+      },
+      "10": {
+       "code-gen": 60
+      },
+      "11": {
+       "code-gen": 35,
+       "no-work": 4,
+       "tokens": 21
+      },
+      "12": {
+       "no-work": 24,
+       "tokens": 36
+      },
+      "13": {
+       "ci": 8,
+       "code-gen": 7,
+       "no-work": 15,
+       "tokens": 30
+      },
+      "14": {
+       "code-gen": 34,
+       "no-work": 8,
+       "tokens": 18
+      },
+      "15": {
+       "no-work": 20,
+       "tokens": 40
+      },
+      "16": {
+       "box": 28,
+       "no-work": 14,
+       "tokens": 18
+      },
+      "17": {
+       "box": 21,
+       "no-work": 9,
+       "tokens": 30
+      },
+      "18": {
+       "box": 10,
+       "code-gen": 7,
+       "no-work": 14,
+       "tokens": 29
+      },
+      "19": {
+       "code-gen": 51,
+       "no-work": 3,
+       "tokens": 6
+      },
+      "20": {
+       "code-gen": 9,
+       "no-work": 9,
+       "tokens": 42
+      },
+      "21": {
+       "box": 37,
+       "no-work": 17,
+       "tokens": 6
+      },
+      "22": {
+       "box": 30,
+       "no-work": 13,
+       "tokens": 17
+      },
+      "23": {
+       "box": 14,
+       "no-work": 16,
+       "tokens": 30
+      }
+     },
+     "minutes": {
+      "box": 140,
+      "ci": 8,
+      "code-gen": 477,
+      "no-work": 185,
+      "tokens": 385,
+      "unknown": 245
+     }
+    },
+    "loop_runs": 7,
+    "loops_per_merged_pr": 0.54,
+    "max_workers": 2,
+    "new_work_share": 0.935,
+    "paused_hours": 0.0,
+    "pr_open_to_merge_h_median": 0.47,
+    "precheck": {
+     "failed_again": 1,
+     "passed": 8,
+     "sent_back": 5
+    },
+    "quality": {
+     "by_size": {
+      "1-2": {
+       "fixed": 0,
+       "merged": 11
+      },
+      "3-4": {
+       "fixed": 0,
+       "merged": 0
+      },
+      "5": {
+       "fixed": 0,
+       "merged": 1
+      },
+      "6+": {
+       "fixed": 0,
+       "merged": 1
+      }
+     },
+     "causes": {},
+     "fix_runs": 0
+    },
+    "review_wait_min_median": 3.0,
+    "slices_merged": 4,
+    "slot_use": 0.562,
+    "usd": 19.3,
+    "usd_per_merged_churn_pr": 1.48,
+    "worker_hours": {
+     "new_work": 25.23,
+     "pr_fix": 0.0,
+     "precheck_retry": 1.05,
+     "send_back": 0.7
+    }
    }
   },
   "nyx": {
@@ -22134,5 +22596,5 @@
   }
  },
  "repo": "squid-protocol/gitgalaxy",
- "updated": "2026-11-15T04:03Z"
+ "updated": "2026-11-16T00:04Z"
 }
