@@ -32741,28 +32741,64 @@
   "2026-11-18": {
    "detail": {
     "bot_outcomes": {
-     "failure": 0,
-     "success": 33
+     "failure": 3,
+     "success": 171
     },
-    "bot_runs": 42,
+    "bot_runs": 228,
     "cancel_savings": {
-     "cancelled": 14,
-     "saved_min_est": 63,
+     "cancelled": 20,
+     "saved_min_est": 66,
      "unpriced": 0,
-     "wall_min": 118
+     "wall_min": 1040
     },
-    "ci_changes": [],
+    "ci_changes": [
+     {
+      "pr": 8591,
+      "title": "ci(evidence-refresh): a det-mutation shard lost to the runner no longer reds the run (#8590) (#8591)"
+     }
+    ],
     "est_method": "ratio-v2",
-    "population": 85,
+    "population": 453,
     "reruns": {
-     "attempts": 0,
-     "by_workflow": {},
-     "failed_again": 0,
-     "passed": 0,
-     "runs": 0
+     "attempts": 10,
+     "by_workflow": {
+      "Det Sweep": [
+       1,
+       0,
+       0
+      ],
+      "Equivalence E2E": [
+       1,
+       0,
+       0
+      ],
+      "Full Suite Gate (All OS x Python)": [
+       1,
+       0,
+       0
+      ],
+      "Generated Docs": [
+       2,
+       0,
+       0
+      ],
+      "GitGalaxy Smoke Tests": [
+       2,
+       0,
+       0
+      ],
+      "Mainframe Ground Truth": [
+       2,
+       1,
+       0
+      ]
+     },
+     "failed_again": 1,
+     "passed": 9,
+     "runs": 10
     },
-    "runner_min_ci": 40,
-    "runner_min_est": 212,
+    "runner_min_ci": 1118,
+    "runner_min_est": 2936,
     "sample": {
      "44204271478": {
       "m": 0.58,
@@ -32807,6 +32843,11 @@
        0.02
       ]
      },
+     "44204433173": {
+      "m": 0.0,
+      "o": "main",
+      "w": []
+     },
      "44204433518": {
       "m": 0.0,
       "o": "main",
@@ -32830,6 +32871,14 @@
       "m": 1.82,
       "o": "main",
       "w": [
+       0.03
+      ]
+     },
+     "44204558825": {
+      "m": 0.2,
+      "o": "main",
+      "w": [
+       0.03,
        0.03
       ]
      },
@@ -32869,6 +32918,16 @@
       "m": 0.95,
       "o": "bot",
       "w": [
+       0.03
+      ]
+     },
+     "44206940679": {
+      "m": 51.47,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.02,
+       0.02,
        0.03
       ]
      },
@@ -33011,58 +33070,381 @@
       "w": [
        0.02
       ]
+     },
+     "44218339248": {
+      "m": 22.65,
+      "o": "agent",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.03
+      ]
+     },
+     "44218339295": {
+      "m": 0.52,
+      "o": "agent",
+      "w": [
+       0.03
+      ]
+     },
+     "44218459246": {
+      "m": 0.45,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "44218540253": {
+      "m": 0.28,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "44222764398": {
+      "m": 1.78,
+      "o": "agent",
+      "w": [
+       0.02
+      ]
+     },
+     "44223781723": {
+      "m": 428.82,
+      "o": "main",
+      "w": [
+       0.05,
+       0.02,
+       0.02,
+       0.03,
+       0.02,
+       0.03,
+       0.02,
+       0.02,
+       0.03,
+       0.03,
+       0.83,
+       0.03,
+       0.97,
+       1.0,
+       0.02,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       5.9,
+       0.03,
+       0.03,
+       0.03,
+       0.77
+      ]
+     },
+     "44225209868": {
+      "m": 1.23,
+      "o": "main",
+      "w": [
+       0.17
+      ]
+     },
+     "44236758316": {
+      "m": 2.83,
+      "o": "automation",
+      "w": [
+       0.03
+      ]
+     },
+     "44236758363": {
+      "m": 3.13,
+      "o": "automation",
+      "w": [
+       0.03
+      ]
+     },
+     "44236758419": {
+      "m": 0.57,
+      "o": "automation",
+      "w": [
+       0.03
+      ]
+     },
+     "44238623428": {
+      "m": 178.05,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "44244440146": {
+      "m": 0.4,
+      "o": "main",
+      "w": [
+       0.02
+      ]
+     },
+     "44244484481": {
+      "m": 0.32,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "44260249013": {
+      "m": 2.18,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44269371089": {
+      "m": 0.93,
+      "o": "main",
+      "w": [
+       0.02,
+       0.02
+      ]
+     },
+     "44274159810": {
+      "m": 22.2,
+      "o": "bot",
+      "w": [
+       0.02,
+       0.03,
+       0.03,
+       0.02,
+       0.02,
+       0.02,
+       0.05,
+       0.07
+      ]
+     },
+     "44283337340": {
+      "m": 0.15,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44287414171": {
+      "m": 0.3,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "44294549381": {
+      "m": 0.68,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44296497744": {
+      "m": 0.23,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44296602948": {
+      "m": 0.48,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44296618643": {
+      "m": 0.48,
+      "o": "main",
+      "w": [
+       0.02,
+       0.08,
+       0.03
+      ]
+     },
+     "44296723959": {
+      "m": 0.22,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "44299105123": {
+      "m": 0.22,
+      "o": "main",
+      "w": [
+       0.23
+      ]
+     },
+     "44301463729": {
+      "m": 0.63,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44304611936": {
+      "m": 0.53,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44305696347": {
+      "m": 0.45,
+      "o": "main",
+      "w": [
+       0.15
+      ]
+     },
+     "44305717875": {
+      "m": 2.67,
+      "o": "bot",
+      "w": [
+       0.05
+      ]
+     },
+     "44305717937": {
+      "m": 3.68,
+      "o": "bot",
+      "w": [
+       0.02
+      ]
+     },
+     "44305718235": {
+      "m": 6.78,
+      "o": "bot",
+      "w": [
+       0.05,
+       0.03
+      ]
+     },
+     "44305718538": {
+      "m": 7.23,
+      "o": "bot",
+      "w": [
+       0.03
+      ]
+     },
+     "44309436119": {
+      "m": 25.35,
+      "o": "bot",
+      "w": [
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.13,
+       0.03,
+       0.02
+      ]
+     },
+     "44310402822": {
+      "m": 4.33,
+      "o": "main",
+      "w": [
+       0.03
+      ]
+     },
+     "44310402976": {
+      "m": 12.63,
+      "o": "main",
+      "w": [
+       0.05,
+       0.03,
+       0.03,
+       0.03,
+       0.03,
+       0.1
+      ]
+     },
+     "44311166007": {
+      "m": 0.52,
+      "o": "main",
+      "w": [
+       0.03
+      ]
      }
     },
     "sample_target": 30,
     "sampled_min_by_origin": {
-     "bot": 52.8,
-     "main": 25.0,
-     "other": 134.4
+     "agent": 237.1,
+     "automation": 30.2,
+     "bot": 1312.3,
+     "main": 1072.0,
+     "other": 284.6
     },
     "sampled_min_by_workflow": {
-     "CI shepherd (label events)": 9.0,
-     "CI shepherd (reconcile)": 8.5,
-     "Deploy Museum of Code Docs": 3.0,
-     "Det Sweep": 11.4,
-     "Equivalence E2E": 70.6,
-     "Generated Docs": 6.5,
-     "GitGalaxy Smoke Tests": 32.0,
-     "GitGalaxy Zero-Trust Pipeline": 14.3,
-     "Main Watch": 1.6,
-     "Mainframe Ground Truth": 25.6,
-     "Mypy Audit": 4.5,
-     "Ports Compile": 8.4,
-     "Ruff Audit": 3.3,
-     "Small Audits": 12.2,
-     "pages build and deployment": 0.9,
-     "post-merge": 0.4
+     "Archetype Validation": 30.9,
+     "CI shepherd (label events)": 24.8,
+     "CI shepherd (reconcile)": 58.2,
+     "CICS Crucible": 91.4,
+     "Cache Prune": 2.5,
+     "CodeQL Security Scan": 83.5,
+     "Deploy Museum of Code Docs": 68.2,
+     "Det Sweep": 186.6,
+     "Equivalence E2E": 437.8,
+     "Evidence Refresh": 411.3,
+     "Flake history (refresh)": 8.1,
+     "Full Suite Gate (All OS x Python)": 73.4,
+     "Generated Docs": 15.6,
+     "Generated Java Base Generation": 53.4,
+     "GitGalaxy Smoke Tests": 384.1,
+     "GitGalaxy Zero-Trust Pipeline": 52.6,
+     "Golden Crucible Resilience Test": 42.7,
+     "Main Watch": 4.9,
+     "Mainframe Ground Truth": 448.6,
+     "Muninn Security Scan": 48.2,
+     "Mypy Audit": 49.0,
+     "Ports Compile": 125.0,
+     "Ruff Audit": 39.1,
+     "Small Audits": 121.3,
+     "pages build and deployment": 20.7,
+     "post-merge": 15.9,
+     "rosetta-audit": 38.5
     },
-    "sampled_runs": 33,
+    "sampled_runs": 71,
     "wait_median": 0.03,
-    "wait_p90": 0.03
+    "wait_p90": 0.05
    },
-   "merged": 2,
+   "merged": 16,
    "merged_by_class": {
-    "agent": 0,
+    "agent": 4,
     "automation": 0,
-    "bot": 1,
-    "other": 1
+    "bot": 9,
+    "other": 3
    },
    "merged_by_repo": {
+    "squid-protocol/cics-crucible": 1,
     "squid-protocol/cobol_to_java_examples": 1,
-    "squid-protocol/gitgalaxy": 1
+    "squid-protocol/gitgalaxy": 10,
+    "squid-protocol/promoter-bot": 1,
+    "squid-protocol/squid-bot": 3
    },
    "merged_scope": "org",
    "runs": {
-    "cancelled": 19,
-    "failure": 1,
-    "skipped": 14,
-    "success": 60,
-    "total": 95
+    "cancelled": 30,
+    "failure": 8,
+    "skipped": 165,
+    "success": 411,
+    "total": 620
    }
   }
  },
- "open_prs": 4,
+ "open_prs": 6,
  "repo": "squid-protocol/gitgalaxy",
  "scorecard": {
   "days": {
@@ -36526,13 +36908,13 @@
        "15": 3,
        "16": 25,
        "17": 4,
-       "18": 17,
+       "18": 18,
        "19": 5,
        "20": 6,
        "21": 4,
        "22": 4
       },
-      "total": 125
+      "total": 126
      }
     }
    },
@@ -36603,13 +36985,13 @@
        "15": 14,
        "16": 14,
        "17": 14,
-       "18": 13,
+       "18": 12,
        "20": 14,
        "21": 4,
        "22": 1,
        "23": 5
       },
-      "total": 258
+      "total": 257
      },
      "squid-shepherd": {
       "busiest_hour": 1,
@@ -36628,7 +37010,7 @@
        "06": 16,
        "07": 2,
        "08": 25,
-       "09": 21,
+       "09": 22,
        "10": 3,
        "11": 9,
        "12": 10,
@@ -36644,46 +37026,89 @@
        "22": 3,
        "23": 5
       },
-      "total": 267
+      "total": 268
      }
     }
    },
    "2026-11-18": {
-    "closed": 1,
+    "closed": 2,
     "not_planned": 0,
-    "opened": 0,
-    "opened_by_origin": {},
-    "red_main": 0,
-    "red_main_h_median": null,
+    "opened": 3,
+    "opened_by_origin": {
+     "automation": 1,
+     "owner": 2
+    },
+    "red_main": 1,
+    "red_main_h_median": 1.3,
     "red_main_open": 0,
     "resolve_h_median": 99.4,
-    "resolved": 1,
-    "resolved_by_bot": 1,
+    "resolved": 2,
+    "resolved_by_bot": 2,
     "resolved_by_origin": {
+     "automation": 1,
      "owner": 1
     },
     "writes": {
+     "github-actions": {
+      "busiest_hour": 1,
+      "hours": {
+       "04": 1
+      },
+      "total": 1
+     },
+     "github-actions[bot]": {
+      "busiest_hour": 1,
+      "hours": {
+       "02": 1,
+       "04": 1,
+       "05": 1,
+       "10": 1,
+       "12": 1,
+       "13": 1
+      },
+      "total": 6
+     },
      "squid-protocol": {
-      "busiest_hour": 5,
+      "busiest_hour": 28,
       "hours": {
        "00": 5,
-       "01": 2
+       "01": 3,
+       "02": 6,
+       "04": 4,
+       "05": 1,
+       "07": 8,
+       "08": 1,
+       "09": 4,
+       "10": 4,
+       "11": 28,
+       "12": 11,
+       "13": 1
       },
-      "total": 7
+      "total": 76
      },
      "squid-shepherd[bot]": {
       "busiest_hour": 18,
       "hours": {
        "00": 18,
-       "01": 3
+       "01": 4,
+       "02": 2,
+       "04": 3,
+       "05": 9,
+       "07": 8,
+       "08": 2,
+       "09": 9,
+       "10": 7,
+       "11": 10,
+       "12": 2,
+       "13": 7
       },
-      "total": 21
+      "total": 81
      }
     }
    }
   },
-  "open_at": "2026-11-18T01:22Z",
-  "open_now": 140
+  "open_at": "2026-11-18T13:19Z",
+  "open_now": 142
  },
- "updated": "2026-11-18T01:22Z"
+ "updated": "2026-11-18T13:19Z"
 }
