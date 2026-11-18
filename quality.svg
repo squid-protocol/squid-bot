@@ -69,21 +69,21 @@
   <text class="lead" x="24" y="77">All hosts, rolling 7 days, a new point every day.</text>
   <rect class="tile" x="24.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="36.0" y="126">FIRST PASS</text>
-  <text class="v" x="36.0" y="154">73%</text>
-  <text class="sub" x="36.0" y="172">144 of 197 merged · +0 pts</text>
+  <text class="v" x="36.0" y="154">79%</text>
+  <text class="sub" x="36.0" y="172">149 of 189 merged · +8 pts</text>
   <rect class="tile" x="245.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="257.0" y="126">FIX RATE, 1-4 FILES</text>
-  <text class="v" x="257.0" y="154">20%</text>
-  <text class="sub" x="257.0" y="172">29 of 148 PRs · +3 pts</text>
+  <text class="v" x="257.0" y="154">18%</text>
+  <text class="sub" x="257.0" y="172">27 of 148 PRs · +1 pts</text>
   <rect class="tile" x="466.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="478.0" y="126">FIX RATE, 5+ FILES</text>
-  <text class="v" x="478.0" y="154">33%</text>
-  <text class="sub" x="478.0" y="172">16 of 49 PRs · -8 pts</text>
+  <text class="v" x="478.0" y="154">20%</text>
+  <text class="sub" x="478.0" y="172">8 of 41 PRs · -23 pts</text>
   <rect class="tile" x="687.0" y="105" width="209.0" height="76" rx="8"/>
   <text class="k" x="699.0" y="126">TOP CAUSE</text>
   <text class="v" x="699.0" y="154">conflict</text>
-  <text class="sub" x="699.0" y="172">31 of 64 fix runs</text>
-  <text class="meta" x="896" y="97" text-anchor="end">7 days Nov 10 – Nov 16</text>
+  <text class="sub" x="699.0" y="172">23 of 48 fix runs</text>
+  <text class="meta" x="896" y="97" text-anchor="end">7 days Nov 11 – Nov 17</text>
   <text class="h2" x="24" y="209">Fix rate by PR size: share of merged PRs that needed a review send-back or CI fix run</text>
   <line class="base" x1="68" x2="716" y1="397.0" y2="397.0"/>
   <text class="tick" x="60" y="401.5" text-anchor="end">0%</text>
@@ -95,27 +95,26 @@
   <text class="tick" x="60" y="274.0" text-anchor="end">60%</text>
   <line class="grid" x1="68" x2="716" y1="227.0" y2="227.0"/>
   <text class="tick" x="60" y="231.5" text-anchor="end">80%</text>
-  <text class="tick" x="123.5" y="416" text-anchor="middle">Oct 15</text>
-  <text class="tick" x="197.6" y="416" text-anchor="middle">Oct 19</text>
-  <text class="tick" x="271.7" y="416" text-anchor="middle">Oct 23</text>
-  <text class="tick" x="345.7" y="416" text-anchor="middle">Oct 27</text>
-  <text class="tick" x="419.8" y="416" text-anchor="middle">Oct 31</text>
-  <text class="tick" x="493.8" y="416" text-anchor="middle">Nov 4</text>
-  <text class="tick" x="567.9" y="416" text-anchor="middle">Nov 8</text>
-  <text class="tick" x="641.9" y="416" text-anchor="middle">Nov 12</text>
-  <text class="tick" x="716.0" y="416" text-anchor="middle">Nov 16</text>
-  <polyline class="line qs1" points="86.5,397.0 105.0,338.0 123.5,341.6 142.1,357.9 160.6,361.6 179.1,359.8 197.6,358.4 216.1,358.1 234.6,356.4 253.1,358.0 271.7,357.1 290.2,353.7 308.7,352.1 327.2,351.6 345.7,351.6 364.2,355.6 382.7,356.1 401.3,356.2 419.8,364.8 438.3,369.5 456.8,370.5 475.3,371.1 493.8,370.0 512.3,369.4 530.9,370.3 549.4,367.7 567.9,364.3 586.4,365.4 604.9,367.6 623.4,365.5 641.9,361.4 660.5,362.1 679.0,360.7 697.5,367.4 716.0,368.4"><title>1-2 files, last 7 days: 14 of 104 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs3" points="86.5,264.2 105.0,269.5 123.5,268.0 142.1,278.2 160.6,284.7 179.1,300.8 197.6,307.2 216.1,316.2 234.6,320.8 253.1,325.5 271.7,335.5 290.2,334.4 308.7,340.4 327.2,343.5 345.7,345.5 364.2,347.2 382.7,350.4 401.3,347.4 419.8,356.9 438.3,352.3 456.8,353.8 475.3,351.9 493.8,352.5 512.3,351.6 530.9,347.2 549.4,352.9 567.9,354.2 586.4,354.8 604.9,351.9 623.4,354.1 641.9,348.7 660.5,354.0 679.0,341.6 697.5,339.8 716.0,324.6"><title>3-4 files, last 7 days: 15 of 44 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs2" points="142.1,366.6 160.6,277.5 179.1,290.8 197.6,276.3 216.1,277.2 234.6,278.6 253.1,283.9 271.7,283.8 290.2,298.8 308.7,299.2 327.2,309.6 345.7,316.7 364.2,318.6 382.7,318.7 401.3,319.2 419.8,327.2 438.3,328.3 456.8,327.3 475.3,318.5 493.8,324.1 512.3,328.6 530.9,336.9 549.4,329.9 567.9,333.2 586.4,327.9 604.9,341.1 623.4,336.3 641.9,349.2 660.5,362.5 679.0,368.3 697.5,381.8 716.0,388.8"><title>5 files, last 7 days: 1 of 26 merged PRs needed a fix</title></polyline>
-  <polyline class="line qs4" points="68.0,302.6 86.5,318.7 105.0,306.7 123.5,278.9 142.1,273.0 160.6,274.0 179.1,277.3 197.6,278.0 216.1,274.9 234.6,264.2 253.1,273.6 271.7,276.1 290.2,275.6 308.7,263.8 327.2,268.9 345.7,264.2 364.2,279.3 382.7,287.4 401.3,304.3 419.8,312.9 438.3,331.2 456.8,320.7 475.3,314.1 493.8,293.5 512.3,284.8 530.9,270.8 549.4,269.5 567.9,281.1 586.4,274.0 604.9,260.4 623.4,266.8 641.9,273.6 660.5,275.6 679.0,266.2 697.5,255.3 716.0,258.4"><title>6+ files, last 7 days: 15 of 23 merged PRs needed a fix</title></polyline>
-  <rect class="qs4k" x="726" y="256.4" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="263.4">6+ files 65%</text>
-  <rect class="qs3k" x="726" y="322.6" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="329.6">3-4 files 34%</text>
-  <rect class="qs1k" x="726" y="366.4" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="373.4">1-2 files 13%</text>
-  <rect class="qs2k" x="726" y="386.8" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="393.8">5 files 4%</text>
+  <text class="tick" x="86.0" y="416" text-anchor="middle">Oct 13</text>
+  <text class="tick" x="176.0" y="416" text-anchor="middle">Oct 18</text>
+  <text class="tick" x="266.0" y="416" text-anchor="middle">Oct 23</text>
+  <text class="tick" x="356.0" y="416" text-anchor="middle">Oct 28</text>
+  <text class="tick" x="446.0" y="416" text-anchor="middle">Nov 2</text>
+  <text class="tick" x="536.0" y="416" text-anchor="middle">Nov 7</text>
+  <text class="tick" x="626.0" y="416" text-anchor="middle">Nov 12</text>
+  <text class="tick" x="716.0" y="416" text-anchor="middle">Nov 17</text>
+  <polyline class="line qs1" points="86.0,397.0 104.0,338.0 122.0,341.6 140.0,357.9 158.0,361.6 176.0,359.8 194.0,358.4 212.0,358.1 230.0,356.4 248.0,358.0 266.0,357.1 284.0,353.7 302.0,352.1 320.0,351.6 338.0,351.6 356.0,355.6 374.0,356.1 392.0,356.2 410.0,364.8 428.0,369.5 446.0,370.5 464.0,371.1 482.0,370.0 500.0,369.4 518.0,370.3 536.0,367.7 554.0,364.3 572.0,365.4 590.0,367.6 608.0,365.5 626.0,361.4 644.0,362.1 662.0,360.7 680.0,367.4 698.0,368.4 716.0,366.9"><title>1-2 files, last 7 days: 15 of 106 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs3" points="86.0,264.2 104.0,269.5 122.0,268.0 140.0,278.2 158.0,284.7 176.0,300.8 194.0,307.2 212.0,316.2 230.0,320.8 248.0,325.5 266.0,335.5 284.0,334.4 302.0,340.4 320.0,343.5 338.0,345.5 356.0,347.2 374.0,350.4 392.0,347.4 410.0,356.9 428.0,352.3 446.0,353.8 464.0,351.9 482.0,352.5 500.0,351.6 518.0,347.2 536.0,352.9 554.0,354.2 572.0,354.8 590.0,351.9 608.0,354.1 626.0,348.7 644.0,354.0 662.0,341.6 680.0,339.8 698.0,324.6 716.0,336.3"><title>3-4 files, last 7 days: 12 of 42 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs2" points="140.0,366.6 158.0,277.5 176.0,290.8 194.0,276.3 212.0,277.2 230.0,278.6 248.0,283.9 266.0,283.8 284.0,298.8 302.0,299.2 320.0,309.6 338.0,316.7 356.0,318.6 374.0,318.7 392.0,319.2 410.0,327.2 428.0,328.3 446.0,327.3 464.0,318.5 482.0,324.1 500.0,328.6 518.0,336.9 536.0,329.9 554.0,333.2 572.0,327.9 590.0,341.1 608.0,336.3 626.0,349.2 644.0,362.5 662.0,368.3 680.0,381.8 698.0,388.8 716.0,389.4"><title>5 files, last 7 days: 1 of 28 merged PRs needed a fix</title></polyline>
+  <polyline class="line qs4" points="68.0,302.6 86.0,318.7 104.0,306.7 122.0,278.9 140.0,273.0 158.0,274.0 176.0,277.3 194.0,278.0 212.0,274.9 230.0,264.2 248.0,273.6 266.0,276.1 284.0,275.6 302.0,263.8 320.0,268.9 338.0,264.2 356.0,279.3 374.0,287.4 392.0,304.3 410.0,312.9 428.0,331.2 446.0,320.7 464.0,314.1 482.0,293.5 500.0,284.8 518.0,270.8 536.0,269.5 554.0,281.1 572.0,274.0 590.0,260.4 608.0,266.8 626.0,273.6 644.0,275.6 662.0,266.2 680.0,255.3 698.0,258.4 716.0,282.6"><title>6+ files, last 7 days: 7 of 13 merged PRs needed a fix</title></polyline>
+  <rect class="qs4k" x="726" y="280.6" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="287.6">6+ files 54%</text>
+  <rect class="qs3k" x="726" y="334.3" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="341.3">3-4 files 29%</text>
+  <rect class="qs1k" x="726" y="364.9" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="371.9">1-2 files 14%</text>
+  <rect class="qs2k" x="726" y="387.4" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="394.4">5 files 4%</text>
   <text class="h2" x="24" y="445">What broke: fix runs per 100 merged PRs, by cause</text>
   <line class="base" x1="68" x2="716" y1="633.0" y2="633.0"/>
   <text class="tick" x="60" y="637.5" text-anchor="end">0</text>
@@ -127,30 +126,29 @@
   <text class="tick" x="60" y="510.0" text-anchor="end">30</text>
   <line class="grid" x1="68" x2="716" y1="463.0" y2="463.0"/>
   <text class="tick" x="60" y="467.5" text-anchor="end">40</text>
-  <text class="tick" x="123.5" y="652" text-anchor="middle">Oct 15</text>
-  <text class="tick" x="197.6" y="652" text-anchor="middle">Oct 19</text>
-  <text class="tick" x="271.7" y="652" text-anchor="middle">Oct 23</text>
-  <text class="tick" x="345.7" y="652" text-anchor="middle">Oct 27</text>
-  <text class="tick" x="419.8" y="652" text-anchor="middle">Oct 31</text>
-  <text class="tick" x="493.8" y="652" text-anchor="middle">Nov 4</text>
-  <text class="tick" x="567.9" y="652" text-anchor="middle">Nov 8</text>
-  <text class="tick" x="641.9" y="652" text-anchor="middle">Nov 12</text>
-  <text class="tick" x="716.0" y="652" text-anchor="middle">Nov 16</text>
-  <polyline class="line qs1" points="68.0,558.0 86.5,575.6 105.0,596.3 123.5,586.2 142.1,583.5 160.6,578.6 179.1,579.7 197.6,581.7 216.1,584.2 234.6,575.9 253.1,574.0 271.7,578.7 290.2,582.6 308.7,581.9 327.2,583.1 345.7,581.6 364.2,588.4 382.7,596.1 401.3,599.0 419.8,602.6 438.3,610.2 456.8,610.3 475.3,610.7 493.8,610.0 512.3,609.6 530.9,606.3 549.4,608.6 567.9,603.5 586.4,595.5 604.9,595.6 623.4,589.0 641.9,584.5 660.5,585.9 679.0,581.3 697.5,582.5 716.0,594.2"><title>derived file not refreshed, last 7 days: 18 fix runs per 197 merged PRs</title></polyline>
-  <polyline class="line qs3" points="68.0,583.0 86.5,587.1 105.0,591.0 123.5,593.4 142.1,599.1 160.6,596.1 179.1,600.6 197.6,602.6 216.1,603.7 234.6,601.5 253.1,603.2 271.7,603.2 290.2,591.0 308.7,587.7 327.2,587.8 345.7,587.0 364.2,585.9 382.7,577.9 401.3,573.1 419.8,585.7 438.3,586.7 456.8,586.8 475.3,584.8 493.8,586.9 512.3,596.7 530.9,585.2 549.4,586.9 567.9,588.8 586.4,582.2 604.9,577.9 623.4,575.9 641.9,557.2 660.5,574.2 679.0,568.0 697.5,563.1 716.0,566.1"><title>conflict with main, last 7 days: 31 fix runs per 197 merged PRs</title></polyline>
-  <polyline class="line qs2" points="68.0,533.0 86.5,587.1 105.0,580.5 123.5,561.0 142.1,562.6 160.6,573.3 179.1,580.9 197.6,589.3 216.1,594.0 234.6,597.2 253.1,604.5 271.7,603.8 290.2,603.4 308.7,605.2 327.2,605.7 345.7,605.6 364.2,607.5 382.7,607.5 401.3,611.1 419.8,616.8 438.3,617.8 456.8,617.8 475.3,616.5 493.8,614.4 512.3,614.9 530.9,619.2 549.4,619.8 567.9,620.4 586.4,619.8 604.9,618.7 623.4,622.3 641.9,621.8 660.5,618.3 679.0,616.3 697.5,617.5 716.0,617.9"><title>broke other tests, last 7 days: 7 fix runs per 197 merged PRs</title></polyline>
-  <polyline class="line qs4" points="68.0,633.0 86.5,621.5 105.0,559.5 123.5,499.7 142.1,533.9 160.6,550.5 179.1,570.5 197.6,569.3 216.1,567.2 234.6,560.6 253.1,579.7 271.7,586.5 290.2,594.6 308.7,592.2 327.2,594.4 345.7,597.8 364.2,606.0 382.7,604.4 401.3,594.4 419.8,586.4 438.3,577.7 456.8,580.6 475.3,578.3 493.8,583.2 512.3,585.4 530.9,591.7 549.4,592.6 567.9,609.9 586.4,607.6 604.9,608.8 623.4,609.2 641.9,613.1 660.5,618.3 679.0,618.0 697.5,617.5 716.0,617.9"><title>main red / flake / infra, last 7 days: 7 fix runs per 197 merged PRs</title></polyline>
-  <polyline class="line qn" points="68.0,508.0 86.5,541.1 105.0,538.6 123.5,535.8 142.1,541.7 160.6,562.8 179.1,579.7 197.6,585.5 216.1,593.2 234.6,603.7 253.1,611.4 271.7,616.8 290.2,619.7 308.7,621.3 327.2,624.5 345.7,624.7 364.2,623.7 382.7,620.0 401.3,615.1 419.8,606.0 438.3,598.4 456.8,597.2 475.3,594.2 493.8,592.9 512.3,597.5 530.9,602.2 549.4,608.6 567.9,618.3 586.4,618.6 604.9,622.0 623.4,623.5 641.9,625.5 660.5,627.1 679.0,628.0 697.5,627.2 716.0,630.8"><title>own tests, review, other, last 7 days: 1 fix runs per 197 merged PRs</title></polyline>
-  <rect class="qs3k" x="726" y="564.1" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="571.1">conflict 16</text>
-  <rect class="qs1k" x="726" y="592.2" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="599.2">stale 9</text>
-  <rect class="qs2k" x="726" y="615.9" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="622.9">collateral 4</text>
-  <rect class="qs4k" x="726" y="633.9" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="640.9">env 4</text>
-  <rect class="qnk" x="726" y="651.9" width="12" height="4" rx="2"/>
-  <text class="lbl" x="744" y="658.9">other 1</text>
+  <text class="tick" x="86.0" y="652" text-anchor="middle">Oct 13</text>
+  <text class="tick" x="176.0" y="652" text-anchor="middle">Oct 18</text>
+  <text class="tick" x="266.0" y="652" text-anchor="middle">Oct 23</text>
+  <text class="tick" x="356.0" y="652" text-anchor="middle">Oct 28</text>
+  <text class="tick" x="446.0" y="652" text-anchor="middle">Nov 2</text>
+  <text class="tick" x="536.0" y="652" text-anchor="middle">Nov 7</text>
+  <text class="tick" x="626.0" y="652" text-anchor="middle">Nov 12</text>
+  <text class="tick" x="716.0" y="652" text-anchor="middle">Nov 17</text>
+  <polyline class="line qs1" points="68.0,558.0 86.0,575.6 104.0,596.3 122.0,586.2 140.0,583.5 158.0,578.6 176.0,579.7 194.0,581.7 212.0,584.2 230.0,575.9 248.0,574.0 266.0,578.7 284.0,582.6 302.0,581.9 320.0,583.1 338.0,581.6 356.0,588.4 374.0,596.1 392.0,599.0 410.0,602.6 428.0,610.2 446.0,610.3 464.0,610.7 482.0,610.0 500.0,609.6 518.0,606.3 536.0,608.6 554.0,603.5 572.0,595.5 590.0,595.6 608.0,589.0 626.0,584.5 644.0,585.9 662.0,581.3 680.0,582.5 698.0,594.2 716.0,603.8"><title>derived file not refreshed, last 7 days: 13 fix runs per 189 merged PRs</title></polyline>
+  <polyline class="line qs3" points="68.0,583.0 86.0,587.1 104.0,591.0 122.0,593.4 140.0,599.1 158.0,596.1 176.0,600.6 194.0,602.6 212.0,603.7 230.0,601.5 248.0,603.2 266.0,603.2 284.0,591.0 302.0,587.7 320.0,587.8 338.0,587.0 356.0,585.9 374.0,577.9 392.0,573.1 410.0,585.7 428.0,586.7 446.0,586.8 464.0,584.8 482.0,586.9 500.0,596.7 518.0,585.2 536.0,586.9 554.0,588.8 572.0,582.2 590.0,577.9 608.0,575.9 626.0,557.2 644.0,574.2 662.0,568.0 680.0,563.1 698.0,566.1 716.0,581.3"><title>conflict with main, last 7 days: 23 fix runs per 189 merged PRs</title></polyline>
+  <polyline class="line qs2" points="68.0,533.0 86.0,587.1 104.0,580.5 122.0,561.0 140.0,562.6 158.0,573.3 176.0,580.9 194.0,589.3 212.0,594.0 230.0,597.2 248.0,604.5 266.0,603.8 284.0,603.4 302.0,605.2 320.0,605.7 338.0,605.6 356.0,607.5 374.0,607.5 392.0,611.1 410.0,616.8 428.0,617.8 446.0,617.8 464.0,616.5 482.0,614.4 500.0,614.9 518.0,619.2 536.0,619.8 554.0,620.4 572.0,619.8 590.0,618.7 608.0,622.3 626.0,621.8 644.0,618.3 662.0,616.3 680.0,617.5 698.0,617.9 716.0,621.8"><title>broke other tests, last 7 days: 5 fix runs per 189 merged PRs</title></polyline>
+  <polyline class="line qs4" points="68.0,633.0 86.0,621.5 104.0,559.5 122.0,499.7 140.0,533.9 158.0,550.5 176.0,570.5 194.0,569.3 212.0,567.2 230.0,560.6 248.0,579.7 266.0,586.5 284.0,594.6 302.0,592.2 320.0,594.4 338.0,597.8 356.0,606.0 374.0,604.4 392.0,594.4 410.0,586.4 428.0,577.7 446.0,580.6 464.0,578.3 482.0,583.2 500.0,585.4 518.0,591.7 536.0,592.6 554.0,609.9 572.0,607.6 590.0,608.8 608.0,609.2 626.0,613.1 644.0,618.3 662.0,618.0 680.0,617.5 698.0,617.9 716.0,626.3"><title>main red / flake / infra, last 7 days: 3 fix runs per 189 merged PRs</title></polyline>
+  <polyline class="line qn" points="68.0,508.0 86.0,541.1 104.0,538.6 122.0,535.8 140.0,541.7 158.0,562.8 176.0,579.7 194.0,585.5 212.0,593.2 230.0,603.7 248.0,611.4 266.0,616.8 284.0,619.7 302.0,621.3 320.0,624.5 338.0,624.7 356.0,623.7 374.0,620.0 392.0,615.1 410.0,606.0 428.0,598.4 446.0,597.2 464.0,594.2 482.0,592.9 500.0,597.5 518.0,602.2 536.0,608.6 554.0,618.3 572.0,618.6 590.0,622.0 608.0,623.5 626.0,625.5 644.0,627.1 662.0,628.0 680.0,627.2 698.0,630.8 716.0,624.0"><title>own tests, review, other, last 7 days: 4 fix runs per 189 merged PRs</title></polyline>
+  <rect class="qs3k" x="726" y="579.3" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="586.3">conflict 12</text>
+  <rect class="qs1k" x="726" y="601.8" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="608.8">stale 7</text>
+  <rect class="qs2k" x="726" y="619.8" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="626.8">collateral 3</text>
+  <rect class="qnk" x="726" y="637.8" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="644.8">other 2</text>
+  <rect class="qs4k" x="726" y="655.8" width="12" height="4" rx="2"/>
+  <text class="lbl" x="744" y="662.8">env 2</text>
   <text class="meta" x="24" y="675">Each day is the 7 days ending on it (fewer at the start); a size line is drawn where that window has 5 merged PRs or more.</text>
   <text class="meta" x="24" y="693">Tiles: the last 7 days, change on the 7 before. Causes are labelled by a model from each fix run&apos;s report.</text>
   <text class="meta" x="24" y="711">Data: factory.json "quality", summed over every orchestrator host.</text>
