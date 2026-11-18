@@ -940,18 +940,67 @@ def test_quality_sheet_draws_daily_rolling_fix_rates_by_size_and_causes():
     assert rows[-1]["by_size"]["5"] == {"merged": 7, "fixed": 0} and rows[-1]["causes"]["stale"] == 7
     svg = dashboard.render_quality(data, TODAY, dashboard.Config(repo="owner/repo"))
     ET.fromstring(svg)
-    assert "PR quality by size" in svg and "All hosts, rolling 7 days" in svg and "FIX RATE, 5+ FILES" in svg
-    assert "3 of 10 PRs · -70 pts" in svg  # 5+ files: (0 + 3) of (7 + 3), against 7 of 7 the window a week before
+    assert "PR quality by size" in svg and "Size lines roll 14 days and causes 7" in svg
+    assert "FIX RATE, 5 FILES" in svg and "FIX RATE, 6+ FILES" in svg
+    assert "0 of 7 PRs · -100 pts" in svg  # 5 files: 0 of 7 this week, against 7 of 7 the window a week before
+    assert "3 of 3 PRs" in svg  # 6+: the old lump (3 PRs, all fixed), nothing the week before to compare with
     assert "1 of 21 PRs" in svg  # 1-4 files
-    assert "<circle" not in svg and "<polyline" in svg  # lines only
-    assert "5 files, last 7 days: 0 of 7 merged PRs needed a fix" in svg  # hover text per line
+    assert "<polyline" in svg and svg.count("<circle") == 4  # lines; the only dots are the by-size table's (4 rows: 1-2, 3-4, 5, 6+)
+    assert "5 files, last 14 days: 7 of 14 merged PRs needed a fix" in svg  # hover text per line, on the 14-day window
     assert ">6+ files" not in svg  # under 5 PRs in a window: a gap, no label
+    assert "By size, " in svg and "95% interval" in svg  # the table says how sure each rate is
     assert ">stale 25<" in svg and ">other 25<" in svg  # 7 fix runs per 28 merged PRs; review folds into other
     assert ">Oct 13<" in svg and ">Oct 1<" in svg and ">Sep 30<" not in svg  # every 2nd day, counted from the last
     md = "\n".join(dashboard.quality_md(data, TODAY))
-    assert "| fix 5 |" in md and "(partial)" in md
+    assert "| fix 5 |" in md and "| fix 6 | fix 7 | fix 8+ |" in md and "(partial)" in md
     assert dashboard.render_quality(_data(3), TODAY, dashboard.Config(repo="owner/repo")) is None
     assert dashboard.quality_md(_data(3), TODAY) == []
+
+
+def _split_data():
+    """Two weeks where 5, 6 and 7 file PRs are recorded apart and 8+ is rare; the first days carry the old 6+ lump."""
+    data = _data(3)
+    days = {}
+    for k in range(20):
+        d = (date(2026, 11, 1) + dashboard.timedelta(days=k)).isoformat()
+        if k < 6:  # recorded before the split: one lump
+            sizes = {"1-2": (4, 1), "5": (2, 1), "6+": (3, 2)}
+        else:
+            sizes = {"1-2": (4, 1), "5": (2, 0), "6": (2, int(k % 2 == 0)), "7": (1, 1), "8+": (1 if k == 19 else 0, 1 if k == 19 else 0)}
+        days[d] = _quality_day(sizes, {"stale": 1}, 8, 6)
+    data["factory"] = {"days": days}
+    return data
+
+
+def test_quality_sizes_5_6_7_and_8plus_are_their_own_lines_with_their_counts():
+    data = _split_data()
+    svg = dashboard.render_quality(data, TODAY, dashboard.Config(repo="owner/repo"))
+    ET.fromstring(svg)
+    for label in ("5 files", "6 files", "7 files"):
+        assert f">{label} " in svg or f">{label}<" in svg  # a line and an end label for each
+    assert re.search(r">6 files \d+%<tspan class=\"nlbl\"> n=\d+", svg)  # the PRs behind the last point
+    assert not re.search(r">8\+ files \d+%", svg)  # one PR in the window: no line that looks sure of itself ...
+    assert ">8+ files<" in svg and "1 of 1 needed a fix = 100% (95% interval 21-100%)" in svg  # ... but the table shows it, wide
+    assert "6+ (not split)" in svg and "Dashed = 6 or more files" in svg  # the old lump stays visible for the days before the split
+    assert "FIX RATE, 6+ FILES" in svg
+    tot = dashboard.quality_total(data)
+    assert tot["by_size"]["8+"] == {"merged": 1, "fixed": 1} and tot["by_size"]["6+"] == {"merged": 18, "fixed": 12}
+    assert tot["by_size"]["7"] == {"merged": 14, "fixed": 14}
+    md = "\n".join(dashboard.quality_md(data, TODAY))
+    assert "| fix 6+ (not split) |" in md
+
+
+def test_an_unknown_size_bucket_is_kept_not_dropped():
+    acc = dashboard._quality_zero()
+    dashboard._quality_add(acc, {"quality": {"by_size": {"9-12": {"merged": 2, "fixed": 1}}}})
+    assert acc["by_size"]["9-12"] == {"merged": 2, "fixed": 1}
+
+
+def test_wilson_interval_is_wide_for_a_handful_and_tight_for_many():
+    lo, hi = dashboard._wilson(1, 1)
+    assert lo < 25 and hi == 100.0  # one PR that needed a fix says almost nothing
+    lo, hi = dashboard._wilson(500, 1000)
+    assert 46 < lo < 48 and 52 < hi < 54
 
 
 # ---------------------------------------------------------------- merged PRs across the owner's repositories (2026-11-13)
