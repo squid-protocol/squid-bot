@@ -73,7 +73,7 @@ DEFAULT_AGENT_MARKERS = (r"Generated with \[?Claude Code|Co-Authored-By: Claude|
                          r"agy-authored|Devin AI|Cursor Agent|OpenAI Codex|Gemini CLI")
 CLASSES = ("bot", "agent", "other", "automation")
 SHOW_BEFORE = 14  # days before the bot started kept on the charts and used as its "before" baseline
-MAX_DAYS = 90
+MAX_DAYS = 366  # a safety bound only: the left edge is pinned to the bot start (shown_days), it never slides
 
 
 def _csv(s: str) -> list[str]:
@@ -832,7 +832,9 @@ def bot_start(data: dict, cfg: Config) -> str | None:
 
 
 def shown_days(data: dict, cfg: Config, days: int, today: date) -> int:
-    """Days on the charts: the configured window, stretched so the bot's start and SHOW_BEFORE days before it stay in view."""
+    """Days on the charts: the configured window, stretched so the bot's start and SHOW_BEFORE days before it stay in view.
+    With a bot the left edge is therefore PINNED at SHOW_BEFORE days before its start and the charts only grow to the
+    right as time passes (owner 2026-11-18); it used to be capped at 90 days, after which the edge would have slid."""
     start = bot_start(data, cfg)
     if not start or start > today.isoformat():
         return days
@@ -1228,6 +1230,12 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     start_i = next((i for i, (day, _) in enumerate(rows) if day >= start), None) if start else None
     out: list[str] = []
 
+    def settled(values: list) -> list:
+        """A day still in progress is never drawn in a ratio chart (owner 2026-11-18): 1 h into a UTC day a share of
+        runs or of PRs swings from 0 to 35% on a handful of events and reads as the system breaking. Counts, hours and
+        dollars keep their faded "today so far" marks; rates, percentages, p90s and per-PR figures wait for the day to end."""
+        return [None if day == today_s else v for (day, _), v in zip(rows, values)]
+
     # Heading and the one-sentence story
     out.append(f'<text class="h1" x="{pad}" y="34">{escape(cfg.heading)}</text>')
     out.append(f'<text class="meta" x="{width - pad}" y="34" text-anchor="end">last {len(rows)} days · '
@@ -1292,8 +1300,11 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     # Shared furniture for every panel
     events = [(d, label) for d, label in cfg.events if d in index]
 
+    title_end = [0.0]  # where the last panel title ends, so a legend that would run into it drops to its own row
+
     def frame(top: int, chart_h: int, axis: tuple[float, float], title: str, formatter, title_detail: str = "") -> None:
         maximum, step = axis
+        title_end[0] = pad + 6.6 * len(title)
         intervals = round(maximum / step)
         tip = f"<title>{escape(title_detail)}</title>" if title_detail else ""
         out.append(f'<g>{tip}<text class="h2" x="{pad}" y="{top - 30}">{escape(title)}</text></g>')
@@ -1357,10 +1368,25 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
 
     def legend(y: int, items: list[tuple[str, str]]) -> None:
         x = right
+        if right - sum(6.2 * len(label) + 22 for label, _ in items) < title_end[0] + 16:
+            y += 17  # no room beside the title: a row of its own between the title and the chart
         for label, css in reversed(items):
             x -= 6.2 * len(label) + 22
             out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 8}" width="9" height="9" rx="2"/>')
             out.append(f'<text class="lbl" x="{x + 13:.1f}" y="{y}">{escape(label)}</text>')
+
+    def limit_label(text: str, yl: float, hit: list[int]) -> None:
+        """The label of a limit line, on the side of the chart where no mark reaches the line: the right end, or the
+        left end when a day up against the limit sits there (a "5×0" over the last bar was printed through "limit
+        5,000/h"). Marks at both ends: the right end, one row higher."""
+        w = 6.2 * len(text) + 14
+        if all(x_mid(i) < right - w for i in hit):
+            x, anchor, dy = right, "end", 5
+        elif all(x_mid(i) > left + w for i in hit):
+            x, anchor, dy = left + 4, "start", 5
+        else:
+            x, anchor, dy = right, "end", 18
+        out.append(f'<text class="avgl" x="{x:.1f}" y="{yl - dy:.1f}" text-anchor="{anchor}">{escape(text)}</text>')
 
     # The panels run as a story under four headings (owner 2026-10-30): what came out (delivery, issues), was it good
     # (first pass, change failure), what did it cost (spend, per PR, per issue), and how close the limits are (CI hours,
@@ -1533,7 +1559,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     section("Was it good?")
 
     # First-pass rate: exact (every merged bot PR is known), with a 95% band for the day's sample size
-    fp =[(fac_days.get(d) or {}).get("first_pass") for d, _ in rows]
+    fp = settled([(fac_days.get(d) or {}).get("first_pass") for d, _ in rows])
     if any(x and x.get("merged") for x in fp):
         top, chart_h = y, 120
         vals, lo_b, hi_b, tips = [], [], [], []
@@ -1566,7 +1592,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         live = lambda d: "red_main" in sc_days.get(d, {}) and (not start or d >= start)  # noqa: E731
         reds = [sc_days[d]["red_main"] if live(d) else None for d, _ in rows]
         merged = [row["merged"] if live(d) else None for d, row in rows]
-        daily = [100 * f / m if f is not None and m else None for f, m in zip(reds, merged)]
+        daily = settled([100 * f / m if f is not None and m else None for f, m in zip(reds, merged)])
         label = cfg.red_main_label if cfg and cfg.red_main_label else "red-main"
         top, chart_h = y, 110
         axis = _nice_axis(max([1.0] + [v for v in daily if v is not None]))
@@ -1602,7 +1628,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
                             + (" (today so far)" if d == today_s else ""),
             f"{made:,} merged {cfg.bot_name} PRs for ${spent:,.0f}")
         panel += 1
-        per_pr = [usd[d] / prs[d] if prs.get(d) else None for d, _ in rows]
+        per_pr = settled([usd[d] / prs[d] if prs.get(d) else None for d, _ in rows])
         top, chart_h = y, 120
         pr_axis = _nice_axis(max((v for v in per_pr if v is not None), default=1.0))
         frame(top, chart_h, pr_axis, f"{panel} · Cost per PR — {cfg.bot_name} dollars per merged PR, each day",
@@ -1624,8 +1650,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     # Cost per resolved issue: the bot's dollars over the issues it did the work on (merged bot PRs), each day as a dot
     # and the average of the days so far (up to 7) as the line, from the first day with a bot-resolved issue: day 1 is
     # one day's figure, day 2 the average of two, and so on (owner 2026-10-24: no zero-filled days, no false trend).
-    usd = [(fac_days.get(d) or {}).get("usd") if not start or d >= start else None for d, _ in rows]
-    by_bot = [sc_days[d].get("resolved_by_bot") if d in sc_days else None for d, _ in rows]
+    usd = settled([(fac_days.get(d) or {}).get("usd") if not start or d >= start else None for d, _ in rows])
+    by_bot = settled([sc_days[d].get("resolved_by_bot") if d in sc_days else None for d, _ in rows])
     first = next((i for i, (u, r) in enumerate(zip(usd, by_bot)) if u is not None and r), None)
     if first is not None:
         usd = [u if i >= first else None for i, u in enumerate(usd)]
@@ -1747,8 +1773,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
         if pool_size:
             yl = top + chart_h - chart_h * pool_size / wait_axis[0]
-            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
-                       f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">runner limit {pool_size}</text>')
+            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
+            limit_label(f"runner limit {pool_size}", yl, [i for i, _, w in waits if w["median"] >= 0.85 * pool_size])
         y = top + chart_h + 70
     if view == "limits":
         if not limit_days and not bots and not waits:
@@ -1822,15 +1848,15 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
                 out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
         if ceiling:
             yl = top + chart_h - chart_h * ceiling / hours_max
-            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
-                       f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">'
-                       f'runner max {ceiling:,} h/day ({pool} runners)</text>')
+            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
+            limit_label(f"runner max {ceiling:,} h/day ({pool} runners)", yl,
+                        [i for i, v in enumerate(hours) if v is not None and v >= 0.85 * ceiling])
         y = top + chart_h + 70
 
     # Queue wait and CI cost per merged PR (sampled)
-    wait_values = [detail.get("wait_p90") for detail in details]
-    runner_values = [runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
-                     and row["merged"] else None for (_, row), detail in zip(rows, details)]
+    wait_values = settled([detail.get("wait_p90") for detail in details])
+    runner_values = settled([runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
+                             and row["merged"] else None for (_, row), detail in zip(rows, details)])
     if any(v is not None for v in wait_values + runner_values):
         top, chart_h = y, 120
         wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
@@ -1892,6 +1918,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         failed_values.append(100 * bad / judged if judged else None)
         failed_tips.append(f'{100 * bad / judged:.1f}% of runs failed ({bad:,} of {judged:,} CI runs that '
                            f'passed or failed{bot_note})' if judged else "")
+    saved_values, failed_values = settled(saved_values), settled(failed_values)
     top, chart_h = y, 120
     pct_axis = _nice_axis(max([1.0] + [v for v in saved_values + failed_values if v is not None]))
     frame(top, chart_h, pct_axis, f"{panel} · Efficiency — % of run minutes saved by early cancellation (est.) and % of runs failed",
@@ -1912,8 +1939,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         frame(top, chart_h, axis, f"{panel} · GitHub API — calls in the busiest hour each day on the shared token "
               f"(limit {limit:,}/h; red: readings that found it exhausted)", lambda v: f"{v:,.0f}")
         yl = top + chart_h - chart_h * limit / axis[0]
-        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
-                   f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">limit {limit:,}/h</text>')
+        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
+        limit_label(f"limit {limit:,}/h", yl, [i for i, x in enumerate(api) if (x.get("peak_hour") or 0) >= 0.85 * limit])
         for i, ((day, _), x) in enumerate(zip(rows, api)):
             v = x.get("peak_hour")
             if not v:
@@ -1945,8 +1972,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
               "comments, label and state changes, merges, new PRs and issues; GitHub's secondary-limit guidance "
               f"is about {WRITE_GUIDE_H} content-creating requests an hour per account")
         yl = top + chart_h - chart_h * WRITE_GUIDE_H / axis[0]
-        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>'
-                   f'<text class="avgl" x="{right}" y="{yl - 5:.1f}" text-anchor="end">~{WRITE_GUIDE_H}/h</text>')
+        out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
+        limit_label(f"~{WRITE_GUIDE_H}/h", yl, [i for i, w in enumerate(writes)
+                                                if any(w.get(a, {}).get("busiest_hour", 0) >= 0.85 * WRITE_GUIDE_H for a in actors)])
         for a, cls in zip(actors, ("cum", "failedl", "saved")):
             line_series(top, chart_h, [w[a]["busiest_hour"] if a in w else None for w in writes], axis[0], cls=cls,
                         tips=[f"{a}: busiest hour {w[a]['busiest_hour']} writes, {w[a]['total']} that day" if a in w
@@ -2463,7 +2491,7 @@ def render_quality(data: dict, today: date, cfg: Config) -> str | None:
         for ly, text, cls in ends:
             out.append(f'<rect class="q{cls}k" x="{right + 10}" y="{ly - 2:.1f}" width="12" height="4" rx="2"/>')
             out.append(f'<text class="lbl" x="{right + 28}" y="{ly + 5:.1f}">{escape(text)}</text>')
-        y = top + chart_h + 48
+        y = max(top + chart_h + 48, (ends[-1][0] + 30) if ends else 0)  # the footnote starts below the lowest end label
 
     size_series = []
     for b, cls in QUALITY_SIZES:
