@@ -38,7 +38,7 @@ def test_render_is_valid_svg_with_one_bar_per_day_and_real_totals():
     assert root.tag.endswith("svg")
     titles = [t.text for t in root.iter("{http://www.w3.org/2000/svg}title")]
     assert sum("merged" in t for t in titles) == 30
-    assert sum("runs" in t for t in titles) == 30
+    assert sum("runs" in t for t in titles) == 29  # the 29 finished days; today's failure rate waits for the day to end
     merged_total = sum(30 + i for i in range(30))
     assert f"{merged_total:,}" in svg
     assert "2.6% of runs failed (40 of 1,540" in svg  # 40 / (1500 + 40)
@@ -216,11 +216,13 @@ def test_an_orchestrators_factory_json_adds_an_agent_row_and_a_summary_table():
 def test_charts_show_each_days_own_numbers_not_a_trailing_average():
     data = _data()
     data["days"][TODAY.isoformat()] = _day(71, 900, 100, 0)  # a spike today: 71 merged, 90% pass
+    data["days"][(TODAY - timedelta(days=1)).isoformat()] = _day(65, 900, 100, 0)  # and one on a finished day
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
-    assert "Oct 14 · 71 merged PRs (today so far)" in svg
-    assert "Oct 14: 10.0% of runs failed (100 of 1,000" in svg
-    assert "Oct 13 · 31 merged PRs ·" in svg
+    assert "Oct 14 · 71 merged PRs (today so far)" in svg  # counts keep today's faded bar
+    assert "Oct 13: 10.0% of runs failed (100 of 1,000" in svg  # a finished day's own rate, not an average
+    assert "Oct 14: 10.0% of runs failed" not in svg  # ... but the day in progress is never a rate (2026-11-18)
+    assert "Oct 12 · 32 merged PRs ·" in svg
     assert "7-day average" not in svg and "trailing" not in svg
 
 
@@ -492,13 +494,15 @@ def test_minutes_saved_prices_a_cancelled_run_at_its_workflows_median_success():
 
 def test_the_efficiency_chart_plots_minutes_saved_and_failed_runs_as_percentages():
     data = _data()
-    data["days"][TODAY.isoformat()]["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0,
-                                                 "runner_min_est": 600, "sampled_runs": 24,
-                                                 "cancel_savings": {"wall_min": 900, "saved_min_est": 100,
-                                                                    "cancelled": 12, "unpriced": 0}}
+    detail = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 4.0, "runner_min_est": 600,
+              "sampled_runs": 24,
+              "cancel_savings": {"wall_min": 900, "saved_min_est": 100, "cancelled": 12, "unpriced": 0}}
+    data["days"][(TODAY - timedelta(days=1)).isoformat()]["detail"] = dict(detail)  # a finished day
+    data["days"][TODAY.isoformat()]["detail"] = {**detail, "cancel_savings": {**detail["cancel_savings"], "saved_min_est": 777}}
     svg = dashboard.render(data, 30, TODAY)
     ET.fromstring(svg)
     assert "10.0% of run minutes saved by early cancellation (est. 100 of 1,000 min; 12 runs cancelled)" in svg
+    assert "est. 777" not in svg  # the day in progress is not a point on the chart (2026-11-18)
     assert "minutes saved (est.)" in svg and "runs failed" in svg
     md = dashboard.summary_md(data, CFG, 30, TODAY, [])
     assert "| Proof · failed runs |" in md
@@ -1014,3 +1018,53 @@ def test_collect_recounts_older_days_across_the_owner_newest_first_and_capped(mo
     assert all(out["days"][d]["merged"] == 5 and out["days"][d]["merged_scope"] == "org" for d in recounted)
     waiting = [d for d, r in out["days"].items() if r.get("merged_scope", "repo") != "org"]
     assert waiting and max(waiting) < min(recounted)  # the rest wait for the next runs (and are drawn grey)
+
+
+# --- partial days, pinned window, label collisions (2026-11-18) ----------------------------------------------------
+
+
+def _titles(svg: str) -> list[str]:
+    return [t.text or "" for t in ET.fromstring(svg).iter("{http://www.w3.org/2000/svg}title")]
+
+
+def test_ratio_charts_never_draw_the_day_in_progress():
+    """1 h into a UTC day, '% of runs failed' or '% minutes saved' rests on a handful of events and swings to 0 or 35%."""
+    data = _detailed()
+    for d in data["days"].values():
+        d["detail"]["cancel_savings"] = {"saved_min_est": 30, "wall_min": 70, "cancelled": 3, "unpriced": 0}
+    svg = dashboard.render(data, 30, TODAY, CFG)
+    today = f"{dashboard._fmt_day(TODAY.isoformat())}:"
+    yesterday = f"{dashboard._fmt_day((TODAY - timedelta(days=1)).isoformat())}:"
+    ratio = ("% of runs failed", "of run minutes saved", "job queue wait", "minutes · ", "runner hours / merged PR")
+    assert [t for t in _titles(svg) if t.startswith(today) and any(k in t for k in ratio)] == []  # today: no ratio mark
+    assert any(t.startswith(yesterday) and "% of runs failed" in t for t in _titles(svg))  # yesterday keeps its
+    assert any(t.startswith(f"{dashboard._fmt_day(TODAY.isoformat())} ·") and "merged PRs" in t for t in _titles(svg))
+
+
+def test_first_pass_change_failure_and_cost_ratios_skip_today_too():
+    cfg = dashboard.Config(repo="owner/repo", bot_prefixes=["churn/"], bot_start="2026-10-05", bot_name="promoter-bot",
+                           red_main_label="ci-red-main")
+    svg = dashboard.render(_factory_data(), 10, TODAY, cfg)
+    today = f"{dashboard._fmt_day(TODAY.isoformat())}:"
+    keys = ("first pass", "per merged PR", "times main went red", "per issue")
+    assert [t for t in _titles(svg) if t.startswith(today) and any(k in t for k in keys)] == []
+    assert any("first pass" in t for t in _titles(svg))  # earlier days still drawn
+
+
+def test_the_left_edge_is_pinned_to_the_bot_start_and_never_slides():
+    cfg = dashboard.Config(repo="o/r", bot_start="2026-01-01")
+    d1 = dashboard.shown_days({}, cfg, 30, TODAY)
+    d2 = dashboard.shown_days({}, cfg, 30, TODAY + timedelta(days=30))
+    assert d1 > 90  # the old 90-day cap would have cut the pre-bot baseline off
+    assert (TODAY - timedelta(days=d1 - 1)) == (TODAY + timedelta(days=30) - timedelta(days=d2 - 1))  # same left edge
+
+
+def test_the_limit_label_moves_to_the_empty_side_when_a_day_reaches_the_limit():
+    data = _factory_data()
+    last = sorted(data["days"])[-1]
+    data["factory"]["days"][last]["api"] = {"peak_hour": 5000, "readings_at_zero": 3}
+    svg = dashboard.render(data, 10, TODAY, CFG)
+    assert re.search(r'text-anchor="start">limit 5,000/h<', svg) and 'text-anchor="end">limit 5,000/h<' not in svg
+    data["factory"]["days"][last]["api"] = {"peak_hour": 800, "readings_at_zero": 0}
+    svg = dashboard.render(data, 10, TODAY, CFG)
+    assert 'text-anchor="end">limit 5,000/h<' in svg  # nothing near the limit: the usual right-hand label

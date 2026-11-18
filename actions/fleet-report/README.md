@@ -68,7 +68,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 | `agent-branch-prefixes` | `claude/,codex/,copilot/,cursor/,devin/` | Head-branch prefixes that mark a PR as agent-made |
 | `bot-branch-prefixes` | none | Head-branch prefixes of the bot the dashboard follows (e.g. `churn/`). Its PRs are classed **bot**, ahead of the agent prefixes |
 | `bot-name` | `bot` | Name shown for the bot |
-| `bot-start` | its first merged PR | `YYYY-MM-DD` the bot went live. The charts stretch (up to 90 days) to keep 14 days before it in view; those 14 days are the "before" baseline |
+| `bot-start` | its first merged PR | `YYYY-MM-DD` the bot went live. The charts start 14 days before it and the left edge stays pinned there (they only grow to the right, never slide); those 14 days are the "before" baseline |
 | `events` | none | Dates to mark, as `YYYY-MM-DD: label; YYYY-MM-DD: label` |
 | `agent-markers` | built-in list | Regex on PR bodies that marks a PR as agent-made (Claude Code, Copilot, Devin, Cursor, Codex and Gemini CLI trailers by default) |
 | `bot-workflows` | none | Workflow names that are your orchestrator's own bookkeeping, reported as a share of runs |
@@ -120,7 +120,7 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 
 **PR quality by size** (`quality.svg`, when `factory.json` days carry a `quality` field): daily, over the 7 days ending on each day and summed across every host in `factory.json`, the share of merged bot PRs that needed a fix (a review send-back or a CI fix run) by hand-written file count (1-2, 3-4, 5, 6+), and fix runs per 100 merged PRs by cause. Plain lines; a size line is drawn where a window has 5 PRs or more. The weekly report keeps a weekly table. It is published beside `dashboard.svg`, as is `goals.svg` when `factory.json` has `goals`.
 
-Today is drawn faded, as incomplete. The cards use finished days only.
+Today is drawn faded as incomplete for counts, hours and dollars. Rates (first-pass, change failure, cost per PR or issue, queue wait, CI load per PR, efficiency percentages) are never drawn for the day in progress: a share of a handful of events swings wildly and reads as the system breaking, so they appear once the UTC day ends. The cards use finished days only.
 
 The current GitHub API feed does not contain historical local-host PSI, agent review effort, or post-merge rework. The dashboard leaves those out rather than treating CI activity as a substitute for them.
 
