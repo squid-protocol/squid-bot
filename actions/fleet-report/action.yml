@@ -66,6 +66,9 @@ inputs:
   runner-pool:
     description: Concurrent runners available (e.g. 20). A dotted line on the CI hours chart marks pool x 24 h, and a day's runner time above it is reported as an estimate fault.
     default: ""
+  runner-pool-changes:
+    description: "'YYYY-MM-DD: runners; ...' the limit from that day on (a plan upgrade). Draws a dotted line with a label on every chart, and the runner-limit lines step to the new value."
+    default: ""
   occupancy-scope:
     description: >-
       "org" (default) = count every repository of the owner, since they share the hosted-runner pool; "repo" = `repo`
@@ -138,6 +141,7 @@ runs:
         I_SAMPLE_MIN: ${{ inputs.sample-min }}
         I_SAMPLE_BUDGET: ${{ inputs.sample-budget }}
         I_POOL: ${{ inputs.runner-pool }}
+        I_POOL_CHANGES: ${{ inputs.runner-pool-changes }}
         I_OCC: ${{ inputs.occupancy-sample }}
         I_OCC_SCOPE: ${{ inputs.occupancy-scope }}
         I_MERGED_SCOPE: ${{ inputs.merged-scope }}
@@ -157,7 +161,7 @@ runs:
         fi
         args=(--repo "$I_REPO" --days "$I_DAYS" --out "$OUT" --title "$I_TITLE" --bot-workflows "$I_BOTS"
               --agent-branch-prefixes "$I_PREFIXES" --sample-fraction "$I_FRACTION" --sample-min "$I_SAMPLE_MIN"
-              --sample-budget "$I_SAMPLE_BUDGET" --runner-pool "$I_POOL" --detail-backfill "$I_BACKFILL"
+              --sample-budget "$I_SAMPLE_BUDGET" --runner-pool "$I_POOL" --runner-pool-changes "$I_POOL_CHANGES" --detail-backfill "$I_BACKFILL"
               --max-wait-p90 "$I_MAX_WAIT" --max-runner-hours-per-pr "$I_MAX_H" --summary "$GITHUB_STEP_SUMMARY"
               --bot-branch-prefixes "$I_BOT_PREFIXES" --bot-name "$I_BOT_NAME" --bot-start "$I_BOT_START" --events "$I_EVENTS"
               --cost-max "$I_COST_MAX" --red-main-label "$I_RED_MAIN" --merged-scope "$I_MERGED_SCOPE")

@@ -90,6 +90,23 @@ def _events(s: str) -> list[tuple[str, str]]:
     return out
 
 
+def _pool_changes(s: str) -> list[tuple[str, int]]:
+    """'2026-11-22: 40; 2027-02-01: 60' -> [(day, runners), ...] sorted by day"""
+    out = []
+    for day, label in _events(s):
+        out.append((day, int(label)))
+    return sorted(out)
+
+
+def pool_on(cfg: "Config", day: str) -> int | None:
+    """The runner limit in force on `day`: the base --runner-pool, replaced by each change dated on or before it."""
+    pool = cfg.runner_pool
+    for changed, runners in cfg.pool_changes:
+        if changed <= day:
+            pool = runners
+    return pool
+
+
 @dataclass
 class Config:
     repo: str
@@ -101,6 +118,7 @@ class Config:
     sample_min: int = 30  # ...but never fewer runs than this
     sample_budget: int = 400  # new run lookups per invocation, across all days (API budget); the rest come next run
     runner_pool: int | None = None  # concurrent runners available; a day's estimate above pool x 24 h is flagged
+    pool_changes: list[tuple[str, int]] = field(default_factory=list)  # (day, runners) from that UTC day on (a plan upgrade)
     bot_prefixes: list[str] = field(default_factory=list)
     bot_name: str = "bot"
     bot_start: str = ""
@@ -1074,12 +1092,13 @@ def sampling_note(cfg: Config) -> str:
 
 
 def check_alerts(data: dict, days: int, today: date, max_wait_p90: float | None, max_h_per_pr: float | None,
-                 pool: int | None = None) -> list[str]:
+                 pool: int | None = None, cfg: "Config | None" = None) -> list[str]:
     dated = [(d, r) for d, r in window_rows(data, days, today) if d != today.isoformat()][-7:]
     cur = week_stats([r for _, r in dated])
     out = []
     for day, r in dated:  # an estimate the runners could not have produced is an estimator fault, not a busy day
         det = r.get("detail", {})
+        pool = pool_on(cfg, day) if cfg else pool  # the limit in force that day, not today's
         if over_ceiling(det, pool) and (ex := det.get("exact") or {}).get("org_runner_min") is not None:
             out.append(f"{day}: measured runner time {ex['org_runner_min'] / 60:.0f} h (job times, peak "
                        f"{ex.get('peak')} jobs at once) is over the pool's {pool * 24} h: check runner-pool, or jobs counted "
@@ -1141,6 +1160,7 @@ STYLE = """
   .stale .seg { fill: var(--neutral); opacity: 0.6; }
   .line.cum { stroke: var(--s1); stroke-width: 2.5; } .dot.cum { fill: var(--s1); } .area { fill: var(--s1); opacity: 0.12; }
   .endl { font-size: 13px; font-weight: 650; fill: var(--s1); font-variant-numeric: tabular-nums; }
+  .upg { stroke: var(--s1); stroke-width: 1.5; stroke-dasharray: 2 3; }
   .avg { stroke: var(--ink2); stroke-width: 1.5; stroke-dasharray: 5 4; } .avgl { font-size: 10.5px; font-weight: 600; fill: var(--ink2);
     paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
   .clip { font-size: 9.5px; fill: var(--ink2); } .vl { font-size: 9.5px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
@@ -1225,8 +1245,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     start = bot_start(data, cfg)
     start = start if start and start <= today_s else None
     last, before = last_two_days(data, today)
-    cur = week_stats([data["days"][last]], cfg.runner_pool) if last else {}
-    prev = week_stats([data["days"][before]], cfg.runner_pool) if before else {}
+    cur = week_stats([data["days"][last]], pool_on(cfg, last)) if last else {}
+    prev = week_stats([data["days"][before]], pool_on(cfg, before)) if before else {}
     start_i = next((i for i, (day, _) in enumerate(rows) if day >= start), None) if start else None
     out: list[str] = []
 
@@ -1299,6 +1319,9 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
 
     # Shared furniture for every panel
     events = [(d, label) for d, label in cfg.events if d in index]
+    # a runner-limit change inside the window: a dotted line on every panel, labelled in the lane above the first chart
+    upgrades = [(d, runners, pool_on(cfg, (date.fromisoformat(d) - timedelta(days=1)).isoformat()))
+                for d, runners in cfg.pool_changes if d in index]
 
     title_end = [0.0]  # where the last panel title ends, so a legend that would run into it drops to its own row
 
@@ -1325,12 +1348,17 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         if start_i is not None:
             x = x_left(start_i)
             out.append(f'<line class="start" x1="{x:.1f}" x2="{x:.1f}" y1="{top - 4}" y2="{top + chart_h}"/>')
+        for day, runners, was in upgrades:
+            x = x_left(index[day])
+            out.append(f'<g><title>{_fmt_day(day)}: runner limit {was or "?"} to {runners}</title><line class="upg" '
+                       f'x1="{x:.1f}" x2="{x:.1f}" y1="{top - 4}" y2="{top + chart_h}"/></g>')
 
     def annotate(top: int) -> None:
         """Labels for the bot's start and the events, in the lane above the first chart (two rows, no overlaps)."""
         labels = [(x_left(index[d]), f"{_fmt_day(d)} · {label}", d < (start or "9999")) for d, label in events]
         if start_i is not None:
             labels.append((x_left(start_i), f"{cfg.bot_name} live · {_fmt_day(start)}", False))
+        labels += [(x_left(index[d]), f"{_fmt_day(d)} · {was or '?'} → {n} runners", False) for d, n, was in upgrades]
         taken: list[list[tuple[float, float]]] = [[], []]
         for x, text, before in sorted(labels, key=lambda item: item[2]):
             w = 6.2 * len(text)
@@ -1340,7 +1368,7 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
                 before = True
             row = next((r for r in (0, 1) if all(x1 < a or x0 > b for a, b in taken[r])), 1)
             taken[row].append((x0, x1))
-            cls = "startl" if text.startswith(f"{cfg.bot_name} live") else "evl"
+            cls = "startl" if text.startswith(f"{cfg.bot_name} live") or "runners" in text else "evl"
             anchor = "end" if before else "start"
             out.append(f'<text class="{cls}" x="{(x - 5 if before else x + 5):.1f}" y="{top - 8 - 13 * row}" '
                        f'text-anchor="{anchor}">{escape(text)}</text>')
@@ -1374,6 +1402,22 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
             x -= 6.2 * len(label) + 22
             out.append(f'<rect class="{css}" x="{x:.1f}" y="{y - 8}" width="9" height="9" rx="2"/>')
             out.append(f'<text class="lbl" x="{x + 13:.1f}" y="{y}">{escape(label)}</text>')
+
+    def limit_line(top: int, chart_h: int, axis_max: float, per_day: list[int | None]) -> None:
+        """The runner limit as a dotted step line: level through each stretch of days, stepping where it changed."""
+        y_at = lambda value: top + chart_h - chart_h * value / axis_max
+        pts: list[str] = []
+        prev_n = None
+        for i, n in enumerate(per_day):
+            if not n:
+                continue
+            if prev_n is not None and n != prev_n:
+                pts.append(f"{x_left(i):.1f},{y_at(prev_n):.1f}")
+            pts.append(f"{x_left(i):.1f},{y_at(n):.1f}")
+            pts.append(f"{x_left(i) + slot:.1f},{y_at(n):.1f}")
+            prev_n = n
+        if len(pts) > 1:
+            out.append(f'<polyline class="avg" fill="none" points="{" ".join(pts)}"/>')
 
     def limit_label(text: str, yl: float, hit: list[int]) -> None:
         """The label of a limit line, on the side of the chart where no mark reaches the line: the right end, or the
@@ -1758,7 +1802,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
              if view == "limits" and (row.get("detail") or {}).get("busy_while_waiting")]
     if waits:
         top, chart_h = y, 170
-        pool_size = cfg.runner_pool or 0
+        pools = [pool_on(cfg, d) or 0 for d, _ in rows]
+        pool_size = max(pools)
         wait_axis = _nice_axis(max([pool_size] + [w["peak"] for _, _, w in waits]))
         frame(top, chart_h, wait_axis, f"{panel} · Runners in use while work waits — median, when {WAITING_RUNS}+ runs are queued",
               lambda v: f"{v:g}", "A long queue should fill the pool. A line that stays under the limit however long the queue "
@@ -1772,9 +1817,11 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
             out.append(f'<g{fade}><title>{escape(tip)}</title><path class="ls1" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
         if pool_size:
-            yl = top + chart_h - chart_h * pool_size / wait_axis[0]
-            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
-            limit_label(f"runner limit {pool_size}", yl, [i for i, _, w in waits if w["median"] >= 0.85 * pool_size])
+            limit_line(top, chart_h, wait_axis[0], pools)
+            now = pools[-1]
+            yl = top + chart_h - chart_h * now / wait_axis[0]
+            limit_label(f"runner limit {now}" + (f" (was {min(p for p in pools if p)})" if min(p for p in pools if p) != now else ""),
+                        yl, [i for i, _, w in waits if w["median"] >= 0.85 * pools[i]])
         y = top + chart_h + 70
     if view == "limits":
         if not limit_days and not bots and not waits:
@@ -1806,8 +1853,11 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
     # marks what its runners can do in a day, and sits above the queue wait it explains
     details = [row.get("detail", {}) for _, row in rows]
     pool = cfg.runner_pool
-    repo_hours = [runner_minutes(detail, pool) / 60 if runner_minutes(detail) is not None else None for detail in details]
-    org_hours = [None if (m := org_runner_minutes(detail, pool)) is None else m / 60 for detail in details]
+    pools = [pool_on(cfg, d) for d, _ in rows]  # the limit in force each day (it was raised on the plan upgrade)
+    pool = pools[-1] if pools else pool
+    repo_hours = [runner_minutes(detail, pl) / 60 if runner_minutes(detail) is not None else None
+                  for detail, pl in zip(details, pools)]
+    org_hours = [None if (m := org_runner_minutes(detail, pl)) is None else m / 60 for detail, pl in zip(details, pools)]
     hours = [r if o is None else o for r, o in zip(repo_hours, org_hours)]
     any_org = any(o is not None for o in org_hours)
     repo_name = cfg.repo.split("/")[-1]
@@ -1816,7 +1866,8 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
         top, chart_h = y, 150
         # a few days' estimates overshoot (a small sample of long runs x thousands of runs): fit the axis to 3x the
         # median day and mark the days above it, so they don't flatten the rest; the pool's ceiling stays in view
-        ceiling = pool * 24 if pool else 0
+        ceilings = [pl * 24 if pl else 0 for pl in pools]
+        ceiling = max(ceilings, default=0)
         hours_axis = _nice_axis(max(min(known[-1], 3 * known[len(known) // 2]), ceiling))
         hours_max = hours_axis[0]
         frame(top, chart_h, hours_axis, f"{panel} · CI hours — runner hours per day"
@@ -1839,24 +1890,25 @@ def render(data: dict, days: int, today: date, cfg: Config | None = None, view: 
             tip = (f"{_fmt_day(day)} · {v:,.0f} runner hours {whose}{' (today so far)' if day == today_s else ''} · "
                    f"{row['runs']['total']:,} runs" + (" · " + ", ".join(f"{k} {100 * f:.0f}%" for k, f in split) if split else ""))
             raw = runner_minutes(details[i])
-            if not org and pool and raw > pool * 1440:
-                tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pool} runners can do in a day: drawn at that ceiling"
+            if not org and pools[i] and raw > pools[i] * 1440:
+                tip += f" · the estimate ({raw / 60:,.0f} h) is over what {pools[i]} runners can do in a day: drawn at that ceiling"
             fade = ' class="partial"' if day == today_s and css not in ("hmeasured", "hexact") else ""  # a faded dark bar reads as an estimate
             out.append(f'<g{fade}><title>{escape(tip)}</title><path class="{css}" '
                        f'd="{_bar_path(x_left(i) + (slot - bar_w) / 2, top + chart_h - h, bar_w, h, 4)}"/></g>')
             if v > hours_max:
                 out.append(f'<text class="clip" x="{x_mid(i):.1f}" y="{top - 8}" text-anchor="middle">▲ {v:,.0f} h</text>')
         if ceiling:
-            yl = top + chart_h - chart_h * ceiling / hours_max
-            out.append(f'<line class="avg" x1="{left}" x2="{right}" y1="{yl:.1f}" y2="{yl:.1f}"/>')
-            limit_label(f"runner max {ceiling:,} h/day ({pool} runners)", yl,
-                        [i for i, v in enumerate(hours) if v is not None and v >= 0.85 * ceiling])
+            limit_line(top, chart_h, hours_max, ceilings)
+            now = ceilings[-1]
+            yl = top + chart_h - chart_h * now / hours_max
+            limit_label(f"runner max {now:,} h/day ({pool} runners)", yl,
+                        [i for i, v in enumerate(hours) if v is not None and ceilings[i] and v >= 0.85 * ceilings[i]])
         y = top + chart_h + 70
 
     # Queue wait and CI cost per merged PR (sampled)
     wait_values = settled([detail.get("wait_p90") for detail in details])
-    runner_values = settled([runner_minutes(detail, pool) / row["merged"] / 60 if runner_minutes(detail) is not None
-                             and row["merged"] else None for (_, row), detail in zip(rows, details)])
+    runner_values = settled([runner_minutes(detail, pl) / row["merged"] / 60 if runner_minutes(detail) is not None
+                             and row["merged"] else None for (_, row), detail, pl in zip(rows, details, pools)])
     if any(v is not None for v in wait_values + runner_values):
         top, chart_h = y, 120
         wait_axis = _nice_axis(max((v for v in wait_values if v is not None), default=1.0))
@@ -2676,6 +2728,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--sample-runs", type=int, help="deprecated: the old fixed per-day sample; read as --sample-min")
     p.add_argument("--sample-budget", type=int, default=400, help="new run lookups per invocation (API budget)")
     p.add_argument("--runner-pool", default="", help="concurrent runners; estimates above pool x 24 h are flagged")
+    p.add_argument("--runner-pool-changes", default="",
+                   help="'YYYY-MM-DD: runners; ...' the limit from that day on (a plan upgrade): dotted line on every chart")
     p.add_argument("--occupancy-scope", choices=["org", "repo"], default="org",
                    help="count every repository of the owner (they share the runner pool; default) or --repo only")
     p.add_argument("--merged-scope", choices=["org", "repo"], default="org",
@@ -2699,7 +2753,7 @@ def main(argv: list[str] | None = None) -> int:
                  sample_fraction=a.sample_fraction, sample_min=a.sample_runs or a.sample_min,
                  sample_budget=a.sample_budget, runner_pool=int(a.runner_pool) if str(a.runner_pool).strip() else None,
                  bot_prefixes=_csv(a.bot_branch_prefixes), bot_name=a.bot_name or "bot", bot_start=a.bot_start,
-                 events=_events(a.events), cost_max=_opt_float(a.cost_max), red_main_label=a.red_main_label.strip(),
+                 events=_events(a.events), pool_changes=_pool_changes(a.runner_pool_changes), cost_max=_opt_float(a.cost_max), red_main_label=a.red_main_label.strip(),
                  merged_scope=a.merged_scope)
     a.out.mkdir(parents=True, exist_ok=True)
     occ_file = a.out / OCC_FILE
@@ -2730,7 +2784,7 @@ def main(argv: list[str] | None = None) -> int:
             row["detail"]["occupancy"] = occ  # this repository's runner time
             if any(r.get("scope") == "org" for r in readings) and (pool := occupancy_day(readings, d)):
                 row["detail"]["occupancy_org"] = pool  # every repository's: the pool's real load
-            if busy := busy_while_waiting(readings, d, cfg.runner_pool):
+            if busy := busy_while_waiting(readings, d, pool_on(cfg, d)):
                 row["detail"]["busy_while_waiting"] = busy
     factory_file = a.out / "factory.json"  # an orchestrator's own numbers, published to the same branch (optional)
     if factory_file.exists():
@@ -2749,7 +2803,7 @@ def main(argv: list[str] | None = None) -> int:
     if quality_svg:
         (a.out / "quality.svg").write_text(quality_svg, encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
-                          cfg.runner_pool)
+                          cfg.runner_pool, cfg)
     for msg in alerts:
         print(f"::warning title=Fleet CI report::{msg}")
     if a.summary:

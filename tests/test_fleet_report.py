@@ -1117,3 +1117,18 @@ def test_the_limit_label_moves_to_the_empty_side_when_a_day_reaches_the_limit():
     data["factory"]["days"][last]["api"] = {"peak_hour": 800, "readings_at_zero": 0}
     svg = dashboard.render(data, 10, TODAY, CFG)
     assert 'text-anchor="end">limit 5,000/h<' in svg  # nothing near the limit: the usual right-hand label
+
+
+def test_a_runner_upgrade_draws_a_dotted_line_and_steps_the_limits():
+    data = _data(10)
+    for d in data["days"].values():
+        d["detail"] = {"bot_runs": 0, "ci_changes": [], "wait_median": 1.0, "wait_p90": 3.0, "runner_min_est": 100 * 60}
+    day = (TODAY - timedelta(days=4)).isoformat()
+    cfg = dashboard.Config(repo="owner/repo", runner_pool=20, pool_changes=dashboard._pool_changes(f"{day}: 40"))
+    assert dashboard.pool_on(cfg, (TODAY - timedelta(days=5)).isoformat()) == 20 and dashboard.pool_on(cfg, day) == 40
+    svg = dashboard.render(data, 10, TODAY, cfg)
+    ET.fromstring(svg)
+    assert 'class="upg"' in svg and "20 → 40 runners" in svg  # the dotted line, labelled at the top
+    assert "runner max 960 h/day (40 runners)" in svg and '<polyline class="avg"' in svg  # the new limit, as a step line
+    plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
+    assert 'class="upg"' not in plain
