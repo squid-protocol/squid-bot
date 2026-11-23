@@ -62,7 +62,7 @@ The first run backfills 30 days of exact counts, plus the sampled detail for the
 |---|---|---|
 | `repo` | the running repo | Repository to measure (`owner/repo`). Can be another public repo. |
 | `token` | `github.token` | Reads the measured repo and pushes to `branch` |
-| `branch` | `dashboard` | Where `dashboard.svg`, `limits.svg`, `quality.svg` and `metrics.json` are published. Empty = don't publish. |
+| `branch` | `dashboard` | Where `dashboard.svg`, `limits.svg`, `quality.svg`, `stuck.svg` and `metrics.json` are published. Empty = don't publish. |
 | `days` | `30` | Days on the dashboard |
 | `title` | `<repo>: CI activity` | Heading |
 | `agent-branch-prefixes` | `claude/,codex/,copilot/,cursor/,devin/` | Head-branch prefixes that mark a PR as agent-made |
@@ -119,6 +119,8 @@ Output: `dashboard-url`, the raw URL of the published SVG.
 - **Bots allowed vs working** (when `factory.json` days carry `max_workers` and `worker_hours`): the most bots allowed that day across hosts, against the average working, split into new work and fix loops. The gap is unused capacity; the tooltip gives the idle and paused hours.
 
 **PR quality by size** (`quality.svg`, when `factory.json` days carry a `quality` field): daily, over the 7 days ending on each day and summed across every host in `factory.json`, the share of merged bot PRs that needed a fix (a review send-back or a CI fix run) by hand-written file count (1-2, 3-4, 5, 6+), and fix runs per 100 merged PRs by cause. Plain lines; a size line is drawn where a window has 5 PRs or more. The weekly report keeps a weekly table. It is published beside `dashboard.svg`, as is `goals.svg` when `factory.json` has `goals`.
+
+**What is stuck right now** (`stuck.svg`, every run, read live from the GitHub API): the open PRs that have not moved for 6+ hours, grouped by cause. The cause comes from the `ci-gate` status text (`failing: a, b`), a merge conflict, a draft, or a dependency bump. A cause shared by 3+ PRs is drawn red and called out in the headline, because that is one problem, not several (2026-11-21..23: about 20 PRs red for one `rosetta-audit` gap, with nothing on the dashboard showing it). It also shows how old the oldest open `--red-main-label` issue is. A failed read keeps the last snapshot.
 
 Today is drawn faded as incomplete for counts, hours and dollars. Rates (first-pass, change failure, cost per PR or issue, queue wait, CI load per PR, efficiency percentages) are never drawn for the day in progress: a share of a handful of events swings wildly and reads as the system breaking, so they appear once the UTC day ends. The cards use finished days only.
 

@@ -2709,6 +2709,159 @@ def _opt_float(s: str | None) -> float | None:
     return float(s) if s not in (None, "") else None
 
 
+# ---------------------------------------------------------------- stuck PRs by cause (stuck.svg, 2026-11-23)
+# 2026-11-21..23: about 20 open PRs sat red for ONE shared reason (a rosetta-audit baseline gap on main). Every per-PR number
+# looked ordinary; nothing showed "20 PRs, one cause, 2 days". This reads what is waiting right now from the GitHub API
+# (the ci-gate status text names each failing check), groups the PRs by cause, and flags a cause shared by several PRs.
+STUCK_MIN_H = 6  # an open PR younger than this is still in flight, not stuck
+STUCK_SHARED = 3  # this many PRs failing for one reason read as one cause, not N problems
+STUCK_PAGES = 4  # 50 open PRs a page
+STUCK_PRS = """query($q: String!, $after: String) { search(query: $q, type: ISSUE, first: 50, after: $after) {
+  pageInfo { hasNextPage endCursor }
+  nodes { ... on PullRequest { number title isDraft createdAt mergeStateStatus headRefName
+    labels(first: 20) { nodes { name } }
+    commits(last: 1) { nodes { commit { statusCheckRollup { contexts(first: 100) { nodes {
+      __typename ... on StatusContext { context state description }
+      ... on CheckRun { name conclusion } } } } } } } } } } }"""
+
+
+def stuck_pr(node: dict, now: datetime) -> dict:
+    """One open PR from the search, reduced to what the cause needs."""
+    ctx = []
+    for c in (node.get("commits") or {}).get("nodes") or []:
+        roll = (c.get("commit") or {}).get("statusCheckRollup") or {}
+        ctx += (roll.get("contexts") or {}).get("nodes") or []
+    gate = next((c.get("description") or "" for c in ctx if c.get("context") == "ci-gate"), "")
+    failed = sorted({c["name"] for c in ctx if c.get("conclusion") in ("FAILURE", "TIMED_OUT") and c.get("name")})
+    return {"number": node["number"], "draft": bool(node.get("isDraft")), "state": node.get("mergeStateStatus") or "",
+            "age_h": round((now - _iso(node["createdAt"])).total_seconds() / 3600, 1), "branch": node.get("headRefName") or "",
+            "labels": sorted(n["name"] for n in (node.get("labels") or {}).get("nodes") or []), "gate": gate, "failed": failed}
+
+
+def stuck_reasons(pr: dict) -> list[str]:
+    """Why an open PR is not moving, as short names; [] when it is in flight, young or green. The ci-gate text is
+    'failing: a, b' (or 'waiting on: ...' while checks run), so a check named there is a reason; a conflict is one too."""
+    if pr["age_h"] < STUCK_MIN_H or pr["state"] == "CLEAN":
+        return []
+    if pr["branch"].startswith("dependabot/"):
+        return ["dependency bump"]
+    if pr["draft"]:
+        return ["draft (CI skipped)"]
+    gate = pr["gate"].strip()
+    reasons = [x.strip() for x in gate[len("failing:"):].split(",") if x.strip()] if gate.lower().startswith("failing:") else []
+    reasons += [f for f in pr["failed"] if f not in reasons] if not reasons else []
+    if pr["state"] == "DIRTY" and "merge conflict" not in reasons:
+        reasons.append("merge conflict")
+    if not reasons and "shepherd:needs-fix" in pr["labels"]:
+        reasons.append("shepherd needs-fix")
+    return reasons
+
+
+def stuck_summary(prs: list[dict]) -> dict:
+    """{open, stuck, causes: [{cause, count, oldest_h, prs, shared}]}, biggest cause first. A PR with two reasons
+    counts under both: the cause is what matters, so one cause shared by many PRs is the signal."""
+    by: dict[str, list[dict]] = {}
+    stuck = 0
+    for pr in prs:
+        rs = stuck_reasons(pr)
+        stuck += bool(rs)
+        for r in rs:
+            by.setdefault(r, []).append(pr)
+    causes = [{"cause": c, "count": len(v), "oldest_h": max(x["age_h"] for x in v),
+               "prs": sorted(x["number"] for x in v)[:10], "shared": len(v) >= STUCK_SHARED} for c, v in by.items()]
+    causes.sort(key=lambda c: (-c["count"], -c["oldest_h"], c["cause"]))
+    return {"open": len(prs), "stuck": stuck, "causes": causes}
+
+
+def red_main_now(repo: str, label: str, now: datetime) -> dict:
+    """Open issues carrying the red-main label: how many, and the age of the oldest."""
+    if not label:
+        return {}
+    rows = [i for i in gh_json(f"repos/{repo}/issues?labels={label}&state=open&per_page=50") if "pull_request" not in i]
+    ages = sorted(((now - _iso(i["created_at"])).total_seconds() / 3600 for i in rows), reverse=True)
+    return {"count": len(rows), "oldest_h": round(ages[0], 1) if ages else 0.0,
+            "titles": [i["title"] for i in rows][:5]}
+
+
+def collect_stuck(cfg: Config, now: datetime | None = None) -> dict:
+    now = now or datetime.now(timezone.utc)
+    prs, after = [], ""
+    for _ in range(STUCK_PAGES):
+        page = gh_graphql(STUCK_PRS, q=f"repo:{cfg.repo} is:pr is:open", **({"after": after} if after else {}))["search"]
+        prs += [stuck_pr(n, now) for n in page["nodes"] if n]
+        if not page["pageInfo"]["hasNextPage"]:
+            break
+        after = page["pageInfo"]["endCursor"]
+    return {"at": now.strftime("%Y-%m-%dT%H:%MZ"), **stuck_summary(prs), "red_main": red_main_now(cfg.repo, cfg.red_main_label, now)}
+
+
+def _age(h: float) -> str:
+    return f"{h:.0f} h" if h < 48 else f"{h / 24:.1f} days"
+
+
+def render_stuck(data: dict, cfg: Config) -> str | None:
+    st = data.get("stuck")
+    if not st:
+        return None
+    width, pad, row_h, bar_x, bar_w = 920, 24, 26, 330, 300
+    causes = st.get("causes") or []
+    shared = [c for c in causes if c["shared"]]
+    out, y = [], 36
+    out.append(f'<text class="h1" x="{pad}" y="{y}">{escape(cfg.repo)}: what is stuck right now</text>')
+    head = (f"{st['stuck']} of {st['open']} open PRs have not moved in {STUCK_MIN_H}+ hours." if st["stuck"]
+            else f"None of the {st['open']} open PRs is stuck.")
+    if shared:
+        top = shared[0]
+        head += f' {top["count"]} share one cause: {top["cause"]}.'
+    out.append(f'<text class="lead" x="{pad}" y="{y + 22}">{escape(head)}</text>')
+    out.append(f'<text class="lead" x="{pad}" y="{y + 41}">A PR with two reasons counts under both. A cause shared by '
+               f'{STUCK_SHARED}+ PRs is one problem, not {STUCK_SHARED}.</text>')
+    y += 70
+    top_n = max([c["count"] for c in causes] or [1])
+    for c in causes[:12]:
+        w = max(3.0, bar_w * c["count"] / top_n)
+        cls = "stk-shared" if c["shared"] else "stk-one"
+        out.append(f'<text class="h2" x="{pad}" y="{y + 14}">{escape(_short(c["cause"], 36))}</text>')
+        out.append(f'<rect class="{cls}" x="{bar_x}" y="{y + 2}" width="{w:.1f}" height="16" rx="3"><title>'
+                   f'{escape(c["cause"])}: {c["count"]} PRs, oldest {_age(c["oldest_h"])}: '
+                   f'{", ".join("#" + str(n) for n in c["prs"])}</title></rect>')
+        out.append(f'<text class="meta" x="{bar_x + w + 8:.1f}" y="{y + 14}">{c["count"]} PRs · oldest {_age(c["oldest_h"])}</text>')
+        y += row_h
+    if len(causes) > 12:
+        out.append(f'<text class="meta" x="{pad}" y="{y + 14}">and {len(causes) - 12} smaller causes</text>')
+        y += row_h
+    rm = st.get("red_main") or {}
+    y += 14
+    if rm:
+        line = (f"Main: {rm['count']} red-main issue(s) open, the oldest {_age(rm['oldest_h'])}." if rm.get("count")
+                else "Main: no red-main issue open.")
+        out.append(f'<text class="h2" x="{pad}" y="{y + 12}">{escape(line)}</text>')
+        y += 24
+    out.append(f'<text class="meta" x="{pad}" y="{y + 12}">Read from the GitHub API at {escape(st["at"])}; draft and dependency PRs are '
+               'counted but are not failures.</text>')
+    height = y + 34
+    style = STYLE + "\n  .stk-one { fill: var(--s1); } .stk-shared { fill: var(--failed); }\n"
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
+            f'role="img" aria-label="{escape(cfg.repo)} stuck PRs by cause">\n<style>{style}</style>\n<g class="root">\n'
+            f'  <rect class="bg" x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="10"/>\n  '
+            + "\n  ".join(out) + "\n</g>\n</svg>\n")
+
+
+def stuck_md(data: dict) -> str:
+    st = data.get("stuck")
+    if not st:
+        return ""
+    lines = ["", "### What is stuck right now (stuck.svg)", "",
+             f"{st['stuck']} of {st['open']} open PRs have not moved in {STUCK_MIN_H}+ hours (read {st['at']})."]
+    rm = st.get("red_main") or {}
+    if rm.get("count"):
+        lines.append(f"Main is red: {rm['count']} open red-main issue(s), the oldest {_age(rm['oldest_h'])}.")
+    lines += ["", "| Cause | PRs | Oldest | Shared |", "|---|---|---|---|"]
+    lines += [f"| {_md(c['cause'])} | {c['count']} ({', '.join('#' + str(n) for n in c['prs'])}) | {_age(c['oldest_h'])} | "
+              f"{'**one cause, several PRs**' if c['shared'] else ''} |" for c in st.get("causes", [])]
+    return "\n".join(lines) + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     env = os.environ.get
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
@@ -2771,6 +2924,10 @@ def main(argv: list[str] | None = None) -> int:
     today = datetime.now(timezone.utc).date()
     if not a.render_only:
         data = collect(cfg, a.days, data, today, a.detail_backfill)
+        try:  # a live snapshot of what is waiting; a failed read keeps the last one
+            data["stuck"] = collect_stuck(cfg)
+        except (RuntimeError, ValueError, KeyError, OSError) as e:
+            print(f"::warning title=Fleet CI report::stuck-PR snapshot not read: {e}", file=sys.stderr)
         data_file.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
         # a run that starts before midnight UTC finishes after it: draw "today" as of the finish (the "updated" stamp),
         # so the day that just ended isn't labelled "today so far"
@@ -2802,13 +2959,16 @@ def main(argv: list[str] | None = None) -> int:
     quality_svg = render_quality(data, today, cfg)
     if quality_svg:
         (a.out / "quality.svg").write_text(quality_svg, encoding="utf-8")
+    stuck_svg = render_stuck(data, cfg)
+    if stuck_svg:
+        (a.out / "stuck.svg").write_text(stuck_svg, encoding="utf-8")
     alerts = check_alerts(data, a.days, today, _opt_float(a.max_wait_p90), _opt_float(a.max_runner_hours_per_pr),
                           cfg.runner_pool, cfg)
     for msg in alerts:
         print(f"::warning title=Fleet CI report::{msg}")
     if a.summary:
         with a.summary.open("a", encoding="utf-8") as f:
-            f.write(summary_md(data, cfg, a.days, today, alerts))
+            f.write(summary_md(data, cfg, a.days, today, alerts) + stuck_md(data))
     print(f"wrote {a.out}/dashboard.svg and metrics.json ({len(data['days'])} days of history)", file=sys.stderr)
     return 1 if alerts and a.fail_on_alert else 0
 

@@ -1132,3 +1132,72 @@ def test_a_runner_upgrade_draws_a_dotted_line_and_steps_the_limits():
     assert "runner max 960 h/day (40 runners)" in svg and '<polyline class="avg"' in svg  # the new limit, as a step line
     plain = dashboard.render(data, 10, TODAY, dashboard.Config(repo="owner/repo", runner_pool=20))
     assert 'class="upg"' not in plain
+
+
+# ---- stuck PRs by cause (stuck.svg): the 2026-11-21..23 pile-up, replayed -----------------------------------------------
+NOW = datetime(2026, 11, 23, 12, 0, tzinfo=timezone.utc)
+
+
+def _stuck_pr(n: int, age_h: float = 30, gate: str = "", state: str = "BLOCKED", draft: bool = False, branch: str = "churn/x",
+        labels: tuple = (), failed: tuple = ()) -> dict:
+    return {"number": n, "draft": draft, "state": state, "age_h": age_h, "branch": branch, "labels": list(labels),
+            "gate": gate, "failed": list(failed)}
+
+
+def test_a_young_green_or_running_pr_is_not_stuck():
+    assert dashboard.stuck_reasons(_stuck_pr(1, age_h=2, gate="failing: rosetta-audit")) == []  # still in flight
+    assert dashboard.stuck_reasons(_stuck_pr(2, state="CLEAN")) == []
+    assert dashboard.stuck_reasons(_stuck_pr(3, gate="waiting on: det, full-suite")) == []  # checks running
+
+
+def test_ci_gate_text_names_the_reasons_and_a_conflict_is_one_too():
+    assert dashboard.stuck_reasons(_stuck_pr(1, gate="failing: merge conflict, rosetta-audit", state="DIRTY")) == [
+        "merge conflict", "rosetta-audit"]
+    assert dashboard.stuck_reasons(_stuck_pr(2, gate="failing: rosetta-audit", state="DIRTY")) == ["rosetta-audit", "merge conflict"]
+    assert dashboard.stuck_reasons(_stuck_pr(3, draft=True)) == ["draft (CI skipped)"]
+    assert dashboard.stuck_reasons(_stuck_pr(4, branch="dependabot/pip/x")) == ["dependency bump"]
+    assert dashboard.stuck_reasons(_stuck_pr(5, labels=("shepherd:needs-fix",))) == ["shepherd needs-fix"]
+    assert dashboard.stuck_reasons(_stuck_pr(6, failed=("det", "mypy"))) == ["det", "mypy"]  # no gate text: the failed check runs
+
+
+def test_thirteen_prs_red_for_one_check_read_as_one_shared_cause():
+    prs = [_stuck_pr(9000 + i, age_h=40 + i, gate="failing: rosetta-audit") for i in range(13)]
+    prs += [_stuck_pr(9100, gate="failing: det"), _stuck_pr(9101, age_h=1, gate="failing: det"), _stuck_pr(9102, state="CLEAN")]
+    s = dashboard.stuck_summary(prs)
+    assert (s["open"], s["stuck"]) == (16, 14)  # the young det PR and the clean one are not stuck
+    top = s["causes"][0]
+    assert (top["cause"], top["count"], top["shared"]) == ("rosetta-audit", 13, True)
+    assert top["oldest_h"] == 52 and len(top["prs"]) == 10  # the PR list is capped
+    det = next(c for c in s["causes"] if c["cause"] == "det")
+    assert det["count"] == 1 and not det["shared"]
+
+
+def test_stuck_svg_flags_the_shared_cause_and_is_valid(monkeypatch):
+    prs = [_stuck_pr(9000 + i, age_h=50, gate="failing: merge conflict, rosetta-audit", state="DIRTY") for i in range(9)]
+    st = {"at": "2026-11-23T12:00Z", **dashboard.stuck_summary(prs), "red_main": {"count": 1, "oldest_h": 60.0, "titles": ["x"]}}
+    cfg = dashboard.Config(repo="owner/repo")
+    svg = dashboard.render_stuck({"stuck": st}, cfg)
+    root = ET.fromstring(svg)
+    assert root.tag.endswith("svg") and "9 share one cause" in svg and "stk-shared" in svg
+    assert "2.5 days" in svg and "oldest 2.5 days" in svg
+    assert dashboard.render_stuck({}, cfg) is None
+    md = dashboard.stuck_md({"stuck": st})
+    assert "| rosetta-audit | 9 (" in md and "one cause, several PRs" in md and "Main is red" in md
+
+
+def test_collect_stuck_pages_and_reads_the_gate_status(monkeypatch):
+    node = {"number": 7, "title": "t", "isDraft": False, "createdAt": "2026-11-21T00:00:00Z", "mergeStateStatus": "BLOCKED",
+            "headRefName": "churn/7", "labels": {"nodes": [{"name": "shepherd:merge"}]},
+            "commits": {"nodes": [{"commit": {"statusCheckRollup": {"contexts": {"nodes": [
+                {"__typename": "StatusContext", "context": "ci-gate", "state": "FAILURE", "description": "failing: rosetta-audit"},
+                {"__typename": "CheckRun", "name": "det", "conclusion": "SUCCESS"}]}}}}]}}
+    pages = [{"search": {"pageInfo": {"hasNextPage": True, "endCursor": "c1"}, "nodes": [node]}},
+             {"search": {"pageInfo": {"hasNextPage": False, "endCursor": None}, "nodes": [{**node, "number": 8}, {}]}}]
+    seen = []
+    monkeypatch.setattr(dashboard, "gh_graphql", lambda query, **v: seen.append(v) or pages[len(seen) - 1])
+    monkeypatch.setattr(dashboard, "gh_json", lambda path: [{"created_at": "2026-11-21T00:00:00Z", "title": "main is red: x"},
+                                                           {"created_at": "2026-11-22T00:00:00Z", "title": "pr", "pull_request": {}}])
+    st = dashboard.collect_stuck(dashboard.Config(repo="owner/repo", red_main_label="ci-red-main"), NOW)
+    assert "after" not in seen[0] and seen[1]["after"] == "c1"  # first page sends no cursor
+    assert (st["open"], st["stuck"]) == (2, 2) and st["causes"][0]["cause"] == "rosetta-audit"
+    assert st["red_main"] == {"count": 1, "oldest_h": 60.0, "titles": ["main is red: x"]}  # the PR row is skipped
