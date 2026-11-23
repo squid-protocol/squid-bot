@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -40,7 +41,7 @@ except ImportError:
     import pr_check  # noqa: E402
 
 try:
-    import ci_rerun_stats  # GitGalaxy's first-attempt cause classifier (#5137)
+    from squid_bot import ci_rerun_stats  # GitGalaxy's first-attempt cause classifier (#5137)
 except ImportError:
     ci_rerun_stats = None
 
@@ -50,15 +51,27 @@ REFRESH_DAYS = 2  # today and yesterday can still change
 WINDOW_H = 2
 MIN_RESCUES = 2
 MIN_RATE = 0.8
+# A cause is this job's own (not a flake) once its reruns failed again MIN_REAL times and passed under REAL_RATE of the
+# time. 2026-11-13: `ground-truth` was learned flaky from timeouts and pull failures, so the evidence-refresh PR's
+# repeatable test failure earned a rerun on every push for four days (PR #8169, seven reruns, each failed again).
+MIN_REAL = 2
+REAL_RATE = 0.5
 ISSUE_TITLE = "Flaky CI job: {name}"
 
 
-def cause(job: dict[str, Any]) -> str | None:
-    """Why this failed attempt failed, by ci_rerun_stats' classifier (None where it is not available)."""
-    return ci_rerun_stats.classify([job]) if ci_rerun_stats else None
+def cause(job: dict[str, Any], log: Any = None, attempt_jobs: list[dict[str, Any]] | None = None) -> str | None:
+    """Why this failed attempt failed, by ci_rerun_stats' classifier (None where it is not available).
+
+    `log(job)` reads a job's log; it is called only for a failed Db2 step, to tell a registry pull failure from a Db2
+    start failure (without it every failed Db2 step reads as db2_start).
+    A gate job (`ground-truth`: "Every part passed") is classified with the jobs of its attempt it gates (#5605)."""
+    if not ci_rerun_stats:
+        return None
+    logs = {job.get("name", ""): log(job)} if log and ci_rerun_stats.has_failed_db2_step(job) else None
+    return ci_rerun_stats.classify(ci_rerun_stats.scope_jobs(job, attempt_jobs or []), logs=logs)
 
 
-def rerun_verdicts(jobs: list[dict[str, Any]]) -> dict[str, tuple[bool, str | None]]:
+def rerun_verdicts(jobs: list[dict[str, Any]], log: Any = None) -> dict[str, tuple[bool, str | None]]:
     """{job name: (passed on its latest attempt, why its first failed attempt failed)} for the jobs of one run that
     FAILED on an earlier attempt. A job whose latest attempt was cancelled or skipped says nothing and is left out."""
     by: dict[str, list[dict[str, Any]]] = {}
@@ -70,13 +83,15 @@ def rerun_verdicts(jobs: list[dict[str, Any]]) -> dict[str, tuple[bool, str | No
         last = js[-1]
         failed = [j for j in js[:-1] if j.get("conclusion") == "failure"]
         if failed and last.get("conclusion") in ("success", "failure"):
-            out[name] = (last["conclusion"] == "success", cause(failed[0]))
+            out[name] = (last["conclusion"] == "success", cause(failed[0], log, jobs))
     return out
 
 
-def day_reruns(api: pr_check.Api, day: str) -> dict[str, list[Any]]:
-    """{job name: [passed on a rerun, failed again, {first-attempt cause: count}]} for the runs created on `day` (UTC)
-    that were rerun."""
+def day_reruns(api: pr_check.Api, day: str, log: Any = None) -> dict[str, list[Any]]:
+    """{job name: [passed on a rerun, failed again, {first-attempt cause: count}, {cause: [passed, failed again]}]} for
+    the runs created on `day` (UTC) that were rerun. `log(job)` defaults to ci_rerun_stats.job_log. The fourth entry
+    says which causes a rerun cures; days cached before it was recorded have three."""
+    log = log or (ci_rerun_stats.job_log if ci_rerun_stats else None)
     out: dict[str, list[Any]] = {}
     for h in range(0, 24, WINDOW_H):
         span = f"{day}T{h:02d}:00:00Z..{day}T{h + WINDOW_H - 1:02d}:59:59Z"
@@ -84,11 +99,14 @@ def day_reruns(api: pr_check.Api, day: str) -> dict[str, list[Any]]:
             if (r.get("run_attempt") or 1) < 2 or r.get("status") != "completed":
                 continue
             jobs = pr_check.paged(api, f"repos/{REPO_SLUG}/actions/runs/{r['id']}/jobs?filter=all", "jobs")
-            for name, (passed, why) in rerun_verdicts(jobs).items():
-                row = out.setdefault(name, [0, 0, {}])
+            for name, (passed, why) in rerun_verdicts(jobs, log).items():
+                if why == "superseded":
+                    continue  # cancelled by a newer push, then rerun: the job was not nondeterministic (#5605)
+                row = out.setdefault(name, [0, 0, {}, {}])
                 row[0 if passed else 1] += 1
                 if why:
                     row[2][why] = row[2].get(why, 0) + 1
+                    row[3].setdefault(why, [0, 0])[0 if passed else 1] += 1
     return out
 
 
@@ -145,22 +163,38 @@ def tally(cache: dict[str, Any]) -> list[dict[str, Any]]:
     sums: dict[str, list[Any]] = {}
     for per_job in (cache.get("days") or {}).values():
         for name, row in per_job.items():
-            s = sums.setdefault(name, [0, 0, {}])
+            s = sums.setdefault(name, [0, 0, {}, {}])
             s[0] += row[0]
             s[1] += row[1]
             for why, k in (row[2] if len(row) > 2 else {}).items():
                 s[2][why] = s[2].get(why, 0) + k
+            for why, (ok, again) in (row[3] if len(row) > 3 else {}).items():
+                both = s[3].setdefault(why, [0, 0])
+                both[0] += ok
+                both[1] += again
     rows = []
-    for name, (passed, failed, causes) in sums.items():
+    for name, (passed, failed, causes, by_cause) in sums.items():
         rate = passed / (passed + failed)
+        real = sorted(why for why, (ok, again) in by_cause.items() if again >= MIN_REAL and ok / (ok + again) < REAL_RATE)
         rows.append({"job": name, "passed_on_rerun": passed, "failed_again": failed, "rerun_pass_rate": round(rate, 2),
                      "learned_flaky": passed >= MIN_RESCUES and rate >= MIN_RATE,
-                     "causes": dict(sorted(causes.items(), key=lambda kv: -kv[1]))})  # fmt: skip
+                     "causes": dict(sorted(causes.items(), key=lambda kv: -kv[1])),
+                     "real_causes": real})  # fmt: skip
     return sorted(rows, key=lambda r: (-r["passed_on_rerun"], -r["failed_again"], r["job"]))
 
 
-def learned(cache: dict[str, Any]) -> set[str]:
-    return {r["job"] for r in tally(cache) if r["learned_flaky"]}
+class Learned(set):  # type: ignore[type-arg]
+    """The learned-flaky job names, as before, plus `real_causes`: per job, the first-attempt causes a rerun does NOT
+    cure. A caller that only tests membership needs no change; ci_digest reads the causes."""
+
+    real_causes: dict[str, set[str]]
+
+
+def learned(cache: dict[str, Any]) -> Learned:
+    rows = [r for r in tally(cache) if r["learned_flaky"]]
+    out = Learned(r["job"] for r in rows)
+    out.real_causes = {r["job"]: set(r["real_causes"]) for r in rows if r["real_causes"]}
+    return out
 
 
 def file_issues(rows: list[dict[str, Any]], run: Any = subprocess.run) -> list[str]:
@@ -188,12 +222,9 @@ def file_issues(rows: list[dict[str, Any]], run: Any = subprocess.run) -> list[s
 
 
 def default_cache() -> Path:
-    try:
-        from squid_bot.config import get_state_path
-
-        return get_state_path().parent / "flake_history.json"
-    except Exception:  # noqa: BLE001 (GitGalaxy has no squid_bot.config)
-        return Path("/tmp/squid-bot/state/flake_history.json")  # noqa: S108
+    state = os.environ.get("CI_SHEPHERD_STATE")  # beside ci_shepherd's state file, where learned_flakes reads it
+    base = Path(state).parent if state else Path.home() / ".cache" / "gitgalaxy"
+    return base / "flake_history.json"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -203,7 +234,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--refresh-only", action="store_true")
     ap.add_argument("--no-refresh", action="store_true", help="report from the cache without calling GitHub")
     ap.add_argument("--budget-s", type=float, help="start no new day after this many seconds (the rest next time)")
-    ap.add_argument("--file-issues", action="store_true", help="open one issue per learned-flaky job (writes to GitHub)")
+    ap.add_argument(
+        "--file-issues", action="store_true", help="open one issue per learned-flaky job (writes to GitHub)"
+    )
     a = ap.parse_args(argv)
     cache = load(a.cache) if a.no_refresh else refresh(pr_check.gh_api, a.cache, budget_s=a.budget_s)
     if a.refresh_only:
@@ -217,8 +250,10 @@ def main(argv: list[str] | None = None) -> int:
         for r in rows:
             mark = "FLAKY " if r["learned_flaky"] else "      "
             why = ", ".join(f"{k} {v}" for k, v in r["causes"].items())
-            print(f"  {mark}{r['job']}: passed on rerun {r['passed_on_rerun']}, failed again {r['failed_again']}"
-                  + (f" ({why})" if why else ""))
+            print(
+                f"  {mark}{r['job']}: passed on rerun {r['passed_on_rerun']}, failed again {r['failed_again']}"
+                + (f" ({why})" if why else "")
+            )
         if not rows:
             print("  no reruns")
     if a.file_issues:

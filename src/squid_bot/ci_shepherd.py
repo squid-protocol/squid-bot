@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""The CI shepherd (#4790): takes a queue of pull requests to merge, and does the waiting and the sorting itself.
+"""RETIRED as the live shepherd (#5398): the GitHub workflows (shepherd-reconcile.yml / shepherd-event.yml, via
+tests/tools/shepherd_gh.py) are the live one; no unit or process runs this on the box. Kept as the fallback docs/ci.md
+names for when the workflows are down. Its learned-flake handling (below) now exists in shepherd_gh too.
+
+The CI shepherd (#4790): takes a queue of pull requests to merge, and does the waiting and the sorting itself.
 
     python tests/tools/box/ci_shepherd.py add 4811 4819 [--after 4811]   # queue PRs (--after: wait for that one first)
     python tests/tools/box/ci_shepherd.py run [--once] [--every 600] [--hours 6]
@@ -44,6 +48,7 @@ try:
 except ImportError:
     TOOLS = Path(__file__).resolve().parents[1]
     sys.path.insert(0, str(TOOLS))
+    sys.path.insert(0, str(Path(__file__).resolve().parent))  # box_status
     import ci_digest  # noqa: E402
     import flake_history  # noqa: E402
     import pr_check  # noqa: E402
@@ -54,6 +59,7 @@ try:
 except Exception:
     STATE = Path(os.environ.get("SQUID_BOT_STATE") or os.environ.get("CI_SHEPHERD_STATE", "/tmp/squid-bot/state/shepherd.json"))
 REPO_SLUG = pr_check.REPO_SLUG
+API_CACHE = Path(os.environ.get("SHEPHERD_API_CACHE", Path.home() / ".cache" / "gitgalaxy" / "ci_shepherd_api"))
 Run = Callable[[list[str]], subprocess.CompletedProcess[str]]
 
 
@@ -125,12 +131,13 @@ def record_event(state: dict[str, Any], n: int, sha: str, event: str, detail: st
 
 
 def box_verdict() -> str:
-    """Global metabolic headroom signal (cAMP-CRP) from box_status: 'GREEN', 'YELLOW', or 'RED'."""
+    """The host's headroom, from box_status: 'GREEN', 'YELLOW', or 'RED'."""
     try:
         try:
             from squid_bot import box_status
         except ImportError:
-            import box_status  # type: ignore[no-redef]
+            import box_status
+
         if not Path("/proc/meminfo").exists():
             return "GREEN"
         return str(box_status.snapshot(sample=0.1).get("verdict") or "GREEN")
@@ -159,14 +166,16 @@ def fixer_priority(state: dict[str, Any], cand: tuple[int, str, dict[str, Any]])
     return (-waiting, len(real["failed"]), n)
 
 
-def start_fixers(state: dict[str, Any], cands: list[tuple[int, str, dict[str, Any]]], fixer: str, did: list[str]) -> None:
+def start_fixers(
+    state: dict[str, Any], cands: list[tuple[int, str, dict[str, Any]]], fixer: str, did: list[str]
+) -> None:
     """Start at most MAX_FIXERS of the pass's fixer candidates, most useful first, when the box reads GREEN. The box
     is read once: a fixer just started has not loaded it yet, so a second reading in the same pass would lie."""
     cands = sorted(cands, key=lambda c: fixer_priority(state, c))
     verdict = box_verdict()
     for i, (n, sha, real) in enumerate(cands):
         if verdict in ("RED", "YELLOW"):
-            did.append(f"#{n} fixer deferred: box is {verdict} (catabolite repression)")
+            did.append(f"#{n} fixer deferred: box is {verdict} (no headroom for a fixer)")
             if once(state, n, sha, "note:fixer-deferred"):
                 record_event(state, n, sha, "fixer_deferred", f"box {verdict}")
         elif i >= MAX_FIXERS:
@@ -351,25 +360,28 @@ def _pass_one(
 
 
 def step(state: dict[str, Any], api: pr_check.Api = pr_check.gh_api, run: Run = _run,
-         digest: Callable[[int], dict[str, Any]] | None = None, settle: float = 30) -> list[str]:  # fmt: skip
+         digest: Callable[[int], dict[str, Any]] | None = None, settle: float = 30,
+         graphql: pr_check.GraphQL | None = None) -> list[str]:  # fmt: skip
     """One pass over the queue. Returns what it did (for the log and the tests). Every queued PR gets at least one
-    line: what it did, or its state and why nothing was done (#4790: a pass logged nothing about #4837)."""
+    line: what it did, or its state and why nothing was done (#4790: a pass logged nothing about #4837).
+    `graphql` (#6534): each PR's state and a failing PR's digest, and main's failing checks (read once per pass), come
+    from GraphQL, REST when a query fails."""
     on_main_cache: list[set[str]] = []
 
     flaky_cache: list[set[str]] = []
 
     def _default_digest(n: int) -> dict[str, Any]:
         if not on_main_cache:
-            on_main_cache.append(ci_digest.main_failures(api))
+            on_main_cache.append(ci_digest.main_failures(api, graphql=graphql))
             flaky_cache.append(learned_flakes(state))
-        return ci_digest.digest(n, api, on_main=on_main_cache[0], flaky=flaky_cache[0])
+        return ci_digest.digest(n, api, on_main=on_main_cache[0], flaky=flaky_cache[0], graphql=graphql)
 
     digest_fn = digest or _default_digest
     did: list[str] = []
     in_flight = [0]
     fixers: list[tuple[int, str, dict[str, Any]]] = []
     for n in list(state["queue"]):
-        res = pr_check.check(n, api)
+        res = pr_check.check(n, api, graphql)
         if res["state"] != "open":
             state["queue"].remove(n)
             did.append(f"#{n} {res['state']}: left the queue")
@@ -385,6 +397,12 @@ def step(state: dict[str, Any], api: pr_check.Api = pr_check.gh_api, run: Run = 
     if fixers:
         start_fixers(state, fixers, os.environ.get("CI_SHEPHERD_FIXER", ""), did)
     return did
+
+
+def pass_api(store: Path | None = None) -> pr_check.Api:
+    """The REST reads that stay, for one pass (#6534): conditional (ETag; a 304 costs no quota, the store persists
+    across passes) with a finished SHA's reads, a commit and a completed run shared within the pass."""
+    return pr_check.pass_cache(pr_check.conditional_api(API_CACHE if store is None else store))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -416,9 +434,10 @@ def main(argv: list[str] | None = None) -> int:
                 with open(STATE.with_suffix(".lock"), "w") as lock:  # held per pass; add/drop wait for it
                     fcntl.flock(lock, fcntl.LOCK_EX)
                     state = load()
-                    for line in step(state):
+                    for line in step(state, pass_api(), graphql=pr_check.gh_graphql):
                         log(line)
                     save(state)
+                    pr_check.prune_api_store(API_CACHE)  # the store a long run keeps stays small
                 if args.once or (args.exit_when_empty and not state["queue"]) or time.time() > end:
                     log(
                         "queue empty"
