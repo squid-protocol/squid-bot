@@ -59,24 +59,24 @@
 <g class="root">
   <rect class="bg" x="0.5" y="0.5" width="919" height="307" rx="10"/>
   <text class="h1" x="24" y="36">squid-protocol/gitgalaxy: what is stuck right now</text>
-  <text class="lead" x="24" y="58">3 of 8 open PRs have not moved in 6+ hours.</text>
+  <text class="lead" x="24" y="58">5 of 13 open PRs have not moved in 6+ hours.</text>
   <text class="lead" x="24" y="77">A PR with two reasons counts under both. A cause shared by 3+ PRs is one problem, not 3.</text>
   <text class="h2" x="24" y="120">ground-truth</text>
-  <rect class="stk-one" x="330" y="108" width="300.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 7.4 days: #8564</title></rect>
-  <text class="meta" x="638.0" y="120">1 PRs · oldest 7.4 days</text>
-  <text class="h2" x="24" y="146">full-suite matrix</text>
-  <rect class="stk-one" x="330" y="134" width="300.0" height="16" rx="3"><title>full-suite matrix: 1 PRs, oldest 28 h: #9135</title></rect>
-  <text class="meta" x="638.0" y="146">1 PRs · oldest 28 h</text>
-  <text class="h2" x="24" y="172">full-suite-matrix</text>
-  <rect class="stk-one" x="330" y="160" width="300.0" height="16" rx="3"><title>full-suite-matrix: 1 PRs, oldest 28 h: #9135</title></rect>
-  <text class="meta" x="638.0" y="172">1 PRs · oldest 28 h</text>
-  <text class="h2" x="24" y="198">merge conflict</text>
-  <rect class="stk-one" x="330" y="186" width="300.0" height="16" rx="3"><title>merge conflict: 1 PRs, oldest 28 h: #9135</title></rect>
-  <text class="meta" x="638.0" y="198">1 PRs · oldest 28 h</text>
-  <text class="h2" x="24" y="224">det</text>
-  <rect class="stk-one" x="330" y="212" width="300.0" height="16" rx="3"><title>det: 1 PRs, oldest 15 h: #9172</title></rect>
-  <text class="meta" x="638.0" y="224">1 PRs · oldest 15 h</text>
-  <text class="h2" x="24" y="262">Main: 2 red-main issue(s) open, the oldest 28 h.</text>
-  <text class="meta" x="24" y="286">Read from the GitHub API at 2026-11-24T20:35Z; draft and dependency PRs are counted but are not failures.</text>
+  <rect class="stk-one" x="330" y="108" width="300.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 7.6 days: #8564</title></rect>
+  <text class="meta" x="638.0" y="120">1 PRs · oldest 7.6 days</text>
+  <text class="h2" x="24" y="146">dependency bump</text>
+  <rect class="stk-one" x="330" y="134" width="300.0" height="16" rx="3"><title>dependency bump: 1 PRs, oldest 2.4 days: #9043</title></rect>
+  <text class="meta" x="638.0" y="146">1 PRs · oldest 2.4 days</text>
+  <text class="h2" x="24" y="172">shepherd (label event)</text>
+  <rect class="stk-one" x="330" y="160" width="300.0" height="16" rx="3"><title>shepherd (label event): 1 PRs, oldest 34 h: #9135</title></rect>
+  <text class="meta" x="638.0" y="172">1 PRs · oldest 34 h</text>
+  <text class="h2" x="24" y="198">det</text>
+  <rect class="stk-one" x="330" y="186" width="300.0" height="16" rx="3"><title>det: 1 PRs, oldest 22 h: #9172</title></rect>
+  <text class="meta" x="638.0" y="198">1 PRs · oldest 22 h</text>
+  <text class="h2" x="24" y="224">shepherd needs-fix</text>
+  <rect class="stk-one" x="330" y="212" width="300.0" height="16" rx="3"><title>shepherd needs-fix: 1 PRs, oldest 7 h: #9232</title></rect>
+  <text class="meta" x="638.0" y="224">1 PRs · oldest 7 h</text>
+  <text class="h2" x="24" y="262">Main: 2 red-main issue(s) open, the oldest 35 h.</text>
+  <text class="meta" x="24" y="286">Read from the GitHub API at 2026-11-25T02:56Z; draft and dependency PRs are counted but are not failures.</text>
 </g>
 </svg>
