@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 308" width="920" height="308" role="img" aria-label="squid-protocol/gitgalaxy stuck PRs by cause">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 490" width="920" height="490" role="img" aria-label="squid-protocol/gitgalaxy stuck PRs by cause">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
@@ -57,26 +57,47 @@
   .stk-one { fill: var(--s1); } .stk-shared { fill: var(--failed); }
 </style>
 <g class="root">
-  <rect class="bg" x="0.5" y="0.5" width="919" height="307" rx="10"/>
+  <rect class="bg" x="0.5" y="0.5" width="919" height="489" rx="10"/>
   <text class="h1" x="24" y="36">squid-protocol/gitgalaxy: what is stuck right now</text>
-  <text class="lead" x="24" y="58">5 of 13 open PRs have not moved in 6+ hours.</text>
+  <text class="lead" x="24" y="58">8 of 16 open PRs have not moved in 6+ hours. 6 share one cause: merge conflict.</text>
   <text class="lead" x="24" y="77">A PR with two reasons counts under both. A cause shared by 3+ PRs is one problem, not 3.</text>
-  <text class="h2" x="24" y="120">ground-truth</text>
-  <rect class="stk-one" x="330" y="108" width="300.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 7.6 days: #8564</title></rect>
-  <text class="meta" x="638.0" y="120">1 PRs · oldest 7.6 days</text>
-  <text class="h2" x="24" y="146">dependency bump</text>
-  <rect class="stk-one" x="330" y="134" width="300.0" height="16" rx="3"><title>dependency bump: 1 PRs, oldest 2.4 days: #9043</title></rect>
-  <text class="meta" x="638.0" y="146">1 PRs · oldest 2.4 days</text>
+  <text class="h2" x="24" y="120">merge conflict</text>
+  <rect class="stk-shared" x="330" y="108" width="300.0" height="16" rx="3"><title>merge conflict: 6 PRs, oldest 8.6 days: #8564, #9135, #9232, #9292, #9293, #9320</title></rect>
+  <text class="meta" x="638.0" y="120">6 PRs · oldest 8.6 days</text>
+  <text class="h2" x="24" y="146">ground-truth</text>
+  <rect class="stk-one" x="330" y="134" width="50.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 8.6 days: #8564</title></rect>
+  <text class="meta" x="388.0" y="146">1 PRs · oldest 8.6 days</text>
   <text class="h2" x="24" y="172">shepherd (label event)</text>
-  <rect class="stk-one" x="330" y="160" width="300.0" height="16" rx="3"><title>shepherd (label event): 1 PRs, oldest 34 h: #9135</title></rect>
-  <text class="meta" x="638.0" y="172">1 PRs · oldest 34 h</text>
+  <rect class="stk-one" x="330" y="160" width="50.0" height="16" rx="3"><title>shepherd (label event): 1 PRs, oldest 2.4 days: #9135</title></rect>
+  <text class="meta" x="388.0" y="172">1 PRs · oldest 2.4 days</text>
   <text class="h2" x="24" y="198">det</text>
-  <rect class="stk-one" x="330" y="186" width="300.0" height="16" rx="3"><title>det: 1 PRs, oldest 22 h: #9172</title></rect>
-  <text class="meta" x="638.0" y="198">1 PRs · oldest 22 h</text>
-  <text class="h2" x="24" y="224">shepherd needs-fix</text>
-  <rect class="stk-one" x="330" y="212" width="300.0" height="16" rx="3"><title>shepherd needs-fix: 1 PRs, oldest 7 h: #9232</title></rect>
-  <text class="meta" x="638.0" y="224">1 PRs · oldest 7 h</text>
-  <text class="h2" x="24" y="262">Main: 2 red-main issue(s) open, the oldest 35 h.</text>
-  <text class="meta" x="24" y="286">Read from the GitHub API at 2026-11-25T02:56Z; draft and dependency PRs are counted but are not failures.</text>
+  <rect class="stk-one" x="330" y="186" width="50.0" height="16" rx="3"><title>det: 1 PRs, oldest 45 h: #9172</title></rect>
+  <text class="meta" x="388.0" y="198">1 PRs · oldest 45 h</text>
+  <text class="h2" x="24" y="224">crucible-audit (full-precision)</text>
+  <rect class="stk-one" x="330" y="212" width="50.0" height="16" rx="3"><title>crucible-audit (full-precision): 1 PRs, oldest 14 h: #9292</title></rect>
+  <text class="meta" x="388.0" y="224">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="250">crucible-audit (zero-dependency)</text>
+  <rect class="stk-one" x="330" y="238" width="50.0" height="16" rx="3"><title>crucible-audit (zero-dependency): 1 PRs, oldest 14 h: #9292</title></rect>
+  <text class="meta" x="388.0" y="250">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="276">callgraph</text>
+  <rect class="stk-one" x="330" y="264" width="50.0" height="16" rx="3"><title>callgraph: 1 PRs, oldest 14 h: #9293</title></rect>
+  <text class="meta" x="388.0" y="276">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="302">full-suite</text>
+  <rect class="stk-one" x="330" y="290" width="50.0" height="16" rx="3"><title>full-suite: 1 PRs, oldest 14 h: #9293</title></rect>
+  <text class="meta" x="388.0" y="302">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="328">full-suite part 4/5</text>
+  <rect class="stk-one" x="330" y="316" width="50.0" height="16" rx="3"><title>full-suite part 4/5: 1 PRs, oldest 14 h: #9293</title></rect>
+  <text class="meta" x="388.0" y="328">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="354">shard 2</text>
+  <rect class="stk-one" x="330" y="342" width="50.0" height="16" rx="3"><title>shard 2: 1 PRs, oldest 14 h: #9293</title></rect>
+  <text class="meta" x="388.0" y="354">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="380">shard 3</text>
+  <rect class="stk-one" x="330" y="368" width="50.0" height="16" rx="3"><title>shard 3: 1 PRs, oldest 14 h: #9293</title></rect>
+  <text class="meta" x="388.0" y="380">1 PRs · oldest 14 h</text>
+  <text class="h2" x="24" y="406">shepherd needs-fix</text>
+  <rect class="stk-one" x="330" y="394" width="50.0" height="16" rx="3"><title>shepherd needs-fix: 1 PRs, oldest 11 h: #9306</title></rect>
+  <text class="meta" x="388.0" y="406">1 PRs · oldest 11 h</text>
+  <text class="h2" x="24" y="444">Main: 2 red-main issue(s) open, the oldest 2.4 days.</text>
+  <text class="meta" x="24" y="468">Read from the GitHub API at 2026-11-26T02:05Z; draft and dependency PRs are counted but are not failures.</text>
 </g>
 </svg>
