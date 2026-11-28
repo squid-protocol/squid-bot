@@ -5096,3 +5096,7 @@
 {"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T05:31:07Z"}
 {"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T05:46:08Z"}
 {"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T06:00:59Z"}
+{"by_repo": {"squid-protocol/squid-telemetry": {"queued": 0, "queued_runs": 0, "running": 1, "running_in_queued_runs": 0}}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 1, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T06:16:05Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T06:31:11Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T06:46:02Z"}
+{"by_repo": {}, "queued": 0, "queued_runs": 0, "repos_read": 27, "running": 0, "running_in_queued_runs": 0, "scope": "org", "t": "2026-11-28T07:00:59Z"}
