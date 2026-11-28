@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 256" width="920" height="256" role="img" aria-label="squid-protocol/gitgalaxy stuck PRs by cause">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 334" width="920" height="334" role="img" aria-label="squid-protocol/gitgalaxy stuck PRs by cause">
 <style>
   .root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781; --grid:#e1e0d9;
           --axis:#c3c2b7; --border:rgba(11,11,11,0.10); --tile:#f4f3f0; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
@@ -57,20 +57,29 @@
   .stk-one { fill: var(--s1); } .stk-shared { fill: var(--failed); }
 </style>
 <g class="root">
-  <rect class="bg" x="0.5" y="0.5" width="919" height="255" rx="10"/>
+  <rect class="bg" x="0.5" y="0.5" width="919" height="333" rx="10"/>
   <text class="h1" x="24" y="36">squid-protocol/gitgalaxy: what is stuck right now</text>
-  <text class="lead" x="24" y="58">2 of 9 open PRs have not moved in 6+ hours.</text>
+  <text class="lead" x="24" y="58">4 of 9 open PRs have not moved in 6+ hours.</text>
   <text class="lead" x="24" y="77">A PR with two reasons counts under both. A cause shared by 3+ PRs is one problem, not 3.</text>
-  <text class="h2" x="24" y="120">merge conflict</text>
-  <rect class="stk-one" x="330" y="108" width="300.0" height="16" rx="3"><title>merge conflict: 2 PRs, oldest 9.6 days: #8564, #9135</title></rect>
-  <text class="meta" x="638.0" y="120">2 PRs · oldest 9.6 days</text>
-  <text class="h2" x="24" y="146">ground-truth</text>
-  <rect class="stk-one" x="330" y="134" width="150.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 9.6 days: #8564</title></rect>
-  <text class="meta" x="488.0" y="146">1 PRs · oldest 9.6 days</text>
-  <text class="h2" x="24" y="172">shepherd (label event)</text>
-  <rect class="stk-one" x="330" y="160" width="150.0" height="16" rx="3"><title>shepherd (label event): 1 PRs, oldest 3.4 days: #9135</title></rect>
-  <text class="meta" x="488.0" y="172">1 PRs · oldest 3.4 days</text>
-  <text class="h2" x="24" y="210">Main: 2 red-main issue(s) open, the oldest 3.4 days.</text>
-  <text class="meta" x="24" y="234">Read from the GitHub API at 2026-11-27T02:06Z; draft and dependency PRs are counted but are not failures.</text>
+  <text class="h2" x="24" y="120">ground-truth</text>
+  <rect class="stk-one" x="330" y="108" width="300.0" height="16" rx="3"><title>ground-truth: 1 PRs, oldest 10.6 days: #8564</title></rect>
+  <text class="meta" x="638.0" y="120">1 PRs · oldest 10.6 days</text>
+  <text class="h2" x="24" y="146">ground-truth part 3/4</text>
+  <rect class="stk-one" x="330" y="134" width="300.0" height="16" rx="3"><title>ground-truth part 3/4: 1 PRs, oldest 10.6 days: #8564</title></rect>
+  <text class="meta" x="638.0" y="146">1 PRs · oldest 10.6 days</text>
+  <text class="h2" x="24" y="172">merge conflict</text>
+  <rect class="stk-one" x="330" y="160" width="300.0" height="16" rx="3"><title>merge conflict: 1 PRs, oldest 4.4 days: #9135</title></rect>
+  <text class="meta" x="638.0" y="172">1 PRs · oldest 4.4 days</text>
+  <text class="h2" x="24" y="198">shepherd (label event)</text>
+  <rect class="stk-one" x="330" y="186" width="300.0" height="16" rx="3"><title>shepherd (label event): 1 PRs, oldest 4.4 days: #9135</title></rect>
+  <text class="meta" x="638.0" y="198">1 PRs · oldest 4.4 days</text>
+  <text class="h2" x="24" y="224">draft (CI skipped)</text>
+  <rect class="stk-one" x="330" y="212" width="300.0" height="16" rx="3"><title>draft (CI skipped): 1 PRs, oldest 24 h: #9484</title></rect>
+  <text class="meta" x="638.0" y="224">1 PRs · oldest 24 h</text>
+  <text class="h2" x="24" y="250">muninn</text>
+  <rect class="stk-one" x="330" y="238" width="300.0" height="16" rx="3"><title>muninn: 1 PRs, oldest 7 h: #9517</title></rect>
+  <text class="meta" x="638.0" y="250">1 PRs · oldest 7 h</text>
+  <text class="h2" x="24" y="288">Main: 1 red-main issue(s) open, the oldest 4.4 days.</text>
+  <text class="meta" x="24" y="312">Read from the GitHub API at 2026-11-28T01:47Z; draft and dependency PRs are counted but are not failures.</text>
 </g>
 </svg>
